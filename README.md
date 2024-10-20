@@ -19,9 +19,12 @@ See also:
 https://github.com/0xdea/ghidra-scripts  
 https://github.com/binarly-io/idalib/
 
-## Compiling (macOS)
+## Compiling (macOS arm64)
 
 ```
+[Download and install IDA Pro]
+See https://hex-rays.com/ida-pro
+
 [Download, extract, and compile the IDA SDK]
 $ cd idasdk90
 $ export PATH=~/idasdk90/bin:$PATH
