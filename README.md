@@ -6,7 +6,7 @@
 [![](https://img.shields.io/badge/twitter-%400xdea-blue.svg)](https://twitter.com/0xdea)
 [![](https://img.shields.io/badge/mastodon-%40raptor-purple.svg)](https://infosec.exchange/@raptor)
 
-> ""The road to exploitable bugs is paved with unexploitable bugs."
+> "The road to exploitable bugs is paved with unexploitable bugs."
 >
 > -- Mark Dowd
 
@@ -19,13 +19,16 @@ See also:
 https://github.com/0xdea/ghidra-scripts  
 https://github.com/binarly-io/idalib/
 
-## Compiling
+## Compiling (macOS)
 
 ```
-[macOS example]
-$ brew install mingw-w64
-$ rustup target add x86_64-pc-windows-gnu
-$ cargo build --release --target x86_64-pc-windows-gnu
+[Download, extract, and compile the IDA SDK]
+$ cd idasdk90
+$ export PATH=~/idasdk90/bin:$PATH
+$ make NDEBUG=1 __MAC__=1 __ARM__=1 __EA64__=1
+
+[Compile rhabdomancer]
+$ cargo build --release
 ```
 
 ## Usage
