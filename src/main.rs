@@ -1,10 +1,10 @@
 //
-// rhabdomancer - Vulnerability research assistant that locates calls to potentially insecure functions in a binary file.
+// rhabdomancer - IDA Pro vulnerability research assistant
 // Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>
 //
-// > "It's important to be quotable."  
-// >  
-// > -- Halvar Flake  
+// > "The road to exploitable bugs is paved with unexploitable bugs."
+// >
+// > -- Mark Dowd
 //
 // TODO
 //
@@ -27,7 +27,7 @@ use std::process;
 const PROG: &str = "rhabdomancer.exe";
 
 fn main() {
-    println!("rhabdomancer - Vulnerability research assistant that locates calls to potentially insecure functions in a binary file.");
+    println!("rhabdomancer - IDA Pro vulnerability research assistant");
     println!("Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>");
     println!();
 

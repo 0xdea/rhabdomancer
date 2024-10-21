@@ -15,11 +15,11 @@ Auditors can backtrace from these candidate points to find pathways allowing acc
 
 TODO description:
 
-* Rust, idalib
 * C/C++ target
 * Tiers of badness
 * Briefly cover pros/cons of candidate point strategy
 * Mention TAOSSA and other strategies
+* Rust, idalib
 
 Blog post:  
 TODO
