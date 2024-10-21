@@ -10,8 +10,8 @@
 >
 > -- Mark Dowd
 
-Rhabdomancer is a simple IDA Pro plugin that locates all calls to potentially insecure API functions in a binary file.
-Auditors can backtrace from these candidate points to find pathways allowing access from untrusted input.
+Rhabdomancer is a simple IDA Pro headless plugin that locates all calls to potentially insecure API functions in a
+binary file. Auditors can backtrace from these candidate points to find pathways allowing access from untrusted input.
 
 TODO description:
 
@@ -19,22 +19,28 @@ TODO description:
 * Tiers of badness
 * Briefly cover pros/cons of candidate point strategy
 * Mention TAOSSA and other strategies
-* Rust, idalib
+* Rust, idalib, headless
 
 Blog post:  
 TODO
 
 See also:  
 https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java  
+https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib  
 https://github.com/binarly-io/idalib/
 
-## Compiling (macOS arm64)
+## Compiling
+
+* Download, install, and configure IDA Pro (see https://hex-rays.com/ida-pro)
+* Download and extract the IDA SDK (see https://docs.hex-rays.com/developer-guide)
+
+* TODO env vars when idalib is used as a dependency?
 
 ```
-[Download and install IDA Pro]
-See https://hex-rays.com/ida-pro
+[Download, install, and configure IDA Pro, see https://hex-rays.com/ida-pro]
 
-[Download, extract, and compile the IDA SDK]
+[Download and extract the IDA SDK]
+See https://docs.hex-rays.com/developer-guide
 $ cd idasdk90
 $ export PATH=~/idasdk90/bin:$PATH
 $ make NDEBUG=1 __MAC__=1 __ARM__=1 __EA64__=1

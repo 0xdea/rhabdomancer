@@ -1,6 +1,6 @@
 //
-// rhabdomancer - IDA Pro vulnerability research assistant
-// Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>
+// rhabdomancer - IDA headless vulnerability research assistant
+// Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>
 //
 // > "The road to exploitable bugs is paved with unexploitable bugs."
 // >
@@ -27,8 +27,8 @@ use std::process;
 const PROG: &str = "rhabdomancer.exe";
 
 fn main() {
-    println!("rhabdomancer - IDA Pro vulnerability research assistant");
-    println!("Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>");
+    println!("rhabdomancer - IDA headless vulnerability research assistant");
+    println!("Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>");
     println!();
 
     // Parse command line arguments
