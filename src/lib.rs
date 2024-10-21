@@ -66,6 +66,7 @@ pub fn run(action: &str) -> Result<(), Box<dyn Error>> {
 }
 
 // Other functions ...
+// TODO: grab config (insecure functions, tier, maybe message from external file); either use regular file, config (or more secure alternatives), or other serialization
 
 #[cfg(test)]
 mod tests {

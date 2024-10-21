@@ -10,13 +10,22 @@
 >
 > -- Mark Dowd
 
-TODO
+Rhabdomancer is a simple IDA Pro plugin that locates all calls to potentially insecure API functions in a binary file.
+Auditors can backtrace from these candidate points to find pathways allowing access from untrusted input.
+
+TODO description:
+
+* Rust, idalib
+* C/C++ target
+* Tiers of badness
+* Briefly cover pros/cons of candidate point strategy
+* Mention TAOSSA and other strategies
 
 Blog post:  
 TODO
 
 See also:  
-https://github.com/0xdea/ghidra-scripts  
+https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java  
 https://github.com/binarly-io/idalib/
 
 ## Compiling (macOS arm64)
