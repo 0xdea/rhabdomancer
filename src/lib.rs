@@ -42,11 +42,11 @@
 //! * TODO
 //!
 
-// Standard library imports
 use std::error::Error;
+use std::io;
+use std::path::Path;
 
-// External crate imports
-// use ...;
+use idalib::idb::IDB;
 
 // Internal imports
 // use ...;
@@ -56,11 +56,16 @@ use std::error::Error;
 // static NAME: type = ...;
 
 /// Dispatch to function implementing the selected action
-pub fn run(action: &str) -> Result<(), Box<dyn Error>> {
-    match action {
-        "action1" => func1()?,
-        _ => func2(action)?,
+pub fn run(filepath: &Path) -> Result<(), Box<dyn Error>> {
+    // Check target file
+    if !filepath.is_file() {
+        return Err(Box::new(io::Error::new(
+            io::ErrorKind::NotFound,
+            "not a file",
+        )));
     }
+
+    let idb = IDB::open(filepath)?;
 
     Ok(())
 }

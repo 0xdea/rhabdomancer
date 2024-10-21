@@ -1,6 +1,6 @@
 //
-// rhabdomancer - IDA headless vulnerability research assistant
-// Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>
+// rhabdomancer - IDA Pro vulnerability research assistant
+// Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>
 //
 // > "The road to exploitable bugs is paved with unexploitable bugs."
 // >
@@ -9,7 +9,6 @@
 // TODO
 //
 
-// Standard library imports
 use std::env;
 use std::path::Path;
 use std::process;
@@ -24,11 +23,11 @@ use std::process;
 
 // static NAME: type = ...;
 
-const PROG: &str = "rhabdomancer.exe";
+const PROG: &str = "rhabdomancer";
 
 fn main() {
-    println!("rhabdomancer - IDA headless vulnerability research assistant");
-    println!("Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>");
+    println!("rhabdomancer - IDA Pro vulnerability research assistant");
+    println!("Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>");
     println!();
 
     // Parse command line arguments
@@ -40,21 +39,16 @@ fn main() {
         .to_str()
         .unwrap_or(PROG);
 
-    let action = match args.len() {
-        1 => "default",
-        2 => &args[1].clone(),
-        _ => {
-            usage(prog);
-            process::exit(1);
-        }
+    let filename = match args.len() {
+        2 => &args[1],
+        _ => "-",
     };
-    if action.starts_with('-') {
+    if filename.starts_with('-') {
         usage(prog);
-        process::exit(1);
     }
 
     // Let's do it
-    match rhabdomancer::run(action) {
+    match rhabdomancer::run(Path::new(filename)) {
         Ok(()) => (),
         Err(err) => {
             eprintln!("[!] Error: {err}");
@@ -63,11 +57,13 @@ fn main() {
     }
 }
 
-/// Print usage information
+/// Print usage information and exit
 fn usage(prog: &str) {
     println!("Usage:");
-    println!(".\\{prog} TODO");
+    println!("./{prog} [binary file]");
     println!("\nExamples:");
-    println!(".\\{prog}");
-    println!(".\\{prog} TODO");
+    println!("./{prog} TODO");
+    println!("./{prog} TODO");
+
+    process::exit(1);
 }
