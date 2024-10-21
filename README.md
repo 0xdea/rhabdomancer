@@ -31,21 +31,12 @@ https://github.com/binarly-io/idalib/
 
 ## Compiling
 
-* Download, install, and configure IDA Pro (see https://hex-rays.com/ida-pro)
-* Download and extract the IDA SDK (see https://docs.hex-rays.com/developer-guide)
-
-* TODO env vars when idalib is used as a dependency?
+1. Download, install, and configure IDA Pro (see https://hex-rays.com/ida-pro)
+2. Download and extract the IDA SDK (see https://docs.hex-rays.com/developer-guide)
+3. Compile rhabdomancer (macOS example):
 
 ```
-[Download, install, and configure IDA Pro, see https://hex-rays.com/ida-pro]
-
-[Download and extract the IDA SDK]
-See https://docs.hex-rays.com/developer-guide
-$ cd idasdk90
-$ export PATH=~/idasdk90/bin:$PATH
-$ make NDEBUG=1 __MAC__=1 __ARM__=1 __EA64__=1
-
-[Compile rhabdomancer]
+$ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
 $ cargo build --release
 ```
 
