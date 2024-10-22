@@ -72,6 +72,8 @@ pub fn run(filepath: &Path) -> Result<(), Box<dyn Error>> {
 
 // Other functions ...
 // TODO: grab config (insecure functions, tier, maybe message from external file); either use regular file, config (or more secure alternatives), or other serialization
+// TODO: reason on the output to make it usable/perhaps importable into IDA Pro and/or other tools; see also https://github.com/Accenture/VulFi
+// TODO: perhaps we can save an IDA db that can be opened in the tool, looks like the best course of action to me
 
 #[cfg(test)]
 mod tests {
