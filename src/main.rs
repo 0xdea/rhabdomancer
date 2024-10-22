@@ -1,14 +1,3 @@
-//
-// rhabdomancer - IDA Pro vulnerability research assistant
-// Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>
-//
-// > "The road to exploitable bugs is paved with unexploitable bugs."
-// >
-// > -- Mark Dowd
-//
-// TODO
-//
-
 use std::env;
 use std::path::Path;
 use std::process;

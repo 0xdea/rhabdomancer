@@ -1,15 +1,15 @@
 //!
-//! rhabdomancer - Vulnerability research assistant that locates calls to potentially insecure functions in a binary file.
+//! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>
 //!
-//! > "It's important to be quotable."  
-//! >  
-//! > -- Halvar Flake  
+//! > "The road to exploitable bugs is paved with unexploitable bugs."
+//! >
+//! > -- Mark Dowd
 //!
 //! TODO
 //!
 //! # See also
-//! [TODO](TODO)  
+//! [TODO](TODO)
 //!
 //! # Cross-compiling
 //! ```sh
