@@ -65,15 +65,23 @@ pub fn run(filepath: &Path) -> Result<(), Box<dyn Error>> {
         )));
     }
 
-    let idb = IDB::open(filepath)?;
+    let idb = IDB::open_with(filepath, true)?;
+
+    for (id, f) in idb.functions() {
+        println!("{id} {}", f.name().unwrap());
+    }
 
     Ok(())
 }
 
 // Other functions ...
 // TODO: grab config (insecure functions, tier, maybe message from external file); either use regular file, config (or more secure alternatives), or other serialization
-// TODO: reason on the output to make it usable/perhaps importable into IDA Pro and/or other tools; see also https://github.com/Accenture/VulFi
-// TODO: perhaps we can save an IDA db that can be opened in the tool, looks like the best course of action to me
+// TODO: see also https://github.com/Accenture/VulFi
+// TODO: reason on the output to make it usable/perhaps importable into IDA Pro and/or other tools; perhaps we can save an IDA db that can be opened in the tool
+
+fn get_function_addr(name: &str) -> Option<usize> {
+    todo!()
+}
 
 #[cfg(test)]
 mod tests {
