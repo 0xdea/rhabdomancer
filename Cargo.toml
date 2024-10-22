@@ -12,6 +12,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 idalib = "0.1"
+anyhow = "1"
 
 [build-dependencies]
 idalib-build = "0.1"
