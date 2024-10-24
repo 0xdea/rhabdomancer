@@ -67,9 +67,12 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     }
 
     // Open target file, run auto-analysis, and keep results
+    // TODO: make sure a user can distinguish between an error (nothing is printed after opening because of non-ergonomic API) and success (messages are printed)
     eprint!("[+] ");
     let idb = IDB::open_with(filepath, true)?;
 
+    // TODO: select interesting API functions
+    // TODO: consider using regex as well, check Ghidra plugin
     for (id, f) in idb.functions() {
         println!("{id} {}", f.name().unwrap());
 
@@ -108,7 +111,7 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
 // TODO: grab config (insecure functions, tier, maybe message from external file); either use regular file, config (or more secure alternatives), or other serialization
 // TODO: see also https://github.com/Accenture/VulFi
 // TODO: reason on the output to make it usable/perhaps importable into IDA Pro and/or other tools; perhaps we can save an IDA db that can be opened in the tool
-// TODO: add bookmark/comment (see also ghidra version), but collect also the calling function's name
+// TODO: add bookmark and/or comment (see also ghidra version), but collect also the calling function's name
 
 #[cfg(test)]
 mod tests {
