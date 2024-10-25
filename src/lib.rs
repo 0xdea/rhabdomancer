@@ -42,17 +42,32 @@
 //! * TODO
 //!
 
+use std::collections::HashSet;
+use std::error::Error;
+use std::path::Path;
+
 use idalib::func::Function;
 use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
-use std::error::Error;
-use std::path::Path;
 
 // TODO: const NAME: type = ...;
 // TODO: static NAME: type = ...;
 
+// TODO: remove all unwraps and similar where possible, implement robust error handling
+// TODO: optimize data structures and algorithms to make code idiomatic and performant (test with large files, e.g. zysh)
+
 /// Main program logic
 pub fn run(filepath: &Path) -> anyhow::Result<()> {
+    let mut tier0 = HashSet::new();
+    //let mut tier1 = HashSet::new();
+    //let mut tier2 = HashSet::new();
+
+    tier0.insert("strcpy");
+    tier0.insert("sprintf");
+    tier0.insert("test");
+
+    let mut bad_funcs = vec![];
+
     println!("[*] Trying to analyze binary file {}", filepath.display());
 
     // Check target file
@@ -71,10 +86,20 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     eprint!("[+] ");
     let idb = IDB::open_with(filepath, true)?;
 
-    // TODO: select interesting API functions, case-insensitive
+    // TODO: select interesting API functions, case-insensitive (check binaries with more than a function that matches a single bad pattern)
     // TODO: consider using regex as well, check Ghidra plugin
+
+    for bad in tier0 {
+        let tmp = get_funcs_with_name(&idb, bad);
+        bad_funcs.extend(tmp);
+    }
+
+    for f in bad_funcs {
+        println!("{}", f.name().unwrap());
+    }
+
     for (id, f) in idb.functions() {
-        println!("{id} {}", f.name().unwrap());
+        //println!("{id} {}", f.name().unwrap());
 
         // TODO: move logic outside and handle errors, maybe use a suitable collection if needed
         get_xrefs(&idb, f);
@@ -91,13 +116,24 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
 }
 
 /// TODO
+fn get_funcs_with_name<'a>(idb: &'a IDB, name: &'a str) -> Vec<Function<'a>> {
+    let mut funcs = vec![];
+    for (_id, f) in idb.functions() {
+        if f.name().unwrap().eq_ignore_ascii_case(name) {
+            funcs.push(f);
+        }
+    }
+    funcs
+}
+
+/// TODO
 fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
     let mut current = idb
         .first_xref_to(func.start_address(), XRefQuery::ALL)
         .ok_or_else(|| anyhow::anyhow!("no XREFs to function {}", func.name().unwrap()))?;
 
     loop {
-        println!("{:#x}", current.from());
+        //println!("{:#x}", current.from());
 
         match current.next_to() {
             Some(next) => current = next,
