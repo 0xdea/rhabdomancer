@@ -108,13 +108,17 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
     Ok(())
 }
 
+// TODO: see my interesting function list, semgrep, https://github.com/Accenture/VulFi
 // TODO: grab config (insecure functions, tier, maybe message from external file); either use regular file, config (or more secure alternatives), or other serialization
-// TODO: see also https://github.com/Accenture/VulFi
-// TODO: reason on the output to make it usable/perhaps importable into IDA Pro and/or other tools; perhaps we can save an IDA db that can be opened in the tool
-// TODO: add bookmark (with a folder for each tier!) and/or comment (see also ghidra version), but collect also the calling function's name
-// TODO: see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
+
+// TODO: collect/print the calling function's name and location -- see also ghidra version
+// TODO: add comment, to be used with Text search (Find all occurrences) - see also ghidra version
+
+// TODO: add bookmark (with a folder for each tier!); see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
 // TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
+
 // TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
+
 // TODO: future feature: implement basic rules to rule out obvious false positive?! (see VulFi)
 
 #[cfg(test)]
