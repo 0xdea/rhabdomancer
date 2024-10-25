@@ -71,7 +71,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     eprint!("[+] ");
     let idb = IDB::open_with(filepath, true)?;
 
-    // TODO: select interesting API functions
+    // TODO: select interesting API functions, case-insensitive
     // TODO: consider using regex as well, check Ghidra plugin
     for (id, f) in idb.functions() {
         println!("{id} {}", f.name().unwrap());
@@ -111,7 +111,11 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
 // TODO: grab config (insecure functions, tier, maybe message from external file); either use regular file, config (or more secure alternatives), or other serialization
 // TODO: see also https://github.com/Accenture/VulFi
 // TODO: reason on the output to make it usable/perhaps importable into IDA Pro and/or other tools; perhaps we can save an IDA db that can be opened in the tool
-// TODO: add bookmark and/or comment (see also ghidra version), but collect also the calling function's name
+// TODO: add bookmark (with a folder for each tier!) and/or comment (see also ghidra version), but collect also the calling function's name
+// TODO: see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
+// TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
+// TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
+// TODO: future feature: implement basic rules to rule out obvious false positive?! (see VulFi)
 
 #[cfg(test)]
 mod tests {

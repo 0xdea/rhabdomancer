@@ -26,6 +26,7 @@ TODO
 
 See also:  
 https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java  
+https://github.com/Accenture/VulFi  
 https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib  
 https://github.com/binarly-io/idalib/
 
