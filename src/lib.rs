@@ -58,15 +58,18 @@ use idalib::xref::XRefQuery;
 
 // TODO: clippy everything, use cargo udeps, and deny
 
-/// TODO
-#[derive(Ord, PartialOrd, Eq, PartialEq)]
+/// Priority of bad API functions
+/// * High: these functions are generally considered insecure
+/// * Medium: these functions are interesting and should be checked for insecure use cases
+/// * Low: code paths involving these functions should be carefully checked
 enum Priority {
     High,
     Medium,
     Low,
 }
 
-/// TODO: add methods?
+/// List of bad API functions and their associated priority
+/// TODO: add methods to wrap native methods? It depends on the config model that we'll be adopting
 struct BadFunctions<'a>(BTreeMap<&'a str, Priority>);
 
 /// Main program logic
@@ -76,9 +79,6 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     bad.0.insert("strcpy", Priority::High);
     bad.0.insert("sprintf", Priority::High);
     bad.0.insert("test", Priority::High);
-
-    // TODO: implement Eq trait for Function to be able to use HashSet or similar collection to natively avoid duplicates? maybe derive it in the library or create a new type here
-    // TODO: use our own struct/newtype to collect bad function by tier?
 
     let mut found = BTreeMap::new();
 
@@ -177,6 +177,8 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
 // TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
 
 // TODO: future feature: implement basic rules to rule out obvious false positive?! (see VulFi)
+
+// TODO: generate documentation and check that it makes sense;)
 
 // TODO: add test suite
 #[cfg(test)]
