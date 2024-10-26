@@ -42,7 +42,7 @@
 //! * TODO
 //!
 
-use std::collections::HashSet;
+use std::collections::BTreeMap;
 use std::error::Error;
 use std::path::Path;
 
@@ -58,21 +58,29 @@ use idalib::xref::XRefQuery;
 
 // TODO: clippy everything, use cargo udeps, and deny
 
+/// TODO
+#[derive(Ord, PartialOrd, Eq, PartialEq)]
+enum Priority {
+    High,
+    Medium,
+    Low,
+}
+
+/// TODO: add methods?
+struct BadFunctions<'a>(BTreeMap<&'a str, Priority>);
+
 /// Main program logic
 pub fn run(filepath: &Path) -> anyhow::Result<()> {
-    let mut tier0 = HashSet::new();
-    //let mut tier1 = HashSet::new();
-    //let mut tier2 = HashSet::new();
+    let mut bad = BadFunctions(BTreeMap::new());
 
-    tier0.insert("strcpy");
-    tier0.insert("sprintf");
-    tier0.insert("test");
+    bad.0.insert("strcpy", Priority::High);
+    bad.0.insert("sprintf", Priority::High);
+    bad.0.insert("test", Priority::High);
 
     // TODO: implement Eq trait for Function to be able to use HashSet or similar collection to natively avoid duplicates? maybe derive it in the library or create a new type here
     // TODO: use our own struct/newtype to collect bad function by tier?
-    //let mut bad0 = HashSet::new();
 
-    let mut bad0 = vec![];
+    let mut found = BTreeMap::new();
 
     println!("[*] Trying to analyze binary file {}", filepath.display());
 
@@ -97,16 +105,17 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     // TODO: consider using regex as well, check Ghidra plugin
     // TODO: should we also check for some tags/function attributes such as external or this is good enough? (KISS)
     // TODO: move to its own function?
-    for (_id, f) in idb.functions() {
-        if tier0
+    for (id, f) in idb.functions() {
+        if bad
+            .0
             .iter()
-            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
+            .any(|(n, p)| n.eq_ignore_ascii_case(&f.name().unwrap()))
         {
-            bad0.push(f);
+            found.insert(id, f);
         }
     }
 
-    for f in bad0 {
+    for (_id, f) in found {
         println!("{}", f.name().unwrap());
     }
 
