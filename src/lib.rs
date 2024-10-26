@@ -57,9 +57,9 @@ use idalib::xref::XRefQuery;
 // TODO: clippy everything, use cargo udeps and deny
 
 /// Priority of bad API functions
-/// * High: these functions are generally considered insecure
-/// * Medium: these functions are interesting and should be checked for insecure use cases
-/// * Low: code paths involving these functions should be carefully checked
+/// * High priority - These functions are generally considered insecure
+/// * Medium priority - These functions are interesting and should be checked for insecure use cases
+/// * Low priority - Code paths involving these functions should be carefully checked
 enum Priority {
     High,
     Medium,
@@ -147,20 +147,22 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     let found = find_bad_functions(&idb, &bad);
 
     for (_id, f) in found.high {
-        println!("{}", f.name().unwrap());
+        println!("[BAD 0] {}", f.name().unwrap());
+        get_xrefs(&idb, f);
     }
     for (_id, f) in found.medium {
-        println!("{}", f.name().unwrap());
+        println!("[BAD 1] {}", f.name().unwrap());
+        get_xrefs(&idb, f);
     }
     for (_id, f) in found.low {
-        println!("{}", f.name().unwrap());
+        println!("[BAD 2] {}", f.name().unwrap());
+        get_xrefs(&idb, f);
     }
 
     for (id, f) in idb.functions() {
         //println!("{id} {}", f.name().unwrap());
 
-        // TODO: move logic outside and handle errors, maybe use a suitable collection if needed
-        get_xrefs(&idb, f);
+        //get_xrefs(&idb, f);
 
         /*
         let xref = idb
@@ -222,13 +224,14 @@ fn match_function(func: &Function, bad: &BadFunctions) -> Option<Priority> {
 }
 
 /// TODO: this must be refactored
+/// TODO: move logic outside and handle errors, maybe use a suitable collection if needed
 fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
     let mut current = idb
         .first_xref_to(func.start_address(), XRefQuery::ALL)
         .ok_or_else(|| anyhow::anyhow!("no XREFs to function {}", func.name().unwrap()))?;
 
     loop {
-        //println!("{:#x}", current.from());
+        println!("{:#x}", current.from());
 
         match current.next_to() {
             Some(next) => current = next,
