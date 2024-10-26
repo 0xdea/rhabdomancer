@@ -149,6 +149,12 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     for (_id, f) in found.high {
         println!("{}", f.name().unwrap());
     }
+    for (_id, f) in found.medium {
+        println!("{}", f.name().unwrap());
+    }
+    for (_id, f) in found.low {
+        println!("{}", f.name().unwrap());
+    }
 
     for (id, f) in idb.functions() {
         //println!("{id} {}", f.name().unwrap());
@@ -174,23 +180,45 @@ fn find_bad_functions<'a>(idb: &'a IDB, bad: &'a BadFunctions) -> FoundBadFuncti
     let mut found = FoundBadFunctions::new();
 
     for (id, f) in idb.functions() {
-        if match_function(&f, &bad.high) {
-            found.insert(id, f, &Priority::High);
-        } else if match_function(&f, &bad.medium) {
-            found.insert(id, f, &Priority::Medium);
-        } else if match_function(&f, &bad.low) {
-            found.insert(id, f, &Priority::Low);
+        match match_function(&f, bad) {
+            Some(Priority::High) => found.insert(id, f, &Priority::High),
+            Some(Priority::Medium) => found.insert(id, f, &Priority::Medium),
+            Some(Priority::Low) => found.insert(id, f, &Priority::Low),
+            None => (),
         }
     }
 
     found
 }
 
-/// Compare a function with a list of function names and return true if it matches
+/// Compare a function with a list of bad API function names
 /// TODO: consider using regex instead, check Ghidra plugin and my semgrep rules
-fn match_function(func: &Function, list: &[String]) -> bool {
-    list.iter()
+fn match_function(func: &Function, bad: &BadFunctions) -> Option<Priority> {
+    if bad
+        .high
+        .iter()
         .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
+    {
+        return Some(Priority::High);
+    }
+
+    if bad
+        .medium
+        .iter()
+        .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
+    {
+        return Some(Priority::Medium);
+    }
+
+    if bad
+        .low
+        .iter()
+        .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
+    {
+        return Some(Priority::Low);
+    }
+
+    None
 }
 
 /// TODO: this must be refactored
