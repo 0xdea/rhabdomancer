@@ -43,15 +43,14 @@
 //!
 
 use std::collections::BTreeMap;
+use std::env;
 use std::error::Error;
 use std::path::Path;
 
+use config::{Config, ConfigError, File};
 use idalib::func::Function;
 use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
-
-// TODO: const NAME: type = ...;
-// TODO: static NAME: type = ...;
 
 // TODO: remove all unwraps and similar where possible, implement robust error handling
 // TODO: optimize data structures and algorithms to make code idiomatic and performant (test with large files, e.g. zysh)
@@ -69,18 +68,40 @@ enum Priority {
 }
 
 /// List of bad API functions and their associated priority
-/// TODO: add methods to wrap native methods? It depends on the config model that we'll be adopting
-struct BadFunctions<'a>(BTreeMap<&'a str, Priority>);
+#[derive(serde::Deserialize)]
+struct BadFunctions {
+    high: Vec<String>,
+    medium: Vec<String>,
+    low: Vec<String>,
+}
+
+impl BadFunctions {
+    /// Get settings from configuration file
+    pub fn get() -> Result<Self, ConfigError> {
+        let path = env::current_dir().expect("Failed to determine the current directory");
+        let conf_dir = path.join("conf");
+
+        Config::builder()
+            .add_source(File::from(conf_dir.join("rhabdomancer.toml")))
+            .build()?
+            .try_deserialize()
+    }
+}
 
 /// Main program logic
 pub fn run(filepath: &Path) -> anyhow::Result<()> {
-    let mut bad = BadFunctions(BTreeMap::new());
+    /*
+        let mut bad = BadFunctions(BTreeMap::new());
 
-    bad.0.insert("strcpy", Priority::High);
-    bad.0.insert("sprintf", Priority::High);
-    bad.0.insert("test", Priority::High);
+        bad.0.insert("strcpy", Priority::High);
+        bad.0.insert("sprintf", Priority::High);
+        bad.0.insert("test", Priority::High);
+    */
+    let bad_all = BadFunctions::get()?;
 
-    let mut found = BTreeMap::new();
+    let mut bad_high = BTreeMap::new();
+    //let mut bad_medium = BTreeMap::new();
+    //let mut bad_low = BTreeMap::new();
 
     println!("[*] Trying to analyze binary file {}", filepath.display());
 
@@ -106,16 +127,16 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     // TODO: should we also check for some tags/function attributes such as external or this is good enough? (KISS)
     // TODO: move to its own function?
     for (id, f) in idb.functions() {
-        if bad
-            .0
+        if bad_all
+            .high
             .iter()
-            .any(|(n, p)| n.eq_ignore_ascii_case(&f.name().unwrap()))
+            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
         {
-            found.insert(id, f);
+            bad_high.insert(id, f);
         }
     }
 
-    for (_id, f) in found {
+    for (_id, f) in bad_high {
         println!("{}", f.name().unwrap());
     }
 
@@ -166,7 +187,6 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
 }
 
 // TODO: see my interesting function list, semgrep, https://github.com/Accenture/VulFi
-// TODO: grab config (insecure functions, tier, maybe message from external file); either use regular file, config (or more secure alternatives for yaml), or other serialization
 
 // TODO: collect/print the calling function's name and location -- see also ghidra version
 // TODO: add comment, to be used with Text search (Find all occurrences) - see also ghidra version

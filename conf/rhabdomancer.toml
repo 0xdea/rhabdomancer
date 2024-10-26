@@ -1,0 +1,8 @@
+# These functions are generally considered insecure
+high = ["strcpy", "sprintf", "test"]
+
+# These functions are interesting and should be checked for insecure use cases
+medium = []
+
+# Code paths involving these functions should be carefully checked
+low = []
