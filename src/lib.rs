@@ -44,7 +44,6 @@
 
 use std::collections::BTreeMap;
 use std::env;
-use std::error::Error;
 use std::path::Path;
 
 use config::{Config, ConfigError, File};
@@ -57,6 +56,16 @@ use idalib::xref::XRefQuery;
 // TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
 // TODO: clippy everything, use cargo udeps and deny
 
+/// Priority of bad API functions
+/// * High: these functions are generally considered insecure
+/// * Medium: these functions are interesting and should be checked for insecure use cases
+/// * Low: code paths involving these functions should be carefully checked
+enum Priority {
+    High,
+    Medium,
+    Low,
+}
+
 /// List of names of bad API functions, organized by their associated priority
 #[derive(serde::Deserialize)]
 struct BadFunctions {
@@ -68,7 +77,7 @@ struct BadFunctions {
 impl BadFunctions {
     /// Get bad API functions from configuration file
     pub fn get() -> Result<Self, ConfigError> {
-        let path = env::current_dir().expect("Failed to determine the current directory");
+        let path = env::current_dir().expect("[!] Failed to determine the current directory");
         let conf_dir = path.join("conf");
 
         Config::builder()
@@ -85,12 +94,28 @@ struct FoundBadFunctions<'a> {
     low: BTreeMap<FunctionId, Function<'a>>,
 }
 
-impl FoundBadFunctions<'_> {
-    fn new() -> Self {
+impl<'a> FoundBadFunctions<'a> {
+    /// Initialize the list of bad API functions found in the target binary
+    const fn new() -> Self {
         Self {
             high: BTreeMap::new(),
             medium: BTreeMap::new(),
             low: BTreeMap::new(),
+        }
+    }
+
+    /// Insert in the list a new bad API function found in the target binary
+    fn insert(&mut self, id: FunctionId, function: Function<'a>, priority: &Priority) {
+        match priority {
+            Priority::High => {
+                self.high.insert(id, function);
+            }
+            Priority::Medium => {
+                self.medium.insert(id, function);
+            }
+            Priority::Low => {
+                self.low.insert(id, function);
+            }
         }
     }
 }
@@ -143,47 +168,29 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
 }
 
 /// Find bad API functions in the target binary
-/// TODO: optimize duplicated code
 /// TODO: return an option?
-/// TODO: consider using regex as well, check Ghidra plugin
 /// TODO: should we also check for some tags/function attributes such as external or this is good enough? (KISS)
 fn find_bad_functions<'a>(idb: &'a IDB, bad: &'a BadFunctions) -> FoundBadFunctions<'a> {
     let mut found = FoundBadFunctions::new();
 
-    // Find high priority bad API functions
     for (id, f) in idb.functions() {
-        if bad
-            .high
-            .iter()
-            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
-        {
-            found.high.insert(id, f);
-        }
-    }
-
-    // Find medium priority bad API functions
-    for (id, f) in idb.functions() {
-        if bad
-            .medium
-            .iter()
-            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
-        {
-            found.medium.insert(id, f);
-        }
-    }
-
-    // Find low priority bad API functions
-    for (id, f) in idb.functions() {
-        if bad
-            .low
-            .iter()
-            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
-        {
-            found.low.insert(id, f);
+        if match_function(&f, &bad.high) {
+            found.insert(id, f, &Priority::High);
+        } else if match_function(&f, &bad.medium) {
+            found.insert(id, f, &Priority::Medium);
+        } else if match_function(&f, &bad.low) {
+            found.insert(id, f, &Priority::Low);
         }
     }
 
     found
+}
+
+/// Compare a function with a list of function names and return true if it matches
+/// TODO: consider using regex instead, check Ghidra plugin and my semgrep rules
+fn match_function(func: &Function, list: &[String]) -> bool {
+    list.iter()
+        .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
 }
 
 /// TODO: this must be refactored
