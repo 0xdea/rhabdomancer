@@ -66,7 +66,11 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     tier0.insert("sprintf");
     tier0.insert("test");
 
-    let mut bad_funcs = vec![];
+    // TODO: implement Eq trait for Function to be able to use HashSet or similar collection to natively avoid duplicates? maybe derive it in the library or create a new type here
+    // TODO: use our own struct/newtype to collect bad function by tier?
+    //let mut bad0 = HashSet::new();
+
+    let mut bad0 = vec![];
 
     println!("[*] Trying to analyze binary file {}", filepath.display());
 
@@ -83,18 +87,24 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
 
     // Open target file, run auto-analysis, and keep results
     // TODO: make sure a user can distinguish between an error (nothing is printed after opening because of non-ergonomic API) and success (messages are printed)
+    // TODO: fix this [*] Trying to analyze binary file /Users/raptor/Downloads/web-console-login [+] % when there's no license available
     eprint!("[+] ");
     let idb = IDB::open_with(filepath, true)?;
 
     // TODO: select interesting API functions, case-insensitive (check binaries with more than a function that matches a single bad pattern)
     // TODO: consider using regex as well, check Ghidra plugin
-
-    for bad in tier0 {
-        let tmp = get_funcs_with_name(&idb, bad);
-        bad_funcs.extend(tmp);
+    // TODO: should we also check for some tags/function attributes such as external or this is good enough? (KISS)
+    // TODO: move to its own function?
+    for (_id, f) in idb.functions() {
+        if tier0
+            .iter()
+            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
+        {
+            bad0.push(f);
+        }
     }
 
-    for f in bad_funcs {
+    for f in bad0 {
         println!("{}", f.name().unwrap());
     }
 
@@ -115,7 +125,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// TODO
+/// TODO: we don't need this anymore
 fn get_funcs_with_name<'a>(idb: &'a IDB, name: &'a str) -> Vec<Function<'a>> {
     let mut funcs = vec![];
     for (_id, f) in idb.functions() {
@@ -126,7 +136,7 @@ fn get_funcs_with_name<'a>(idb: &'a IDB, name: &'a str) -> Vec<Function<'a>> {
     funcs
 }
 
-/// TODO
+/// TODO: this must be refactored
 fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
     let mut current = idb
         .first_xref_to(func.start_address(), XRefQuery::ALL)
@@ -157,6 +167,7 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
 
 // TODO: future feature: implement basic rules to rule out obvious false positive?! (see VulFi)
 
+// TODO: add test suite
 #[cfg(test)]
 mod tests {
     #[test]
