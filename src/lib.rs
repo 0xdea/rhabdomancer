@@ -48,26 +48,16 @@ use std::error::Error;
 use std::path::Path;
 
 use config::{Config, ConfigError, File};
-use idalib::func::Function;
+use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
 
 // TODO: remove all unwraps and similar where possible, implement robust error handling
-// TODO: optimize data structures and algorithms to make code idiomatic and performant (test with large files, e.g. zysh)
+// TODO: test performance with large files, e.g. zysh; optimize data structures to make them more performant/idiomatic if needed
+// TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
+// TODO: clippy everything, use cargo udeps and deny
 
-// TODO: clippy everything, use cargo udeps, and deny
-
-/// Priority of bad API functions
-/// * High: these functions are generally considered insecure
-/// * Medium: these functions are interesting and should be checked for insecure use cases
-/// * Low: code paths involving these functions should be carefully checked
-enum Priority {
-    High,
-    Medium,
-    Low,
-}
-
-/// List of bad API functions and their associated priority
+/// List of names of bad API functions, organized by their associated priority
 #[derive(serde::Deserialize)]
 struct BadFunctions {
     high: Vec<String>,
@@ -76,7 +66,7 @@ struct BadFunctions {
 }
 
 impl BadFunctions {
-    /// Get settings from configuration file
+    /// Get bad API functions from configuration file
     pub fn get() -> Result<Self, ConfigError> {
         let path = env::current_dir().expect("Failed to determine the current directory");
         let conf_dir = path.join("conf");
@@ -88,24 +78,32 @@ impl BadFunctions {
     }
 }
 
+/// List of bad API functions found in the target binary, organized by their associated priority
+struct FoundBadFunctions<'a> {
+    high: BTreeMap<FunctionId, Function<'a>>,
+    medium: BTreeMap<FunctionId, Function<'a>>,
+    low: BTreeMap<FunctionId, Function<'a>>,
+}
+
+impl FoundBadFunctions<'_> {
+    fn new() -> Self {
+        Self {
+            high: BTreeMap::new(),
+            medium: BTreeMap::new(),
+            low: BTreeMap::new(),
+        }
+    }
+}
+
 /// Main program logic
 pub fn run(filepath: &Path) -> anyhow::Result<()> {
-    /*
-        let mut bad = BadFunctions(BTreeMap::new());
-
-        bad.0.insert("strcpy", Priority::High);
-        bad.0.insert("sprintf", Priority::High);
-        bad.0.insert("test", Priority::High);
-    */
-    let bad_all = BadFunctions::get()?;
-
-    let mut bad_high = BTreeMap::new();
-    //let mut bad_medium = BTreeMap::new();
-    //let mut bad_low = BTreeMap::new();
+    let bad = BadFunctions::get()?;
 
     println!("[*] Trying to analyze binary file {}", filepath.display());
 
-    // Check target file
+    // Check target binary
+    // TODO: make sure a user can distinguish between an error (nothing is printed after opening because of non-ergonomic API) and success (messages are printed)
+    // TODO: fix this: [*] Trying to analyze binary file /Users/raptor/Downloads/web-console-login [+] % when there's no license available
     if !filepath.is_file() {
         return Err(anyhow::anyhow!(format!("{:?} is not a file", filepath)));
 
@@ -116,27 +114,14 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
         ))); */
     }
 
-    // Open target file, run auto-analysis, and keep results
-    // TODO: make sure a user can distinguish between an error (nothing is printed after opening because of non-ergonomic API) and success (messages are printed)
-    // TODO: fix this [*] Trying to analyze binary file /Users/raptor/Downloads/web-console-login [+] % when there's no license available
+    // Open target binary, run auto-analysis, and keep results
     eprint!("[+] ");
     let idb = IDB::open_with(filepath, true)?;
 
-    // TODO: select interesting API functions, case-insensitive (check binaries with more than a function that matches a single bad pattern)
-    // TODO: consider using regex as well, check Ghidra plugin
-    // TODO: should we also check for some tags/function attributes such as external or this is good enough? (KISS)
-    // TODO: move to its own function?
-    for (id, f) in idb.functions() {
-        if bad_all
-            .high
-            .iter()
-            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
-        {
-            bad_high.insert(id, f);
-        }
-    }
+    // Find bad API functions in the target binary
+    let found = find_bad_functions(&idb, &bad);
 
-    for (_id, f) in bad_high {
+    for (_id, f) in found.high {
         println!("{}", f.name().unwrap());
     }
 
@@ -157,15 +142,48 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// TODO: we don't need this anymore
-fn get_funcs_with_name<'a>(idb: &'a IDB, name: &'a str) -> Vec<Function<'a>> {
-    let mut funcs = vec![];
-    for (_id, f) in idb.functions() {
-        if f.name().unwrap().eq_ignore_ascii_case(name) {
-            funcs.push(f);
+/// Find bad API functions in the target binary
+/// TODO: optimize duplicated code
+/// TODO: return an option?
+/// TODO: consider using regex as well, check Ghidra plugin
+/// TODO: should we also check for some tags/function attributes such as external or this is good enough? (KISS)
+fn find_bad_functions<'a>(idb: &'a IDB, bad: &'a BadFunctions) -> FoundBadFunctions<'a> {
+    let mut found = FoundBadFunctions::new();
+
+    // Find high priority bad API functions
+    for (id, f) in idb.functions() {
+        if bad
+            .high
+            .iter()
+            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
+        {
+            found.high.insert(id, f);
         }
     }
-    funcs
+
+    // Find medium priority bad API functions
+    for (id, f) in idb.functions() {
+        if bad
+            .medium
+            .iter()
+            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
+        {
+            found.medium.insert(id, f);
+        }
+    }
+
+    // Find low priority bad API functions
+    for (id, f) in idb.functions() {
+        if bad
+            .low
+            .iter()
+            .any(|x| x.eq_ignore_ascii_case(&f.name().unwrap()))
+        {
+            found.low.insert(id, f);
+        }
+    }
+
+    found
 }
 
 /// TODO: this must be refactored
@@ -189,14 +207,13 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
 // TODO: see my interesting function list, semgrep, https://github.com/Accenture/VulFi
 
 // TODO: collect/print the calling function's name and location -- see also ghidra version
-// TODO: add comment, to be used with Text search (Find all occurrences) - see also ghidra version
-
+// TODO: add comment, to be used with Text search (Find all occurrences) - see also ghidra version; specify this in the comments/README and explain why bookmarks weren't used instead
 // TODO: add bookmark (with a folder for each tier!); see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
 // TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
 
 // TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
 
-// TODO: future feature: implement basic rules to rule out obvious false positive?! (see VulFi)
+// TODO: future feature: implement basic rules to rule out obvious false positive?! (see VulFi) -> TODO in comments/README
 
 // TODO: generate documentation and check that it makes sense;)
 
