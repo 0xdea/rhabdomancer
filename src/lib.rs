@@ -56,6 +56,8 @@ use idalib::xref::XRefQuery;
 // TODO: remove all unwraps and similar where possible, implement robust error handling
 // TODO: optimize data structures and algorithms to make code idiomatic and performant (test with large files, e.g. zysh)
 
+// TODO: clippy everything, use cargo udeps, and deny
+
 /// Main program logic
 pub fn run(filepath: &Path) -> anyhow::Result<()> {
     let mut tier0 = HashSet::new();
@@ -155,7 +157,7 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
 }
 
 // TODO: see my interesting function list, semgrep, https://github.com/Accenture/VulFi
-// TODO: grab config (insecure functions, tier, maybe message from external file); either use regular file, config (or more secure alternatives), or other serialization
+// TODO: grab config (insecure functions, tier, maybe message from external file); either use regular file, config (or more secure alternatives for yaml), or other serialization
 
 // TODO: collect/print the calling function's name and location -- see also ghidra version
 // TODO: add comment, to be used with Text search (Find all occurrences) - see also ghidra version
