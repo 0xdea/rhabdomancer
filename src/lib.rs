@@ -77,6 +77,9 @@ use idalib::IDAError;
 // TODO: add test suite
 // TODO: generate documentation and check that it makes sense;)
 
+// TODO: CI with GitHub Actions
+// TODO: push release(s) to crates.io
+
 /// Priority of bad API functions
 /// * High priority - These functions are generally considered insecure
 /// * Medium priority - These functions are interesting and should be checked for insecure use cases
@@ -203,7 +206,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     println!("[*] Finding bad API function calls...");
     let found = BadFunctions::find(&idb, &bad);
 
-    // Find bad API function calls in target binary
+    // Mark bad API function calls in target binary
     for (_, f) in found.high {
         mark_calls(&idb, &f, &Priority::High)?;
     }
