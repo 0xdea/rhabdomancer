@@ -13,13 +13,7 @@
 Rhabdomancer is a simple IDA Pro headless plugin that locates all calls to potentially insecure API functions in a
 binary file. Auditors can backtrace from these candidate points to find pathways allowing access from untrusted input.
 
-TODO description:
-
-* C/C++ target
-* Tiers of badness
-* Briefly cover pros/cons of candidate point strategy
-* Mention TAOSSA and other strategies
-* Rust, idalib, headless
+TODO
 
 Blog post:  
 https://security.humanativaspa.it/using-rust-for-vulnerability-research

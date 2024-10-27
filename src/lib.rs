@@ -15,7 +15,7 @@
 // * Tiers of badness
 // * Briefly cover pros/cons of candidate point strategy
 // * Mention TAOSSA and other strategies
-// * Rust, idalib, headless
+// * Rust, idalib, headless, performance
 //!
 //! # See also
 //! * <https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java>
@@ -48,6 +48,7 @@
 //! * IDA Pro 9.0.240925 on macOS arm64
 //!
 //! # TODO
+//! * Enrich known bad API function list (see <https://github.com/0xdea/semgrep-rules>)
 //! * Implement regex pattern matching instead of ASCII case insensitive matching
 //! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>
 //!
@@ -61,10 +62,20 @@ use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
 
+// TODO: add comment, to be used with Text search (Find all occurrences) - specify this in the comments/README and explain why bookmarks weren't used instead
+// TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
+// TODO: add bookmark (with a folder for each tier!); see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
+// TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
+
 // TODO: remove all unwraps and similar where possible, implement robust error handling
+// TODO: test along with ghidra version and compare output and performance
+// TODO: should we also check for some tags/function attributes such as external or what we have so far is good enough? (KISS) -- see IDA book from p.478
 // TODO: test performance with large files, e.g. zysh; optimize data structures to make them more performant/idiomatic if needed
 // TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
 // TODO: clippy everything, use cargo udeps and deny
+
+// TODO: add test suite
+// TODO: generate documentation and check that it makes sense;)
 
 /// Priority of bad API functions
 /// * High priority - These functions are generally considered insecure
@@ -78,13 +89,13 @@ enum Priority {
 
 /// List of known bad API function names, organized by their associated priority
 #[derive(serde::Deserialize)]
-struct BadFunctions {
+struct KnownBadFunctions {
     high: Vec<String>,
     medium: Vec<String>,
     low: Vec<String>,
 }
 
-impl BadFunctions {
+impl KnownBadFunctions {
     /// Get known bad API function names from configuration file
     pub fn get() -> Result<Self, ConfigError> {
         let path = env::current_dir().expect("[!] Failed to determine the current directory");
@@ -98,20 +109,31 @@ impl BadFunctions {
 }
 
 /// List of bad API functions found in the target binary, organized by their associated priority
-struct FoundBadFunctions<'a> {
+struct BadFunctions<'a> {
     high: BTreeMap<FunctionId, Function<'a>>,
     medium: BTreeMap<FunctionId, Function<'a>>,
     low: BTreeMap<FunctionId, Function<'a>>,
 }
 
-impl<'a> FoundBadFunctions<'a> {
-    /// Initialize the list of bad API functions
-    const fn new() -> Self {
-        Self {
+impl<'a> BadFunctions<'a> {
+    /// Initialize the list of bad API functions found in the target binary
+    fn get(idb: &'a IDB, bad: &KnownBadFunctions) -> Self {
+        let mut found = Self {
             high: BTreeMap::new(),
             medium: BTreeMap::new(),
             low: BTreeMap::new(),
+        };
+
+        for (id, f) in idb.functions() {
+            match check_function(&f, bad) {
+                Some(Priority::High) => found.insert(id, f, &Priority::High),
+                Some(Priority::Medium) => found.insert(id, f, &Priority::Medium),
+                Some(Priority::Low) => found.insert(id, f, &Priority::Low),
+                None => (),
+            }
         }
+
+        found
     }
 
     /// Insert a new bad API function found in the target binary
@@ -132,66 +154,45 @@ impl<'a> FoundBadFunctions<'a> {
 
 /// Locate all calls to potentially insecure API functions in the binary file at `filepath`
 pub fn run(filepath: &Path) -> anyhow::Result<()> {
-    let bad = BadFunctions::get()?;
-
-    println!("[*] Trying to analyze binary file {}", filepath.display());
+    // Load known bad API function names from the configuration file
+    println!("[*] Loading known bad API function names");
+    let bad = KnownBadFunctions::get()?;
 
     // Check target binary
-    // TODO: make sure a user can distinguish between an error (nothing is printed after opening because of non-ergonomic API) and success (messages are printed)
-    // TODO: fix this: [*] Trying to analyze binary file /Users/raptor/Downloads/web-console-login [+] % when there's no license available
+    println!("[*] Trying to analyze binary file {filepath:?}");
     if !filepath.is_file() {
-        return Err(anyhow::anyhow!(format!("{:?} is not a file", filepath)));
-
-        /*
-        Err(Box::new(io::Error::new(
-            io::ErrorKind::NotFound,
-            "not a file",
-        ))); */
+        return Err(anyhow::anyhow!("invalid file path"));
     }
 
     // Open target binary, run auto-analysis, and keep results
-    eprint!("[+] ");
     let idb = IDB::open_with(filepath, true)?;
+    println!("[+] Successfully analyzed binary file");
 
     // Find bad API functions in the target binary
-    let found = find_bad_functions(&idb, &bad);
+    println!();
+    println!("[*] Marking bad API function calls in the target binary...");
+    let found = BadFunctions::get(&idb, &bad);
 
-    for (_id, f) in found.high {
-        println!("[BAD 0] {}", f.name().unwrap());
-        get_xrefs(&idb, f);
+    for (_, f) in found.high {
+        println!("\n[BAD 0] {}", f.name().unwrap());
+        let _ = get_xrefs(&idb, &f);
     }
-    for (_id, f) in found.medium {
-        println!("[BAD 1] {}", f.name().unwrap());
-        get_xrefs(&idb, f);
+    for (_, f) in found.medium {
+        println!("\n[BAD 1] {}", f.name().unwrap());
+        let _ = get_xrefs(&idb, &f);
     }
-    for (_id, f) in found.low {
-        println!("[BAD 2] {}", f.name().unwrap());
-        get_xrefs(&idb, f);
+    for (_, f) in found.low {
+        println!("\n[BAD 2] {}", f.name().unwrap());
+        let _ = get_xrefs(&idb, &f);
     }
 
+    println!();
+    println!("[+] Done processing binary file {filepath:?}");
     Ok(())
 }
 
-/// Find bad API functions in the target binary
-/// TODO: return an option?
-/// TODO: should we also check for some tags/function attributes such as external or this is good enough? (KISS) -- see IDA book from p.478
-fn find_bad_functions<'a>(idb: &'a IDB, bad: &'a BadFunctions) -> FoundBadFunctions<'a> {
-    let mut found = FoundBadFunctions::new();
-
-    for (id, f) in idb.functions() {
-        match check_function(&f, bad) {
-            Some(Priority::High) => found.insert(id, f, &Priority::High),
-            Some(Priority::Medium) => found.insert(id, f, &Priority::Medium),
-            Some(Priority::Low) => found.insert(id, f, &Priority::Low),
-            None => (),
-        }
-    }
-
-    found
-}
-
 /// Compare a function with a list of known bad API function names
-fn check_function(func: &Function, bad: &BadFunctions) -> Option<Priority> {
+fn check_function(func: &Function, bad: &KnownBadFunctions) -> Option<Priority> {
     if bad
         .high
         .iter()
@@ -219,21 +220,23 @@ fn check_function(func: &Function, bad: &BadFunctions) -> Option<Priority> {
     None
 }
 
-/// TODO: this must be refactored
-/// TODO: move logic outside and handle errors, maybe use a suitable collection if needed
-fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
+/// Get all XREFs to the specified functions and mark their locations
+/// TODO: mark XREFs locations with a comment
+fn get_xrefs(idb: &IDB, func: &Function) -> anyhow::Result<()> {
     let mut current = idb
         .first_xref_to(func.start_address(), XRefQuery::ALL)
-        .ok_or_else(|| anyhow::anyhow!("no XREFs to function {}", func.name().unwrap()))?;
+        .ok_or_else(|| anyhow::anyhow!("No XREFs found"))?;
 
-    // TODO: refactor loop into a while let
-    // TODO: calculate addresses before and do error handling
     loop {
-        println!(
-            "{:#x} in {}",
-            current.from(),
-            idb.function_at(current.from()).unwrap().name().unwrap()
-        );
+        if idb.function_at(current.from()).is_some() {
+            println!(
+                "{:#x} in {}",
+                current.from(),
+                idb.function_at(current.from()).unwrap().name().unwrap()
+            );
+        } else {
+            println!("{:#x}", current.from());
+        }
 
         match current.next_to() {
             Some(next) => current = next,
@@ -244,18 +247,6 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
     Ok(())
 }
 
-// TODO: see my interesting function list, semgrep, https://github.com/Accenture/VulFi
-
-// TODO: collect/print the calling function's name and location -- see also ghidra version
-// TODO: add comment, to be used with Text search (Find all occurrences) - see also ghidra version; specify this in the comments/README and explain why bookmarks weren't used instead
-// TODO: add bookmark (with a folder for each tier!); see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
-// TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
-
-// TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
-
-// TODO: generate documentation and check that it makes sense;)
-
-// TODO: add test suite
 #[cfg(test)]
 mod tests {
     #[test]
