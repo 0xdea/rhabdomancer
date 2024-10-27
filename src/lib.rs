@@ -62,7 +62,7 @@ use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
 
-// TODO: add comment, to be used with Text search (Find all occurrences) - specify this in the comments/README and explain why bookmarks weren't used instead
+// TODO: mark calls locations with comment, to be used with Text search (Find all occurrences) - specify this in the comments/README and explain why bookmarks weren't used instead
 // TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
 // TODO: add bookmark (with a folder for each tier!); see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
 // TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
@@ -98,7 +98,8 @@ struct KnownBadFunctions {
 impl KnownBadFunctions {
     /// Populate the list of bad API function names from configuration file
     pub fn populate() -> Result<Self, ConfigError> {
-        let path = env::current_dir().expect("[!] Failed to determine the current directory");
+        let path =
+            env::current_dir().expect("[!] Error: failed to determine the current directory");
         let conf_dir = path.join("conf");
 
         Config::builder()
@@ -205,15 +206,15 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     // Find bad API function calls in target binary
     for (_, f) in found.high {
         println!("\n[BAD 0] {}", f.name().unwrap());
-        let _ = get_xrefs(&idb, &f);
+        let _ = locate_calls(&idb, &f);
     }
     for (_, f) in found.medium {
         println!("\n[BAD 1] {}", f.name().unwrap());
-        let _ = get_xrefs(&idb, &f);
+        let _ = locate_calls(&idb, &f);
     }
     for (_, f) in found.low {
         println!("\n[BAD 2] {}", f.name().unwrap());
-        let _ = get_xrefs(&idb, &f);
+        let _ = locate_calls(&idb, &f);
     }
 
     println!();
@@ -221,9 +222,8 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Get all XREFs to the specified functions and mark their locations
-/// TODO: mark XREFs locations with a comment
-fn get_xrefs(idb: &IDB, func: &Function) -> anyhow::Result<()> {
+/// Get all calls to the specified functions and mark their locations
+fn locate_calls(idb: &IDB, func: &Function) -> anyhow::Result<()> {
     let mut current = idb
         .first_xref_to(func.start_address(), XRefQuery::ALL)
         .ok_or_else(|| anyhow::anyhow!("No XREFs found"))?;
