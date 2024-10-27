@@ -6,9 +6,9 @@
 //! >
 //! > -- Mark Dowd
 //!
-//! Rhabdomancer is a simple IDA Pro headless plugin that locates all calls to potentially insecure
-//! API functions in a binary file. Auditors can backtrace from these candidate points to find
-//! pathways allowing access from untrusted input.
+//! Rhabdomancer is a blazing fast IDA Pro headless plugin that locates all calls to potentially
+//! insecure API functions in a binary file. Auditors can backtrace from these candidate points to
+//! find pathways allowing access from untrusted input.
 //!
 //! TODO description:
 // * C/C++ target
@@ -63,8 +63,7 @@ use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
 use idalib::IDAError;
 
-// TODO: mark calls locations with comment, to be used with Text search (Find all occurrences) - specify this in the comments/README and explain why bookmarks weren't used instead
-// TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
+// TODO: mark calls locations with comment, to be used with Text search (Find all occurrences) - specify this in the comments/README and explain why bookmarks weren't used instead (cumbersome, limit)
 // TODO: add bookmark (with a folder for each tier!); see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
 // TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
 
