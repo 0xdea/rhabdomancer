@@ -67,7 +67,6 @@ use idalib::xref::XRefQuery;
 // TODO: add bookmark (with a folder for each tier!); see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
 // TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
 
-// TODO: remove all unwraps and similar where possible, implement robust error handling
 // TODO: test along with ghidra version and compare output and performance
 // TODO: should we also check for some tags/function attributes such as external or what we have so far is good enough? (KISS) -- see IDA book from p.478
 // TODO: test performance with large files, e.g. zysh; optimize data structures to make them more performant/idiomatic if needed
@@ -206,15 +205,15 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     // Find bad API function calls in target binary
     for (_, f) in found.high {
         println!("\n[BAD 0] {}", f.name().unwrap());
-        let _ = locate_calls(&idb, &f);
+        locate_calls(&idb, &f);
     }
     for (_, f) in found.medium {
         println!("\n[BAD 1] {}", f.name().unwrap());
-        let _ = locate_calls(&idb, &f);
+        locate_calls(&idb, &f);
     }
     for (_, f) in found.low {
         println!("\n[BAD 2] {}", f.name().unwrap());
-        let _ = locate_calls(&idb, &f);
+        locate_calls(&idb, &f);
     }
 
     println!();
@@ -223,29 +222,26 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
 }
 
 /// Get all calls to the specified functions and mark their locations
-fn locate_calls(idb: &IDB, func: &Function) -> anyhow::Result<()> {
-    let mut current = idb
-        .first_xref_to(func.start_address(), XRefQuery::ALL)
-        .ok_or_else(|| anyhow::anyhow!("No XREFs found"))?;
+fn locate_calls(idb: &IDB, func: &Function) {
+    // Get first XREF if available, otherwise return early
+    let Some(mut current) = idb.first_xref_to(func.start_address(), XRefQuery::ALL) else {
+        return;
+    };
 
     loop {
-        if idb.function_at(current.from()).is_some() {
-            println!(
-                "{:#x} in {}",
-                current.from(),
-                idb.function_at(current.from()).unwrap().name().unwrap()
-            );
-        } else {
-            println!("{:#x}", current.from());
-        }
+        // Get caller function name if available
+        let caller = idb
+            .function_at(current.from())
+            .map_or("<unknown>".to_string(), |f| f.name().unwrap());
 
+        println!("{:#x} in {}", current.from(), caller);
+
+        // Get next XREF
         match current.next_to() {
             Some(next) => current = next,
             None => break,
         }
     }
-
-    Ok(())
 }
 
 #[cfg(test)]
