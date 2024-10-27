@@ -96,8 +96,8 @@ struct KnownBadFunctions {
 }
 
 impl KnownBadFunctions {
-    /// Get known bad API function names from configuration file
-    pub fn get() -> Result<Self, ConfigError> {
+    /// Populate the list of bad API function names from configuration file
+    pub fn populate() -> Result<Self, ConfigError> {
         let path = env::current_dir().expect("[!] Failed to determine the current directory");
         let conf_dir = path.join("conf");
 
@@ -107,7 +107,7 @@ impl KnownBadFunctions {
             .try_deserialize()
     }
 
-    /// Compare a function with the list of known bad API function names
+    /// Check if a function is in the list of known bad API function names and return its priority
     fn check_function(&self, func: &Function) -> Option<Priority> {
         if self
             .high
@@ -137,7 +137,7 @@ impl KnownBadFunctions {
     }
 }
 
-/// List of bad API functions found in the target binary, organized by their associated priority
+/// List of bad API functions found in target binary, organized by their associated priority
 struct BadFunctions<'a> {
     high: BTreeMap<FunctionId, Function<'a>>,
     medium: BTreeMap<FunctionId, Function<'a>>,
@@ -145,8 +145,8 @@ struct BadFunctions<'a> {
 }
 
 impl<'a> BadFunctions<'a> {
-    /// Initialize the list of bad API functions found in the target binary
-    fn get(idb: &'a IDB, bad: &KnownBadFunctions) -> Self {
+    /// Find bad API functions in target binary
+    fn find(idb: &'a IDB, bad: &KnownBadFunctions) -> Self {
         let mut found = Self {
             high: BTreeMap::new(),
             medium: BTreeMap::new(),
@@ -165,7 +165,7 @@ impl<'a> BadFunctions<'a> {
         found
     }
 
-    /// Insert a new bad API function found in the target binary
+    /// Insert a new bad API function found in target binary
     fn insert(&mut self, id: FunctionId, function: Function<'a>, priority: &Priority) {
         match priority {
             Priority::High => {
@@ -185,7 +185,7 @@ impl<'a> BadFunctions<'a> {
 pub fn run(filepath: &Path) -> anyhow::Result<()> {
     // Load known bad API function names from the configuration file
     println!("[*] Loading known bad API function names");
-    let bad = KnownBadFunctions::get()?;
+    let bad = KnownBadFunctions::populate()?;
 
     // Check target binary
     println!("[*] Trying to analyze binary file {filepath:?}");
@@ -197,11 +197,12 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     let idb = IDB::open_with(filepath, true)?;
     println!("[+] Successfully analyzed binary file");
 
-    // Find bad API functions in the target binary
+    // Find bad API functions in target binary
     println!();
-    println!("[*] Marking bad API function calls in the target binary...");
-    let found = BadFunctions::get(&idb, &bad);
+    println!("[*] Finding bad API function calls...");
+    let found = BadFunctions::find(&idb, &bad);
 
+    // Find bad API function calls in target binary
     for (_, f) in found.high {
         println!("\n[BAD 0] {}", f.name().unwrap());
         let _ = get_xrefs(&idb, &f);
