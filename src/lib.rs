@@ -61,6 +61,7 @@ use config::{Config, ConfigError, File};
 use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
+use idalib::IDAError;
 
 // TODO: mark calls locations with comment, to be used with Text search (Find all occurrences) - specify this in the comments/README and explain why bookmarks weren't used instead
 // TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
@@ -68,6 +69,7 @@ use idalib::xref::XRefQuery;
 // TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
 
 // TODO: test along with ghidra version and compare output and performance
+// TODO: search only for code XREFs, not data XREFs (e.g., XRefQuery::FAR)? Pay attention to duplicate entries, what's the cause?
 // TODO: should we also check for some tags/function attributes such as external or what we have so far is good enough? (KISS) -- see IDA book from p.478
 // TODO: test performance with large files, e.g. zysh; optimize data structures to make them more performant/idiomatic if needed
 // TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
@@ -86,7 +88,7 @@ enum Priority {
     Low,
 }
 
-/// List of known bad API function names, organized by their associated priority
+/// List of known bad API function names organized by priority
 #[derive(serde::Deserialize)]
 struct KnownBadFunctions {
     high: Vec<String>,
@@ -137,7 +139,7 @@ impl KnownBadFunctions {
     }
 }
 
-/// List of bad API functions found in target binary, organized by their associated priority
+/// List of bad API functions found in target binary organized by priority
 struct BadFunctions<'a> {
     high: BTreeMap<FunctionId, Function<'a>>,
     medium: BTreeMap<FunctionId, Function<'a>>,
@@ -204,16 +206,13 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
 
     // Find bad API function calls in target binary
     for (_, f) in found.high {
-        println!("\n[BAD 0] {}", f.name().unwrap());
-        locate_calls(&idb, &f);
+        mark_calls(&idb, &f, &Priority::High)?;
     }
     for (_, f) in found.medium {
-        println!("\n[BAD 1] {}", f.name().unwrap());
-        locate_calls(&idb, &f);
+        mark_calls(&idb, &f, &Priority::Medium)?;
     }
     for (_, f) in found.low {
-        println!("\n[BAD 2] {}", f.name().unwrap());
-        locate_calls(&idb, &f);
+        mark_calls(&idb, &f, &Priority::Low)?;
     }
 
     println!();
@@ -221,27 +220,48 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Get all calls to the specified functions and mark their locations
-fn locate_calls(idb: &IDB, func: &Function) {
+/// Locate all calls to the specified function and mark their locations
+fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
+    // Prepare comment
+    let comment = match priority {
+        Priority::High => {
+            format!("[BAD 0] {}", func.name().unwrap())
+        }
+        Priority::Medium => {
+            format!("[BAD 1] {}", func.name().unwrap())
+        }
+        Priority::Low => {
+            format!("[BAD 2] {}", func.name().unwrap())
+        }
+    };
+    println!("\n{comment}");
+
     // Get first XREF if available, otherwise return early
     let Some(mut current) = idb.first_xref_to(func.start_address(), XRefQuery::ALL) else {
-        return;
+        return Ok(());
     };
 
     loop {
-        // Get caller function name if available
+        // Print address with caller function name if available
         let caller = idb
             .function_at(current.from())
             .map_or("<unknown>".to_string(), |f| f.name().unwrap());
-
         println!("{:#x} in {}", current.from(), caller);
 
+        // Add or append comment if not already present
+        if !idb.get_cmt(current.from()).contains("[BAD ") {
+            idb.append_cmt(current.from(), comment.clone())?;
+        }
+
         // Get next XREF
-        match current.next_to() {
-            Some(next) => current = next,
-            None => break,
+        if let Some(next) = current.next_to() {
+            current = next;
+        } else {
+            break;
         }
     }
+
+    Ok(())
 }
 
 #[cfg(test)]
