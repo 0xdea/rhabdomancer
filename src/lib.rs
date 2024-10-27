@@ -106,6 +106,35 @@ impl KnownBadFunctions {
             .build()?
             .try_deserialize()
     }
+
+    /// Compare a function with the list of known bad API function names
+    fn check_function(&self, func: &Function) -> Option<Priority> {
+        if self
+            .high
+            .iter()
+            .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
+        {
+            return Some(Priority::High);
+        }
+
+        if self
+            .medium
+            .iter()
+            .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
+        {
+            return Some(Priority::Medium);
+        }
+
+        if self
+            .low
+            .iter()
+            .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
+        {
+            return Some(Priority::Low);
+        }
+
+        None
+    }
 }
 
 /// List of bad API functions found in the target binary, organized by their associated priority
@@ -125,7 +154,7 @@ impl<'a> BadFunctions<'a> {
         };
 
         for (id, f) in idb.functions() {
-            match check_function(&f, bad) {
+            match bad.check_function(&f) {
                 Some(Priority::High) => found.insert(id, f, &Priority::High),
                 Some(Priority::Medium) => found.insert(id, f, &Priority::Medium),
                 Some(Priority::Low) => found.insert(id, f, &Priority::Low),
@@ -189,35 +218,6 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     println!();
     println!("[+] Done processing binary file {filepath:?}");
     Ok(())
-}
-
-/// Compare a function with a list of known bad API function names
-fn check_function(func: &Function, bad: &KnownBadFunctions) -> Option<Priority> {
-    if bad
-        .high
-        .iter()
-        .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
-    {
-        return Some(Priority::High);
-    }
-
-    if bad
-        .medium
-        .iter()
-        .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
-    {
-        return Some(Priority::Medium);
-    }
-
-    if bad
-        .low
-        .iter()
-        .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
-    {
-        return Some(Priority::Low);
-    }
-
-    None
 }
 
 /// Get all XREFs to the specified functions and mark their locations
