@@ -22,7 +22,7 @@ TODO description:
 * Rust, idalib, headless
 
 Blog post:  
-TODO
+https://security.humanativaspa.it/using-rust-for-vulnerability-research
 
 See also:  
 https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java  
@@ -33,9 +33,11 @@ https://github.com/binarly-io/idalib/
 
 1. Download, install, and configure IDA Pro (see https://hex-rays.com/ida-pro)
 2. Download and extract the IDA SDK (see https://docs.hex-rays.com/developer-guide)
-3. Compile rhabdomancer (macOS example):
+3. Compile rhabdomancer as follows (macOS example):
 
 ```
+$ git clone https://github.com/0xdea/rhabdomancer
+$ cd rhabdomancer
 $ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
 $ cargo build --release
 ```
@@ -46,13 +48,7 @@ $ cargo build --release
 TODO
 ```
 
-## Examples
-
-TODO:
-
-```sh
-TODO
-```
+## Example
 
 TODO:
 
