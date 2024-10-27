@@ -10,17 +10,27 @@
 //! API functions in a binary file. Auditors can backtrace from these candidate points to find
 //! pathways allowing access from untrusted input.
 //!
+//! TODO description:
+// * C/C++ target
+// * Tiers of badness
+// * Briefly cover pros/cons of candidate point strategy
+// * Mention TAOSSA and other strategies
+// * Rust, idalib, headless
+//!
 //! # See also
 //! * <https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java>
 //! * <https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib>
 //! * <https://github.com/binarly-io/idalib/>
 //!
-//! # Cross-compiling
+//! ## Compiling
+//! 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>)
+//! 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>)
+//! 3. Compile rhabdomancer as follows (macOS example):
 //! ```sh
-//! [macOS example]
-//! $ brew install mingw-w64
-//! $ rustup target add x86_64-pc-windows-gnu
-//! $ cargo build --release --target x86_64-pc-windows-gnu
+//! $ git clone https://github.com/0xdea/rhabdomancer
+//! $ cd rhabdomancer
+//! $ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
+//! $ cargo build --release
 //! ```
 //!
 //! # Usage
@@ -28,19 +38,14 @@
 //! TODO
 //! ```
 //!
-//! # Examples
+//! # Example
 //! TODO:
 //! ```sh
 //! TODO
 //! ```
 //!
-//! TODO:
-//! ```sh
-//! TODO
-//! ```
-//!
-//! # Tested on
-//! * TODO
+//! # Tested with
+//! * IDA Pro 9.0.240925 on macOS arm64
 //!
 //! # TODO
 //! * Implement regex pattern matching instead of ASCII case insensitive matching
@@ -169,7 +174,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
 
 /// Find bad API functions in the target binary
 /// TODO: return an option?
-/// TODO: should we also check for some tags/function attributes such as external or this is good enough? (KISS)
+/// TODO: should we also check for some tags/function attributes such as external or this is good enough? (KISS) -- see IDA book from p.478
 fn find_bad_functions<'a>(idb: &'a IDB, bad: &'a BadFunctions) -> FoundBadFunctions<'a> {
     let mut found = FoundBadFunctions::new();
 
