@@ -6,10 +6,14 @@
 //! >
 //! > -- Mark Dowd
 //!
-//! TODO
+//! Rhabdomancer is a simple IDA Pro headless plugin that locates all calls to potentially insecure
+//! API functions in a binary file. Auditors can backtrace from these candidate points to find
+//! pathways allowing access from untrusted input.
 //!
 //! # See also
-//! [TODO](TODO)
+//! * <https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java>
+//! * <https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib>
+//! * <https://github.com/binarly-io/idalib/>
 //!
 //! # Cross-compiling
 //! ```sh
@@ -39,7 +43,8 @@
 //! * TODO
 //!
 //! # TODO
-//! * TODO
+//! * Implement regex pattern matching instead of ASCII case insensitive matching
+//! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>
 //!
 
 use std::collections::BTreeMap;
@@ -66,7 +71,7 @@ enum Priority {
     Low,
 }
 
-/// List of names of bad API functions, organized by their associated priority
+/// List of known bad API function names, organized by their associated priority
 #[derive(serde::Deserialize)]
 struct BadFunctions {
     high: Vec<String>,
@@ -75,7 +80,7 @@ struct BadFunctions {
 }
 
 impl BadFunctions {
-    /// Get bad API functions from configuration file
+    /// Get known bad API function names from configuration file
     pub fn get() -> Result<Self, ConfigError> {
         let path = env::current_dir().expect("[!] Failed to determine the current directory");
         let conf_dir = path.join("conf");
@@ -95,7 +100,7 @@ struct FoundBadFunctions<'a> {
 }
 
 impl<'a> FoundBadFunctions<'a> {
-    /// Initialize the list of bad API functions found in the target binary
+    /// Initialize the list of bad API functions
     const fn new() -> Self {
         Self {
             high: BTreeMap::new(),
@@ -104,7 +109,7 @@ impl<'a> FoundBadFunctions<'a> {
         }
     }
 
-    /// Insert in the list a new bad API function found in the target binary
+    /// Insert a new bad API function found in the target binary
     fn insert(&mut self, id: FunctionId, function: Function<'a>, priority: &Priority) {
         match priority {
             Priority::High => {
@@ -120,7 +125,7 @@ impl<'a> FoundBadFunctions<'a> {
     }
 }
 
-/// Main program logic
+/// Locate all calls to potentially insecure API functions in the binary file at `filepath`
 pub fn run(filepath: &Path) -> anyhow::Result<()> {
     let bad = BadFunctions::get()?;
 
@@ -159,19 +164,6 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
         get_xrefs(&idb, f);
     }
 
-    for (id, f) in idb.functions() {
-        //println!("{id} {}", f.name().unwrap());
-
-        //get_xrefs(&idb, f);
-
-        /*
-        let xref = idb
-            .first_xref_to(f.start_address(), XRefQuery::ALL)
-            .map_or(0x0, |x| x.from());
-        println!("{:x}", xref)
-        */
-    }
-
     Ok(())
 }
 
@@ -182,7 +174,7 @@ fn find_bad_functions<'a>(idb: &'a IDB, bad: &'a BadFunctions) -> FoundBadFuncti
     let mut found = FoundBadFunctions::new();
 
     for (id, f) in idb.functions() {
-        match match_function(&f, bad) {
+        match check_function(&f, bad) {
             Some(Priority::High) => found.insert(id, f, &Priority::High),
             Some(Priority::Medium) => found.insert(id, f, &Priority::Medium),
             Some(Priority::Low) => found.insert(id, f, &Priority::Low),
@@ -193,9 +185,8 @@ fn find_bad_functions<'a>(idb: &'a IDB, bad: &'a BadFunctions) -> FoundBadFuncti
     found
 }
 
-/// Compare a function with a list of bad API function names
-/// TODO: consider using regex instead, check Ghidra plugin and my semgrep rules
-fn match_function(func: &Function, bad: &BadFunctions) -> Option<Priority> {
+/// Compare a function with a list of known bad API function names
+fn check_function(func: &Function, bad: &BadFunctions) -> Option<Priority> {
     if bad
         .high
         .iter()
@@ -230,8 +221,14 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
         .first_xref_to(func.start_address(), XRefQuery::ALL)
         .ok_or_else(|| anyhow::anyhow!("no XREFs to function {}", func.name().unwrap()))?;
 
+    // TODO: refactor loop into a while let
+    // TODO: calculate addresses before and do error handling
     loop {
-        println!("{:#x}", current.from());
+        println!(
+            "{:#x} in {}",
+            current.from(),
+            idb.function_at(current.from()).unwrap().name().unwrap()
+        );
 
         match current.next_to() {
             Some(next) => current = next,
@@ -250,8 +247,6 @@ fn get_xrefs(idb: &IDB, func: Function) -> anyhow::Result<()> {
 // TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
 
 // TODO: running a new scan should not overwrite previous bookmarks/comments, also handle previous hand-made bookmarks/comments
-
-// TODO: future feature: implement basic rules to rule out obvious false positive?! (see VulFi) -> TODO in comments/README
 
 // TODO: generate documentation and check that it makes sense;)
 
