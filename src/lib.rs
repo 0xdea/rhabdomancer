@@ -10,19 +10,20 @@
 //! insecure API functions in a binary file. Auditors can backtrace from these candidate points to
 //! find pathways allowing access from untrusted input.
 //!
-//! TODO description:
-// * C/C++ target
-// * Tiers of badness
-// * Briefly cover pros/cons of candidate point strategy
-// * Mention TAOSSA and other strategies
-// * Rust, idalib, headless, performance
+//! # Features
+//! * C/C++ binary targets in any architecture implemented by IDA Pro are supported
+//! * Known bad API functions are grouped in tiers of badness, to help prioritize the audit work
+//! * Bad API function call locations are printed in the output and marked with comments in the IDB
+//! * Collect relevant comments in an IDA Pro window using `Text search` and `Find all occurrences`
+//! * Blazing fast, headless user experience courtesy of Binarly's idalib Rust bindings
 //!
 //! # See also
 //! * <https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java>
 //! * <https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib>
 //! * <https://github.com/binarly-io/idalib/>
+//! * <https://books.google.it/books/about/The_Art_of_Software_Security_Assessment.html>
 //!
-//! ## Compiling
+//! # Compiling
 //! 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>)
 //! 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>)
 //! 3. Compile rhabdomancer as follows (macOS example):
@@ -51,6 +52,7 @@
 //! * Enrich known bad API function list (see <https://github.com/0xdea/semgrep-rules>)
 //! * Implement regex pattern matching instead of ASCII case insensitive matching
 //! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>
+//! * Use the `bookmarks_t` API, despite it being cumbersome and having a MAX_MARK_SLOT of 1024
 //!
 
 use std::collections::BTreeMap;
@@ -63,20 +65,16 @@ use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
 use idalib::IDAError;
 
-// TODO: mark calls locations with comment, to be used with Text search (Find all occurrences) - specify this in the comments/README and explain why bookmarks weren't used instead (cumbersome, limit)
-// TODO: add bookmark (with a folder for each tier!); see idasdk90/include/moves.hpp | class bookmarks_t: mark(ea, index, title=0, desc, ud=0?); get() to check for duplicates?, get_desc()? others...? 1024 max bookmark limit?!
-// TODO: see also https://gist.github.com/idiom/74114d745d6c427333ac237f91eee414
-
 // TODO: test along with ghidra version and compare output and performance
 // TODO: search only for code XREFs, not data XREFs (e.g., XRefQuery::FAR)? Pay attention to duplicate entries, what's the cause?
 // TODO: should we also check for some tags/function attributes such as external or what we have so far is good enough? (KISS) -- see IDA book from p.478
 // TODO: test performance with large files, e.g. zysh; optimize data structures to make them more performant/idiomatic if needed
 // TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
-// TODO: clippy everything, use cargo udeps and deny
 
 // TODO: add test suite
 // TODO: generate documentation and check that it makes sense;)
 
+// TODO: clippy everything, use cargo udeps and deny
 // TODO: CI with GitHub Actions
 // TODO: push release(s) to crates.io
 
@@ -100,7 +98,7 @@ struct KnownBadFunctions {
 
 impl KnownBadFunctions {
     /// Populate the list of bad API function names from configuration file
-    pub fn populate() -> Result<Self, ConfigError> {
+    pub fn load() -> Result<Self, ConfigError> {
         let path =
             env::current_dir().expect("[!] Error: failed to determine the current directory");
         let conf_dir = path.join("conf");
@@ -149,8 +147,8 @@ struct BadFunctions<'a> {
 }
 
 impl<'a> BadFunctions<'a> {
-    /// Find bad API functions in target binary
-    fn find(idb: &'a IDB, bad: &KnownBadFunctions) -> Self {
+    /// Find all bad API functions in target binary
+    fn find_all(idb: &'a IDB, bad: &KnownBadFunctions) -> Self {
         let mut found = Self {
             high: BTreeMap::new(),
             medium: BTreeMap::new(),
@@ -159,9 +157,9 @@ impl<'a> BadFunctions<'a> {
 
         for (id, f) in idb.functions() {
             match bad.check_function(&f) {
-                Some(Priority::High) => found.insert(id, f, &Priority::High),
-                Some(Priority::Medium) => found.insert(id, f, &Priority::Medium),
-                Some(Priority::Low) => found.insert(id, f, &Priority::Low),
+                Some(Priority::High) => found.insert_function(id, f, &Priority::High),
+                Some(Priority::Medium) => found.insert_function(id, f, &Priority::Medium),
+                Some(Priority::Low) => found.insert_function(id, f, &Priority::Low),
                 None => (),
             }
         }
@@ -169,19 +167,34 @@ impl<'a> BadFunctions<'a> {
         found
     }
 
-    /// Insert a new bad API function found in target binary
-    fn insert(&mut self, id: FunctionId, function: Function<'a>, priority: &Priority) {
+    /// Insert a new bad API function in the list
+    fn insert_function(&mut self, id: FunctionId, func: Function<'a>, priority: &Priority) {
         match priority {
             Priority::High => {
-                self.high.insert(id, function);
+                self.high.insert(id, func);
             }
             Priority::Medium => {
-                self.medium.insert(id, function);
+                self.medium.insert(id, func);
             }
             Priority::Low => {
-                self.low.insert(id, function);
+                self.low.insert(id, func);
             }
         }
+    }
+
+    /// Locate all calls to bad API functions and mark them
+    fn locate_calls(&self, idb: &'a IDB) -> anyhow::Result<()> {
+        for f in self.high.values() {
+            mark_calls(idb, f, &Priority::High)?;
+        }
+        for f in self.medium.values() {
+            mark_calls(idb, f, &Priority::Medium)?;
+        }
+        for f in self.low.values() {
+            mark_calls(idb, f, &Priority::Low)?;
+        }
+
+        Ok(())
     }
 }
 
@@ -189,40 +202,27 @@ impl<'a> BadFunctions<'a> {
 pub fn run(filepath: &Path) -> anyhow::Result<()> {
     // Load known bad API function names from the configuration file
     println!("[*] Loading known bad API function names");
-    let bad = KnownBadFunctions::populate()?;
+    let known_bad = KnownBadFunctions::load()?;
 
-    // Check target binary
+    // Open target binary, run auto-analysis, and keep results
     println!("[*] Trying to analyze binary file {filepath:?}");
     if !filepath.is_file() {
         return Err(anyhow::anyhow!("invalid file path"));
     }
-
-    // Open target binary, run auto-analysis, and keep results
     let idb = IDB::open_with(filepath, true)?;
     println!("[+] Successfully analyzed binary file");
 
-    // Find bad API functions in target binary
+    // Locate and mark bad API function calls in target binary
     println!();
     println!("[*] Finding bad API function calls...");
-    let found = BadFunctions::find(&idb, &bad);
-
-    // Mark bad API function calls in target binary
-    for (_, f) in found.high {
-        mark_calls(&idb, &f, &Priority::High)?;
-    }
-    for (_, f) in found.medium {
-        mark_calls(&idb, &f, &Priority::Medium)?;
-    }
-    for (_, f) in found.low {
-        mark_calls(&idb, &f, &Priority::Low)?;
-    }
+    BadFunctions::find_all(&idb, &known_bad).locate_calls(&idb)?;
 
     println!();
     println!("[+] Done processing binary file {filepath:?}");
     Ok(())
 }
 
-/// Locate all calls to the specified function and mark their locations
+/// Locate all calls to the specified function and mark them
 fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
     // Prepare comment
     let comment = match priority {
@@ -238,7 +238,7 @@ fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDA
     };
     println!("\n{comment}");
 
-    // Get first XREF if available, otherwise return early
+    // Get first XREF if available, otherwise return immediately
     let Some(mut current) = idb.first_xref_to(func.start_address(), XRefQuery::ALL) else {
         return Ok(());
     };
@@ -250,7 +250,7 @@ fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDA
             .map_or("<unknown>".to_string(), |f| f.name().unwrap());
         println!("{:#x} in {}", current.from(), caller);
 
-        // Add or append comment if not already present
+        // Add comment if not already present to mark call location
         if !idb.get_cmt(current.from()).contains("[BAD ") {
             idb.append_cmt(current.from(), comment.clone())?;
         }

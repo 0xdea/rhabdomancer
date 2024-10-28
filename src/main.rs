@@ -2,16 +2,6 @@ use std::env;
 use std::path::Path;
 use std::process;
 
-// External crate imports
-// use ...;
-
-// Internal imports
-// use ...;
-
-// const NAME: type = ...;
-
-// static NAME: type = ...;
-
 const PROG: &str = "rhabdomancer";
 
 fn main() {
@@ -50,9 +40,8 @@ fn main() {
 fn usage(prog: &str) {
     println!("Usage:");
     println!("./{prog} [binary file]");
-    println!("\nExamples:");
-    println!("./{prog} TODO");
-    println!("./{prog} TODO");
+    println!();
+    println!("[*] Make sure IDA Pro is configured with a valid license");
 
     process::exit(1);
 }
