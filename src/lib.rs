@@ -75,7 +75,6 @@ use idalib::IDAError;
 // TODO: generate documentation and check that it makes sense;)
 
 // TODO: clippy everything, use cargo udeps and deny
-// TODO: CI with GitHub Actions, including cargo deny check advisories
 // TODO: push release(s) to crates.io
 
 /// Priority of bad API functions
