@@ -13,43 +13,46 @@
 Rhabdomancer is a blazing fast IDA Pro headless plugin that locates all calls to potentially insecure API functions in
 a binary file. Auditors can backtrace from these candidate points to find pathways allowing access from untrusted input.
 
-TODO
+## Features
 
-Blog post:  
-https://security.humanativaspa.it/using-rust-for-vulnerability-research
+* Blazing fast, headless user experience courtesy of IDA Pro and Binarly's idalib Rust bindings.
+* Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
+* Bad API function call locations are printed to stdout and marked with comments in the IDB.
+* Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
 
-See also:  
-https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java  
-https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib  
-https://github.com/binarly-io/idalib/  
-https://books.google.it/books/about/The_Art_of_Software_Security_Assessment.html
+## Blog post
+
+* <https://security.humanativaspa.it/using-rust-for-vulnerability-research>
+
+## See also
+
+* <https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java>
+* <https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib>
+* <https://github.com/binarly-io/idalib/>
+* <https://books.google.it/books/about/The_Art_of_Software_Security_Assessment.html>
 
 ## Compiling
 
-1. Download, install, and configure IDA Pro (see https://hex-rays.com/ida-pro)
-2. Download and extract the IDA SDK (see https://docs.hex-rays.com/developer-guide)
-3. Compile rhabdomancer as follows (macOS example):
-
-```
-$ git clone https://github.com/0xdea/rhabdomancer
-$ cd rhabdomancer
-$ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
-$ cargo build --release
-```
+1. Download, install, and configure IDA Pro (see https://hex-rays.com/ida-pro).
+2. Download and extract the IDA SDK (see https://docs.hex-rays.com/developer-guide).
+3. Compile rhabdomancer as follows:
+    ```sh
+    $ git clone https://github.com/0xdea/rhabdomancer
+    $ cd rhabdomancer
+    $ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
+    $ cargo build --release
+    ```
 
 ## Usage
 
-```
-TODO
-```
-
-## Example
-
-TODO:
-
-```sh
-TODO
-```
+1. Make sure IDA Pro is configured with a valid license and is not currently running.
+2. Run rhabdomancer as follows:
+    ```sh
+    $ ./target/release/rhabdomancer [binary file]
+    ```
+3. Open the resulting `.i64` IDB file.
+4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD `
+5. Enjoy your results collected in an IDA Pro windows.
 
 ## Tested with
 
@@ -57,4 +60,7 @@ TODO
 
 ## TODO
 
-* TODO
+* Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024
+* Enrich known bad API function list (see <https://github.com/0xdea/semgrep-rules>)
+* Implement regex pattern matching instead of ASCII case insensitive matching
+* Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>

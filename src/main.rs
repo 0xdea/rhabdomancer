@@ -39,9 +39,7 @@ fn main() {
 /// Print usage information and exit
 fn usage(prog: &str) {
     println!("Usage:");
-    println!("./{prog} [binary file]");
-    println!();
-    println!("[*] Make sure IDA Pro is configured with a valid license");
+    println!("$ ./{prog} [binary file]");
 
     process::exit(1);
 }

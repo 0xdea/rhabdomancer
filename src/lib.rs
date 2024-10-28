@@ -10,49 +10,50 @@
 //! insecure API functions in a binary file. Auditors can backtrace from these candidate points to
 //! find pathways allowing access from untrusted input.
 //!
-//! # Features
-//! * C/C++ binary targets in any architecture implemented by IDA Pro are supported
-//! * Known bad API functions are grouped in tiers of badness, to help prioritize the audit work
-//! * Bad API function call locations are printed in the output and marked with comments in the IDB
-//! * Collect relevant comments in an IDA Pro window using `Text search` and `Find all occurrences`
-//! * Blazing fast, headless user experience courtesy of Binarly's idalib Rust bindings
+//! ## Features
+//! * Blazing fast, headless user experience courtesy of IDA Pro and Binarly's idalib Rust bindings.
+//! * Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
+//! * Bad API function call locations are printed to stdout and marked with comments in the IDB.
+//! * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
 //!
-//! # See also
+//! ## Blog post
+//! * <https://security.humanativaspa.it/using-rust-for-vulnerability-research>
+//!
+//! ## See also
 //! * <https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java>
 //! * <https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib>
 //! * <https://github.com/binarly-io/idalib/>
 //! * <https://books.google.it/books/about/The_Art_of_Software_Security_Assessment.html>
 //!
-//! # Compiling
-//! 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>)
-//! 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>)
-//! 3. Compile rhabdomancer as follows (macOS example):
-//! ```sh
-//! $ git clone https://github.com/0xdea/rhabdomancer
-//! $ cd rhabdomancer
-//! $ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
-//! $ cargo build --release
-//! ```
+//! ## Compiling
+//! 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
+//! 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
+//! 3. Compile rhabdomancer as follows:
+//!     ```sh
+//!     $ git clone https://github.com/0xdea/rhabdomancer
+//!     $ cd rhabdomancer
+//!     $ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
+//!     $ cargo build --release
+//!     ```
 //!
-//! # Usage
-//! ```sh
-//! TODO
-//! ```
+//! ## Usage
+//! 1. Make sure IDA Pro is configured with a valid license and is not currently running.
+//! 2. Run rhabdomancer as follows:
+//!     ```sh
+//!     $ ./target/release/rhabdomancer [binary file]
+//!     ```
+//! 3. Open the resulting `.i64` IDB file.
+//! 4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD `
+//! 5. Enjoy your results collected in an IDA Pro windows.
 //!
-//! # Example
-//! TODO:
-//! ```sh
-//! TODO
-//! ```
-//!
-//! # Tested with
+//! ## Tested with
 //! * IDA Pro 9.0.240925 on macOS arm64
 //!
-//! # TODO
+//! ## TODO
+//! * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024
 //! * Enrich known bad API function list (see <https://github.com/0xdea/semgrep-rules>)
 //! * Implement regex pattern matching instead of ASCII case insensitive matching
 //! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>
-//! * Use the `bookmarks_t` API, despite it being cumbersome and having a MAX_MARK_SLOT of 1024
 //!
 
 use std::collections::BTreeMap;
@@ -65,17 +66,16 @@ use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
 use idalib::IDAError;
 
-// TODO: test along with ghidra version and compare output and performance
+// TODO: test along with ghidra version on different types of binaries and compare output and performance
 // TODO: search only for code XREFs, not data XREFs (e.g., XRefQuery::FAR)? Pay attention to duplicate entries, what's the cause?
 // TODO: should we also check for some tags/function attributes such as external or what we have so far is good enough? (KISS) -- see IDA book from p.478
-// TODO: test performance with large files, e.g. zysh; optimize data structures to make them more performant/idiomatic if needed
 // TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
 
 // TODO: add test suite
 // TODO: generate documentation and check that it makes sense;)
 
 // TODO: clippy everything, use cargo udeps and deny
-// TODO: CI with GitHub Actions
+// TODO: CI with GitHub Actions, including cargo deny check advisories
 // TODO: push release(s) to crates.io
 
 /// Priority of bad API functions
@@ -185,13 +185,57 @@ impl<'a> BadFunctions<'a> {
     /// Locate all calls to bad API functions and mark them
     fn locate_calls(&self, idb: &'a IDB) -> anyhow::Result<()> {
         for f in self.high.values() {
-            mark_calls(idb, f, &Priority::High)?;
+            Self::mark_calls(idb, f, &Priority::High)?;
         }
         for f in self.medium.values() {
-            mark_calls(idb, f, &Priority::Medium)?;
+            Self::mark_calls(idb, f, &Priority::Medium)?;
         }
         for f in self.low.values() {
-            mark_calls(idb, f, &Priority::Low)?;
+            Self::mark_calls(idb, f, &Priority::Low)?;
+        }
+
+        Ok(())
+    }
+
+    /// Locate all calls to the specified function and mark them
+    fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
+        // Prepare comment
+        let comment = match priority {
+            Priority::High => {
+                format!("[BAD 0] {}", func.name().unwrap())
+            }
+            Priority::Medium => {
+                format!("[BAD 1] {}", func.name().unwrap())
+            }
+            Priority::Low => {
+                format!("[BAD 2] {}", func.name().unwrap())
+            }
+        };
+        println!("\n{comment}");
+
+        // Get first XREF if available, otherwise return immediately
+        let Some(mut current) = idb.first_xref_to(func.start_address(), XRefQuery::ALL) else {
+            return Ok(());
+        };
+
+        loop {
+            // Print address with caller function name if available
+            let caller = idb
+                .function_at(current.from())
+                .map_or("<unknown>".to_string(), |f| f.name().unwrap());
+            println!("{:#x} in {}", current.from(), caller);
+
+            // Add comment if not already present to mark call location
+            if !idb.get_cmt(current.from()).contains("[BAD ") {
+                idb.append_cmt(current.from(), comment.clone())?;
+            }
+
+            // Get next XREF
+            if let Some(next) = current.next_to() {
+                current = next;
+            } else {
+                break;
+            }
         }
 
         Ok(())
@@ -219,50 +263,6 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
 
     println!();
     println!("[+] Done processing binary file {filepath:?}");
-    Ok(())
-}
-
-/// Locate all calls to the specified function and mark them
-fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
-    // Prepare comment
-    let comment = match priority {
-        Priority::High => {
-            format!("[BAD 0] {}", func.name().unwrap())
-        }
-        Priority::Medium => {
-            format!("[BAD 1] {}", func.name().unwrap())
-        }
-        Priority::Low => {
-            format!("[BAD 2] {}", func.name().unwrap())
-        }
-    };
-    println!("\n{comment}");
-
-    // Get first XREF if available, otherwise return immediately
-    let Some(mut current) = idb.first_xref_to(func.start_address(), XRefQuery::ALL) else {
-        return Ok(());
-    };
-
-    loop {
-        // Print address with caller function name if available
-        let caller = idb
-            .function_at(current.from())
-            .map_or("<unknown>".to_string(), |f| f.name().unwrap());
-        println!("{:#x} in {}", current.from(), caller);
-
-        // Add comment if not already present to mark call location
-        if !idb.get_cmt(current.from()).contains("[BAD ") {
-            idb.append_cmt(current.from(), comment.clone())?;
-        }
-
-        // Get next XREF
-        if let Some(next) = current.next_to() {
-            current = next;
-        } else {
-            break;
-        }
-    }
-
     Ok(())
 }
 
