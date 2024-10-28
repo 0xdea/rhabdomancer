@@ -37,14 +37,14 @@
 //!     ```
 //!
 //! ## Usage
-//! 1. Make sure IDA Pro is configured with a valid license and is not currently running.
+//! 1. Make sure IDA Pro is properly configured with a valid license.
 //! 2. Run rhabdomancer as follows:
 //!     ```sh
 //!     $ ./target/release/rhabdomancer [binary file]
 //!     ```
-//! 3. Open the resulting `.i64` IDB file.
+//! 3. Open the resulting `.i64` IDB file with IDA Pro.
 //! 4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD `.
-//! 5. Enjoy your results collected in an IDA Pro windows.
+//! 5. Enjoy your results conveniently collected in an IDA Pro window.
 //!
 //! ## Tested with
 //! * IDA Pro 9.0.240925 on macOS arm64.
