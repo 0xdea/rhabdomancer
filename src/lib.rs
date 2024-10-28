@@ -17,7 +17,7 @@
 //! * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
 //!
 //! ## Blog post
-//! * <https://security.humanativaspa.it/using-rust-for-vulnerability-research>
+//! * <https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust>
 //!
 //! ## See also
 //! * <https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java>

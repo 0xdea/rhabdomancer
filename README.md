@@ -22,7 +22,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 ## Blog post
 
-* <https://security.humanativaspa.it/using-rust-for-vulnerability-research>
+* <https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust>
 
 ## See also
 
