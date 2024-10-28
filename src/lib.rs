@@ -43,17 +43,17 @@
 //!     $ ./target/release/rhabdomancer [binary file]
 //!     ```
 //! 3. Open the resulting `.i64` IDB file.
-//! 4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD `
+//! 4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD `.
 //! 5. Enjoy your results collected in an IDA Pro windows.
 //!
 //! ## Tested with
-//! * IDA Pro 9.0.240925 on macOS arm64
+//! * IDA Pro 9.0.240925 on macOS arm64.
 //!
 //! ## TODO
-//! * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024
-//! * Enrich known bad API function list (see <https://github.com/0xdea/semgrep-rules>)
-//! * Implement regex pattern matching instead of ASCII case insensitive matching
-//! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>
+//! * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
+//! * Enrich known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
+//! * Implement regex pattern matching instead of ASCII case insensitive matching.
+//! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.
 //!
 
 use std::collections::BTreeMap;
