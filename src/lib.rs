@@ -64,7 +64,7 @@ use config::{Config, ConfigError, File};
 use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
-use idalib::IDAError;
+use idalib::{enable_console_messages, IDAError};
 
 // TODO: test along with ghidra version on different types of binaries and compare output and performance
 // TODO: search only for code XREFs, not data XREFs (e.g., XRefQuery::FAR)? Pay attention to duplicate entries, what's the cause?
@@ -247,6 +247,9 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     println!("[*] Loading known bad API function names");
     let known_bad = KnownBadFunctions::load()?;
 
+    // Enable console messages to report any license issues
+    enable_console_messages(true);
+
     // Open target binary, run auto-analysis, and keep results
     println!("[*] Trying to analyze binary file {filepath:?}");
     if !filepath.is_file() {
@@ -254,6 +257,9 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     }
     let idb = IDB::open_with(filepath, true)?;
     println!("[+] Successfully analyzed binary file");
+
+    // Disable console messages
+    enable_console_messages(false);
 
     // Locate and mark bad API function calls in target binary
     println!();
