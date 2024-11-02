@@ -62,5 +62,6 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
 * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
-* Implement regex pattern matching instead of ASCII case insensitive matching.
+* Implement regex pattern matching, considering that `_func` in IDA Pro GUI is `.func` in idalib.
+* Consider narrowing down marked cross-references (e.g, `is_code`, `is_data`, etc.).
 * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.

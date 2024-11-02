@@ -52,7 +52,8 @@
 //! ## TODO
 //! * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
 //! * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
-//! * Implement regex pattern matching instead of ASCII case insensitive matching.
+//! * Implement regex pattern matching, considering that `_func` in IDA Pro GUI is `.func` in idalib.
+//! * Consider narrowing down marked cross-references (e.g, `is_code`, `is_data`, etc.).
 //! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.
 //!
 
@@ -67,15 +68,10 @@ use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
 use idalib::{enable_console_messages, Address, IDAError};
 
-// TODO: confirm fix for got/plt matches, see IDA book from p.478 + ghidra
-
-// TODO: debug missing comments in text search
-// TODO: use bookmarks API
+// TODO: use the bookmarks API and make sure bookmarks and comments match (and text search includes everything...)
 
 // TODO: test along with ghidra version on different types of binaries and compare output and performance
-// TODO: use `XRefQuery::FAR` instead of `XRefQuery::ALL`?
 // TODO: what causes duplicate entries in stdout? Are they a problem?
-// TODO: should we also check for some tags/function attributes such as external or what we have so far is good enough? (KISS)
 // TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
 
 // TODO: add test suite
@@ -205,24 +201,16 @@ impl<'a> BadFunctions<'a> {
 
     /// Locate all calls to the specified function and mark them
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
-        // TODO: remove when debugging/testing is not needed anymore
-        let func_name = func.name().unwrap();
-        let segment = idb
-            .segment_at(func.start_address())
-            .unwrap()
-            .name()
-            .unwrap();
-
         // Prepare comment
         let comment = match priority {
             Priority::High => {
-                format!("[BAD 0] {} ({})", func_name, segment)
+                format!("[BAD 0] {}", func.name().unwrap())
             }
             Priority::Medium => {
-                format!("[BAD 1] {} ({})", func_name, segment)
+                format!("[BAD 1] {}", func.name().unwrap())
             }
             Priority::Low => {
-                format!("[BAD 2] {} ({})", func_name, segment)
+                format!("[BAD 2] {}", func.name().unwrap())
             }
         };
         println!("\n{comment}");
@@ -234,7 +222,7 @@ impl<'a> BadFunctions<'a> {
 
         loop {
             // Handle .plt indirection in ELF binaries
-            if segm_is_plt(idb, current.from()) {
+            if is_in_plt(idb, current.from()) {
                 if let Some(thunk) = idb.first_xref_to(
                     idb.function_at(current.from())
                         .map_or(BADADDR.into(), |f| f.start_address()),
@@ -297,13 +285,10 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Check if segment in which address resides is .plt
-fn segm_is_plt(idb: &IDB, addr: Address) -> bool {
+/// Check if an address is in the .plt segment
+fn is_in_plt(idb: &IDB, addr: Address) -> bool {
     idb.segment_at(addr)
-        .unwrap()
-        .name()
-        .unwrap()
-        .contains("plt")
+        .is_some_and(|s| s.name().unwrap().contains("plt"))
 }
 
 #[cfg(test)]
