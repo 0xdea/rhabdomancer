@@ -113,27 +113,17 @@ impl KnownBadFunctions {
 
     /// Check if a function is in the list of known bad API function names and return its priority
     fn check_function(&self, func: &Function) -> Option<Priority> {
-        if self
-            .high
-            .iter()
-            .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
-        {
+        let func_matches = |x: &String| -> bool { x.eq_ignore_ascii_case(&func.name().unwrap()) };
+
+        if self.high.iter().any(func_matches) {
             return Some(Priority::High);
         }
 
-        if self
-            .medium
-            .iter()
-            .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
-        {
+        if self.medium.iter().any(func_matches) {
             return Some(Priority::Medium);
         }
 
-        if self
-            .low
-            .iter()
-            .any(|x| x.eq_ignore_ascii_case(&func.name().unwrap()))
-        {
+        if self.low.iter().any(func_matches) {
             return Some(Priority::Low);
         }
 
