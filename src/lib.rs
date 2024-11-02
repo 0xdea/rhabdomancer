@@ -67,11 +67,14 @@ use idalib::xref::XRefQuery;
 use idalib::{enable_console_messages, IDAError};
 
 // TODO: fix got/plt matches, see IDA book from p.478 + ghidra
+// segment_at()
+// https://cpp.docs.hex-rays.com/group__seg__name.html
+
 // TODO: debug missing comments in text search
 // TODO: use bookmarks API
 
 // TODO: test along with ghidra version on different types of binaries and compare output and performance
-// TODO: make sure we're not missing anuthing with `XRefQuery::FAR` instead of `XRefQuery::ALL`
+// TODO: use `XRefQuery::FAR` instead of `XRefQuery::ALL`?
 // TODO: what causes duplicate entries in stdout? Are they a problem?
 // TODO: should we also check for some tags/function attributes such as external or what we have so far is good enough? (KISS)
 // TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
@@ -218,7 +221,7 @@ impl<'a> BadFunctions<'a> {
         println!("\n{comment}");
 
         // Get first XREF if available, otherwise return immediately
-        let Some(mut current) = idb.first_xref_to(func.start_address(), XRefQuery::FAR) else {
+        let Some(mut current) = idb.first_xref_to(func.start_address(), XRefQuery::ALL) else {
             return Ok(());
         };
 
