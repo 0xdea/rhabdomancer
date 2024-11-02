@@ -66,9 +66,13 @@ use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
 use idalib::{enable_console_messages, IDAError};
 
+// TODO: fix got/plt matches, see IDA book from p.478 + ghidra
+// TODO: debug missing comments in text search
+// TODO: use bookmarks API
+
 // TODO: test along with ghidra version on different types of binaries and compare output and performance
 // TODO: search only for code XREFs, not data XREFs (e.g., XRefQuery::FAR)? Pay attention to duplicate entries, what's the cause?
-// TODO: should we also check for some tags/function attributes such as external or what we have so far is good enough? (KISS) -- see IDA book from p.478
+// TODO: should we also check for some tags/function attributes such as external or what we have so far is good enough? (KISS)
 // TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
 
 // TODO: add test suite
