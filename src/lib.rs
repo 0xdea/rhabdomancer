@@ -61,14 +61,13 @@ use std::env;
 use std::path::Path;
 
 use config::{Config, ConfigError, File};
+use idalib::ffi::BADADDR;
 use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
-use idalib::{enable_console_messages, IDAError};
+use idalib::{enable_console_messages, Address, IDAError};
 
-// TODO: fix got/plt matches, see IDA book from p.478 + ghidra
-// segment_at()
-// https://cpp.docs.hex-rays.com/group__seg__name.html
+// TODO: confirm fix for got/plt matches, see IDA book from p.478 + ghidra
 
 // TODO: debug missing comments in text search
 // TODO: use bookmarks API
@@ -206,16 +205,24 @@ impl<'a> BadFunctions<'a> {
 
     /// Locate all calls to the specified function and mark them
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
+        // TODO: remove when debugging/testing is not needed anymore
+        let func_name = func.name().unwrap();
+        let segment = idb
+            .segment_at(func.start_address())
+            .unwrap()
+            .name()
+            .unwrap();
+
         // Prepare comment
         let comment = match priority {
             Priority::High => {
-                format!("[BAD 0] {}", func.name().unwrap())
+                format!("[BAD 0] {} ({})", func_name, segment)
             }
             Priority::Medium => {
-                format!("[BAD 1] {}", func.name().unwrap())
+                format!("[BAD 1] {} ({})", func_name, segment)
             }
             Priority::Low => {
-                format!("[BAD 2] {}", func.name().unwrap())
+                format!("[BAD 2] {} ({})", func_name, segment)
             }
         };
         println!("\n{comment}");
@@ -226,6 +233,17 @@ impl<'a> BadFunctions<'a> {
         };
 
         loop {
+            // Handle .plt indirection in ELF binaries
+            if segm_is_plt(idb, current.from()) {
+                if let Some(thunk) = idb.first_xref_to(
+                    idb.function_at(current.from())
+                        .map_or(BADADDR.into(), |f| f.start_address()),
+                    XRefQuery::ALL,
+                ) {
+                    current = thunk;
+                }
+            }
+
             // Print address with caller function name if available
             let caller = idb
                 .function_at(current.from())
@@ -277,6 +295,15 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     println!();
     println!("[+] Done processing binary file {filepath:?}");
     Ok(())
+}
+
+/// Check if segment in which address resides is .plt
+fn segm_is_plt(idb: &IDB, addr: Address) -> bool {
+    idb.segment_at(addr)
+        .unwrap()
+        .name()
+        .unwrap()
+        .contains("plt")
 }
 
 #[cfg(test)]
