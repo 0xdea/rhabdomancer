@@ -69,6 +69,7 @@ use idalib::xref::XRefQuery;
 use idalib::{enable_console_messages, Address, IDAError};
 
 // TODO: test along with ghidra version on different types of binaries and compare output and performance
+// TODO: fix problem with libc.so.1:intel and test again against previous targets
 // TODO: what causes duplicate entries in stdout? Are they a problem?
 
 // TODO: use the bookmarks API and make sure bookmarks and comments match (and text search includes everything...)
@@ -211,6 +212,7 @@ impl<'a> BadFunctions<'a> {
 
         loop {
             // Handle .plt indirection in ELF binaries (only the first thunk is considered)
+            // TODO: fix, maybe make it recursive?
             if is_in_plt(idb, current.from()) {
                 if let Some(thunk) = idb.first_xref_to(
                     idb.function_at(current.from())
