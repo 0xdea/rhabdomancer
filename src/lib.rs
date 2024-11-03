@@ -53,7 +53,6 @@
 //! * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
 //! * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
 //! * Implement regex pattern matching instead of .plt hack (`_func` in GUI is `.func` in idalib).
-//! * Consider narrowing down marked cross-references (e.g, `is_code`, `is_data`, etc.).
 //! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.
 //!
 
@@ -65,11 +64,11 @@ use config::{Config, ConfigError, File};
 use idalib::ffi::BADADDR;
 use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
-use idalib::xref::XRefQuery;
+use idalib::xref::{XRef, XRefQuery};
 use idalib::{enable_console_messages, Address, IDAError};
 
 // TODO: test along with ghidra version on different types of binaries and compare output and performance
-// TODO: fix problem with libc.so.1:intel and test again against previous targets
+// TODO: fix problem with libc.so.1:intel (.execve not detected) and test again against previous targets
 // TODO: what causes duplicate entries in stdout? Are they a problem?
 
 // TODO: use the bookmarks API and make sure bookmarks and comments match (and text search includes everything...)
@@ -205,44 +204,37 @@ impl<'a> BadFunctions<'a> {
         };
         println!("\n{comment}");
 
-        // Get first XREF if available, otherwise return immediately
-        let Some(mut current) = idb.first_xref_to(func.start_address(), XRefQuery::ALL) else {
-            return Ok(());
-        };
+        // Traverse XREFs and mark call locations
+        idb.first_xref_to(func.start_address(), XRefQuery::ALL)
+            .map_or(Ok(()), |cur| Self::traverse_xrefs(idb, &cur, &comment))
+    }
 
-        loop {
-            // Handle .plt indirection in ELF binaries (only the first thunk is considered)
-            // TODO: fix, maybe make it recursive?
-            if is_in_plt(idb, current.from()) {
-                if let Some(thunk) = idb.first_xref_to(
-                    idb.function_at(current.from())
-                        .map_or(BADADDR.into(), |f| f.start_address()),
-                    XRefQuery::ALL,
-                ) {
-                    current = thunk;
-                }
-            }
-
+    /// Recursively traverse XREFs and mark call locations
+    fn traverse_xrefs(idb: &IDB, xref: &XRef, comment: &str) -> Result<(), IDAError> {
+        // Handle .plt indirection in ELF binaries
+        if is_in_plt(idb, xref.from()) {
+            idb.first_xref_to(
+                idb.function_at(xref.from())
+                    .map_or(BADADDR.into(), |f| f.start_address()),
+                XRefQuery::ALL,
+            )
+            .map(|thunk| Self::traverse_xrefs(idb, &thunk, comment));
+        } else if xref.is_code() {
             // Print address with caller function name if available
             let caller = idb
-                .function_at(current.from())
+                .function_at(xref.from())
                 .map_or("<unknown>".to_string(), |f| f.name().unwrap());
-            println!("{:#x} in {}", current.from(), caller);
+            println!("{:#x} in {}", xref.from(), caller);
 
             // Add comment if not already present to mark call location
-            if !idb.get_cmt(current.from()).contains("[BAD ") {
-                idb.append_cmt(current.from(), comment.clone())?;
-            }
-
-            // Get next XREF
-            if let Some(next) = current.next_to() {
-                current = next;
-            } else {
-                break;
+            if !idb.get_cmt(xref.from()).contains("[BAD ") {
+                idb.append_cmt(xref.from(), comment)?;
             }
         }
 
-        Ok(())
+        // Process next XREF
+        xref.next_to()
+            .map_or(Ok(()), |next| Self::traverse_xrefs(idb, &next, comment))
     }
 }
 
