@@ -52,7 +52,7 @@
 //! ## TODO
 //! * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
 //! * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
-//! * Implement regex pattern matching, considering that `_func` in IDA Pro GUI is `.func` in idalib.
+//! * Implement regex pattern matching instead of .plt hack (`_func` in GUI is `.func` in idalib).
 //! * Consider narrowing down marked cross-references (e.g, `is_code`, `is_data`, etc.).
 //! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.
 //!
@@ -68,11 +68,10 @@ use idalib::idb::IDB;
 use idalib::xref::XRefQuery;
 use idalib::{enable_console_messages, Address, IDAError};
 
-// TODO: use the bookmarks API and make sure bookmarks and comments match (and text search includes everything...)
-
 // TODO: test along with ghidra version on different types of binaries and compare output and performance
 // TODO: what causes duplicate entries in stdout? Are they a problem?
-// TODO: test with binaries with more than a function that matches a single bad pattern (e.g., case-insensitive)
+
+// TODO: use the bookmarks API and make sure bookmarks and comments match (and text search includes everything...)
 
 // TODO: add test suite
 // TODO: generate documentation and check that it makes sense;)
@@ -211,7 +210,7 @@ impl<'a> BadFunctions<'a> {
         };
 
         loop {
-            // Handle .plt indirection in ELF binaries
+            // Handle .plt indirection in ELF binaries (only the first thunk is considered)
             if is_in_plt(idb, current.from()) {
                 if let Some(thunk) = idb.first_xref_to(
                     idb.function_at(current.from())
