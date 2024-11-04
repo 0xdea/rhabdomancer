@@ -62,5 +62,4 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
 * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
-* Implement regex pattern matching instead of .plt hack (`_func` in GUI is `.func` in idalib).
 * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.

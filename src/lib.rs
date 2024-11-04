@@ -52,7 +52,6 @@
 //! ## TODO
 //! * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
 //! * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
-//! * Implement regex pattern matching instead of .plt hack (`_func` in GUI is `.func` in idalib).
 //! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.
 //!
 
@@ -66,10 +65,10 @@ use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
 use idalib::{enable_console_messages, Address, IDAError};
+use regex::Regex;
 
 // TODO: test along with ghidra version on different types of binaries and compare output and performance
-// TODO: fix problem with libc.so.1:intel (.execve not detected) and test again against previous targets
-// TODO: what causes duplicate entries in stdout? Are they a problem?
+// TODO: what causes duplicate entries in stdout? Are they a problem? (ls)
 
 // TODO: use the bookmarks API and make sure bookmarks and comments match (and text search includes everything...)
 
@@ -112,17 +111,15 @@ impl KnownBadFunctions {
 
     /// Check if a function is in the list of known bad API function names and return its priority
     fn check_function(&self, func: &Function) -> Option<Priority> {
-        let func_matches = |x: &String| -> bool { x.eq_ignore_ascii_case(&func.name().unwrap()) };
+        let re = Regex::new(&format!(r"^[._]?{}$", &func.name().unwrap())).unwrap();
 
-        if self.high.iter().any(func_matches) {
+        if self.high.iter().any(|bad| re.is_match(bad)) {
             return Some(Priority::High);
         }
-
-        if self.medium.iter().any(func_matches) {
+        if self.medium.iter().any(|bad| re.is_match(bad)) {
             return Some(Priority::Medium);
         }
-
-        if self.low.iter().any(func_matches) {
+        if self.low.iter().any(|bad| re.is_match(bad)) {
             return Some(Priority::Low);
         }
 
@@ -191,15 +188,16 @@ impl<'a> BadFunctions<'a> {
     /// Locate all calls to the specified function and mark them
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
         // Prepare comment
+        let pre = ['.', '_'];
         let comment = match priority {
             Priority::High => {
-                format!("[BAD 0] {}", func.name().unwrap())
+                format!("[BAD 0] {}", func.name().unwrap().trim_start_matches(pre))
             }
             Priority::Medium => {
-                format!("[BAD 1] {}", func.name().unwrap())
+                format!("[BAD 1] {}", func.name().unwrap().trim_start_matches(pre))
             }
             Priority::Low => {
-                format!("[BAD 2] {}", func.name().unwrap())
+                format!("[BAD 2] {}", func.name().unwrap().trim_start_matches(pre))
             }
         };
         println!("\n{comment}");
@@ -215,7 +213,7 @@ impl<'a> BadFunctions<'a> {
         if is_in_plt(idb, xref.from()) {
             idb.first_xref_to(
                 idb.function_at(xref.from())
-                    .map_or(BADADDR.into(), |f| f.start_address()),
+                    .map_or(BADADDR.into(), |func| func.start_address()),
                 XRefQuery::ALL,
             )
             .map(|thunk| Self::traverse_xrefs(idb, &thunk, comment));
@@ -223,7 +221,7 @@ impl<'a> BadFunctions<'a> {
             // Print address with caller function name if available
             let caller = idb
                 .function_at(xref.from())
-                .map_or("<unknown>".to_string(), |f| f.name().unwrap());
+                .map_or("<unknown>".to_string(), |func| func.name().unwrap());
             println!("{:#x} in {}", xref.from(), caller);
 
             // Add comment if not already present to mark call location
@@ -271,7 +269,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
 /// Check if an address is in the .plt segment
 fn is_in_plt(idb: &IDB, addr: Address) -> bool {
     idb.segment_at(addr)
-        .is_some_and(|s| s.name().unwrap().contains("plt"))
+        .is_some_and(|segm| segm.name().unwrap().contains("plt"))
 }
 
 #[cfg(test)]

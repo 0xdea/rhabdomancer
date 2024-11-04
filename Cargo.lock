@@ -905,6 +905,7 @@ dependencies = [
  "config",
  "idalib",
  "idalib-build",
+ "regex",
  "serde",
 ]
 

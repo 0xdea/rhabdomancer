@@ -15,6 +15,7 @@ idalib = "0.1"
 anyhow = "1"
 config = "0.14"
 serde = { version = "1.0.210", features = ["derive"] }
+regex = "1.11"
 
 [build-dependencies]
 idalib-build = "0.1"
