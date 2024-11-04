@@ -43,8 +43,9 @@
 //!     $ ./target/release/rhabdomancer [binary file]
 //!     ```
 //! 3. Open the resulting `.i64` IDB file with IDA Pro.
-//! 4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD `.
-//! 5. Enjoy your results conveniently collected in an IDA Pro window.
+//! 4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD`.
+//! 5. Enjoy your results conveniently collected in an IDA Pro window (but double check that all
+//!    results are displayed, as text search is buggy and sometimes misses some comments).
 //!
 //! ## Tested with
 //! * IDA Pro 9.0.240925 on macOS arm64.
@@ -58,6 +59,7 @@
 use std::collections::BTreeMap;
 use std::env;
 use std::path::Path;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use config::{Config, ConfigError, File};
 use idalib::ffi::BADADDR;
@@ -67,16 +69,14 @@ use idalib::xref::{XRef, XRefQuery};
 use idalib::{enable_console_messages, Address, IDAError};
 use regex::Regex;
 
-// TODO: test along with ghidra version on different types of binaries and compare output and performance
-// TODO: what causes duplicate entries in stdout? Are they a problem? (ls)
-
 // TODO: use the bookmarks API and make sure bookmarks and comments match (and text search includes everything...)
-
 // TODO: add test suite
 // TODO: generate documentation and check that it makes sense;)
-
 // TODO: clippy everything, use cargo udeps and deny
 // TODO: push release(s) to crates.io
+
+/// Number of marked call locations
+static COUNTER: AtomicUsize = AtomicUsize::new(0);
 
 /// Priority of bad API functions
 /// * High priority - These functions are generally considered insecure
@@ -188,16 +188,15 @@ impl<'a> BadFunctions<'a> {
     /// Locate all calls to the specified function and mark them
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
         // Prepare comment
-        let pre = ['.', '_'];
         let comment = match priority {
             Priority::High => {
-                format!("[BAD 0] {}", func.name().unwrap().trim_start_matches(pre))
+                format!("[BAD 0] {}", func.name().unwrap().trim_start_matches('.'))
             }
             Priority::Medium => {
-                format!("[BAD 1] {}", func.name().unwrap().trim_start_matches(pre))
+                format!("[BAD 1] {}", func.name().unwrap().trim_start_matches('.'))
             }
             Priority::Low => {
-                format!("[BAD 2] {}", func.name().unwrap().trim_start_matches(pre))
+                format!("[BAD 2] {}", func.name().unwrap().trim_start_matches('.'))
             }
         };
         println!("\n{comment}");
@@ -227,6 +226,7 @@ impl<'a> BadFunctions<'a> {
             // Add comment if not already present to mark call location
             if !idb.get_cmt(xref.from()).contains("[BAD ") {
                 idb.append_cmt(xref.from(), comment)?;
+                COUNTER.fetch_add(1, Ordering::Relaxed);
             }
         }
 
@@ -262,6 +262,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     BadFunctions::find_all(&idb, &known_bad).locate_calls(&idb)?;
 
     println!();
+    println!("[+] Marked {COUNTER:?} new call locations");
     println!("[+] Done processing binary file {filepath:?}");
     Ok(())
 }

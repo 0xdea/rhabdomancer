@@ -52,7 +52,8 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
     ```
 3. Open the resulting `.i64` IDB file with IDA Pro.
 4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD `.
-5. Enjoy your results conveniently collected in an IDA Pro window.
+5. Enjoy your results conveniently collected in an IDA Pro window (but double check that all results are displayed, as
+   text search is buggy and sometimes misses some comments).
 
 ## Tested with
 
