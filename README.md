@@ -59,6 +59,10 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 * IDA Pro 9.0.240925 on macOS arm64.
 
+## Changelog
+
+* <https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md>
+
 ## TODO
 
 * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.

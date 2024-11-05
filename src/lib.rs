@@ -50,6 +50,9 @@
 //! ## Tested with
 //! * IDA Pro 9.0.240925 on macOS arm64.
 //!
+//! ## Changelog
+//! * <https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md>
+//!
 //! ## TODO
 //! * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
 //! * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
