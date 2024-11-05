@@ -9,6 +9,7 @@ repository = "https://github.com/0xdea/rhabdomancer"
 license = "MIT"
 keywords = ["reverse-engineering", "vuln-dev", "ida-pro", "ida-plugin", "idalib"]
 categories = ["command-line-utilities"]
+exclude = [".github/*"]
 
 [dependencies]
 idalib = "0.1"
