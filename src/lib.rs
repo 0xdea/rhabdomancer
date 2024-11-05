@@ -69,12 +69,6 @@ use idalib::xref::{XRef, XRefQuery};
 use idalib::{enable_console_messages, Address, IDAError};
 use regex::Regex;
 
-// TODO: use the bookmarks API and make sure bookmarks and comments match (and text search includes everything...)
-// TODO: add test suite
-// TODO: generate documentation and check that it makes sense;)
-// TODO: clippy everything, use cargo udeps and deny
-// TODO: push release(s) to crates.io
-
 /// Number of marked call locations
 static COUNTER: AtomicUsize = AtomicUsize::new(0);
 
@@ -273,6 +267,7 @@ fn is_in_plt(idb: &IDB, addr: Address) -> bool {
         .is_some_and(|segm| segm.name().unwrap().contains("plt"))
 }
 
+// TODO: add test suite
 #[cfg(test)]
 mod tests {
     #[test]
