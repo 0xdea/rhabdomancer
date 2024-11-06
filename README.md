@@ -31,10 +31,24 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 * <https://github.com/binarly-io/idalib/>
 * <https://books.google.it/books/about/The_Art_of_Software_Security_Assessment.html>
 
+## Installing
+
+The easiest way to get the latest stable version is via [crates.io](https://crates.io/crates/rhabdomancer):
+
+1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
+2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
+3. Install rhabdomancer as follows:
+   ```sh
+   $ export IDASDKDIR=/path/to/idasdk90
+   $ cargo install rhabdomancer
+   ```
+
 ## Compiling
 
-1. Download, install, and configure IDA Pro (see https://hex-rays.com/ida-pro).
-2. Download and extract the IDA SDK (see https://docs.hex-rays.com/developer-guide).
+Alternatively, you can compile the current version available on [GitHub](https://github.com/0xdea/rhabdomancer):
+
+1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
+2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
 3. Compile rhabdomancer as follows:
     ```sh
     $ git clone https://github.com/0xdea/rhabdomancer
@@ -48,7 +62,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 1. Make sure IDA Pro is properly configured with a valid license.
 2. Run rhabdomancer as follows:
     ```sh
-    $ ./target/release/rhabdomancer [binary file]
+    $ rhabdomancer [binary file]
     ```
 3. Open the resulting `.i64` IDB file with IDA Pro.
 4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD `.
