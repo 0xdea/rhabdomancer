@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Markdown links to version tags on release headings in CHANGELOG.
-* Instructions for installing via `cargo install` in README and crate comments.
+* Add markdown links to version tags on release headings in CHANGELOG.
+* Add instructions for installing via `cargo install` in README and crate comments.
+* Add test suite.
+* Add support for the `bookmarks_t` API.
+
+### Changed
+
 * Update dependencies.
-* Test suite.
-* Support for the `bookmarks_t` API.
+
+### Fixed
+
+* Improved user experience when opening IDB files thanks to the new license manager API in idalib.
 
 ## [0.1.0] - 2024-11-05
 
