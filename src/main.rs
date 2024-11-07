@@ -28,7 +28,7 @@ fn main() {
 
     // Let's do it
     match rhabdomancer::run(Path::new(filename)) {
-        Ok(()) => (),
+        Ok(_) => (),
         Err(err) => {
             eprintln!("[!] Error: {err}");
             process::exit(1);

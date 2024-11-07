@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Add markdown links to version tags on release headings in CHANGELOG.
 * Add instructions for installing via `cargo install` in README and crate comments.
-* Add test suite.
+* Add integration tests without the default harness, because they must run in the main thread.
 * Add support for the `bookmarks_t` API.
 
 ### Changed

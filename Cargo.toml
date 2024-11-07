@@ -21,6 +21,11 @@ regex = "1.11"
 [build-dependencies]
 idalib-build = "0.1"
 
+[[test]]
+name = "tests"
+path = "tests/main.rs"
+harness = false
+
 [lints.clippy]
 all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }

@@ -245,7 +245,8 @@ impl<'a> BadFunctions<'a> {
 }
 
 /// Locate all calls to potentially insecure API functions in the binary file at `filepath`
-pub fn run(filepath: &Path) -> anyhow::Result<()> {
+/// and return how many call locations were marked or an error in case something goes wrong
+pub fn run(filepath: &Path) -> anyhow::Result<usize> {
     // Load known bad API function names from the configuration file
     println!("[*] Loading known bad API function names");
     let known_bad = KnownBadFunctions::load()?;
@@ -272,20 +273,11 @@ pub fn run(filepath: &Path) -> anyhow::Result<()> {
     println!();
     println!("[+] Marked {COUNTER:?} new call locations");
     println!("[+] Done processing binary file {filepath:?}");
-    Ok(())
+    Ok(COUNTER.load(Ordering::Relaxed))
 }
 
 /// Check if an address is in the .plt segment
 fn is_in_plt(idb: &IDB, addr: Address) -> bool {
     idb.segment_at(addr)
         .is_some_and(|segm| segm.name().unwrap().contains("plt"))
-}
-
-// TODO: add test suite
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
 }
