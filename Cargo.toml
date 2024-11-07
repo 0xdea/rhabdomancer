@@ -13,7 +13,7 @@ exclude = [".github/*", ".cargo/*"]
 
 [dependencies]
 idalib = "0.1"
-anyhow = "1"
+anyhow = "1.0"
 config = "0.14"
 serde = { version = "1.0.210", features = ["derive"] }
 regex = "1.11"

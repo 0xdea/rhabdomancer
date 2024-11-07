@@ -33,7 +33,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 ## Installing
 
-The easiest way to get the latest stable version is via [crates.io](https://crates.io/crates/rhabdomancer):
+The easiest way to get the latest release is via [crates.io](https://crates.io/crates/rhabdomancer):
 
 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
@@ -45,7 +45,7 @@ The easiest way to get the latest stable version is via [crates.io](https://crat
 
 ## Compiling
 
-Alternatively, you can compile the current version available on [GitHub](https://github.com/0xdea/rhabdomancer):
+Alternatively, you can build the tool from [source](https://github.com/0xdea/rhabdomancer):
 
 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
