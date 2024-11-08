@@ -5,11 +5,12 @@ authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2021"
 description = "Vulnerability research assistant that locates all calls to potentially insecure API functions in a binary file."
 homepage = "https://0xdeadbeef.info/"
+documentation = "https://0xdeadbeef.info/rhabdomancer/rhabdomancer/"
 repository = "https://github.com/0xdea/rhabdomancer"
 license = "MIT"
 keywords = ["reverse-engineering", "vuln-dev", "ida-pro", "ida-plugin", "idalib"]
 categories = ["command-line-utilities"]
-exclude = [".github/*", ".cargo/*"]
+exclude = [".github/*", ".cargo/*", "docs/*"]
 
 [dependencies]
 idalib = "0.1"

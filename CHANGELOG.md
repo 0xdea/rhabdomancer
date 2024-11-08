@@ -21,7 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* **TODO** Improved user experience when opening IDB files thanks to the new license manager API in idalib.
+* **TODO** Improve user experience when opening IDB files thanks to the new license manager API in idalib.
+* Locally generate documentation that fails building on docs.rs and host it on GitHub pages.
 
 ## [0.1.0] - 2024-11-05
 
