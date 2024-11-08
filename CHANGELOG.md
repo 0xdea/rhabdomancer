@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * **TODO** Add support for IDA Pro's `bookmarks_t` API that I've implemented in idalib.
-* **TODO** Add integration tests without the default harness, because they must run in the main thread.
 
 ### Fixed
 
@@ -20,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Add integration tests without the default harness, because they must run in the main thread.
 * Add instructions for installing via `cargo install` in README and crate comments.
 * Add markdown links to version tags on release headings in CHANGELOG.
 
