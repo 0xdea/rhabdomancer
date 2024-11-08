@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * **TODO** Add support for IDA Pro's `bookmarks_t` API that I've implemented in idalib.
 * **TODO** Add integration tests without the default harness, because they must run in the main thread.
+
+### Fixed
+
+* **TODO** Improve user experience when opening IDB files thanks to the new license manager API in idalib.
+
+## [0.1.1] - 2024-11-08
+
+### Added
+
 * Add instructions for installing via `cargo install` in README and crate comments.
 * Add markdown links to version tags on release headings in CHANGELOG.
 
@@ -21,17 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* **TODO** Improve user experience when opening IDB files thanks to the new license manager API in idalib.
-* Locally generate documentation that fails building on docs.rs and host it on GitHub pages.
+* Locally generate documentation that fails to build on docs.rs and host it on GitHub pages.
 
 ## [0.1.0] - 2024-11-05
 
 * First release to be published on [crates.io](https://crates.io/).
 
-### Added
+[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.1.1...HEAD
 
-* Add this CHANGELOG file to keep track of notable changes for each version of this project.
-
-[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.1.0...HEAD
+[0.1.1]: https://github.com/0xdea/rhabdomancer/compare/v0.1.0...0.1.1
 
 [0.1.0]: https://github.com/0xdea/rhabdomancer/releases/tag/v0.1.0

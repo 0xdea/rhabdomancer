@@ -1,14 +1,14 @@
 [package]
 name = "rhabdomancer"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2021"
 description = "Vulnerability research assistant that locates all calls to potentially insecure API functions in a binary file."
 homepage = "https://0xdeadbeef.info/"
-documentation = "https://0xdeadbeef.info/rhabdomancer/rhabdomancer/"
 repository = "https://github.com/0xdea/rhabdomancer"
+documentation = "https://0xdeadbeef.info/rhabdomancer/rhabdomancer/"
 license = "MIT"
-keywords = ["reverse-engineering", "vuln-dev", "ida-pro", "ida-plugin", "idalib"]
+keywords = ["reverse-engineering", "binary-file", "vuln-dev", "ida", "idalib"]
 categories = ["command-line-utilities"]
 exclude = [".github/*", ".cargo/*", "docs/*"]
 
