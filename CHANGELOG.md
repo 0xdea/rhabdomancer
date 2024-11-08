@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * **TODO** Improve user experience when opening IDB files thanks to the new license manager API in idalib.
+* Exclude tests that include binary files from [crates.io](https://crates.io/) package.
 
 ## [0.1.1] - 2024-11-08
 
