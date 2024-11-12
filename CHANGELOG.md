@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * **TODO** Add support for IDA Pro's `bookmarks_t` API that I've implemented in idalib.
 
+### Changed
+
+* Update dependencies.
+
 ### Fixed
 
 * **TODO** Improve user experience when opening IDB files thanks to the new license manager API in idalib.
