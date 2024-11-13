@@ -1,6 +1,6 @@
 # Changelog for rhabdomancer
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -10,11 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Add support for IDA Pro's `bookmarks_t` API that I've contributed to idalib.
-* Add build and doc GitHub workflows for CI testing and documentation building.
+* Add build and doc GitHub workflows.
 
 ### Changed
 
-* Bump to use idalib v0.2.0 and update other dependencies.
+* Switch to idalib v0.2.0 and update other dependencies.
 
 ### Fixed
 
