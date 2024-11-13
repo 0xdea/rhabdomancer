@@ -17,7 +17,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 * Blazing fast, headless user experience courtesy of IDA Pro and Binarly's idalib Rust bindings.
 * Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
-* Bad API function call locations are printed to stdout and marked with comments in the IDB.
+* Bad API function call locations are printed to stdout and marked in the IDB.
 * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
 
 ## Blog post
@@ -65,9 +65,10 @@ Alternatively, you can build the tool from [source](https://github.com/0xdea/rha
     $ rhabdomancer [binary file]
     ```
 3. Open the resulting `.i64` IDB file with IDA Pro.
-4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD `.
-5. Enjoy your results conveniently collected in an IDA Pro window (but double check that all results are displayed, as
-   text search is buggy and sometimes misses some comments).
+4. Select `View` > `Open subviews` > `Bookmarks`
+5. Enjoy your results conveniently collected in an IDA Pro window.
+
+*Note: rhabdomancer also adds comments at marked call locations.*
 
 ## Tested with
 
@@ -79,6 +80,5 @@ Alternatively, you can build the tool from [source](https://github.com/0xdea/rha
 
 ## TODO
 
-* Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
 * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
 * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.

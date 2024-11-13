@@ -13,7 +13,7 @@
 //! ## Features
 //! * Blazing fast, headless user experience courtesy of IDA Pro and Binarly's idalib Rust bindings.
 //! * Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
-//! * Bad API function call locations are printed to stdout and marked with comments in the IDB.
+//! * Bad API function call locations are printed to stdout and marked in the IDB.
 //! * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
 //!
 //! ## Blog post
@@ -54,9 +54,10 @@
 //!     $ rhabdomancer [binary file]
 //!     ```
 //! 3. Open the resulting `.i64` IDB file with IDA Pro.
-//! 4. Select `Search` > `Text...`, flag `Find all occurrences`, and search for `[BAD`.
-//! 5. Enjoy your results conveniently collected in an IDA Pro window (but double check that all
-//!    results are displayed, as text search is buggy and sometimes misses some comments).
+//! 4. Select `View` > `Open subviews` > `Bookmarks`
+//! 5. Enjoy your results conveniently collected in an IDA Pro window.
+//!
+//! *Note: rhabdomancer also adds comments at marked call locations.*
 //!
 //! ## Tested with
 //! * IDA Pro 9.0.240925 on macOS arm64.
@@ -65,7 +66,6 @@
 //! * <https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md>
 //!
 //! ## TODO
-//! * Try the `bookmarks_t` API, despite it being cumbersome and having a `MAX_MARK_SLOT` of 1024.
 //! * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
 //! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.
 //!
@@ -195,8 +195,8 @@ impl<'a> BadFunctions<'a> {
 
     /// Locate all calls to the specified function and mark them
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
-        // Prepare comment
-        let comment = match priority {
+        // Prepare description
+        let desc = match priority {
             Priority::High => {
                 format!("[BAD 0] {}", func.name().unwrap().trim_start_matches('.'))
             }
@@ -207,15 +207,15 @@ impl<'a> BadFunctions<'a> {
                 format!("[BAD 2] {}", func.name().unwrap().trim_start_matches('.'))
             }
         };
-        println!("\n{comment}");
+        println!("\n{desc}");
 
         // Traverse XREFs and mark call locations
         idb.first_xref_to(func.start_address(), XRefQuery::ALL)
-            .map_or(Ok(()), |cur| Self::traverse_xrefs(idb, &cur, &comment))
+            .map_or(Ok(()), |cur| Self::traverse_xrefs(idb, &cur, &desc))
     }
 
     /// Recursively traverse XREFs and mark call locations
-    fn traverse_xrefs(idb: &IDB, xref: &XRef, comment: &str) -> Result<(), IDAError> {
+    fn traverse_xrefs(idb: &IDB, xref: &XRef, desc: &str) -> Result<(), IDAError> {
         // Handle .plt indirection in ELF binaries
         if is_in_plt(idb, xref.from()) {
             idb.first_xref_to(
@@ -223,7 +223,7 @@ impl<'a> BadFunctions<'a> {
                     .map_or(BADADDR.into(), |func| func.start_address()),
                 XRefQuery::ALL,
             )
-            .map(|thunk| Self::traverse_xrefs(idb, &thunk, comment));
+            .map(|thunk| Self::traverse_xrefs(idb, &thunk, desc));
         } else if xref.is_code() {
             // Print address with caller function name if available
             let caller = idb
@@ -231,20 +231,30 @@ impl<'a> BadFunctions<'a> {
                 .map_or("<unknown>".to_string(), |func| func.name().unwrap());
             println!("{:#x} in {}", xref.from(), caller);
 
+            // Add bookmark if not already present to mark call location
+            if !idb
+                .bookmarks()
+                .get_description(xref.from())
+                .unwrap_or_default()
+                .contains("[BAD ")
+            {
+                idb.bookmarks().mark(xref.from(), desc)?;
+                COUNTER.fetch_add(1, Ordering::Relaxed);
+            }
+
             // Add comment if not already present to mark call location
             if !idb
                 .get_cmt(xref.from())
                 .unwrap_or_default()
                 .contains("[BAD ")
             {
-                idb.append_cmt(xref.from(), comment)?;
-                COUNTER.fetch_add(1, Ordering::Relaxed);
+                idb.append_cmt(xref.from(), desc)?;
             }
         }
 
         // Process next XREF
         xref.next_to()
-            .map_or(Ok(()), |next| Self::traverse_xrefs(idb, &next, comment))
+            .map_or(Ok(()), |next| Self::traverse_xrefs(idb, &next, desc))
     }
 }
 

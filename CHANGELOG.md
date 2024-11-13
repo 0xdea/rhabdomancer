@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* **TODO** Add support for IDA Pro's `bookmarks_t` API that I've implemented in idalib.
+* Add support for IDA Pro's `bookmarks_t` API that I've contributed to idalib.
 
 ### Changed
 
-* Update idalib to v0.2.0 and update other dependencies.
+* Bump to use idalib v0.2.0 and update other dependencies.
 
 ### Fixed
 
