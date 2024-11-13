@@ -27,6 +27,10 @@ jobs:
         env:
           IDASDKDIR: "${{ runner.temp }}/idasdk90"
         run: cargo build
+      - name: rustfmt
+        run: cargo fmt --check
+      - name: clippy
+        run: cargo clippy -- -D warnings
 
   build-macos:
     runs-on: macOS-latest
