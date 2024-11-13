@@ -13,11 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Update dependencies.
+* Update idalib to v0.2.0 and update other dependencies.
 
 ### Fixed
 
-* **TODO** Improve user experience when opening IDB files thanks to the new license manager API in idalib.
+* Improve user experience when opening IDB files thanks to the new license manager API in idalib v0.2.0.
 * Exclude tests that include binary files from [crates.io](https://crates.io/) package.
 
 ## [0.1.1] - 2024-11-08

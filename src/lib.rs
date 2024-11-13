@@ -80,7 +80,7 @@ use idalib::ffi::BADADDR;
 use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
-use idalib::{enable_console_messages, Address, IDAError};
+use idalib::{Address, IDAError};
 use regex::Regex;
 
 /// Number of marked call locations
@@ -232,7 +232,11 @@ impl<'a> BadFunctions<'a> {
             println!("{:#x} in {}", xref.from(), caller);
 
             // Add comment if not already present to mark call location
-            if !idb.get_cmt(xref.from()).contains("[BAD ") {
+            if !idb
+                .get_cmt(xref.from())
+                .unwrap_or_default()
+                .contains("[BAD ")
+            {
                 idb.append_cmt(xref.from(), comment)?;
                 COUNTER.fetch_add(1, Ordering::Relaxed);
             }
@@ -251,19 +255,13 @@ pub fn run(filepath: &Path) -> anyhow::Result<usize> {
     println!("[*] Loading known bad API function names");
     let known_bad = KnownBadFunctions::load()?;
 
-    // Enable console messages to report any license issues
-    enable_console_messages(true);
-
     // Open target binary, run auto-analysis, and keep results
     println!("[*] Trying to analyze binary file {filepath:?}");
     if !filepath.is_file() {
         return Err(anyhow::anyhow!("invalid file path"));
     }
-    let idb = IDB::open_with(filepath, true)?;
+    let idb = IDB::open_with(filepath, true, true)?;
     println!("[+] Successfully analyzed binary file");
-
-    // Disable console messages
-    enable_console_messages(false);
 
     // Locate and mark bad API function calls in target binary
     println!();
