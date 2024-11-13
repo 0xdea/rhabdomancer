@@ -48,6 +48,12 @@ jobs:
         run: |
           curl -o "${{ runner.temp }}/idasdk90.zip" -L "$IDASDK90_URL"
           unzip -d "${{ runner.temp }}" -P "$IDASDK90_PASSWORD" "${{ runner.temp }}/idasdk90.zip"
+      - name: rustfmt
+        run: cargo fmt --check
+      - name: clippy
+        env:
+          IDASDKDIR: "${{ runner.temp }}/idasdk90"
+        run: cargo clippy -- -D warnings
       - name: build
         env:
           IDASDKDIR: "${{ runner.temp }}/idasdk90"
@@ -74,6 +80,12 @@ jobs:
         run: |
           curl -o "${{ runner.temp }}/idasdk90.zip" -L $env:IDASDK90_URL
           unzip -d "${{ runner.temp }}" -P $env:IDASDK90_PASSWORD "${{ runner.temp }}/idasdk90.zip"
+      - name: rustfmt
+        run: cargo fmt --check
+      - name: clippy
+        env:
+          IDASDKDIR: "${{ runner.temp }}/idasdk90"
+        run: cargo clippy -- -D warnings
       - name: build
         env:
           IDASDKDIR: "${{ runner.temp }}/idasdk90"
