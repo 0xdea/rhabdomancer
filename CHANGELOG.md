@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Add support for IDA Pro's `bookmarks_t` API that I've contributed to idalib.
+* Add build and doc GitHub workflows for CI testing and documentation building.
 
 ### Changed
 
@@ -18,13 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Improve user experience when opening IDB files thanks to the new license manager API in idalib v0.2.0.
+* Improve custom integration tests using the `bookmarks_t` API.
 * Exclude tests that include binary files from [crates.io](https://crates.io/) package.
 
 ## [0.1.1] - 2024-11-08
 
 ### Added
 
-* Add integration tests without the default harness, because they must run in the main thread.
+* Add integration tests with a custom harness, because they must run in the main thread.
 * Add instructions for installing via `cargo install` in README and crate comments.
 * Add markdown links to version tags on release headings in CHANGELOG.
 
