@@ -73,9 +73,10 @@
 use std::collections::BTreeMap;
 use std::env;
 use std::path::Path;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicU32, Ordering};
 
 use config::{Config, ConfigError, File};
+use idalib::bookmarks::BookmarkIndex;
 use idalib::ffi::BADADDR;
 use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
@@ -84,7 +85,7 @@ use idalib::{Address, IDAError};
 use regex::Regex;
 
 /// Number of marked call locations
-static COUNTER: AtomicUsize = AtomicUsize::new(0);
+static COUNTER: AtomicU32 = AtomicU32::new(0);
 
 /// Priority of bad API functions
 /// * High priority - These functions are generally considered insecure
@@ -260,7 +261,7 @@ impl<'a> BadFunctions<'a> {
 
 /// Locate all calls to potentially insecure API functions in the binary file at `filepath`
 /// and return how many call locations were marked or an error in case something goes wrong
-pub fn run(filepath: &Path) -> anyhow::Result<usize> {
+pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
     // Load known bad API function names from the configuration file
     println!("[*] Loading known bad API function names");
     let known_bad = KnownBadFunctions::load()?;

@@ -1,31 +1,43 @@
 use std::fs;
 use std::path::Path;
 
+use idalib::bookmarks::BookmarkIndex;
 use idalib::idb::IDB;
 
 /// Custom harness for integration tests
-fn main() {
+fn main() -> anyhow::Result<()> {
     // Target binary path
     const FILENAME: &str = "./tests/bin/ls";
-    // Number of marked call locations with the default configuration
-    const N_MARKS: usize = 86;
+    // Expected number of marked call locations with default configuration
+    const N_MARKS: BookmarkIndex = 86;
 
     // Remove IDB file if it exists
     let idb_path = &format!("{FILENAME}.i64");
     let idb_path = Path::new(idb_path);
     if idb_path.is_file() {
-        fs::remove_file(idb_path).unwrap();
+        fs::remove_file(idb_path)?;
     }
 
     // Run rhabdomancer and check the number of marked call locations
-    let n_marks = rhabdomancer::run(Path::new(FILENAME)).unwrap();
+    let n_marks = rhabdomancer::run(Path::new(FILENAME))?;
     assert_eq!(n_marks, N_MARKS);
 
     // Check all marked call locations
-    let _idb = IDB::open(FILENAME).unwrap();
-    // TODO: implement bookmarks first, which should allow for an easy check
-    // TODO: for comments, we need to implement text search functionality in idalib
+    let idb = IDB::open(FILENAME)?;
+    assert_eq!(idb.bookmarks().len(), n_marks);
+    for i in 0..idb.bookmarks().len() {
+        assert!(idb
+            .bookmarks()
+            .get_description_by_index(i)
+            .is_some_and(|desc| desc.starts_with("[BAD ")));
+    }
+
+    // TODO: check also comments, via either one of the following functionalities to be added to idalib:
+    //  * text search
+    //  * `bookmarks().find_address()`
 
     // Remove IDB file at the end
-    fs::remove_file(idb_path).unwrap();
+    fs::remove_file(idb_path)?;
+
+    Ok(())
 }
