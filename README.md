@@ -5,6 +5,8 @@
 [![](https://img.shields.io/crates/d/rhabdomancer?style=flat&color=red)](https://crates.io/crates/rhabdomancer)
 [![](https://img.shields.io/badge/twitter-%400xdea-blue.svg)](https://twitter.com/0xdea)
 [![](https://img.shields.io/badge/mastodon-%40raptor-purple.svg)](https://infosec.exchange/@raptor)
+[![build](https://github.com/0xdea/rhabdomancer/actions/workflows/build.yml/badge.svg)](https://github.com/0xdea/rhabdomancer/actions/workflows/build.yml)
+[![doc](https://github.com/0xdea/rhabdomancer/actions/workflows/doc.yml/badge.svg)](https://github.com/0xdea/rhabdomancer/actions/workflows/doc.yml)
 
 > "The road to exploitable bugs is paved with unexploitable bugs."
 >
