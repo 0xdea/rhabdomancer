@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Add support for IDA Pro's `bookmarks_t` API that I've contributed to idalib.
-* Add build and doc GitHub workflows.
+* Add build and doc GitHub workflows as [documented](https://github.com/binarly-io/idalib/blob/master/GITHUB-ACTIONS.md)
+  in idalib.
 
 ### Changed
 
