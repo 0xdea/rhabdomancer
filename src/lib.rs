@@ -11,7 +11,7 @@
 //! find pathways allowing access from untrusted input.
 //!
 //! ## Features
-//! * Blazing fast, headless user experience courtesy of IDA Pro and Binarly's idalib Rust bindings.
+//! * Blazing fast, headless user experience courtesy of IDA Pro 9 and Binarly's idalib Rust bindings.
 //! * Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
 //! * Bad API function call locations are printed to stdout and marked in the IDB.
 //! * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
