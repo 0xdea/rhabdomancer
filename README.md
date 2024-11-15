@@ -22,7 +22,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 * Bad API function call locations are printed to stdout and marked in the IDB.
 * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
 
-![](https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/screen01.jpg)
+![](https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/screen01.png)
 
 ## Blog post
 
