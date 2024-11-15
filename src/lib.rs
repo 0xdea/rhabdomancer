@@ -36,7 +36,7 @@
 //!    ```
 //!
 //! ## Compiling
-//! Alternatively, you can build the tool from [source](https://github.com/0xdea/rhabdomancer):
+//! Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer):
 //! 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
 //! 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
 //! 3. Compile rhabdomancer as follows:

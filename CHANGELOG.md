@@ -10,17 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Add support for IDA Pro's `bookmarks_t` API that I've contributed to idalib.
+* Add support for IDA Pro's search API that I've contributed to idalib (only used in tests).
 * Add build and doc GitHub workflows as [documented](https://github.com/binarly-io/idalib/blob/master/GITHUB-ACTIONS.md)
   in idalib.
 
 ### Changed
 
-* Switch to idalib v0.2.0 and update other dependencies.
+* Switch to idalib v0.2 and update other dependencies.
 
 ### Fixed
 
-* Improve user experience when opening IDB files thanks to the new license manager API in idalib v0.2.0.
-* Improve custom integration tests using the `bookmarks_t` API.
+* Improve user experience when opening IDB files thanks to the new license manager API in idalib v0.2.
+* Improve custom integration tests using the `bookmarks_t` API and search API.
 * Exclude tests that include binary files from [crates.io](https://crates.io/) package.
 
 ## [0.1.1] - 2024-11-08

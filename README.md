@@ -22,6 +22,8 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 * Bad API function call locations are printed to stdout and marked in the IDB.
 * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
 
+![](https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/screen01.jpg)
+
 ## Blog post
 
 * <https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust>
@@ -47,7 +49,7 @@ The easiest way to get the latest release is via [crates.io](https://crates.io/c
 
 ## Compiling
 
-Alternatively, you can build the tool from [source](https://github.com/0xdea/rhabdomancer):
+Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer):
 
 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
