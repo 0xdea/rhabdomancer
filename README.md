@@ -15,14 +15,14 @@
 Rhabdomancer is a blazing fast IDA Pro headless plugin that locates all calls to potentially insecure API functions in
 a binary file. Auditors can backtrace from these candidate points to find pathways allowing access from untrusted input.
 
+![](https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/screen01.png)
+
 ## Features
 
 * Blazing fast, headless user experience courtesy of IDA Pro and Binarly's idalib Rust bindings.
 * Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
 * Bad API function call locations are printed to stdout and marked in the IDB.
 * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
-
-![](https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/screen01.png)
 
 ## Blog post
 
