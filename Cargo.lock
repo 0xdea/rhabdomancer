@@ -528,9 +528,9 @@ checksum = "9a3a5bfb195931eeb336b2a7b4d761daec841b97f947d34394601737a7bba5e4"
 
 [[package]]
 name = "idalib"
-version = "0.2.1+9.0.240925"
+version = "0.2.2+9.0.240925"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "873f0d3acaff97efafb6a15cc2d1f13a9d68d5ff255e955ec133d7ea6d39901f"
+checksum = "27127aa2354210a52910a2475300f8b9e17fc2b33107a4e314e98fe1f2464ec0"
 dependencies = [
  "anyhow",
  "autocxx",
@@ -543,18 +543,18 @@ dependencies = [
 
 [[package]]
 name = "idalib-build"
-version = "0.2.0+9.0.240925"
+version = "0.2.2+9.0.240925"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9c6e4dcb00d06d776983618ec956dd45cc292fca15f2a6914d2b255fcca363b9"
+checksum = "119fbac58979c961eb1de591a61ccb548233395c4237b1c1a50ab28d55c367f6"
 dependencies = [
  "anyhow",
 ]
 
 [[package]]
 name = "idalib-sys"
-version = "0.2.1+9.0.240925"
+version = "0.2.2+9.0.240925"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ba058345d21f3c162bd58fc782068745ccf12ae8f2208d32f7c55723dd11024"
+checksum = "1cebd027de8cdcc229af4b53681cc140767f20a90184b8b4b74a14470f32ced0"
 dependencies = [
  "anyhow",
  "autocxx",

@@ -30,7 +30,6 @@ fn main() -> anyhow::Result<()> {
     show_everything(&mut idb);
 
     // Check the number of bookmarks
-    println!();
     print!("[*] Checking number of bookmarks... ");
     assert_eq!(idb.bookmarks().len(), n_marks);
     println!("Ok.");
@@ -46,7 +45,6 @@ fn main() -> anyhow::Result<()> {
     println!("Ok.");
 
     // Check the number of comments
-    println!();
     print!("[*] Checking number of comments... ");
     assert_eq!(idb.find_text_iter("[BAD ").count(), n_marks as usize);
     println!("Ok.");
