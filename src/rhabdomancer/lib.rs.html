@@ -289,7 +289,6 @@
 <a href="#289" id="289">289</a>
 <a href="#290" id="290">290</a>
 <a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
@@ -400,12 +399,11 @@
 <span class="kw">impl </span>KnownBadFunctions {
     <span class="doccomment">/// Populate the list of bad API function names from configuration file
     </span><span class="kw">pub fn </span>load() -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ConfigError&gt; {
-        <span class="kw">let </span>path =
-            env::current_dir().expect(<span class="string">"[!] Error: failed to determine the current directory"</span>);
-        <span class="kw">let </span>conf_dir = path.join(<span class="string">"conf"</span>);
+        <span class="kw">let </span>path = Path::new(<span class="macro">env!</span>(<span class="string">"CARGO_MANIFEST_DIR"</span>)).join(<span class="string">"conf/rhabdomancer.toml"</span>);
 
+        <span class="macro">println!</span>(<span class="string">"[*] Using configuration file {path:?}"</span>);
         Config::builder()
-            .add_source(File::from(conf_dir.join(<span class="string">"rhabdomancer.toml"</span>)))
+            .add_source(File::from(path))
             .build()<span class="question-mark">?
             </span>.try_deserialize()
     }
