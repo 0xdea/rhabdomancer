@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Add integration tests with a custom harness, because they must run in the main thread.
 * Add instructions for installing via `cargo install` in README and crate comments.
-* Add markdown links to version tags on release headings in CHANGELOG.
+* Add Markdown links to version tags on release headings in CHANGELOG.
 
 ### Changed
 

@@ -20,24 +20,57 @@ fn main() -> anyhow::Result<()> {
 
     // Run rhabdomancer and check the number of marked call locations
     let n_marks = rhabdomancer::run(Path::new(FILENAME))?;
+    println!();
+    print!("[*] Checking number of marked call locations... ");
     assert_eq!(n_marks, N_MARKS);
+    println!("Ok.");
 
-    // Check all marked call locations
-    let idb = IDB::open(FILENAME)?;
+    // Open IDB and show everything to ensure search doesn't miss anything
+    let mut idb = IDB::open(FILENAME)?;
+    show_everything(&mut idb);
+
+    // Check the number of bookmarks
+    println!();
+    print!("[*] Checking number of bookmarks... ");
     assert_eq!(idb.bookmarks().len(), n_marks);
+    println!("Ok.");
+
+    // Check bookmarks
+    print!("[*] Checking bookmarks... ");
     for i in 0..idb.bookmarks().len() {
         assert!(idb
             .bookmarks()
             .get_description_by_index(i)
             .is_some_and(|desc| desc.starts_with("[BAD ")));
     }
+    println!("Ok.");
 
-    // TODO: check also comments, via either one of the following functionalities to be added to idalib:
-    //  * text search
-    //  * `bookmarks().find_address()`
+    // Check the number of comments
+    println!();
+    print!("[*] Checking number of comments... ");
+    assert_eq!(idb.find_text_iter("[BAD ").count(), n_marks as usize);
+    println!("Ok.");
+
+    // Check comments
+    print!("[*] Checking comments... ");
+    for i in 0..idb.bookmarks().len() {
+        assert!(idb
+            .get_cmt(idb.bookmarks().get_address(i).unwrap())
+            .is_some_and(|desc| desc.starts_with("[BAD ")));
+    }
+    println!("Ok.");
 
     // Remove IDB file at the end
     fs::remove_file(idb_path)?;
 
+    println!();
     Ok(())
+}
+
+/// Show everything in IDB
+fn show_everything(idb: &mut IDB) {
+    idb.meta_mut().set_show_all_comments();
+    idb.meta_mut().set_show_hidden_funcs();
+    idb.meta_mut().set_show_hidden_insns();
+    idb.meta_mut().set_show_hidden_segms();
 }
