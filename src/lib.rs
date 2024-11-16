@@ -72,7 +72,7 @@
 
 use std::collections::BTreeMap;
 use std::env;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::sync::atomic::{AtomicU32, Ordering};
 
 use config::{Config, ConfigError, File};
@@ -108,12 +108,11 @@ struct KnownBadFunctions {
 impl KnownBadFunctions {
     /// Populate the list of bad API function names from configuration file
     pub fn load() -> Result<Self, ConfigError> {
-        let path: PathBuf = env!("CARGO_MANIFEST_DIR").into();
-        let conf = path.join("conf/rhabdomancer.toml");
+        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml");
 
-        println!("[*] Using configuration file {conf:?}");
+        println!("[*] Using configuration file {path:?}");
         Config::builder()
-            .add_source(File::from(conf))
+            .add_source(File::from(path))
             .build()?
             .try_deserialize()
     }
