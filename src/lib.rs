@@ -15,6 +15,7 @@
 //! * Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
 //! * Bad API function call locations are printed to stdout and marked in the IDB.
 //! * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
+//! * The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
 //!
 //! ## Blog post
 //! * <https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust>
@@ -49,13 +50,14 @@
 //!
 //! ## Usage
 //! 1. Make sure IDA Pro is properly configured with a valid license.
-//! 2. Run rhabdomancer as follows:
+//! 2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed.
+//! 3. Run rhabdomancer as follows:
 //!     ```sh
 //!     $ rhabdomancer [binary file]
 //!     ```
-//! 3. Open the resulting `.i64` IDB file with IDA Pro.
-//! 4. Select `View` > `Open subviews` > `Bookmarks`
-//! 5. Enjoy your results conveniently collected in an IDA Pro window.
+//! 4. Open the resulting `.i64` IDB file with IDA Pro.
+//! 5. Select `View` > `Open subviews` > `Bookmarks`
+//! 6. Enjoy your results conveniently collected in an IDA Pro window.
 //!
 //! *Note: rhabdomancer also adds comments at marked call locations.*
 //!
