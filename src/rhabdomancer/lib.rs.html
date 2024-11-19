@@ -289,6 +289,10 @@
 <a href="#289" id="289">289</a>
 <a href="#290" id="290">290</a>
 <a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
@@ -306,6 +310,7 @@
 //! * Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
 //! * Bad API function call locations are printed to stdout and marked in the IDB.
 //! * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
+//! * The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
 //!
 //! ## Blog post
 //! * &lt;https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust&gt;
@@ -340,13 +345,14 @@
 //!
 //! ## Usage
 //! 1. Make sure IDA Pro is properly configured with a valid license.
-//! 2. Run rhabdomancer as follows:
+//! 2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed.
+//! 3. Run rhabdomancer as follows:
 //!     ```sh
 //!     $ rhabdomancer [binary file]
 //!     ```
-//! 3. Open the resulting `.i64` IDB file with IDA Pro.
-//! 4. Select `View` &gt; `Open subviews` &gt; `Bookmarks`
-//! 5. Enjoy your results conveniently collected in an IDA Pro window.
+//! 4. Open the resulting `.i64` IDB file with IDA Pro.
+//! 5. Select `View` &gt; `Open subviews` &gt; `Bookmarks`
+//! 6. Enjoy your results conveniently collected in an IDA Pro window.
 //!
 //! *Note: rhabdomancer also adds comments at marked call locations.*
 //!
@@ -360,6 +366,8 @@
 //! * Enrich the known bad API function list (see &lt;https://github.com/0xdea/semgrep-rules&gt;).
 //! * Implement a basic ruleset in the style of &lt;https://github.com/Accenture/VulFi&gt;.
 //!
+
+</span><span class="attr">#![doc(html_logo_url = <span class="string">"https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/Y.png"</span>)]
 
 </span><span class="kw">use </span>std::collections::BTreeMap;
 <span class="kw">use </span>std::env;
