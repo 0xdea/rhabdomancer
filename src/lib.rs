@@ -72,6 +72,8 @@
 //! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.
 //!
 
+#![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/Y.png")]
+
 use std::collections::BTreeMap;
 use std::env;
 use std::path::Path;
