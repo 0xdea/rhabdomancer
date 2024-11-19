@@ -39,7 +39,7 @@ fn main() {
 /// Print usage information and exit
 fn usage(prog: &str) {
     println!("Usage:");
-    println!("$ ./{prog} [binary file]");
+    println!("$ ./{prog} <binary_file>");
 
     process::exit(1);
 }

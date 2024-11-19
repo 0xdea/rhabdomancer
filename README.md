@@ -68,7 +68,7 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed.
 3. Run rhabdomancer as follows:
     ```sh
-    $ rhabdomancer [binary file]
+    $ rhabdomancer <binary_file>
     ```
 4. Open the resulting `.i64` IDB file with IDA Pro.
 5. Select `View` > `Open subviews` > `Bookmarks`
