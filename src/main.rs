@@ -2,10 +2,10 @@ use std::env;
 use std::path::Path;
 use std::process;
 
-const PROG: &str = "rhabdomancer";
+const PROG: &str = env!("CARGO_PKG_NAME");
 
 fn main() {
-    println!("rhabdomancer - IDA Pro vulnerability research assistant");
+    println!("{PROG} - IDA Pro vulnerability research assistant");
     println!("Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>");
     println!();
 
