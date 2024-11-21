@@ -9,6 +9,9 @@ fn main() {
     println!("Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>");
     println!();
 
+    // Force IDA Pro to stay quiet
+    idalib::force_batch_mode();
+
     // Parse command line arguments
     let args: Vec<String> = env::args().collect();
 
