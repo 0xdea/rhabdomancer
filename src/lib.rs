@@ -276,9 +276,15 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
     }
     let idb = IDB::open_with(filepath, true, true)?;
     println!("[+] Successfully analyzed binary file");
+    println!();
+
+    // Print binary file information
+    println!("[-] Processor: {}", idb.processor().long_name(),);
+    println!("[-] Compiler: {:?}", idb.meta().cc_id());
+    println!("[-] File type: {:?}", idb.meta().filetype());
+    println!();
 
     // Locate and mark bad API function calls in target binary
-    println!();
     println!("[*] Finding bad API function calls...");
     BadFunctions::find_all(&idb, &known_bad).locate_calls(&idb)?;
 

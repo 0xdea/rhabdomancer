@@ -12,9 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Mention the `conf/rhabdomancer.toml` configuration file in the documentation.
 * Add project logo.
 
-### Fixed
+### Changed
 
-* Force IDA Pro to stay quiet via `idalib::force_batch_mode()`.
+* Improve output and force IDA Pro to stay quiet via `idalib::force_batch_mode()`.
 
 ## [0.2.1] - 2024-11-16
 
