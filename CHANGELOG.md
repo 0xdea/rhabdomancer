@@ -60,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2024-11-05
 
-* First release to be published on [crates.io](https://crates.io/).
+* First release to be published to [crates.io](https://crates.io/).
 
 [unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.2.1...HEAD
 
