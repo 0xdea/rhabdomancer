@@ -18,12 +18,12 @@
 //! * The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
 //!
 //! ## Blog post
-//! * <https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust>
+//! * <https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust> (*coming soon*)
 //!
 //! ## See also
 //! * <https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java>
 //! * <https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib>
-//! * <https://github.com/binarly-io/idalib/>
+//! * <https://github.com/binarly-io/idalib>
 //! * <https://books.google.it/books/about/The_Art_of_Software_Security_Assessment.html>
 //!
 //! ## Installing
