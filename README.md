@@ -27,7 +27,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 ## Blog post
 
-* <https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust>
+* <https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust> (*coming soon*)
 
 ## See also
 
@@ -82,7 +82,7 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 
 ## Changelog
 
-* <https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md>
+* [CHANGELOG.md](CHANGELOG.md)
 
 ## TODO
 
