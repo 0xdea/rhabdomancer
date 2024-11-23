@@ -69,7 +69,8 @@
 //!
 //! ## TODO
 //! * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
-//! * Implement a basic ruleset in the style of <https://github.com/Accenture/VulFi>.
+//! * Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
+//!   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
 //!
 
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
