@@ -293,6 +293,13 @@
 <a href="#293" id="293">293</a>
 <a href="#294" id="294">294</a>
 <a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
@@ -313,12 +320,12 @@
 //! * The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
 //!
 //! ## Blog post
-//! * &lt;https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust&gt;
+//! * &lt;https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust&gt; (*coming soon*)
 //!
 //! ## See also
 //! * &lt;https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java&gt;
 //! * &lt;https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib&gt;
-//! * &lt;https://github.com/binarly-io/idalib/&gt;
+//! * &lt;https://github.com/binarly-io/idalib&gt;
 //! * &lt;https://books.google.it/books/about/The_Art_of_Software_Security_Assessment.html&gt;
 //!
 //! ## Installing
@@ -348,7 +355,7 @@
 //! 2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed.
 //! 3. Run rhabdomancer as follows:
 //!     ```sh
-//!     $ rhabdomancer [binary file]
+//!     $ rhabdomancer &lt;binary_file&gt;
 //!     ```
 //! 4. Open the resulting `.i64` IDB file with IDA Pro.
 //! 5. Select `View` &gt; `Open subviews` &gt; `Bookmarks`
@@ -364,7 +371,8 @@
 //!
 //! ## TODO
 //! * Enrich the known bad API function list (see &lt;https://github.com/0xdea/semgrep-rules&gt;).
-//! * Implement a basic ruleset in the style of &lt;https://github.com/Accenture/VulFi&gt;.
+//! * Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
+//!   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
 //!
 
 </span><span class="attr">#![doc(html_logo_url = <span class="string">"https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png"</span>)]
@@ -571,10 +579,16 @@
     }
     <span class="kw">let </span>idb = IDB::open_with(filepath, <span class="bool-val">true</span>, <span class="bool-val">true</span>)<span class="question-mark">?</span>;
     <span class="macro">println!</span>(<span class="string">"[+] Successfully analyzed binary file"</span>);
+    <span class="macro">println!</span>();
+
+    <span class="comment">// Print binary file information
+    </span><span class="macro">println!</span>(<span class="string">"[-] Processor: {}"</span>, idb.processor().long_name(),);
+    <span class="macro">println!</span>(<span class="string">"[-] Compiler: {:?}"</span>, idb.meta().cc_id());
+    <span class="macro">println!</span>(<span class="string">"[-] File type: {:?}"</span>, idb.meta().filetype());
+    <span class="macro">println!</span>();
 
     <span class="comment">// Locate and mark bad API function calls in target binary
-    </span><span class="macro">println!</span>();
-    <span class="macro">println!</span>(<span class="string">"[*] Finding bad API function calls..."</span>);
+    </span><span class="macro">println!</span>(<span class="string">"[*] Finding bad API function calls..."</span>);
     BadFunctions::find_all(<span class="kw-2">&amp;</span>idb, <span class="kw-2">&amp;</span>known_bad).locate_calls(<span class="kw-2">&amp;</span>idb)<span class="question-mark">?</span>;
 
     <span class="macro">println!</span>();
