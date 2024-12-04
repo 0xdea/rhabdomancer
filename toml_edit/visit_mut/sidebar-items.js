@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["visit_array_mut","visit_array_of_tables_mut","visit_boolean_mut","visit_datetime_mut","visit_document_mut","visit_float_mut","visit_inline_table_mut","visit_integer_mut","visit_item_mut","visit_string_mut","visit_table_like_kv_mut","visit_table_like_mut","visit_table_mut","visit_value_mut"],"macro":["empty_visit_mut"],"trait":["VisitMut"]};

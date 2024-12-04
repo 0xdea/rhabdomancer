@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["private"],"struct":["Type"],"trait":["Index"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Entry"],"mod":["ordered","unordered"],"struct":["Iter"]};

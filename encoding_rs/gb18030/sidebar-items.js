@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Gb18030Pending"],"fn":["encode_hanzi","gbk_encode_non_unified"],"struct":["Gb18030Decoder","Gb18030Encoder"]};

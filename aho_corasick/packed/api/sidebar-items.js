@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["PATTERN_LIMIT"],"enum":["ForceAlgorithm","MatchKind","SearchKind"],"struct":["Builder","Config","FindIter","Searcher"]};

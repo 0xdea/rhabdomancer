@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["str_from","str_len","str_new","str_ptr","str_ref"]};

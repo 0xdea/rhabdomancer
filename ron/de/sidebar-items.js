@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["from_bytes","from_reader","from_str","struct_error_name"],"macro":["guard_recursion"],"mod":["id","tag","value"],"struct":["CommaSeparated","Deserializer","Enum"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Frame","LiteralTrie","State","StateChunksIter","Transition"]};

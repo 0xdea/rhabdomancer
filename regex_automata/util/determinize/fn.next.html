@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Compute the set of all reachable NFA states, including the full epsilon closure, from a DFA state for a single unit of input. The set of reachable states is returned as a `StateBuilderNFA`. The `StateBuilderNFA` returned also includes any look-behind assertions satisfied by `unit`, in addition to whether it is a match state. For multi-pattern DFAs, the builder will also include the pattern IDs that match (in the order seen)."><title>next in regex_automata::util::determinize - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc fn"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../regex_automata/index.html">regex_<wbr>automata</a><span class="version">0.4.9</span></h2></div><div class="sidebar-elems"><h2><a href="index.html">In regex_<wbr>automata::<wbr>util::<wbr>determinize</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Function <a href="../../index.html">regex_automata</a>::<wbr><a href="../index.html">util</a>::<wbr><a href="index.html">determinize</a>::<wbr><a class="fn" href="#">next</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../../src/regex_automata/util/determinize/mod.rs.html#92-353">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>pub(crate) fn next(
+    nfa: &amp;<a class="struct" href="../../nfa/thompson/nfa/struct.NFA.html" title="struct regex_automata::nfa::thompson::nfa::NFA">NFA</a>,
+    match_kind: <a class="enum" href="../search/enum.MatchKind.html" title="enum regex_automata::util::search::MatchKind">MatchKind</a>,
+    sparses: &amp;mut <a class="struct" href="../sparse_set/struct.SparseSets.html" title="struct regex_automata::util::sparse_set::SparseSets">SparseSets</a>,
+    stack: &amp;mut <a class="struct" href="https://doc.rust-lang.org/1.82.0/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../primitives/struct.StateID.html" title="struct regex_automata::util::primitives::StateID">StateID</a>&gt;,
+    state: &amp;<a class="struct" href="state/struct.State.html" title="struct regex_automata::util::determinize::state::State">State</a>,
+    unit: <a class="struct" href="../alphabet/struct.Unit.html" title="struct regex_automata::util::alphabet::Unit">Unit</a>,
+    empty_builder: <a class="struct" href="state/struct.StateBuilderEmpty.html" title="struct regex_automata::util::determinize::state::StateBuilderEmpty">StateBuilderEmpty</a>,
+) -&gt; <a class="struct" href="state/struct.StateBuilderNFA.html" title="struct regex_automata::util::determinize::state::StateBuilderNFA">StateBuilderNFA</a></code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Compute the set of all reachable NFA states, including the full epsilon
+closure, from a DFA state for a single unit of input. The set of reachable
+states is returned as a <code>StateBuilderNFA</code>. The <code>StateBuilderNFA</code> returned
+also includes any look-behind assertions satisfied by <code>unit</code>, in addition
+to whether it is a match state. For multi-pattern DFAs, the builder will
+also include the pattern IDs that match (in the order seen).</p>
+<p><code>nfa</code> must be able to resolve any NFA state in <code>state</code> and any NFA state
+reachable via the epsilon closure of any NFA state in <code>state</code>. <code>sparses</code>
+must have capacity equivalent to <code>nfa.len()</code>.</p>
+<p><code>match_kind</code> should correspond to the match semantics implemented by the
+DFA being built. Generally speaking, for leftmost-first match semantics,
+states that appear after the first NFA match state will not be included in
+the <code>StateBuilderNFA</code> returned since they are impossible to visit.</p>
+<p><code>sparses</code> is used as scratch space for NFA traversal. Other than their
+capacity requirements (detailed above), there are no requirements on what’s
+contained within them (if anything). Similarly, what’s inside of them once
+this routine returns is unspecified.</p>
+<p><code>stack</code> must have length 0. It is used as scratch space for depth first
+traversal. After returning, it is guaranteed that <code>stack</code> will have length
+0.</p>
+<p><code>state</code> corresponds to the current DFA state on which one wants to compute
+the transition for the input <code>unit</code>.</p>
+<p><code>empty_builder</code> corresponds to the builder allocation to use to produce a
+complete <code>StateBuilderNFA</code> state. If the state is not needed (or is already
+cached), then it can be cleared and reused without needing to create a new
+<code>State</code>. The <code>StateBuilderNFA</code> state returned is final and ready to be
+turned into a <code>State</code> if necessary.</p>
+</div></details></section></div></main></body></html>

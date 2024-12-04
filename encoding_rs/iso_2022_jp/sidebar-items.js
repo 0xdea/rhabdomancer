@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Iso2022JpDecoderState","Iso2022JpEncoderState"],"fn":["encode_kanji","is_kanji_mapped","is_mapped_for_two_byte_encode"],"struct":["Iso2022JpDecoder","Iso2022JpEncoder"]};

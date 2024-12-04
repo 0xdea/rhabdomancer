@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["format","source"],"struct":["File"],"trait":["FileStoredFormat"]};

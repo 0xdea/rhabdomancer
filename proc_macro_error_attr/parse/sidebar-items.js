@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["parse_input","parse_next_attr","parse_signature"],"struct":["Attribute"]};

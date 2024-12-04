@@ -1,0 +1,146 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="This module provides helper routines for dealing with zero-width matches."><title>regex_automata::util::empty - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../regex_automata/index.html">regex_<wbr>automata</a><span class="version">0.4.9</span></h2></div><h2 class="location"><a href="#">Module empty</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#functions">Functions</a></li></ul></section><h2><a href="../index.html">In regex_<wbr>automata::<wbr>util</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../../index.html">regex_automata</a>::<wbr><a href="../index.html">util</a>::<wbr><a class="mod" href="#">empty</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../../src/regex_automata/util/empty.rs.html#1-265">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>This module provides helper routines for dealing with zero-width matches.</p>
+<p>The main problem being solved here is this:</p>
+<ol>
+<li>The caller wants to search something that they know is valid UTF-8, such
+as a Rust <code>&amp;str</code>.</li>
+<li>The regex used by the caller can match the empty string. For example, <code>a*</code>.</li>
+<li>The caller should never get match offsets returned that occur within the
+encoding of a UTF-8 codepoint. It is logically incorrect, and also means that,
+e.g., slicing the <code>&amp;str</code> at those offsets will lead to a panic.</li>
+</ol>
+<p>So the question here is, how do we prevent the caller from getting match
+offsets that split a codepoint? For example, strictly speaking, the regex <code>a*</code>
+matches <code>☃</code> at the positions <code>[0, 0]</code>, <code>[1, 1]</code>, <code>[2, 2]</code> and <code>[3, 3]</code> since
+the UTF-8 encoding of <code>☃</code> is <code>\xE2\x98\x83</code>. In particular, the <code>NFA</code> that
+underlies all of the matching engines in this crate doesn’t have anything in
+its state graph that prevents matching between UTF-8 code units. Indeed, any
+engine derived from the <code>NFA</code> will match at those positions by virtue of the
+fact that the <code>NFA</code> is byte oriented. That is, its transitions are defined over
+bytes and the matching engines work by proceeding one byte at a time.</p>
+<p>(An alternative architecture would be to define the transitions in an <code>NFA</code>
+over codepoints, or <code>char</code>. And then make the matching engines proceed by
+decoding one codepoint at a time. This is a viable strategy, but it doesn’t
+work for DFA matching engines because designing a fast and memory efficient
+transition table for an alphabet as large as Unicode is quite difficult. More
+to the point, the top-level <code>regex</code> crate supports matching on arbitrary bytes
+when Unicode mode is disabled and one is searching a <code>&amp;[u8]</code>. So in that case,
+you can’t just limit yourself to decoding codepoints and matching those. You
+really do need to be able to follow byte oriented transitions on the <code>NFA</code>.)</p>
+<p>In an older version of the regex crate, we handled this case not in the regex
+engine, but in the iterators over matches. Namely, since this case only arises
+when the match is empty, we “just” incremented the next starting position
+of the search by <code>N</code>, where <code>N</code> is the length of the codepoint encoded at
+the current position. The alternative or more “natural” solution of just
+incrementing by <code>1</code> would result in executing a search of <code>a*</code> on <code>☃</code> like
+this:</p>
+<ul>
+<li>Start search at <code>0</code>.</li>
+<li>Found match at <code>[0, 0]</code>.</li>
+<li>Next start position is <code>0</code>.</li>
+<li>To avoid an infinite loop, since it’s an empty match, increment by <code>1</code>.</li>
+<li>Start search at <code>1</code>.</li>
+<li>Found match at <code>[1, 1]</code>. Oops.</li>
+</ul>
+<p>But if we instead incremented by <code>3</code> (the length in bytes of <code>☃</code>), then we get
+the following:</p>
+<ul>
+<li>Start search at <code>0</code>.</li>
+<li>Found match at <code>[0, 0]</code>.</li>
+<li>Next start position is <code>0</code>.</li>
+<li>To avoid an infinite loop, since it’s an empty match, increment by <code>3</code>.</li>
+<li>Start search at <code>3</code>.</li>
+<li>Found match at <code>[3, 3]</code>.</li>
+</ul>
+<p>And we get the correct result. But does this technique work in all cases?
+Crucially, it requires that a zero-width match that splits a codepoint never
+occurs beyond the starting position of the search. Because if it did, merely
+incrementing the start position by the number of bytes in the codepoint at
+the current position wouldn’t be enough. A zero-width match could just occur
+anywhere. It turns out that it is <em>almost</em> true. We can convince ourselves by
+looking at all possible patterns that can match the empty string:</p>
+<ul>
+<li>Patterns like <code>a*</code>, <code>a{0}</code>, <code>(?:)</code>, <code>a|</code> and <code>|a</code> all unconditionally match
+the empty string. That is, assuming there isn’t an <code>a</code> at the current position,
+they will all match the empty string at the start of a search. There is no way
+to move past it because any other match would not be “leftmost.”</li>
+<li><code>^</code> only matches at the beginning of the haystack, where the start position
+is <code>0</code>. Since we know we’re searching valid UTF-8 (if it isn’t valid UTF-8,
+then this entire problem goes away because it implies your string type supports
+invalid UTF-8 and thus must deal with offsets that not only split a codepoint
+but occur in entirely invalid UTF-8 somehow), it follows that <code>^</code> never matches
+between the code units of a codepoint because the start of a valid UTF-8 string
+is never within the encoding of a codepoint.</li>
+<li><code>$</code> basically the same logic as <code>^</code>, but for the end of a string. A valid
+UTF-8 string can’t have an incomplete codepoint at the end of it.</li>
+<li><code>(?m:^)</code> follows similarly to <code>^</code>, but it can match immediately following
+a <code>\n</code>. However, since a <code>\n</code> is always a codepoint itself and can never
+appear within a codepoint, it follows that the position immediately following
+a <code>\n</code> in a string that is valid UTF-8 is guaranteed to not be between the
+code units of another codepoint. (One caveat here is that the line terminator
+for multi-line anchors can now be changed to any arbitrary byte, including
+things like <code>\x98</code> which might occur within a codepoint. However, this wasn’t
+supported by the old regex crate. If it was, it pose the same problems as
+<code>(?-u:\B)</code>, as we’ll discuss below.)</li>
+<li><code>(?m:$)</code> a similar argument as for <code>(?m:^)</code>. The only difference is that a
+<code>(?m:$)</code> matches just before a <code>\n</code>. But the same argument applies.</li>
+<li><code>(?Rm:^)</code> and <code>(?Rm:$)</code> weren’t supported by the old regex crate, but the
+CRLF aware line anchors follow a similar argument as for <code>(?m:^)</code> and <code>(?m:$)</code>.
+Namely, since they only ever match at a boundary where one side is either a
+<code>\r</code> or a <code>\n</code>, neither of which can occur within a codepoint.</li>
+<li><code>\b</code> only matches at positions where both sides are valid codepoints, so
+this cannot split a codepoint.</li>
+<li><code>\B</code>, like <code>\b</code>, also only matches at positions where both sides are valid
+codepoints. So this cannot split a codepoint either.</li>
+<li><code>(?-u:\b)</code> matches only at positions where at least one side of it is an ASCII
+word byte. Since ASCII bytes cannot appear as code units in non-ASCII codepoints
+(one of the many amazing qualities of UTF-8), it follows that this too cannot
+split a codepoint.</li>
+<li><code>(?-u:\B)</code> finally represents a problem. It can matches between <em>any</em> two
+bytes that are either both word bytes or non-word bytes. Since code units like
+<code>\xE2</code> and <code>\x98</code> (from the UTF-8 encoding of <code>☃</code>) are both non-word bytes,
+<code>(?-u:\B)</code> will match at the position between them.</li>
+</ul>
+<p>Thus, our approach of incrementing one codepoint at a time after seeing an
+empty match is flawed because <code>(?-u:\B)</code> can result in an empty match that
+splits a codepoint at a position past the starting point of a search. For
+example, searching <code>(?-u:\B)</code> on <code>a☃</code> would produce the following matches: <code>[2, 2]</code>, <code>[3, 3]</code> and <code>[4, 4]</code>. The positions at <code>0</code> and <code>1</code> don’t match because
+they correspond to word boundaries since <code>a</code> is an ASCII word byte.</p>
+<p>So what did the old regex crate do to avoid this? It banned <code>(?-u:\B)</code> from
+regexes that could match <code>&amp;str</code>. That might sound extreme, but a lot of other
+things were banned too. For example, all of <code>(?-u:.)</code>, <code>(?-u:[^a])</code> and
+<code>(?-u:\W)</code> can match invalid UTF-8 too, including individual code units with a
+codepoint. The key difference is that those expressions could never produce an
+empty match. That ban happens when translating an <code>Ast</code> to an <code>Hir</code>, because
+that process that reason about whether an <code>Hir</code> can produce <em>non-empty</em> matches
+at invalid UTF-8 boundaries. Bottom line though is that we side-stepped the
+<code>(?-u:\B)</code> issue by banning it.</p>
+<p>If banning <code>(?-u:\B)</code> were the only issue with the old regex crate’s approach,
+then I probably would have kept it. <code>\B</code> is rarely used, so it’s not such a big
+deal to have to work-around it. However, the problem with the above approach
+is that it doesn’t compose. The logic for avoiding splitting a codepoint only
+lived in the iterator, which means if anyone wants to implement their own
+iterator over regex matches, they have to deal with this extremely subtle edge
+case to get full correctness.</p>
+<p>Instead, in this crate, we take the approach of pushing this complexity down
+to the lowest layers of each regex engine. The approach is pretty simple:</p>
+<ul>
+<li>If this corner case doesn’t apply, don’t do anything. (For example, if UTF-8
+mode isn’t enabled or if the regex cannot match the empty string.)</li>
+<li>If an empty match is reported, explicitly check if it splits a codepoint.</li>
+<li>If it doesn’t, we’re done, return the match.</li>
+<li>If it does, then ignore the match and re-run the search.</li>
+<li>Repeat the above process until the end of the haystack is reached or a match
+is found that doesn’t split a codepoint or isn’t zero width.</li>
+</ul>
+<p>And that’s pretty much what this module provides. Every regex engine uses these
+methods in their lowest level public APIs, but just above the layer where
+their internal engine is used. That way, all regex engines can be arbitrarily
+composed without worrying about handling this case, and iterators don’t need to
+handle it explicitly.</p>
+<p>(It turns out that a new feature I added, support for changing the line
+terminator in a regex to any arbitrary byte, also provokes the above problem.
+Namely, the byte could be invalid UTF-8 or a UTF-8 continuation byte. So that
+support would need to be limited or banned when UTF-8 mode is enabled, just
+like we did for <code>(?-u:\B)</code>. But thankfully our more robust approach in this
+crate handles that case just fine too.)</p>
+</div></details><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.skip_splits.html" title="fn regex_automata::util::empty::skip_splits">skip_<wbr>splits</a><span title="Restricted Visibility">&nbsp;🔒</span> </div></li><li><div class="item-name"><a class="fn" href="fn.skip_splits_fwd.html" title="fn regex_automata::util::empty::skip_splits_fwd">skip_<wbr>splits_<wbr>fwd</a><span title="Restricted Visibility">&nbsp;🔒</span> </div></li><li><div class="item-name"><a class="fn" href="fn.skip_splits_rev.html" title="fn regex_automata::util::empty::skip_splits_rev">skip_<wbr>splits_<wbr>rev</a><span title="Restricted Visibility">&nbsp;🔒</span> </div></li></ul></section></div></main></body></html>

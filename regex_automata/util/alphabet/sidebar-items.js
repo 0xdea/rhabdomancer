@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["UnitKind"],"struct":["BitSet","ByteClassElementRanges","ByteClassElements","ByteClassIter","ByteClassRepresentatives","ByteClassSet","ByteClasses","ByteSet","ByteSetIter","ByteSetRangeIter","Unit"]};

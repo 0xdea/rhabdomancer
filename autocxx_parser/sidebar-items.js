@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AllowlistEntry","MultiBindingsErr","UnsafePolicy"],"mod":["config","directives","file_locations","multi_bindings","path","subclass_attrs"],"struct":["ExternCppType","IncludeCpp","IncludeCppConfig","MultiBindings","RustFun","RustPath","Subclass","SubclassAttrs"]};

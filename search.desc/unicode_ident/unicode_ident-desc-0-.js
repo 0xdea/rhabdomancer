@@ -1,0 +1,1 @@
+searchState.loadedDescShard("unicode_ident", 0, "github crates-io docs-rs\nReturns the argument unchanged.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nCalls <code>U::from(self)</code>.")

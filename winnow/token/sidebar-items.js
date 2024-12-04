@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["any","any_","literal","literal_","none_of","one_of","take","take_","take_till","take_till0_complete","take_till0_partial","take_till1_complete","take_till1_partial","take_till_m_n","take_until","take_until0_","take_until1_","take_until_m_n_","take_while","take_while0_","take_while1_","take_while_m_n_"]};

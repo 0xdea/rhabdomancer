@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["INIT","PRIME"],"struct":["Utf8BoundedEntry","Utf8BoundedMap","Utf8SuffixEntry","Utf8SuffixKey","Utf8SuffixMap"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Value"],"fn":["from_str","to_string","to_string_pretty"],"macro":["toml"],"mod":["de","edit","fmt","map","ser","table","value"],"struct":["Deserializer","Serializer","Spanned"],"type":["Table"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["InternalString","StringVisitor"],"type":["Inner"]};

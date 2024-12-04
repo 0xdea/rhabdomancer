@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["UNICODE_VERSION"],"enum":["GraphemeIncomplete"],"mod":["grapheme","sentence","tables","word"],"struct":["GraphemeCursor","GraphemeIndices","Graphemes","USentenceBoundIndices","USentenceBounds","UWordBoundIndices","UWordBounds","UnicodeSentences","UnicodeWordIndices","UnicodeWords"],"trait":["UnicodeSegmentation"]};

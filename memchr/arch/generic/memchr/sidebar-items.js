@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["count_byte_by_byte","fwd_byte_by_byte","rev_byte_by_byte","search_slice_with_raw"],"struct":["Iter","One","Three","Two"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":["ImplBox","ImplVec","RustType"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["Alphabetic_table","InCB_Extend_table"],"fn":["Alphabetic","InCB_Extend"]};

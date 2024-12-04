@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["LIMIT"],"enum":["StrContext","StrContextValue"],"fn":["check_recursion","new_input"],"struct":["ContextError","RecursionCheck"],"trait":["FromExternalError","Parser"],"type":["Input","PResult"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["sentence_cat_lookup","sentence_cat_table"],"enum":["SentenceCat"],"fn":["bsearch_range_value_table","sentence_category"]};

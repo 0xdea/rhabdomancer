@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["RegexSet","SetMatches","SetMatchesIntoIter","SetMatchesIter"]};

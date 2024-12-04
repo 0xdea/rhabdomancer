@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["box_type","generate","generate_builtin_rules","generate_enum","generate_expr","generate_expr_atomic","generate_include","generate_patterns","generate_rule","generate_skip","option_type","result_type"],"struct":["QuoteOption"]};

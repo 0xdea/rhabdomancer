@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["count_raw","memchr","memchr2","memchr2_iter","memchr2_raw","memchr3","memchr3_iter","memchr3_raw","memchr_iter","memchr_raw","memrchr","memrchr2","memrchr2_iter","memrchr2_raw","memrchr3","memrchr3_iter","memrchr3_raw","memrchr_iter","memrchr_raw"],"struct":["Memchr","Memchr2","Memchr3"]};

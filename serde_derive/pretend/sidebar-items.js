@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["pretend_fields_used","pretend_fields_used_enum","pretend_fields_used_struct","pretend_fields_used_struct_packed","pretend_used","pretend_variants_used"]};

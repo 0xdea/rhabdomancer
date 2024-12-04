@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Anchored","MatchErrorKind","MatchKind"],"struct":["HalfMatch","Input","Match","MatchError","PatternSet","PatternSetInsertError","PatternSetIter","Span"]};

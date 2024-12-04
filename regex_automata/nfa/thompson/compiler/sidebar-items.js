@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["WhichCaptures"],"struct":["Compiler","Config","ThompsonRef","Utf8Compiler","Utf8LastTransition","Utf8Node","Utf8State"]};

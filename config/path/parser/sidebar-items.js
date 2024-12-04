@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["from_str","ident","integer","postfix","raw_ident","to_error_kind"]};

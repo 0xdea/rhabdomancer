@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["NUM_BUCKETS"],"struct":["RabinKarp"],"type":["Hash"]};

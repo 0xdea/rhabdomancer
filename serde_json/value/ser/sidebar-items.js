@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SerializeMap"],"fn":["float_key_must_be_finite","key_must_be_a_string"],"struct":["MapKeySerializer","SerializeStructVariant","SerializeTupleVariant","SerializeVec","Serializer"]};

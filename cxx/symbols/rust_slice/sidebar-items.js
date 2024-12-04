@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["slice_len","slice_new","slice_ptr"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FINAL","ROOT"],"enum":["SplitRange"],"fn":["intersects"],"struct":["NextDupe","NextInsert","NextIter","RangeTrie","Split","State","Transition"]};

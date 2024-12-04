@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["age","case_folding_simple","general_category","grapheme_cluster_break","perl_word","property_bool","property_names","property_values","script","script_extension","sentence_break","word_break"]};

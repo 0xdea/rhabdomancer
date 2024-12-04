@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="The number of stacks we use inside of the pool. These are only used for non-owners. That is, these represent the “slow” path."><title>MAX_POOL_STACKS in regex_automata::util::pool::inner - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc constant"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../../regex_automata/index.html">regex_<wbr>automata</a><span class="version">0.4.9</span></h2></div><div class="sidebar-elems"><h2><a href="index.html">In regex_<wbr>automata::<wbr>util::<wbr>pool::<wbr>inner</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Constant <a href="../../../index.html">regex_automata</a>::<wbr><a href="../../index.html">util</a>::<wbr><a href="../index.html">pool</a>::<wbr><a href="index.html">inner</a>::<wbr><a class="constant" href="#">MAX_POOL_STACKS</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../../../src/regex_automata/util/pool.rs.html#331">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>const MAX_POOL_STACKS: <a class="primitive" href="https://doc.rust-lang.org/1.82.0/std/primitive.usize.html">usize</a> = 8;</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>The number of stacks we use inside of the pool. These are only used for
+non-owners. That is, these represent the “slow” path.</p>
+<p>In the original implementation of this pool, we only used a single
+stack. While this might be okay for a couple threads, the prevalence of
+32, 64 and even 128 core CPUs has made it untenable. The contention
+such an environment introduces when threads are doing a lot of searches
+on short haystacks (a not uncommon use case) is palpable and leads to
+huge slowdowns.</p>
+<p>This constant reflects a change from using one stack to the number of
+stacks that this constant is set to. The stack for a particular thread
+is simply chosen by <code>thread_id % MAX_POOL_STACKS</code>. The idea behind
+this setup is that there should be a good chance that accesses to the
+pool will be distributed over several stacks instead of all of them
+converging to one.</p>
+<p>This is not a particularly smart or dynamic strategy. Fixing this to a
+specific number has at least two downsides. First is that it will help,
+say, an 8 core CPU more than it will a 128 core CPU. (But, crucially,
+it will still help the 128 core case.) Second is that this may wind
+up being a little wasteful with respect to memory usage. Namely, if a
+regex is used on one thread and then moved to another thread, then it
+could result in creating a new copy of the data in the pool even though
+only one is actually needed.</p>
+<p>And that memory usage bit is why this is set to 8 and not, say, 64.
+Keeping it at 8 limits, to an extent, how much unnecessary memory can
+be allocated.</p>
+<p>In an ideal world, we’d be able to have something like this:</p>
+<ul>
+<li>Grow the number of stacks as the number of concurrent callers
+increases. I spent a little time trying this, but even just adding an
+atomic addition/subtraction for each pop/push for tracking concurrent
+callers led to a big perf hit. Since even more work would seemingly be
+required than just an addition/subtraction, I abandoned this approach.</li>
+<li>The maximum amount of memory used should scale with respect to the
+number of concurrent callers and <em>not</em> the total number of existing
+threads. This is primarily why the <code>thread_local</code> crate isn’t used, as
+as some environments spin up a lot of threads. This led to multiple
+reports of extremely high memory usage (often described as memory
+leaks).</li>
+<li>Even more ideally, the pool should contract in size. That is, it
+should grow with bursts and then shrink. But this is a pretty thorny
+issue to tackle and it might be better to just not.</li>
+<li>It would be nice to explore the use of, say, a lock-free stack
+instead of using a mutex to guard a <code>Vec</code> that is ultimately just
+treated as a stack. The main thing preventing me from exploring this
+is the ABA problem. The <code>crossbeam</code> crate has tools for dealing with
+this sort of problem (via its epoch based memory reclamation strategy),
+but I can’t justify bringing in all of <code>crossbeam</code> as a dependency of
+<code>regex</code> for this.</li>
+</ul>
+<p>See this issue for more context and discussion:
+https://github.com/rust-lang/regex/issues/934</p>
+</div></details></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["unique_ptr_std_string_drop","unique_ptr_std_string_get","unique_ptr_std_string_null","unique_ptr_std_string_raw","unique_ptr_std_string_release"],"struct":["UniquePtr"],"trait":["UniquePtrTarget"]};

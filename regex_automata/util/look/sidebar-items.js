@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Look"],"mod":["is_word_char"],"struct":["LookMatcher","LookSet","LookSetIter","UnicodeWordBoundaryError"]};

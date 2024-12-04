@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="A library for safe, in-place construction of Rust (and C++!) objects."><title>moveit - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="moveit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../moveit/index.html">moveit</a><span class="version">0.6.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#traits">Traits</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">moveit</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/moveit/lib.rs.html#15-168">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A library for safe, in-place construction of Rust (and C++!) objects.</p>
+<h2 id="how-it-works"><a class="doc-anchor" href="#how-it-works">§</a>How It Works</h2>
+<p><code>moveit</code> revolves around <code>unsafe trait</code>s that impose additional guarantees
+on <code>!Unpin</code> types, such that they can be moved in the C++ sense. There are
+two senses of “move” frequently used:</p>
+<ul>
+<li>The Rust sense, which is a blind memcpy and analogous-ish to the
+C++ “std::is_trivially_moveable` type-trait. Rust moves also render the
+moved-from object inaccessible.</li>
+<li>The C++ sense, where a move is really like a mutating <code>Clone</code> operation,
+which leave the moved-from value accessible to be destroyed at the end of
+the scope.</li>
+</ul>
+<p>C++ also has <em>constructors</em>, which are special functions that produce a new
+value in a particular location. In particular, C++ constructors may assume
+that the address of <code>*this</code> will not change; all C++ objects are effectively
+pinned and new objects must be constructed using copy or move constructors.</p>
+<p>The <a href="new/trait.New.html" title="trait moveit::new::New"><code>New</code></a>, <a href="new/copy_new/trait.CopyNew.html" title="trait moveit::new::copy_new::CopyNew"><code>CopyNew</code></a>, and <a href="new/move_new/trait.MoveNew.html" title="trait moveit::new::move_new::MoveNew"><code>MoveNew</code></a> traits bring these concepts
+into Rust. A <a href="new/trait.New.html" title="trait moveit::new::New"><code>New</code></a> is like a nilary <a href="https://doc.rust-lang.org/1.82.0/core/ops/function/trait.FnOnce.html" title="trait core::ops::function::FnOnce"><code>FnOnce</code></a>, except that instead of
+returning its result, it writes it to a <code>Pin&lt;&amp;mut MaybeUninit&lt;T&gt;&gt;</code>, which is
+in the “memory may be repurposed” state described in the
+<a href="https://doc.rust-lang.org/std/pin/index.html#drop-guarantee"><code>Pin</code> documentation</a> (i.e., either it is freshly allocated or the
+destructor was recently run). This allows a <a href="new/trait.New.html" title="trait moveit::new::New"><code>New</code></a> to rely on the
+pointer’s address remaining stable, much like <code>*this</code> in C++.</p>
+<p>Types that implement <a href="new/copy_new/trait.CopyNew.html" title="trait moveit::new::copy_new::CopyNew"><code>CopyNew</code></a> may be <em>copy-constructed</em>: given any
+pointer to <code>T: CopyNew</code>, we can generate a constructor that constructs a
+new, identical <code>T</code> at a designated location. <a href="new/move_new/trait.MoveNew.html" title="trait moveit::new::move_new::MoveNew"><code>MoveNew</code></a> types may be
+<em>move-constructed</em>: given an <em>owning</em> pointer (see <a href="move_ref/trait.DerefMove.html" title="trait moveit::move_ref::DerefMove"><code>DerefMove</code></a>) to <code>T</code>,
+we can generate a similar constructor, except that it also destroys the
+<code>T</code> and the owning pointer’s storage.</p>
+<p>None of this violates the existing <code>Pin</code> guarantees: moving out of a
+<code>Pin&lt;P&gt;</code> does not perform a move in the Rust sense, but rather in the C++
+sense: it mutates through the pinned pointer in a safe manner to construct
+a new <code>P::Target</code>, and then destroys the pointer and its contents.</p>
+<p>In general, move-constructible types are going to want to be <code>!Unpin</code> so
+that they can be self-referential. Self-referential types are one of the
+primary motivations for move constructors.</p>
+<h2 id="constructors"><a class="doc-anchor" href="#constructors">§</a>Constructors</h2>
+<p>A constructor is any type that implements <a href="new/trait.New.html" title="trait moveit::new::New"><code>New</code></a>. Constructors are like
+closures that have guaranteed RVO, which can be used to construct a
+self-referential type in-place. To use the example from the <code>Pin&lt;T&gt;</code> docs:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::marker::PhantomPinned;
+<span class="kw">use </span>std::mem::MaybeUninit;
+<span class="kw">use </span>std::pin::Pin;
+<span class="kw">use </span>std::ptr;
+<span class="kw">use </span>std::ptr::NonNull;
+
+<span class="kw">use </span>moveit::new;
+<span class="kw">use </span>moveit::new::New;
+<span class="kw">use </span>moveit::moveit;
+
+<span class="comment">// This is a self-referential struct because the slice field points to the
+// data field. We cannot inform the compiler about that with a normal
+// reference, as this pattern cannot be described with the usual borrowing
+// rules. Instead we use a raw pointer, though one which is known not to be
+// null, as we know it's pointing at the string.
+</span><span class="kw">struct </span>Unmovable {
+  data: String,
+  slice: NonNull&lt;String&gt;,
+  _pin: PhantomPinned,
+}
+
+<span class="kw">impl </span>Unmovable {
+  <span class="comment">// Defer construction until the final location is known.
+  </span><span class="kw">fn </span>new(data: String) -&gt; <span class="kw">impl </span>New&lt;Output = <span class="self">Self</span>&gt; {
+    new::of(Unmovable {
+      data,
+      <span class="comment">// We only create the pointer once the data is in place
+      // otherwise it will have already moved before we even started.
+      </span>slice: NonNull::dangling(),
+      _pin: PhantomPinned,
+    }).with(|this| <span class="kw">unsafe </span>{
+      <span class="kw">let </span>this = this.get_unchecked_mut();
+      this.slice = NonNull::from(<span class="kw-2">&amp;</span>this.data);
+    })
+     
+    <span class="comment">// It is also possible to use other `new::` helpers, such as
+    // `new::by` and `new::by_raw`, to configure construction behavior.
+  </span>}
+}
+
+<span class="comment">// The constructor can't be used directly, and needs to be emplaced.
+</span><span class="macro">moveit!</span> {
+  <span class="kw">let </span>unmoved = Unmovable::new(<span class="string">"hello"</span>.to_string());
+}
+<span class="comment">// The pointer should point to the correct location,
+// so long as the struct hasn't moved.
+// Meanwhile, we are free to move the pointer around.
+</span><span class="kw">let </span><span class="kw-2">mut </span>still_unmoved = unmoved;
+<span class="macro">assert_eq!</span>(still_unmoved.slice, NonNull::from(<span class="kw-2">&amp;</span>still_unmoved.data));
+
+<span class="comment">// Since our type doesn't implement Unpin, this will fail to compile:
+// let mut new_unmoved = Unmovable::new("world".to_string());
+// std::mem::swap(&amp;mut *still_unmoved, &amp;mut *new_unmoved);
+
+// However, we can implement `MoveNew` to allow it to be "moved" again.</span></code></pre></div>
+<p>The <a href="new/index.html" title="mod moveit::new"><code>new</code></a> module provides various helpers for making constructors. As a
+rule, functions which, in Rust, would normally construct and return a value
+should return <code>impl New</code> instead. This is analogous to have <code>async fn</code>s and
+<code>.iter()</code> functions work.</p>
+<h2 id="emplacement"><a class="doc-anchor" href="#emplacement">§</a>Emplacement</h2>
+<p>The example above makes use of the <a href="macro.moveit.html" title="macro moveit::moveit"><code>moveit!()</code></a> macro, one of many ways to
+turn a constructor into a value. <code>moveit</code> gives you two choices for running
+a constructor:</p>
+<ul>
+<li>On the stack, using the <a href="move_ref/struct.MoveRef.html" title="struct moveit::move_ref::MoveRef"><code>MoveRef</code></a> type (this is what <a href="macro.moveit.html" title="macro moveit::moveit"><code>moveit!()</code></a>
+generates).</li>
+<li>On the heap, using the extension methods from the <a href="new/trait.Emplace.html" title="trait moveit::new::Emplace"><code>Emplace</code></a> trait.</li>
+</ul>
+<p>For example, we could have placed the above in a <code>Box</code> by writing
+<code>Box::emplace(Unmovable::new())</code>.</p>
+</div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.AsMove"><code>pub use crate::move_ref::<a class="trait" href="move_ref/trait.AsMove.html" title="trait moveit::move_ref::AsMove">AsMove</a>;</code></div></li><li><div class="item-name" id="reexport.DerefMove"><code>pub use crate::move_ref::<a class="trait" href="move_ref/trait.DerefMove.html" title="trait moveit::move_ref::DerefMove">DerefMove</a>;</code></div></li><li><div class="item-name" id="reexport.MoveRef"><code>pub use crate::move_ref::<a class="struct" href="move_ref/struct.MoveRef.html" title="struct moveit::move_ref::MoveRef">MoveRef</a>;</code></div></li><li><div class="item-name" id="reexport.CopyNew"><code>pub use crate::new::<a class="trait" href="new/copy_new/trait.CopyNew.html" title="trait moveit::new::copy_new::CopyNew">CopyNew</a>;</code></div></li><li><div class="item-name" id="reexport.Emplace"><code>pub use crate::new::<a class="trait" href="new/trait.Emplace.html" title="trait moveit::new::Emplace">Emplace</a>;</code></div></li><li><div class="item-name" id="reexport.MoveNew"><code>pub use crate::new::<a class="trait" href="new/move_new/trait.MoveNew.html" title="trait moveit::new::move_new::MoveNew">MoveNew</a>;</code></div></li><li><div class="item-name" id="reexport.New"><code>pub use crate::new::<a class="trait" href="new/trait.New.html" title="trait moveit::new::New">New</a>;</code></div></li><li><div class="item-name" id="reexport.TryNew"><code>pub use crate::new::<a class="trait" href="new/trait.TryNew.html" title="trait moveit::new::TryNew">TryNew</a>;</code></div></li><li><div class="item-name" id="reexport.Slot"><code>pub use crate::slot::<a class="struct" href="slot/struct.Slot.html" title="struct moveit::slot::Slot">Slot</a>;</code></div></li></ul><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="alloc_support/index.html" title="mod moveit::alloc_support">alloc_<wbr>support</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Support for the <code>alloc</code> crate, when available.</div></li><li><div class="item-name"><a class="mod" href="cxx_support/index.html" title="mod moveit::cxx_support">cxx_<wbr>support</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Support for <code>cxx</code> types.</div></li><li><div class="item-name"><a class="mod" href="drop_flag/index.html" title="mod moveit::drop_flag">drop_<wbr>flag</a></div><div class="desc docblock-short">Drop flags.</div></li><li><div class="item-name"><a class="mod" href="move_ref/index.html" title="mod moveit::move_ref">move_<wbr>ref</a></div><div class="desc docblock-short">Move references.</div></li><li><div class="item-name"><a class="mod" href="new/index.html" title="mod moveit::new">new</a></div><div class="desc docblock-short">In-place constructors.</div></li><li><div class="item-name"><a class="mod" href="slot/index.html" title="mod moveit::slot">slot</a></div><div class="desc docblock-short">Explicit stack slots, which can be used for stack emplacement.</div></li></ul><h2 id="macros" class="section-header">Macros<a href="#macros" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="macro" href="macro.moveit.html" title="macro moveit::moveit">moveit</a></div><div class="desc docblock-short">Performs an emplacement operation.</div></li><li><div class="item-name"><a class="macro" href="macro.slot.html" title="macro moveit::slot">slot</a></div><div class="desc docblock-short">Constructs a new <a href="slot/struct.Slot.html" title="struct moveit::slot::Slot"><code>Slot</code></a>.</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.MakeCppStorage.html" title="trait moveit::MakeCppStorage">Make<wbr>CppStorage</a></div><div class="desc docblock-short">A type which has the ability to create heap storage space
+for itself in C++, without initializing that storage.</div></li></ul></section></div></main></body></html>

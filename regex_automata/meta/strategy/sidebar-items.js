@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["copy_match_to_slots","new"],"struct":["Core","Pre","ReverseAnchored","ReverseInner","ReverseSuffix"],"trait":["Strategy"]};

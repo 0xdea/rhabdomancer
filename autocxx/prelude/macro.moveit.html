@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Performs an emplacement operation."><title>moveit in autocxx::prelude - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="autocxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../autocxx/index.html">autocxx</a><span class="version">0.27.0</span></h2></div><div class="sidebar-elems"><h2><a href="index.html">In autocxx::<wbr>prelude</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="../index.html">autocxx</a>::<wbr><a href="index.html">prelude</a>::<wbr><a class="macro" href="#">moveit</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../src/moveit/move_ref.rs.html#526">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> moveit {
+    (<span class="kw">let </span><span class="macro-nonterminal">$name</span>:ident $(: <span class="macro-nonterminal">$ty</span>:ty)<span class="question-mark">? </span>= <span class="kw-2">&amp;</span><span class="kw">move </span><span class="kw-2">*</span><span class="macro-nonterminal">$expr</span>:expr $(; $(<span class="macro-nonterminal">$rest</span>:tt)<span class="kw-2">*</span>)<span class="question-mark">?</span>) =&gt; { ... };
+    (<span class="kw">let </span><span class="kw-2">mut </span><span class="macro-nonterminal">$name</span>:ident $(: <span class="macro-nonterminal">$ty</span>:ty)<span class="question-mark">? </span>= <span class="kw-2">&amp;</span><span class="kw">move </span><span class="kw-2">*</span><span class="macro-nonterminal">$expr</span>:expr $(; $(<span class="macro-nonterminal">$rest</span>:tt)<span class="kw-2">*</span>)<span class="question-mark">?</span>) =&gt; { ... };
+    (<span class="kw">let </span><span class="macro-nonterminal">$name</span>:ident $(: <span class="macro-nonterminal">$ty</span>:ty)<span class="question-mark">? </span>= <span class="kw-2">&amp;</span><span class="kw">move </span><span class="macro-nonterminal">$expr</span>:expr $(; $(<span class="macro-nonterminal">$rest</span>:tt)<span class="kw-2">*</span>)<span class="question-mark">?</span>) =&gt; { ... };
+    (<span class="kw">let </span><span class="kw-2">mut </span><span class="macro-nonterminal">$name</span>:ident $(: <span class="macro-nonterminal">$ty</span>:ty)<span class="question-mark">? </span>= <span class="kw-2">&amp;</span><span class="kw">move </span><span class="macro-nonterminal">$expr</span>:expr $(; $(<span class="macro-nonterminal">$rest</span>:tt)<span class="kw-2">*</span>)<span class="question-mark">?</span>) =&gt; { ... };
+    (<span class="kw">let </span><span class="macro-nonterminal">$name</span>:ident $(: <span class="macro-nonterminal">$ty</span>:ty)<span class="question-mark">? </span>= <span class="macro-nonterminal">$expr</span>:expr $(; $(<span class="macro-nonterminal">$rest</span>:tt)<span class="kw-2">*</span>)<span class="question-mark">?</span>) =&gt; { ... };
+    (<span class="kw">let </span><span class="kw-2">mut </span><span class="macro-nonterminal">$name</span>:ident $(: <span class="macro-nonterminal">$ty</span>:ty)<span class="question-mark">? </span>= <span class="macro-nonterminal">$expr</span>:expr $(; $(<span class="macro-nonterminal">$rest</span>:tt)<span class="kw-2">*</span>)<span class="question-mark">?</span>) =&gt; { ... };
+    ($(;)<span class="question-mark">?</span>) =&gt; { ... };
+    (<span class="kw-2">&amp;</span><span class="kw">move </span><span class="kw-2">*</span><span class="macro-nonterminal">$expr</span>:expr) =&gt; { ... };
+    (<span class="kw-2">&amp;</span><span class="kw">move </span><span class="macro-nonterminal">$expr</span>:expr) =&gt; { ... };
+    (<span class="macro-nonterminal">$expr</span>:expr) =&gt; { ... };
+    (@<span class="kw">move </span>$((<span class="macro-nonterminal">$</span><span class="kw-2">mut</span>:<span class="macro-nonterminal">tt</span>))<span class="question-mark">? </span><span class="macro-nonterminal">$name</span>:ident, $(<span class="macro-nonterminal">$ty</span>:ty)<span class="question-mark">?</span>, <span class="macro-nonterminal">$expr</span>:expr) =&gt; { ... };
+    (@put $((<span class="macro-nonterminal">$</span><span class="kw-2">mut</span>:<span class="macro-nonterminal">tt</span>))<span class="question-mark">? </span><span class="macro-nonterminal">$name</span>:ident, $(<span class="macro-nonterminal">$ty</span>:ty)<span class="question-mark">?</span>, <span class="macro-nonterminal">$expr</span>:expr) =&gt; { ... };
+    (@emplace $((<span class="macro-nonterminal">$</span><span class="kw-2">mut</span>:<span class="macro-nonterminal">tt</span>))<span class="question-mark">? </span><span class="macro-nonterminal">$name</span>:ident, $(<span class="macro-nonterminal">$ty</span>:ty)<span class="question-mark">?</span>, <span class="macro-nonterminal">$expr</span>:expr) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Performs an emplacement operation.</p>
+<p>This macro allows for three exotic types of <code>let</code> bindings:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>bx = Box::new(<span class="number">42</span>);
+
+<span class="macro">moveit!</span> {
+  <span class="comment">// Use a `New` to construct a new value in place on the stack. This
+  // produces a value of type `Pin&lt;MoveRef&lt;_&gt;&gt;`.
+  </span><span class="kw">let </span>x = new::default::&lt;i32&gt;();
+   
+  <span class="comment">// Move out of an existing `DerefMove` type, such as a `Box`. This has
+  // type `MoveRef&lt;_&gt;`, but can be pinned using `MoveRef::into_pin()`.
+  </span><span class="kw">let </span>y = <span class="kw-2">&amp;</span><span class="kw">move </span><span class="kw-2">*</span>bx;
+   
+  <span class="comment">// Create a `MoveRef` of an existing type on the stack. This also has
+  // type `MoveRef&lt;_&gt;`.
+  </span><span class="kw">let </span>z = <span class="kw-2">&amp;</span><span class="kw">move </span>y;
+}</code></pre></div>
+<p>All three <code>lets</code>, including in-place construction, pin to the stack.
+Consider using something like <a href="trait.Emplace.html#method.emplace" title="associated function autocxx::prelude::Emplace::emplace"><code>Box::emplace()</code></a> to perform construction on
+the heap.</p>
+<p>This macro also has <em>temporary</em> forms, where rather than creating a binding,
+a temporary (which cannot outlive its complete expression) is created:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>do_thing(x: Pin&lt;MoveRef&lt;i32&gt;&gt;) {
+  <span class="comment">// ...
+</span>}
+
+do_thing(<span class="macro">moveit!</span>(new::of(<span class="number">42</span>)));</code></pre></div>
+<p>Note that these bindings cannot outlive the subexpression:</p>
+
+<div class="example-wrap compile_fail"><a href="#" class="tooltip" title="This example deliberately fails to compile">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">let </span>x = <span class="macro">moveit!</span>(new::of(<span class="number">42</span>));
+<span class="kw">let </span>y = <span class="kw-2">*</span>x;  <span class="comment">// Borrow checker error.</span></code></pre></div>
+</div></details></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FileFormat"],"fn":["all_extensions"],"mod":["ini","json","json5","ron","toml","yaml"]};

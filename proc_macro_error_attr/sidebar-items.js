@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"attr":["proc_macro_error"],"fn":["detect_proc_macro_hack","gen_body","impl_proc_macro_error","is_proc_macro"],"mod":["parse","settings"],"struct":["Error"],"type":["Result"]};

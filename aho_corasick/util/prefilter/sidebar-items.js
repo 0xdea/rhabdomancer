@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Candidate"],"fn":["freq_rank","opposite_ascii_case"],"struct":["Builder","Memmem","MemmemBuilder","Packed","Prefilter","RareByteOffset","RareByteOffsets","RareBytesBuilder","RareBytesOne","RareBytesThree","RareBytesTwo","StartBytesBuilder","StartBytesOne","StartBytesThree","StartBytesTwo"],"trait":["PrefilterI"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["exception","rust_slice","rust_str","rust_string","rust_vec"]};

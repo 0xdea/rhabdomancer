@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["derive","fallback","fields_pat","from_initializer","impl_enum","impl_struct","try_expand","type_is_option","type_parameter_of_option","unoptional_type","use_as_display"]};

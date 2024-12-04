@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["trivial_copy","trivial_move"]};

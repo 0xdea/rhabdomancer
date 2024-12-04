@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ClassState","GroupState","Primitive"],"fn":["is_capture_char","is_hex","specialize_err"],"struct":["NestLimiter","Parser","ParserBuilder","ParserI"],"type":["Result"]};

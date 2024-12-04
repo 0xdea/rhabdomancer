@@ -1,0 +1,1 @@
+searchState.loadedDescShard("autocxx_macro", 0, "Attribute which should never be encountered in real life. …\nAttribute to state that a Rust function is to be exported …\nAttribute to state that a Rust type is to be exported to …\nImplementation of the <code>include_cpp</code> macro. See documentation …\nAttribute to state that a Rust <code>struct</code> is a C++ subclass. …")

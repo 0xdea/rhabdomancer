@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Reference"],"fn":["as_str","build_hex_table","decode_four_hex_digits","decode_hex_val_slow","error","ignore_escape","is_escape","next_or_eof","parse_escape","parse_unicode_escape","peek_or_eof","push_wtf8_codepoint"],"mod":["private"],"static":["HEX0","HEX1"],"struct":["IoRead","Position","SliceRead","StrRead"],"trait":["Fused","Read"]};

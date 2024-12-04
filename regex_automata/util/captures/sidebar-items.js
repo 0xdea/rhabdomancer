@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["GroupInfoErrorKind"],"struct":["Captures","CapturesDebugMap","CapturesPatternIter","GroupInfo","GroupInfoAllNames","GroupInfoError","GroupInfoInner","GroupInfoPatternNames"],"type":["CaptureNameMap"]};

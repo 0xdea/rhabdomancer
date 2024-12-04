@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Allowlist","AllowlistEntry","AllowlistErr","UnsafePolicy"],"struct":["ConcretesMap","ExternCppType","ExternCppTypeMap","IncludeCppConfig","RustFun","Subclass"]};

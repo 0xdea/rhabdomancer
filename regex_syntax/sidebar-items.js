@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["escape","escape_into","is_escapeable_character","is_meta_character","is_word_byte","is_word_character","parse","try_is_word_character"],"mod":["ast","debug","either","error","hir","parser","rank","unicode","unicode_tables","utf8"],"struct":["Parser","ParserBuilder","UnicodeWordError"]};

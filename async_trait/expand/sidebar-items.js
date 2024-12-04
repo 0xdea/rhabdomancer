@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Context"],"fn":["contains_associated_type_impl_trait","expand","lint_suppress_with_body","lint_suppress_without_body","positional_arg","transform_block","transform_sig","where_clause_or_default"]};

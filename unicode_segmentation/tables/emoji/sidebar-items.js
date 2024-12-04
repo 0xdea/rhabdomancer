@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["emoji_cat_lookup","emoji_cat_table"],"enum":["EmojiCat"],"fn":["bsearch_range_value_table","emoji_category"]};

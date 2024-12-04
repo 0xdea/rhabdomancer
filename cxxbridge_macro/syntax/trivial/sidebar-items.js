@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["TrivialReason"],"fn":["as_what","required_trivial_reasons"]};

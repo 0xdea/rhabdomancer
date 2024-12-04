@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["LIMITS"],"enum":["Sign"],"fn":["expr_to_discriminant","insert","parse_int_suffix"],"struct":["Discriminant","DiscriminantSet","Limits"]};

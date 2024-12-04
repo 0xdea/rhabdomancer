@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["slice_assume_init_mut","slice_assume_init_ref","wrap_add","wrap_sub"],"mod":["behavior","error","range"],"struct":["ArrayDeque","CapacityError","Drain","IntoIter","Iter","IterMut"],"trait":["RangeArgument"]};

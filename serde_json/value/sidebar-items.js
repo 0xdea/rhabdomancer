@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Value"],"fn":["from_value","parse_index","to_value"],"mod":["de","from","index","partial_eq","ser"],"struct":["Number","Serializer"],"trait":["Index"]};

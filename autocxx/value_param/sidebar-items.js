@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["as_copy","as_mov","as_new"],"trait":["ValueParam"]};

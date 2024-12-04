@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FormatExtendType","RegionalState","UWordBoundsState"],"fn":["has_alphanumeric","is_emoji","new_unicode_word_indices","new_unicode_words","new_word_bound_indices","new_word_bounds"],"struct":["UWordBoundIndices","UWordBounds","UnicodeWordIndices","UnicodeWords"]};

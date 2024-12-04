@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CHUNKS"],"enum":["Error"],"fn":["compress_postfix_leaves","compress_postfix_mid"],"struct":["TrieSetOwned"],"type":["Result"]};

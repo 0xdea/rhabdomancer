@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["BacktraceStatus"],"fn":["_assert_send_sync"],"macro":["backtrace","backtrace_if_absent","impl_backtrace"],"struct":["Backtrace"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["string_capacity","string_clone","string_drop","string_from_utf16","string_from_utf16_lossy","string_from_utf8","string_from_utf8_lossy","string_len","string_new","string_ptr","string_reserve_additional","string_reserve_total"]};

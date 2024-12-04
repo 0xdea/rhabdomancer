@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Fragment"],"macro":["quote_block","quote_expr"],"struct":["Expr","Match","Stmts"]};

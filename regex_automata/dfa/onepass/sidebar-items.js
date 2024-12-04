@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["BuildErrorKind"],"struct":["BuildError","Builder","Cache","Config","DFA","Epsilons","InternalBuilder","PatternEpsilons","Slots","SlotsIter","SparseTransitionIter","Transition"]};

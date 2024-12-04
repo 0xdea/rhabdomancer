@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DOUBLE_BIAS","DOUBLE_EXPONENT_BITS","DOUBLE_MANTISSA_BITS","DOUBLE_POW5_BITCOUNT","DOUBLE_POW5_INV_BITCOUNT"],"fn":["d2d","decimal_length17"],"struct":["FloatingDecimal64"]};

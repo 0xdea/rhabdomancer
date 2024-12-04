@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["ident_fragment_display"],"trait":["IdentFragment"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AhoCorasickKind"],"fn":["enforce_anchored_consistency"],"struct":["AhoCorasick","AhoCorasickBuilder","FindIter","FindOverlappingIter","StreamFindIter"],"trait":["AcAutomaton"]};

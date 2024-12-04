@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CXXBRIDGE"],"fn":["c_trampoline","extern_fn","operator","r_trampoline"],"macro":["join"]};

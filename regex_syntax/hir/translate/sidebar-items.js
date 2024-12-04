@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["HirFrame"],"fn":["ascii_class","ascii_class_as_chars","hir_ascii_class_bytes"],"struct":["Flags","Translator","TranslatorBuilder","TranslatorI"],"type":["Result"]};

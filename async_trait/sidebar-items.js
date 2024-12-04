@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"attr":["async_trait"],"mod":["args","bound","expand","lifetime","parse","receiver","verbatim"]};

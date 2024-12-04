@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["GraphemeIncomplete","GraphemeState","PairResult"],"fn":["check_pair","new_grapheme_indices","new_graphemes"],"struct":["GraphemeCursor","GraphemeIndices","Graphemes"]};

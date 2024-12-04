@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["moveit","slot"],"mod":["alloc_support","cxx_support","drop_flag","move_ref","new","slot"],"trait":["MakeCppStorage"]};

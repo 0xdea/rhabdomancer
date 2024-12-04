@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Mut","Own","Ref"],"trait":["CastTo"]};

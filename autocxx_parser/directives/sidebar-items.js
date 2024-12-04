@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["allowlist_err_to_syn_err","get_directives"],"static":["DIRECTIVES"],"struct":["BoolFlag","Concrete","DirectivesMap","ExternCppType","ExternRustFun","Generate","GenerateAll","GenerateNs","Inclusion","ModName","RustType","Safety","StringList","Subclass"],"trait":["Directive"]};

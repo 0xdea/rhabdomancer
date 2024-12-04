@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["INFINITY","NAN","NEG_INFINITY"],"struct":["Buffer"],"trait":["Float","Sealed"]};

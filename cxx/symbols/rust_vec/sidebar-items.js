@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["rust_vec_shims","rust_vec_shims_for_primitive"]};

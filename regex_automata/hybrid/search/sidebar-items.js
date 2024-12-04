@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["eoi_fwd","eoi_rev","find_fwd","find_fwd_imp","find_overlapping_fwd","find_overlapping_fwd_imp","find_overlapping_rev","find_rev","find_rev_imp","gave_up","init_fwd","init_rev","prefilter_restart"]};

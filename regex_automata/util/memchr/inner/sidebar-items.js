@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["memchr","memchr2","memchr3","memrchr","memrchr2","memrchr3"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["do_alloc"],"struct":["Global"],"trait":["Allocator"]};

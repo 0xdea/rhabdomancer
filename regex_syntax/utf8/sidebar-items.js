@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MAX_UTF8_BYTES"],"enum":["Utf8Sequence"],"fn":["max_scalar_value"],"struct":["ScalarRange","Utf8Range","Utf8Sequences"]};

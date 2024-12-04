@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["new_sentence_bound_indices","new_sentence_bounds","new_unicode_sentences"],"mod":["fwd"],"struct":["USentenceBoundIndices","USentenceBounds","UnicodeSentences"]};

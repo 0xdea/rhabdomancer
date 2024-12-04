@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Aquamarine is a procedural macro extension for rustdoc, that aims to improve the visual component of Rust documentation through use of the mermaid.js diagrams."><title>aquamarine - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="aquamarine" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../aquamarine/index.html">aquamarine</a><span class="version">0.1.12</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#modules">Modules</a></li><li><a href="#functions">Functions</a></li><li><a href="#attributes">Attribute Macros</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">aquamarine</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/aquamarine/lib.rs.html#1-109">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Aquamarine is a procedural macro extension for <a href="https://doc.rust-lang.org/rustdoc/what-is-rustdoc.html">rustdoc</a>,
+that aims to improve the visual component of Rust documentation through use of the <a href="https://mermaid-js.github.io/mermaid/#/">mermaid.js</a> diagrams.</p>
+<p><code>#[aquamarine]</code> macro works through embedding the <a href="https://github.com/mermaid-js/mermaid">mermaid.js</a> into the generated rustdoc HTML page, modifying the doc comment attributes.</p>
+<p>To inline a diagram into the documentation, use the <code>mermaid</code> snippet in a doc-string:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[cfg_attr(doc, aquamarine)]
+</span><span class="doccomment">/// ```mermaid
+/// graph LR
+///     s([Source]) --&gt; a[[aquamarine]]
+///     r[[rustdoc]] --&gt; f([Docs w/ Mermaid!])
+///     subgraph rustc[Rust Compiler]
+///     a -. inject mermaid.js .-&gt; r
+///     end
+/// ```
+</span><span class="kw">pub fn </span>example() {}</code></pre></div>
+<p>The diagram will appear in place of the <code>mermaid</code> code block, preserving all the comments around it.</p>
+<p>You can even add multiple diagrams!</p>
+<p>To see it in action, go to the <a href="https://docs.rs/aquamarine-demo-crate/0.1.12/aquamarine_demo_crate/fn.example.html">demo crate</a> docs.rs page.</p>
+<h4 id="dark-mode"><a class="doc-anchor" href="#dark-mode">§</a>Dark-mode</h4>
+<p>Aquamarine will automatically select the <code>dark</code> theme as a default, if the current <code>rustdoc</code> theme is either <code>ayu</code> or <code>dark</code>.</p>
+<p>You might need to reload the page to redraw the diagrams after changing the theme.</p>
+<h4 id="custom-themes"><a class="doc-anchor" href="#custom-themes">§</a>Custom themes</h4>
+<p>Theming is supported on per-diagram basis, through the mermaid’s <code>%%init%%</code> attribute.</p>
+<p><em>Note</em>: custom theme will override the default theme</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="doccomment">/// ```mermaid
+/// %%{init: {
+///     'theme': 'base',
+///     'themeVariables': {
+///            'primaryColor': '#ffcccc',
+///            'edgeLabelBackground':'#ccccff',
+///            'tertiaryColor': '#fff0f0' }}}%%
+/// graph TD
+///      A(Diagram needs to be drawn) --&gt; B{Does it have 'init' annotation?}
+///      B --&gt;|No| C(Apply default theme)
+///      B --&gt;|Yes| D(Apply customized theme)
+/// ```</span></code></pre></div>
+<p><a href="https://docs.rs/aquamarine-demo-crate/0.1.12/aquamarine_demo_crate/fn.example_with_styling.html">Demo on docs.rs</a></p>
+<p>To learn more, see the <a href="https://mermaid-js.github.io/mermaid/#/theming">Theming Section</a> of the mermaid.js book</p>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="attrs/index.html" title="mod aquamarine::attrs">attrs</a><span title="Restricted Visibility">&nbsp;🔒</span> </div></li><li><div class="item-name"><a class="mod" href="parse/index.html" title="mod aquamarine::parse">parse</a><span title="Restricted Visibility">&nbsp;🔒</span> </div></li></ul><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.check_input_attrs.html" title="fn aquamarine::check_input_attrs">check_<wbr>input_<wbr>attrs</a><span title="Restricted Visibility">&nbsp;🔒</span> </div></li></ul><h2 id="attributes" class="section-header">Attribute Macros<a href="#attributes" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="attr" href="attr.aquamarine.html" title="attr aquamarine::aquamarine">aquamarine</a></div><div class="desc docblock-short">Aquamarine is a proc-macro that adds <a href="https://mermaid-js.github.io/mermaid/#/">Mermaid</a> diagrams to rustdoc</div></li></ul></section></div></main></body></html>

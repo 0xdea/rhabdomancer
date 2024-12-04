@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Include some C++ headers in your Rust project."><title>include_cpp in autocxx - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="autocxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../autocxx/index.html">autocxx</a><span class="version">0.27.0</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">autocxx</a>::<wbr><a class="macro" href="#">include_cpp</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/autocxx/lib.rs.html#103-115">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> include_cpp {
+    (
+        $(#<span class="macro-nonterminal">$include</span>:ident <span class="macro-nonterminal">$lit</span>:literal)*
+        $(<span class="macro-nonterminal">$mac</span>:<span class="macro">ident!</span>($(<span class="macro-nonterminal">$arg</span>:tt)<span class="kw-2">*</span>))*
+    ) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Include some C++ headers in your Rust project.</p>
+<p>This macro allows you to include one or more C++ headers within
+your Rust code, and call their functions fairly naturally.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>C++ header (<code>input.h</code>):</p>
+<div class="example-wrap"><pre class="language-cpp"><code>#include &lt;cstdint&gt;
+
+uint32_t do_math(uint32_t a);
+</code></pre></div>
+<p>Rust code:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="macro">include_cpp!</span>(
+   #include <span class="string">"input.h"
+   </span><span class="macro">generate!</span>(<span class="string">"do_math"</span>)
+   <span class="macro">safety!</span>(<span class="kw">unsafe</span>)
+);
+
+ffi::do_math(<span class="number">3</span>);</code></pre></div>
+<p>The resulting bindings will use idiomatic Rust wrappers for types from the <a href="../cxx/index.html" title="mod cxx">cxx</a>
+crate, for example <a href="prelude/struct.UniquePtr.html" title="struct autocxx::prelude::UniquePtr"><code>cxx::UniquePtr</code></a> or <a href="../cxx/string/struct.CxxString.html" title="struct cxx::string::CxxString"><code>cxx::CxxString</code></a>. Due to the care and thought
+that’s gone into the <a href="../cxx/index.html" title="mod cxx">cxx</a> crate, such bindings are pleasant and idiomatic to use
+from Rust, and usually don’t require the <code>unsafe</code> keyword.</p>
+<p>For full documentation, see <a href="https://google.github.io/autocxx/">the manual</a>.</p>
+<h2 id="the-include_cpp-macro"><a class="doc-anchor" href="#the-include_cpp-macro">§</a>The <a href="prelude/macro.include_cpp.html" title="macro autocxx::prelude::include_cpp"><code>include_cpp</code></a> macro</h2>
+<p>Within the braces of the <code>include_cpp!{...}</code> macro, you should provide
+a list of at least the following:</p>
+<ul>
+<li><code>#include "cpp_header.h"</code>: a header filename to parse and include</li>
+<li><code>generate!("type_or_function_name")</code>: a type or function name whose declaration
+should be made available to C++. (See the section on Allowlisting, below).</li>
+<li>Optionally, <code>safety!(unsafe)</code> - see discussion of <a href="macro.safety.html" title="macro autocxx::safety"><code>safety</code></a>.</li>
+</ul>
+<p>Other directives are possible as documented in this crate.</p>
+<p>Now, try to build your Rust project. <code>autocxx</code> may fail to generate bindings
+for some of the items you specified with <a href="macro.generate.html" title="macro autocxx::generate">generate</a> directives: remove
+those directives for now, then see the next section for advice.</p>
+<h2 id="allowlisting"><a class="doc-anchor" href="#allowlisting">§</a>Allowlisting</h2>
+<p>How do you inform autocxx which bindings to generate? There are three
+strategies:</p>
+<ul>
+<li><em>Recommended</em>: provide various <a href="macro.generate.html" title="macro autocxx::generate"><code>generate</code></a> directives in the
+<a href="prelude/macro.include_cpp.html" title="macro autocxx::prelude::include_cpp"><code>include_cpp</code></a> macro. This can specify functions or types.</li>
+<li><em>Not recommended</em>: in your <code>build.rs</code>, call <code>Builder::auto_allowlist</code>.
+This will attempt to spot <em>uses</em> of FFI bindings anywhere in your Rust code
+and build the allowlist that way. This is experimental and has known limitations.</li>
+<li><em>Strongly not recommended</em>: use <a href="macro.generate_all.html" title="macro autocxx::generate_all"><code>generate_all</code></a>. This will attempt to
+generate Rust bindings for <em>any</em> C++ type or function discovered in the
+header files. This is generally a disaster if you’re including any
+remotely complex header file: we’ll try to generate bindings for all sorts
+of STL types. This will be slow, and some may well cause problems.
+Effectively this is just a debug option to discover such problems. Don’t
+use it!</li>
+</ul>
+<h2 id="internals"><a class="doc-anchor" href="#internals">§</a>Internals</h2>
+<p>For documentation on how this all actually <em>works</em>, see
+<code>IncludeCppEngine</code> within the <code>autocxx_engine</code> crate.</p>
+</div></details></section></div></main></body></html>

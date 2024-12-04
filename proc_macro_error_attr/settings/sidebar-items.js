@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Setting"],"fn":["ident_to_setting","parse_settings"],"macro":["decl_settings"],"struct":["Settings"]};

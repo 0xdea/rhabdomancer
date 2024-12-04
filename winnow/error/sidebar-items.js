@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ErrMode","ErrorKind","Needed","StrContext","StrContextValue","TreeError","TreeErrorFrame"],"fn":["abbreviate","translate_position"],"struct":["ContextError","InputError","ParseError","TreeErrorBase","TreeErrorContext"],"trait":["AddContext","ErrorConvert","FromExternalError","ParserError"],"type":["IResult","PResult"]};

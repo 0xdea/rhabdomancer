@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Category","ErrorCode"],"fn":["make_error","parse_line_col","starts_with_digit"],"struct":["Error","ErrorImpl","JsonUnexpected"],"type":["Result"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SerKey","Unreachable"],"macro":["string_serialize_via_display"],"struct":["ConfigSerializer","SeqSerializer","StringKeySerializer"]};

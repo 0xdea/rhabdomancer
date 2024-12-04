@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["fmt_primitives"]};

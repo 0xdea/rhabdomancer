@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"attr":["cpp_semantics"],"macro":["include_cpp","moveit"],"struct":["UniquePtr"],"trait":["Emplace","New"]};

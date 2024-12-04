@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["x86_64"],"struct":["Builder","Searcher"],"trait":["SearcherT"]};

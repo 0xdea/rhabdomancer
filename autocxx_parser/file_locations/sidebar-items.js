@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FileLocationStrategy"],"static":["AUTOCXX_RS","AUTOCXX_RS_FILE","AUTOCXX_RS_JSON_ARCHIVE","BUILD_DIR_NAME","RS_DIR_NAME"]};

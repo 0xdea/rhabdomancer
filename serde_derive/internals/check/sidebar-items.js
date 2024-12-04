@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["allow_transparent","check","check_adjacent_tag_conflict","check_default_on_tuple","check_flatten","check_flatten_field","check_from_and_try_from","check_getter","check_identifier","check_internal_tag_field_name_conflict","check_remote_generic","check_transparent","check_variant_skip_attrs","member_message"]};

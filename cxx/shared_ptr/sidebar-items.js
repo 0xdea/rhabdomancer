@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["impl_shared_ptr_target","impl_shared_ptr_target_for_primitive"],"struct":["SharedPtr"],"trait":["SharedPtrTarget"]};

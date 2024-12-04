@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["check_field_attrs","check_non_field_attrs","contains_non_static_lifetime","same_member"]};

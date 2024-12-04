@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["enum_clone","enum_copy","enum_debug","enum_ord","enum_partial_ord","expand_enum","expand_struct","struct_clone","struct_copy","struct_debug","struct_default","struct_ord","struct_partial_ord"]};

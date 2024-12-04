@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["IDAError"],"fn":["enable_console_messages","force_batch_mode","init_library","prepare_library"],"mod":["bookmarks","decompiler","func","idb","insn","license","meta","plugin","processor","segment","strings","xref"],"static":["INIT","batch"],"type":["Address","IDARuntimeHandle"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["BYTE"],"fn":["bits","bool","bytes","pattern","take","take_"]};

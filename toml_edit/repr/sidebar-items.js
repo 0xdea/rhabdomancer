@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Decor","Formatted","Repr"],"trait":["ValueRepr"]};

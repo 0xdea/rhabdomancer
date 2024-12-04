@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Shift","SuffixKind","SuffixOrdering"],"struct":["ApproximateByteSet","Finder","FinderRev","Suffix","TwoWay"]};

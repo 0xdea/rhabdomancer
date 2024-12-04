@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["EucJpPending"],"fn":["encode_kanji"],"struct":["EucJpDecoder","EucJpEncoder"]};

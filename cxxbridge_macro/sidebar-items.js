@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"attr":["bridge"],"mod":["derive","expand","generics","syntax","tokens","type_id"]};

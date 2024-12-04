@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MERMAID_INIT_SCRIPT","MERMAID_JS_CDN","MERMAID_JS_LOCAL","UNEXPECTED_ATTR_ERROR"],"enum":["Attr","Location"],"fn":["generate_diagram_rustdoc","nonempty","split_attr_body","split_inclusive","tokenize_doc_str"],"struct":["Attrs"]};

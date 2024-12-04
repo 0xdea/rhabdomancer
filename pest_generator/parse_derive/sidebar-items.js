@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["GrammarSource"],"fn":["get_attribute","parse_derive"],"struct":["ParsedDerive"]};

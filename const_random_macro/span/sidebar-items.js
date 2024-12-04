@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["gen_random","gen_random_bytes","get_seed","hash_stuff"],"static":["SEED"],"trait":["Random"]};

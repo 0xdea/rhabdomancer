@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["State","WhichCaptures"],"mod":["backtrack","builder","compiler","error","literal_trie","map","nfa","pikevm","range_trie"],"struct":["BuildError","Builder","Compiler","Config","DenseTransitions","NFA","PatternIter","SparseTransitions","Transition"]};

@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="This module contains types and routines for implementing determinization."><title>regex_automata::util::determinize - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../regex_automata/index.html">regex_<wbr>automata</a><span class="version">0.4.9</span></h2></div><h2 class="location"><a href="#">Module determinize</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#modules">Modules</a></li><li><a href="#functions">Functions</a></li></ul></section><h2><a href="../index.html">In regex_<wbr>automata::<wbr>util</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../../index.html">regex_automata</a>::<wbr><a href="../index.html">util</a>::<wbr><a class="mod" href="#">determinize</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../../src/regex_automata/util/determinize/mod.rs.html#1-682">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>This module contains types and routines for implementing determinization.</p>
+<p>In this crate, there are at least two places where we implement
+determinization: fully ahead-of-time compiled DFAs in the <code>dfa</code> module and
+lazily compiled DFAs in the <code>hybrid</code> module. The stuff in this module
+corresponds to the things that are in common between these implementations.</p>
+<p>There are three broad things that our implementations of determinization have
+in common, as defined by this module:</p>
+<ul>
+<li>The classification of start states. That is, whether we’re dealing with
+word boundaries, line boundaries, etc., is all the same. This also includes
+the look-behind assertions that are satisfied by each starting state
+classification.</li>
+<li>The representation of DFA states as sets of NFA states, including
+convenience types for building these DFA states that are amenable to reusing
+allocations.</li>
+<li>Routines for the “classical” parts of determinization: computing the
+epsilon closure, tracking match states (with corresponding pattern IDs, since
+we support multi-pattern finite automata) and, of course, computing the
+transition function between states for units of input.</li>
+</ul>
+<p>I did consider a couple of alternatives to this particular form of code reuse:</p>
+<ol>
+<li>
+<p>Don’t do any code reuse. The problem here is that we <em>really</em> want both
+forms of determinization to do exactly identical things when it comes to
+their handling of NFA states. While our tests generally ensure this, the code
+is tricky and large enough where not reusing code is a pretty big bummer.</p>
+</li>
+<li>
+<p>Implement all of determinization once and make it generic over fully
+compiled DFAs and lazily compiled DFAs. While I didn’t actually try this
+approach, my instinct is that it would be more complex than is needed here.
+And the interface required would be pretty hairy. Instead, I think splitting
+it into logical sub-components works better.</p>
+</li>
+</ol>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="state/index.html" title="mod regex_automata::util::determinize::state">state</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">This module defines a DFA state representation and builders for constructing
+DFA states.</div></li></ul><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.add_nfa_states.html" title="fn regex_automata::util::determinize::add_nfa_states">add_<wbr>nfa_<wbr>states</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Add the NFA state IDs in the given <code>set</code> to the given DFA builder state.
+The order in which states are added corresponds to the order in which they
+were added to <code>set</code>.</div></li><li><div class="item-name"><a class="fn" href="fn.epsilon_closure.html" title="fn regex_automata::util::determinize::epsilon_closure">epsilon_<wbr>closure</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Compute the epsilon closure for the given NFA state. The epsilon closure
+consists of all NFA state IDs, including <code>start_nfa_id</code>, that can be
+reached from <code>start_nfa_id</code> without consuming any input. These state IDs
+are written to <code>set</code> in the order they are visited, but only if they are
+not already in <code>set</code>. <code>start_nfa_id</code> must be a valid state ID for the NFA
+given.</div></li><li><div class="item-name"><a class="fn" href="fn.next.html" title="fn regex_automata::util::determinize::next">next</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Compute the set of all reachable NFA states, including the full epsilon
+closure, from a DFA state for a single unit of input. The set of reachable
+states is returned as a <code>StateBuilderNFA</code>. The <code>StateBuilderNFA</code> returned
+also includes any look-behind assertions satisfied by <code>unit</code>, in addition
+to whether it is a match state. For multi-pattern DFAs, the builder will
+also include the pattern IDs that match (in the order seen).</div></li><li><div class="item-name"><a class="fn" href="fn.set_lookbehind_from_start.html" title="fn regex_automata::util::determinize::set_lookbehind_from_start">set_<wbr>lookbehind_<wbr>from_<wbr>start</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Sets the appropriate look-behind assertions on the given state based on
+this starting configuration.</div></li></ul></section></div></main></body></html>

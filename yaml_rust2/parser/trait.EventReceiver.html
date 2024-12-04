@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Trait to be implemented in order to use the low-level parsing API."><title>EventReceiver in yaml_rust2::parser - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="yaml_rust2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc trait"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../yaml_rust2/index.html">yaml_<wbr>rust2</a><span class="version">0.8.1</span></h2></div><h2 class="location"><a href="#">Event<wbr>Receiver</a></h2><div class="sidebar-elems"><section><h3><a href="#required-methods">Required Methods</a></h3><ul class="block"><li><a href="#tymethod.on_event">on_event</a></li></ul><h3><a href="#implementors">Implementors</a></h3></section><h2><a href="index.html">In yaml_<wbr>rust2::<wbr>parser</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Trait <a href="../index.html">yaml_rust2</a>::<wbr><a href="index.html">parser</a>::<wbr><a class="trait" href="#">EventReceiver</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../src/yaml_rust2/parser.rs.html#191-194">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>pub trait EventReceiver {
+    // Required method
+    fn <a href="#tymethod.on_event" class="fn">on_event</a>(&amp;mut self, ev: <a class="enum" href="enum.Event.html" title="enum yaml_rust2::parser::Event">Event</a>);
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Trait to be implemented in order to use the low-level parsing API.</p>
+<p>The low-level parsing API is event-based (a push parser), calling <a href="trait.EventReceiver.html#tymethod.on_event" title="method yaml_rust2::parser::EventReceiver::on_event"><code>EventReceiver::on_event</code></a>
+for each YAML <a href="enum.Event.html" title="enum yaml_rust2::parser::Event"><code>Event</code></a> that occurs.
+The <a href="trait.EventReceiver.html" title="trait yaml_rust2::parser::EventReceiver"><code>EventReceiver</code></a> trait only receives events. In order to receive both events and their
+location in the source, use <a href="trait.MarkedEventReceiver.html" title="trait yaml_rust2::parser::MarkedEventReceiver"><code>MarkedEventReceiver</code></a>. Note that <a href="trait.EventReceiver.html" title="trait yaml_rust2::parser::EventReceiver"><code>EventReceiver</code></a>s implement
+<a href="trait.MarkedEventReceiver.html" title="trait yaml_rust2::parser::MarkedEventReceiver"><code>MarkedEventReceiver</code></a> automatically.</p>
+<h2 id="event-hierarchy"><a class="doc-anchor" href="#event-hierarchy">§</a>Event hierarchy</h2>
+<p>The event stream starts with an <a href="enum.Event.html#variant.StreamStart" title="variant yaml_rust2::parser::Event::StreamStart"><code>Event::StreamStart</code></a> event followed by an
+<a href="enum.Event.html#variant.DocumentStart" title="variant yaml_rust2::parser::Event::DocumentStart"><code>Event::DocumentStart</code></a> event. If the YAML document starts with a mapping (an object), an
+<a href="enum.Event.html#variant.MappingStart" title="variant yaml_rust2::parser::Event::MappingStart"><code>Event::MappingStart</code></a> event is emitted. If it starts with a sequence (an array), an
+<a href="enum.Event.html#variant.SequenceStart" title="variant yaml_rust2::parser::Event::SequenceStart"><code>Event::SequenceStart</code></a> event is emitted. Otherwise, an <a href="enum.Event.html#variant.Scalar" title="variant yaml_rust2::parser::Event::Scalar"><code>Event::Scalar</code></a> event is emitted.</p>
+<p>In a mapping, key-values are sent as consecutive events. The first event after an
+<a href="enum.Event.html#variant.MappingStart" title="variant yaml_rust2::parser::Event::MappingStart"><code>Event::MappingStart</code></a> will be the key, and following its value. If the mapping contains no
+sub-mapping or sub-sequence, then even events (starting from 0) will always be keys and odd
+ones will always be values. The mapping ends when an <a href="enum.Event.html#variant.MappingEnd" title="variant yaml_rust2::parser::Event::MappingEnd"><code>Event::MappingEnd</code></a> event is received.</p>
+<p>In a sequence, values are sent consecutively until the <a href="enum.Event.html#variant.SequenceEnd" title="variant yaml_rust2::parser::Event::SequenceEnd"><code>Event::SequenceEnd</code></a> event.</p>
+<p>If a value is a sub-mapping or a sub-sequence, an <a href="enum.Event.html#variant.MappingStart" title="variant yaml_rust2::parser::Event::MappingStart"><code>Event::MappingStart</code></a> or
+<a href="enum.Event.html#variant.SequenceStart" title="variant yaml_rust2::parser::Event::SequenceStart"><code>Event::SequenceStart</code></a> event will be sent respectively. Following events until the associated
+<a href="enum.Event.html#variant.MappingStart" title="variant yaml_rust2::parser::Event::MappingStart"><code>Event::MappingStart</code></a> or <a href="enum.Event.html#variant.SequenceEnd" title="variant yaml_rust2::parser::Event::SequenceEnd"><code>Event::SequenceEnd</code></a> (beware of nested mappings or sequences) will
+be part of the value and not another key-value pair or element in the sequence.</p>
+<p>For instance, the following yaml:</p>
+<div class="example-wrap"><pre class="language-yaml"><code>a: b
+c:
+  d: e
+f:
+  - g
+  - h
+</code></pre></div>
+<p>will emit (indented and commented for lisibility):</p>
+<div class="example-wrap"><pre class="language-text"><code>StreamStart, DocumentStart, MappingStart,
+  Scalar(&quot;a&quot;, ..), Scalar(&quot;b&quot;, ..)
+  Scalar(&quot;c&quot;, ..), MappingStart, Scalar(&quot;d&quot;, ..), Scalar(&quot;e&quot;, ..), MappingEnd,
+  Scalar(&quot;f&quot;, ..), SequenceStart, Scalar(&quot;g&quot;, ..), Scalar(&quot;h&quot;, ..), SequenceEnd,
+MappingEnd, DocumentEnd, StreamEnd
+</code></pre></div><h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="doccomment">/// Sink of events. Collects them into an array.
+</span><span class="kw">struct </span>EventSink {
+    events: Vec&lt;Event&gt;,
+}
+
+<span class="doccomment">/// Implement `on_event`, pushing into `self.events`.
+</span><span class="kw">impl </span>EventReceiver <span class="kw">for </span>EventSink {
+    <span class="kw">fn </span>on_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ev: Event) {
+        <span class="self">self</span>.events.push(ev);
+    }
+}
+
+<span class="doccomment">/// Load events from a yaml string.
+</span><span class="kw">fn </span>str_to_events(yaml: <span class="kw-2">&amp;</span>str) -&gt; Vec&lt;Event&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>sink = EventSink { events: Vec::new() };
+    <span class="kw">let </span><span class="kw-2">mut </span>parser = Parser::new_from_str(yaml);
+    <span class="comment">// Load events using our sink as the receiver.
+    </span>parser.load(<span class="kw-2">&amp;mut </span>sink, <span class="bool-val">true</span>).unwrap();
+    sink.events
+}</code></pre></div>
+</div></details><h2 id="required-methods" class="section-header">Required Methods<a href="#required-methods" class="anchor">§</a></h2><div class="methods"><details class="toggle method-toggle" open><summary><section id="tymethod.on_event" class="method"><a class="src rightside" href="../../src/yaml_rust2/parser.rs.html#193">source</a><h4 class="code-header">fn <a href="#tymethod.on_event" class="fn">on_event</a>(&amp;mut self, ev: <a class="enum" href="enum.Event.html" title="enum yaml_rust2::parser::Event">Event</a>)</h4></section></summary><div class="docblock"><p>Handler called for each YAML event that is emitted by the parser.</p>
+</div></details></div><h2 id="implementors" class="section-header">Implementors<a href="#implementors" class="anchor">§</a></h2><div id="implementors-list"></div><script src="../../trait.impl/yaml_rust2/parser/trait.EventReceiver.js" async></script></section></div></main></body></html>

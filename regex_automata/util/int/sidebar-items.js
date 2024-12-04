@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":["I32","Pointer","U16","U32","U64","U8","Usize"]};

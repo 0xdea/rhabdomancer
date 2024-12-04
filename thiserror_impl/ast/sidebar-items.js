@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Input"],"struct":["Enum","Field","Struct","Variant"]};

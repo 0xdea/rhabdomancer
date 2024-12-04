@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Builder","Cache","CapturesMatches","Config","FindMatches","Regex","RegexI","RegexInfo","RegexInfoI","Split","SplitN"],"type":["CachePool","CachePoolFn","CachePoolGuard"]};

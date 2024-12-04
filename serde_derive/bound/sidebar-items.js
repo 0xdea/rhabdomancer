@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["type_of_item","with_bound","with_lifetime_bound","with_self_bound","with_where_predicates","with_where_predicates_from_fields","with_where_predicates_from_variants","without_defaults"]};

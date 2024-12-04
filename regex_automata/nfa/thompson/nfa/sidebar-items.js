@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["State"],"struct":["DenseTransitions","Inner","NFA","PatternIter","SparseTransitions","Transition"]};

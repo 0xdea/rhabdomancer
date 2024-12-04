@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MIN_STATES","SENTINEL_STATES"],"enum":["StateSaver"],"fn":["minimum_cache_capacity","minimum_lazy_state_id","skip_empty_utf8_splits_overlapping"],"struct":["Builder","Cache","Config","DFA","Lazy","LazyRef","OverlappingState","SearchProgress"],"type":["StateMap"]};

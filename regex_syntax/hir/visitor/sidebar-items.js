@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Frame"],"fn":["visit"],"struct":["HeapVisitor"],"trait":["Visitor"]};

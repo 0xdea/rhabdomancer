@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["Ok"],"macro":["anyhow","bail","ensure"],"mod":["backtrace","chain","context","ensure","error","fmt","kind","macros","ptr","wrapper"],"struct":["Chain","Error"],"trait":["Context"],"type":["Result"]};

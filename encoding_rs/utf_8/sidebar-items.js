@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["convert_utf16_to_utf8_partial_inner","convert_utf16_to_utf8_partial_tail","convert_utf8_to_utf16_up_to_invalid","likely","unlikely","utf8_valid_up_to"],"static":["UTF8_DATA"],"struct":["Utf8Data","Utf8Decoder","Utf8Encoder"]};

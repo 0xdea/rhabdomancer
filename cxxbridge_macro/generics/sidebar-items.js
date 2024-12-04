@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["split_for_impl"],"struct":["ImplGenerics","TyGenerics","UnderscoreLifetimes"]};

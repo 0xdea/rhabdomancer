@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Level","SuggestionKind"],"struct":["Diagnostic"],"trait":["DiagnosticExt"]};

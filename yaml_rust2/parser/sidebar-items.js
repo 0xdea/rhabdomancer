@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Event","State"],"struct":["Parser","Tag"],"trait":["EventReceiver","MarkedEventReceiver"],"type":["ParseResult"]};

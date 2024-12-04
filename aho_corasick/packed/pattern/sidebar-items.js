@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["is_equal_raw","is_prefix"],"struct":["Pattern","PatternIter","Patterns"]};

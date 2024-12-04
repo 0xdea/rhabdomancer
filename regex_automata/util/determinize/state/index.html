@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="This module defines a DFA state representation and builders for constructing DFA states."><title>regex_automata::util::determinize::state - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../../regex_automata/index.html">regex_<wbr>automata</a><span class="version">0.4.9</span></h2></div><h2 class="location"><a href="#">Module state</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#functions">Functions</a></li></ul></section><h2><a href="../index.html">In regex_<wbr>automata::<wbr>util::<wbr>determinize</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../../../index.html">regex_automata</a>::<wbr><a href="../../index.html">util</a>::<wbr><a href="../index.html">determinize</a>::<wbr><a class="mod" href="#">state</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../../../src/regex_automata/util/determinize/state.rs.html#1-907">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>This module defines a DFA state representation and builders for constructing
+DFA states.</p>
+<p>This representation is specifically for use in implementations of NFA-to-DFA
+conversion via powerset construction. (Also called “determinization” in this
+crate.)</p>
+<p>The term “DFA state” is somewhat overloaded in this crate. In some cases, it
+refers to the set of transitions over an alphabet for a particular state. In
+other cases, it refers to a set of NFA states. The former is really about the
+final representation of a state in a DFA’s transition table, where as the
+latter—what this module is focused on—is closer to an intermediate form
+that is used to help eventually build the transition table.</p>
+<p>This module exports four types. All four types represent the same idea: an
+ordered set of NFA states. This ordered set represents the epsilon closure of a
+particular NFA state, where the “epsilon closure” is the set of NFA states that
+can be transitioned to without consuming any input. i.e., Follow all of the NFA
+state’s epsilon transitions. In addition, this implementation of DFA states
+cares about two other things: the ordered set of pattern IDs corresponding
+to the patterns that match if the state is a match state, and the set of
+look-behind assertions that were true when the state was created.</p>
+<p>The first, <code>State</code>, is a frozen representation of a state that cannot be
+modified. It may be cheaply cloned without copying the state itself and can be
+accessed safely from multiple threads simultaneously. This type is useful for
+when one knows that the DFA state being constructed is distinct from any other
+previously constructed states. Namely, powerset construction, in practice,
+requires one to keep a cache of previously created DFA states. Otherwise,
+the number of DFA states created in memory balloons to an impractically
+large number. For this reason, equivalent states should endeavor to have an
+equivalent byte-level representation. (In general, “equivalency” here means,
+“equivalent assertions, pattern IDs and NFA state IDs.” We do not require that
+full DFA minimization be implemented here. This form of equivalency is only
+surface deep and is more-or-less a practical necessity.)</p>
+<p>The other three types represent different phases in the construction of a
+DFA state. Internally, these three types (and <code>State</code>) all use the same
+byte-oriented representation. That means one can use any of the builder types
+to check whether the state it represents already exists or not. If it does,
+then there is no need to freeze it into a <code>State</code> (which requires an alloc and
+a copy). Here are the three types described succinctly:</p>
+<ul>
+<li>
+<p><code>StateBuilderEmpty</code> represents a state with no pattern IDs, no assertions
+and no NFA states. Creating a <code>StateBuilderEmpty</code> performs no allocs. A
+<code>StateBuilderEmpty</code> can only be used to query its underlying memory capacity,
+or to convert into a builder for recording pattern IDs and/or assertions.</p>
+</li>
+<li>
+<p><code>StateBuilderMatches</code> represents a state with zero or more pattern IDs, zero
+or more satisfied assertions and zero NFA state IDs. A <code>StateBuilderMatches</code>
+can only be used for adding pattern IDs and recording assertions.</p>
+</li>
+<li>
+<p><code>StateBuilderNFA</code> represents a state with zero or more pattern IDs, zero or
+more satisfied assertions and zero or more NFA state IDs. A <code>StateBuilderNFA</code>
+can only be used for adding NFA state IDs and recording some assertions.</p>
+</li>
+</ul>
+<p>The expected flow here is to use the above builders to construct a candidate
+DFA state to check if it already exists. If it does, then there’s no need to
+freeze it into a <code>State</code>. If it doesn’t exist, then <code>StateBuilderNFA::to_state</code>
+can be called to freeze the builder into an immutable <code>State</code>. In either
+case, <code>clear</code> should be called on the builder to turn it back into a
+<code>StateBuilderEmpty</code> that reuses the underlying memory.</p>
+<p>The main purpose for splitting the builder into these distinct types is to
+make it impossible to do things like adding a pattern ID after adding an NFA
+state ID. Namely, this makes it simpler to use a space-and-time efficient
+binary representation for the state. (The format is documented on the <code>Repr</code>
+type below.) If we just used one type for everything, it would be possible for
+callers to use an incorrect interleaving of calls and thus result in a corrupt
+representation. I chose to use more type machinery to make this impossible to
+do because 1) determinization is itself pretty complex and it wouldn’t be too
+hard to foul this up and 2) there isn’t too much machinery involved and it’s
+well contained.</p>
+<p>As an optimization, sometimes states won’t have certain things set. For
+example, if the underlying NFA has no word boundary assertions, then there is
+no reason to set a state’s look-behind assertion as to whether it was generated
+from a word byte or not. Similarly, if a state has no NFA states corresponding
+to look-around assertions, then there is no reason to set <code>look_have</code> to a
+non-empty set. Finally, callers usually omit unconditional epsilon transitions
+when adding NFA state IDs since they aren’t discriminatory.</p>
+<p>Finally, the binary representation used by these states is, thankfully, not
+serialized anywhere. So any kind of change can be made with reckless abandon,
+as long as everything in this module agrees.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Repr.html" title="struct regex_automata::util::determinize::state::Repr">Repr</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Repr is a read-only view into the representation of a DFA state.</div></li><li><div class="item-name"><a class="struct" href="struct.ReprVec.html" title="struct regex_automata::util::determinize::state::ReprVec">ReprVec</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">ReprVec is a write-only view into the representation of a DFA state.</div></li><li><div class="item-name"><a class="struct" href="struct.State.html" title="struct regex_automata::util::determinize::state::State">State</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">A DFA state that, at its core, is represented by an ordered set of NFA
+states.</div></li><li><div class="item-name"><a class="struct" href="struct.StateBuilderEmpty.html" title="struct regex_automata::util::determinize::state::StateBuilderEmpty">State<wbr>Builder<wbr>Empty</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">A state builder that represents an empty state.</div></li><li><div class="item-name"><a class="struct" href="struct.StateBuilderMatches.html" title="struct regex_automata::util::determinize::state::StateBuilderMatches">State<wbr>Builder<wbr>Matches</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">A state builder that collects assertions and pattern IDs.</div></li><li><div class="item-name"><a class="struct" href="struct.StateBuilderNFA.html" title="struct regex_automata::util::determinize::state::StateBuilderNFA">State<wbr>BuilderNFA</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">A state builder that collects some assertions and NFA state IDs.</div></li></ul><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.read_vari32.html" title="fn regex_automata::util::determinize::state::read_vari32">read_<wbr>vari32</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Read a signed 32-bit integer using zig-zag encoding. Also, return the
+number of bytes read.</div></li><li><div class="item-name"><a class="fn" href="fn.read_varu32.html" title="fn regex_automata::util::determinize::state::read_varu32">read_<wbr>varu32</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Read an unsigned 32-bit varint. Also, return the number of bytes read.</div></li><li><div class="item-name"><a class="fn" href="fn.write_u32.html" title="fn regex_automata::util::determinize::state::write_u32">write_<wbr>u32</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Push a native-endian encoded <code>n</code> on to <code>dst</code>.</div></li><li><div class="item-name"><a class="fn" href="fn.write_vari32.html" title="fn regex_automata::util::determinize::state::write_vari32">write_<wbr>vari32</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Write a signed 32-bit integer using zig-zag encoding.</div></li><li><div class="item-name"><a class="fn" href="fn.write_varu32.html" title="fn regex_automata::util::determinize::state::write_varu32">write_<wbr>varu32</a><span title="Restricted Visibility">&nbsp;🔒</span> </div><div class="desc docblock-short">Write an unsigned 32-bit integer as a varint. In essence, <code>n</code> is written
+as a sequence of bytes where all bytes except for the last one have the
+most significant bit set. The least significant 7 bits correspond to the
+actual bits of <code>n</code>. So in the worst case, a varint uses 5 bytes, but in
+very common cases, it uses fewer than 4.</div></li></ul></section></div></main></body></html>

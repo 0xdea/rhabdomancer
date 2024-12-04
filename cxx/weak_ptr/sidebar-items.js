@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["impl_weak_ptr_target","impl_weak_ptr_target_for_primitive"],"struct":["WeakPtr"],"trait":["WeakPtrTarget"]};

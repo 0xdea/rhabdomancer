@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `filetype_t` type in crate `idalib_sys`."><title>filetype_t in idalib_sys::ffix - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="idalib_sys" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc type"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../idalib_sys/index.html">idalib_<wbr>sys</a><span class="version">0.3.0+9.0.240925</span></h2></div><h2 class="location"><a href="#">filetype_<wbr>t</a></h2><div class="sidebar-elems"><section><h3><a href="#aliased-type">Aliased type</a></h3><h3><a href="#variants">Variants</a></h3><ul class="block variant"><li><a href="#variant.f_AIXAR">f_AIXAR</a></li><li><a href="#variant.f_AOUT">f_AOUT</a></li><li><a href="#variant.f_AR">f_AR</a></li><li><a href="#variant.f_BIN">f_BIN</a></li><li><a href="#variant.f_COFF">f_COFF</a></li><li><a href="#variant.f_COM">f_COM</a></li><li><a href="#variant.f_COM_old">f_COM_old</a></li><li><a href="#variant.f_DRV">f_DRV</a></li><li><a href="#variant.f_ELF">f_ELF</a></li><li><a href="#variant.f_EXE">f_EXE</a></li><li><a href="#variant.f_EXE_old">f_EXE_old</a></li><li><a href="#variant.f_HEX">f_HEX</a></li><li><a href="#variant.f_LE">f_LE</a></li><li><a href="#variant.f_LOADER">f_LOADER</a></li><li><a href="#variant.f_LX">f_LX</a></li><li><a href="#variant.f_MACHO">f_MACHO</a></li><li><a href="#variant.f_MD1IMG">f_MD1IMG</a></li><li><a href="#variant.f_MEX">f_MEX</a></li><li><a href="#variant.f_NLM">f_NLM</a></li><li><a href="#variant.f_OMF">f_OMF</a></li><li><a href="#variant.f_OMFLIB">f_OMFLIB</a></li><li><a href="#variant.f_PE">f_PE</a></li><li><a href="#variant.f_PRC">f_PRC</a></li><li><a href="#variant.f_PSXOBJ">f_PSXOBJ</a></li><li><a href="#variant.f_SREC">f_SREC</a></li><li><a href="#variant.f_W32RUN">f_W32RUN</a></li><li><a href="#variant.f_WIN">f_WIN</a></li><li><a href="#variant.f_ZIP">f_ZIP</a></li></ul></section><h2><a href="index.html">In idalib_<wbr>sys::<wbr>ffix</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Type Alias <a href="../index.html">idalib_sys</a>::<wbr><a href="index.html">ffix</a>::<wbr><a class="type" href="#">filetype_t</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>pub type filetype_t = <a class="enum" href="../ffi/bindgen/root/enum.filetype_t.html" title="enum idalib_sys::ffi::bindgen::root::filetype_t">filetype_t</a>;</code></pre><h2 id="aliased-type" class="section-header">Aliased Type<a href="#aliased-type" class="anchor">§</a></h2><pre class="rust item-decl"><code>enum filetype_t {
+<details class="toggle type-contents-toggle"><summary class="hideme"><span>Show 28 variants</span></summary>    f_EXE_old = 0,
+    f_COM_old = 1,
+    f_BIN = 2,
+    f_DRV = 3,
+    f_WIN = 4,
+    f_HEX = 5,
+    f_MEX = 6,
+    f_LX = 7,
+    f_LE = 8,
+    f_NLM = 9,
+    f_COFF = 10,
+    f_PE = 11,
+    f_OMF = 12,
+    f_SREC = 13,
+    f_ZIP = 14,
+    f_OMFLIB = 15,
+    f_AR = 16,
+    f_LOADER = 17,
+    f_ELF = 18,
+    f_W32RUN = 19,
+    f_AOUT = 20,
+    f_PRC = 21,
+    f_EXE = 22,
+    f_COM = 23,
+    f_AIXAR = 24,
+    f_MACHO = 25,
+    f_PSXOBJ = 26,
+    f_MD1IMG = 27,
+</details>}</code></pre><h2 id="variants" class="variants section-header">Variants<a href="#variants" class="anchor">§</a></h2><div class="variants"><section id="variant.f_EXE_old" class="variant"><a href="#variant.f_EXE_old" class="anchor">§</a><h3 class="code-header">f_EXE_old = 0</h3></section><div class="docblock"><p>&lt; MS DOS EXE File</p>
+</div><section id="variant.f_COM_old" class="variant"><a href="#variant.f_COM_old" class="anchor">§</a><h3 class="code-header">f_COM_old = 1</h3></section><div class="docblock"><p>&lt; MS DOS COM File</p>
+</div><section id="variant.f_BIN" class="variant"><a href="#variant.f_BIN" class="anchor">§</a><h3 class="code-header">f_BIN = 2</h3></section><div class="docblock"><p>&lt; Binary File</p>
+</div><section id="variant.f_DRV" class="variant"><a href="#variant.f_DRV" class="anchor">§</a><h3 class="code-header">f_DRV = 3</h3></section><div class="docblock"><p>&lt; MS DOS Driver</p>
+</div><section id="variant.f_WIN" class="variant"><a href="#variant.f_WIN" class="anchor">§</a><h3 class="code-header">f_WIN = 4</h3></section><div class="docblock"><p>&lt; New Executable (NE)</p>
+</div><section id="variant.f_HEX" class="variant"><a href="#variant.f_HEX" class="anchor">§</a><h3 class="code-header">f_HEX = 5</h3></section><div class="docblock"><p>&lt; Intel Hex Object File</p>
+</div><section id="variant.f_MEX" class="variant"><a href="#variant.f_MEX" class="anchor">§</a><h3 class="code-header">f_MEX = 6</h3></section><div class="docblock"><p>&lt; MOS Technology Hex Object File</p>
+</div><section id="variant.f_LX" class="variant"><a href="#variant.f_LX" class="anchor">§</a><h3 class="code-header">f_LX = 7</h3></section><div class="docblock"><p>&lt; Linear Executable (LX)</p>
+</div><section id="variant.f_LE" class="variant"><a href="#variant.f_LE" class="anchor">§</a><h3 class="code-header">f_LE = 8</h3></section><div class="docblock"><p>&lt; Linear Executable (LE)</p>
+</div><section id="variant.f_NLM" class="variant"><a href="#variant.f_NLM" class="anchor">§</a><h3 class="code-header">f_NLM = 9</h3></section><div class="docblock"><p>&lt; Netware Loadable Module (NLM)</p>
+</div><section id="variant.f_COFF" class="variant"><a href="#variant.f_COFF" class="anchor">§</a><h3 class="code-header">f_COFF = 10</h3></section><div class="docblock"><p>&lt; Common Object File Format (COFF)</p>
+</div><section id="variant.f_PE" class="variant"><a href="#variant.f_PE" class="anchor">§</a><h3 class="code-header">f_PE = 11</h3></section><div class="docblock"><p>&lt; Portable Executable (PE)</p>
+</div><section id="variant.f_OMF" class="variant"><a href="#variant.f_OMF" class="anchor">§</a><h3 class="code-header">f_OMF = 12</h3></section><div class="docblock"><p>&lt; Object Module Format</p>
+</div><section id="variant.f_SREC" class="variant"><a href="#variant.f_SREC" class="anchor">§</a><h3 class="code-header">f_SREC = 13</h3></section><div class="docblock"><p>&lt; Motorola SREC (S-record)</p>
+</div><section id="variant.f_ZIP" class="variant"><a href="#variant.f_ZIP" class="anchor">§</a><h3 class="code-header">f_ZIP = 14</h3></section><div class="docblock"><p>&lt; ZIP file (this file is never loaded to IDA database)</p>
+</div><section id="variant.f_OMFLIB" class="variant"><a href="#variant.f_OMFLIB" class="anchor">§</a><h3 class="code-header">f_OMFLIB = 15</h3></section><div class="docblock"><p>&lt; Library of OMF Modules</p>
+</div><section id="variant.f_AR" class="variant"><a href="#variant.f_AR" class="anchor">§</a><h3 class="code-header">f_AR = 16</h3></section><div class="docblock"><p>&lt; ar library</p>
+</div><section id="variant.f_LOADER" class="variant"><a href="#variant.f_LOADER" class="anchor">§</a><h3 class="code-header">f_LOADER = 17</h3></section><div class="docblock"><p>&lt; file is loaded using LOADER DLL</p>
+</div><section id="variant.f_ELF" class="variant"><a href="#variant.f_ELF" class="anchor">§</a><h3 class="code-header">f_ELF = 18</h3></section><div class="docblock"><p>&lt; Executable and Linkable Format (ELF)</p>
+</div><section id="variant.f_W32RUN" class="variant"><a href="#variant.f_W32RUN" class="anchor">§</a><h3 class="code-header">f_W32RUN = 19</h3></section><div class="docblock"><p>&lt; Watcom DOS32 Extender (W32RUN)</p>
+</div><section id="variant.f_AOUT" class="variant"><a href="#variant.f_AOUT" class="anchor">§</a><h3 class="code-header">f_AOUT = 20</h3></section><div class="docblock"><p>&lt; Linux a.out (AOUT)</p>
+</div><section id="variant.f_PRC" class="variant"><a href="#variant.f_PRC" class="anchor">§</a><h3 class="code-header">f_PRC = 21</h3></section><div class="docblock"><p>&lt; PalmPilot program file</p>
+</div><section id="variant.f_EXE" class="variant"><a href="#variant.f_EXE" class="anchor">§</a><h3 class="code-header">f_EXE = 22</h3></section><div class="docblock"><p>&lt; MS DOS EXE File</p>
+</div><section id="variant.f_COM" class="variant"><a href="#variant.f_COM" class="anchor">§</a><h3 class="code-header">f_COM = 23</h3></section><div class="docblock"><p>&lt; MS DOS COM File</p>
+</div><section id="variant.f_AIXAR" class="variant"><a href="#variant.f_AIXAR" class="anchor">§</a><h3 class="code-header">f_AIXAR = 24</h3></section><div class="docblock"><p>&lt; AIX ar library</p>
+</div><section id="variant.f_MACHO" class="variant"><a href="#variant.f_MACHO" class="anchor">§</a><h3 class="code-header">f_MACHO = 25</h3></section><div class="docblock"><p>&lt; Mac OS X Mach-O</p>
+</div><section id="variant.f_PSXOBJ" class="variant"><a href="#variant.f_PSXOBJ" class="anchor">§</a><h3 class="code-header">f_PSXOBJ = 26</h3></section><div class="docblock"><p>&lt; Sony Playstation PSX object file</p>
+</div><section id="variant.f_MD1IMG" class="variant"><a href="#variant.f_MD1IMG" class="anchor">§</a><h3 class="code-header">f_MD1IMG = 27</h3></section><div class="docblock"><p>&lt; Mediatek Firmware Image</p>
+</div></div><script src="../../type.impl/idalib_sys/ffi/bindgen/root/enum.filetype_t.js" data-self-path="idalib_sys::ffix::filetype_t" async></script></section></div></main></body></html>

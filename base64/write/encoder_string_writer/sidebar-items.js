@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["EncoderStringWriter","Utf8SingleCodeUnitWriter"],"trait":["StrConsumer"]};

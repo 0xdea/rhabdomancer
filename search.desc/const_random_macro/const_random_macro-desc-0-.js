@@ -1,0 +1,1 @@
+searchState.loadedDescShard("const_random_macro", 0, "Create a TokenStream of an identifier out of a string")

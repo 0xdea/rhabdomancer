@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["translate_position"],"struct":["TomlError"]};
