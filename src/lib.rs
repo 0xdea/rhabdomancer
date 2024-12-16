@@ -33,6 +33,7 @@
 //! 3. Install rhabdomancer as follows:
 //!    ```sh
 //!    $ export IDASDKDIR=/path/to/idasdk90
+//!    $ export IDADIR=/path/to/ida # optional, if not set the build script will check common locations
 //!    $ cargo install rhabdomancer
 //!    ```
 //!
@@ -45,6 +46,7 @@
 //!     $ git clone https://github.com/0xdea/rhabdomancer
 //!     $ cd rhabdomancer
 //!     $ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
+//!     $ export IDADIR=/path/to/ida # optional, if not set the build script will check common locations
 //!     $ cargo build --release
 //!     ```
 //!
