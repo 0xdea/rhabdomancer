@@ -1,6 +1,6 @@
 [package]
 name = "rhabdomancer"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2021"
 description = "Vulnerability research assistant that locates all calls to potentially insecure API functions in a binary file."
@@ -16,7 +16,7 @@ exclude = [".cargo/*", ".github/*", ".img/*", "tests/*"]
 idalib = "0.3"
 anyhow = "1.0"
 config = "0.14"
-serde = { version = "1.0.210", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
 regex = "1.11"
 
 [build-dependencies]
