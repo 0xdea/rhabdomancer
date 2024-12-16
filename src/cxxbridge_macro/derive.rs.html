@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cxxbridge-macro-1.0.133/src/derive.rs`."><title>derive.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxxbridge_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cxxbridge-macro-1.0.134/src/derive.rs`."><title>derive.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxxbridge_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxxbridge_macro/</div>derive.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -293,7 +294,17 @@
 <a href="#293" id="293">293</a>
 <a href="#294" id="294">294</a>
 <a href="#295" id="295">295</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::syntax::{derive, Enum, Struct};
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::syntax::{derive, Enum, Struct};
 <span class="kw">use </span>proc_macro2::{Ident, Span, TokenStream};
 <span class="kw">use </span>quote::{quote, quote_spanned, ToTokens};
 
@@ -397,7 +408,8 @@
     <span class="kw">let </span>generics = <span class="kw-2">&amp;</span>strct.generics;
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="kw">impl </span>#generics ::cxx::core::marker::Copy <span class="kw">for </span>#ident #generics {}
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">impl </span>#generics ::cxx::core::marker::Copy <span class="kw">for </span>#ident #generics {}
     }
 }
 
@@ -421,7 +433,8 @@
     };
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="attr">#[allow(clippy::expl_impl_clone_on_copy)]
+        <span class="attr">#[automatically_derived]
+        #[allow(clippy::expl_impl_clone_on_copy)]
         </span><span class="kw">impl </span>#generics ::cxx::core::clone::Clone <span class="kw">for </span>#ident #generics {
             <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
                 #body
@@ -438,7 +451,8 @@
     <span class="kw">let </span>field_names = fields.clone().map(Ident::to_string);
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="kw">impl </span>#generics ::cxx::core::fmt::Debug <span class="kw">for </span>#ident #generics {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">impl </span>#generics ::cxx::core::fmt::Debug <span class="kw">for </span>#ident #generics {
             <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>::cxx::core::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; ::cxx::core::fmt::Result {
                 formatter.debug_struct(#struct_name)
                     #(.field(#field_names, <span class="kw-2">&amp;</span><span class="self">self</span>.#fields))*
@@ -454,7 +468,8 @@
     <span class="kw">let </span>fields = strct.fields.iter().map(|field| <span class="kw-2">&amp;</span>field.name.rust);
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="attr">#[allow(clippy::derivable_impls)] </span><span class="comment">// different spans than the derived impl
+        <span class="attr">#[automatically_derived]
+        #[allow(clippy::derivable_impls)] </span><span class="comment">// different spans than the derived impl
         </span><span class="kw">impl </span>#generics ::cxx::core::default::Default <span class="kw">for </span>#ident #generics {
             <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
                 #ident {
@@ -473,7 +488,8 @@
     <span class="kw">let </span>fields = strct.fields.iter().map(|field| <span class="kw-2">&amp;</span>field.name.rust);
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="kw">impl </span>#generics ::cxx::core::cmp::Ord <span class="kw">for </span>#ident #generics {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">impl </span>#generics ::cxx::core::cmp::Ord <span class="kw">for </span>#ident #generics {
             <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; ::cxx::core::cmp::Ordering {
                 #(
                     <span class="kw">match </span>::cxx::core::cmp::Ord::cmp(<span class="kw-2">&amp;</span><span class="self">self</span>.#fields, <span class="kw-2">&amp;</span>other.#fields) {
@@ -509,7 +525,8 @@
     };
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="kw">impl </span>#generics ::cxx::core::cmp::PartialOrd <span class="kw">for </span>#ident #generics {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">impl </span>#generics ::cxx::core::cmp::PartialOrd <span class="kw">for </span>#ident #generics {
             <span class="attr">#[allow(clippy::non_canonical_partial_ord_impl)]
             #[allow(renamed_and_removed_lints, clippy::incorrect_partial_ord_impl_on_ord_type)] </span><span class="comment">// Rust 1.73 and older
             </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; ::cxx::core::option::Option&lt;::cxx::core::cmp::Ordering&gt; {
@@ -523,7 +540,8 @@
     <span class="kw">let </span>ident = <span class="kw-2">&amp;</span>enm.name.rust;
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="kw">impl </span>::cxx::core::marker::Copy <span class="kw">for </span>#ident {}
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">impl </span>::cxx::core::marker::Copy <span class="kw">for </span>#ident {}
     }
 }
 
@@ -531,7 +549,8 @@
     <span class="kw">let </span>ident = <span class="kw-2">&amp;</span>enm.name.rust;
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="attr">#[allow(clippy::expl_impl_clone_on_copy)]
+        <span class="attr">#[automatically_derived]
+        #[allow(clippy::expl_impl_clone_on_copy)]
         </span><span class="kw">impl </span>::cxx::core::clone::Clone <span class="kw">for </span>#ident {
             <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
                 <span class="kw-2">*</span><span class="self">self
@@ -552,7 +571,8 @@
     <span class="kw">let </span>fallback = <span class="macro">format!</span>(<span class="string">"{}({{}})"</span>, ident);
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="kw">impl </span>::cxx::core::fmt::Debug <span class="kw">for </span>#ident {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">impl </span>::cxx::core::fmt::Debug <span class="kw">for </span>#ident {
             <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>::cxx::core::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; ::cxx::core::fmt::Result {
                 <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
                     #(#variants)*
@@ -567,7 +587,8 @@
     <span class="kw">let </span>ident = <span class="kw-2">&amp;</span>enm.name.rust;
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="kw">impl </span>::cxx::core::cmp::Ord <span class="kw">for </span>#ident {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">impl </span>::cxx::core::cmp::Ord <span class="kw">for </span>#ident {
             <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; ::cxx::core::cmp::Ordering {
                 ::cxx::core::cmp::Ord::cmp(<span class="kw-2">&amp;</span><span class="self">self</span>.repr, <span class="kw-2">&amp;</span>other.repr)
             }
@@ -579,7 +600,8 @@
     <span class="kw">let </span>ident = <span class="kw-2">&amp;</span>enm.name.rust;
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="kw">impl </span>::cxx::core::cmp::PartialOrd <span class="kw">for </span>#ident {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">impl </span>::cxx::core::cmp::PartialOrd <span class="kw">for </span>#ident {
             <span class="attr">#[allow(clippy::non_canonical_partial_ord_impl)]
             #[allow(renamed_and_removed_lints, clippy::incorrect_partial_ord_impl_on_ord_type)] </span><span class="comment">// Rust 1.73 and older
             </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; ::cxx::core::option::Option&lt;::cxx::core::cmp::Ordering&gt; {

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cxxbridge-macro-1.0.133/src/expand.rs`."><title>expand.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxxbridge_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cxxbridge-macro-1.0.134/src/expand.rs`."><title>expand.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxxbridge_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxxbridge_macro/</div>expand.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1956,7 +1957,23 @@
 <a href="#1956" id="1956">1956</a>
 <a href="#1957" id="1957">1957</a>
 <a href="#1958" id="1958">1958</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::syntax::atom::Atom::<span class="kw-2">*</span>;
+<a href="#1959" id="1959">1959</a>
+<a href="#1960" id="1960">1960</a>
+<a href="#1961" id="1961">1961</a>
+<a href="#1962" id="1962">1962</a>
+<a href="#1963" id="1963">1963</a>
+<a href="#1964" id="1964">1964</a>
+<a href="#1965" id="1965">1965</a>
+<a href="#1966" id="1966">1966</a>
+<a href="#1967" id="1967">1967</a>
+<a href="#1968" id="1968">1968</a>
+<a href="#1969" id="1969">1969</a>
+<a href="#1970" id="1970">1970</a>
+<a href="#1971" id="1971">1971</a>
+<a href="#1972" id="1972">1972</a>
+<a href="#1973" id="1973">1973</a>
+<a href="#1974" id="1974">1974</a>
+<a href="#1975" id="1975">1975</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::syntax::atom::Atom::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::syntax::attrs::{<span class="self">self</span>, OtherAttrs};
 <span class="kw">use </span><span class="kw">crate</span>::syntax::cfg::CfgExpr;
 <span class="kw">use </span><span class="kw">crate</span>::syntax::file::Module;
@@ -2145,7 +2162,8 @@
         <span class="attr">#[repr(C)]
         </span>#struct_def
 
-        <span class="kw">unsafe impl </span>#generics ::cxx::ExternType <span class="kw">for </span>#ident #generics {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">unsafe impl </span>#generics ::cxx::ExternType <span class="kw">for </span>#ident #generics {
             <span class="attr">#[allow(unused_attributes)] </span><span class="comment">// incorrect lint
             </span><span class="attr">#[doc(hidden)]
             </span><span class="kw">type </span>Id = #type_id;
@@ -2270,7 +2288,8 @@
     <span class="kw">let </span>impl_token = <span class="macro">Token!</span>[<span class="kw">impl</span>](strct.visibility.span);
 
     <span class="macro">quote_spanned!</span> {span=&gt;
-        #impl_token #generics <span class="self">self</span>::Drop <span class="kw">for super</span>::#ident #generics {}
+        <span class="attr">#[automatically_derived]
+        </span>#impl_token #generics <span class="self">self</span>::Drop <span class="kw">for super</span>::#ident #generics {}
     }
 }
 
@@ -2316,12 +2335,14 @@
         <span class="attr">#[repr(transparent)]
         </span>#enum_def
 
-        <span class="attr">#[allow(non_upper_case_globals)]
+        <span class="attr">#[automatically_derived]
+        #[allow(non_upper_case_globals)]
         </span><span class="kw">impl </span>#ident {
             #(#variants)*
         }
 
-        <span class="kw">unsafe impl </span>::cxx::ExternType <span class="kw">for </span>#ident {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">unsafe impl </span>::cxx::ExternType <span class="kw">for </span>#ident {
             <span class="attr">#[allow(unused_attributes)] </span><span class="comment">// incorrect lint
             </span><span class="attr">#[doc(hidden)]
             </span><span class="kw">type </span>Id = #type_id;
@@ -2363,7 +2384,8 @@
         <span class="attr">#[repr(C)]
         </span>#extern_type_def
 
-        <span class="kw">unsafe impl </span>#generics ::cxx::ExternType <span class="kw">for </span>#ident #generics {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">unsafe impl </span>#generics ::cxx::ExternType <span class="kw">for </span>#ident #generics {
             <span class="attr">#[allow(unused_attributes)] </span><span class="comment">// incorrect lint
             </span><span class="attr">#[doc(hidden)]
             </span><span class="kw">type </span>Id = #type_id;
@@ -2386,7 +2408,8 @@
                 <span class="kw">fn </span>infer() {}
             }
 
-            <span class="kw">impl</span>&lt;T&gt; __AmbiguousIfImpl&lt;()&gt; <span class="kw">for </span>T
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl</span>&lt;T&gt; __AmbiguousIfImpl&lt;()&gt; <span class="kw">for </span>T
             <span class="kw">where
                 </span>T: <span class="question-mark">?</span>::cxx::core::marker::Sized
             {}
@@ -2394,7 +2417,8 @@
             <span class="attr">#[allow(dead_code)]
             </span><span class="kw">struct </span>__Invalid;
 
-            <span class="kw">impl</span>&lt;T&gt; __AmbiguousIfImpl&lt;__Invalid&gt; <span class="kw">for </span>T
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl</span>&lt;T&gt; __AmbiguousIfImpl&lt;__Invalid&gt; <span class="kw">for </span>T
             <span class="kw">where
                 </span>T: <span class="question-mark">?</span>::cxx::core::marker::Sized + ::cxx::core::marker::Unpin,
             {}
@@ -2724,7 +2748,8 @@
                 <span class="kw-2">&amp;</span>elided_generics
             };
             <span class="macro">quote_spanned!</span> {ident.span()=&gt;
-                <span class="kw">impl </span>#generics #receiver_ident #receiver_generics {
+                <span class="attr">#[automatically_derived]
+                </span><span class="kw">impl </span>#generics #receiver_ident #receiver_generics {
                     #doc
                     #attrs
                     #visibility #unsafety #fn_token #ident #arg_list #ret #fn_body
@@ -2789,7 +2814,8 @@
     <span class="kw">let </span>unsafe_impl = <span class="macro">quote_spanned!</span>(ety.type_token.span=&gt; <span class="kw">unsafe impl</span>);
 
     <span class="kw">let </span><span class="kw-2">mut </span>impls = <span class="macro">quote_spanned!</span> {span=&gt;
-        <span class="attr">#[doc(hidden)]
+        <span class="attr">#[automatically_derived]
+        #[doc(hidden)]
         </span>#unsafe_impl #generics ::cxx::private::RustType <span class="kw">for </span>#ident #generics {}
     };
 
@@ -2798,7 +2824,8 @@
             <span class="kw">let </span>type_id = type_id(<span class="kw-2">&amp;</span>ety.name);
             <span class="kw">let </span>span = derive.span;
             impls.extend(<span class="macro">quote_spanned!</span> {span=&gt;
-                <span class="kw">unsafe impl </span>#generics ::cxx::ExternType <span class="kw">for </span>#ident #generics {
+                <span class="attr">#[automatically_derived]
+                </span><span class="kw">unsafe impl </span>#generics ::cxx::ExternType <span class="kw">for </span>#ident #generics {
                     <span class="attr">#[allow(unused_attributes)] </span><span class="comment">// incorrect lint
                     </span><span class="attr">#[doc(hidden)]
                     </span><span class="kw">type </span>Id = #type_id;
@@ -2878,7 +2905,8 @@
     <span class="macro">quote!</span> {
         <span class="kw">mod </span>forbid {
             <span class="kw">pub trait </span>Drop {}
-            <span class="attr">#[allow(drop_bounds)]
+            <span class="attr">#[automatically_derived]
+            #[allow(drop_bounds)]
             </span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>::cxx::core::marker::Sized + ::cxx::core::ops::Drop&gt; <span class="self">self</span>::Drop <span class="kw">for </span>T {}
             #impls
         }
@@ -3259,7 +3287,8 @@
     <span class="kw">let </span>prevent_unwind_drop_label = <span class="macro">format!</span>(<span class="string">"::{} as Drop&gt;::drop"</span>, ident);
 
     <span class="macro">quote_spanned!</span> {end_span=&gt;
-        <span class="attr">#[doc(hidden)]
+        <span class="attr">#[automatically_derived]
+        #[doc(hidden)]
         </span>#unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::ImplBox <span class="kw">for </span>#ident #ty_generics {}
         <span class="attr">#[doc(hidden)]
         #[#UnsafeAttr(#ExportNameAttr = #link_alloc)]
@@ -3317,7 +3346,8 @@
     <span class="kw">let </span>prevent_unwind_drop_label = <span class="macro">format!</span>(<span class="string">"::{} as Drop&gt;::drop"</span>, elem);
 
     <span class="macro">quote_spanned!</span> {end_span=&gt;
-        <span class="attr">#[doc(hidden)]
+        <span class="attr">#[automatically_derived]
+        #[doc(hidden)]
         </span>#unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::ImplVec <span class="kw">for </span>#elem #ty_generics {}
         <span class="attr">#[doc(hidden)]
         #[#UnsafeAttr(#ExportNameAttr = #link_new)]
@@ -3424,7 +3454,8 @@
     <span class="kw">let </span>unsafe_token = <span class="macro">format_ident!</span>(<span class="string">"unsafe"</span>, span = begin_span);
 
     <span class="macro">quote_spanned!</span> {end_span=&gt;
-        #unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::UniquePtrTarget <span class="kw">for </span>#ident #ty_generics {
+        <span class="attr">#[automatically_derived]
+        </span>#unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::UniquePtrTarget <span class="kw">for </span>#ident #ty_generics {
             <span class="kw">fn </span>__typename(f: <span class="kw-2">&amp;mut </span>::cxx::core::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; ::cxx::core::fmt::Result {
                 f.write_str(#name)
             }
@@ -3517,7 +3548,8 @@
     <span class="kw">let </span>unsafe_token = <span class="macro">format_ident!</span>(<span class="string">"unsafe"</span>, span = begin_span);
 
     <span class="macro">quote_spanned!</span> {end_span=&gt;
-        #unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::SharedPtrTarget <span class="kw">for </span>#ident #ty_generics {
+        <span class="attr">#[automatically_derived]
+        </span>#unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::SharedPtrTarget <span class="kw">for </span>#ident #ty_generics {
             <span class="kw">fn </span>__typename(f: <span class="kw-2">&amp;mut </span>::cxx::core::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; ::cxx::core::fmt::Result {
                 f.write_str(#name)
             }
@@ -3578,7 +3610,8 @@
     <span class="kw">let </span>unsafe_token = <span class="macro">format_ident!</span>(<span class="string">"unsafe"</span>, span = begin_span);
 
     <span class="macro">quote_spanned!</span> {end_span=&gt;
-        #unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::WeakPtrTarget <span class="kw">for </span>#ident #ty_generics {
+        <span class="attr">#[automatically_derived]
+        </span>#unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::WeakPtrTarget <span class="kw">for </span>#ident #ty_generics {
             <span class="kw">fn </span>__typename(f: <span class="kw-2">&amp;mut </span>::cxx::core::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; ::cxx::core::fmt::Result {
                 f.write_str(#name)
             }
@@ -3706,7 +3739,8 @@
     </span>};
 
     <span class="macro">quote_spanned!</span> {end_span=&gt;
-        #unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::VectorElement <span class="kw">for </span>#elem #ty_generics {
+        <span class="attr">#[automatically_derived]
+        </span>#unsafe_token <span class="kw">impl </span>#impl_generics ::cxx::private::VectorElement <span class="kw">for </span>#elem #ty_generics {
             <span class="kw">fn </span>__typename(f: <span class="kw-2">&amp;mut </span>::cxx::core::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; ::cxx::core::fmt::Result {
                 f.write_str(#name)
             }
