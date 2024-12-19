@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Document Linux as a supported platform, specify that Windows was not tested.
 
+### Changed
+
+* Update dependencies.
+
 ## [0.2.4] - 2024-12-16
 
 ### Changed
