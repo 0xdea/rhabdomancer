@@ -80,8 +80,8 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 
 ## Tested with
 
-* IDA Pro 9.0.240925 on macOS arm64.
-* IDA Pro 9.0.240925 on Linux x64.
+* IDA Pro 9.0.240925 on macOS arm64 and Linux x64.
+* IDA Pro 9.0.241217 on macOS arm64 and Linux x64.
 
 *Note: not tested on Windows, check [idalib](https://github.com/binarly-io/idalib) documentation if you want to try it
 yourself.*
