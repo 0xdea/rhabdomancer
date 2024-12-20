@@ -13,7 +13,7 @@ categories = ["command-line-utilities"]
 exclude = [".cargo/*", ".github/*", ".img/*", "tests/*"]
 
 [dependencies]
-idalib = "0.3"
+idalib = "0.4"
 anyhow = "1.0"
 config = "0.15"
 serde = { version = "1.0", features = ["derive"] }
