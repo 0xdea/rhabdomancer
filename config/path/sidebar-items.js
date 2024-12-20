@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Expression"],"fn":["sindex_to_uindex"],"mod":["parser"]};
+window.SIDEBAR_ITEMS = {"enum":["Postfix"],"fn":["abs_index"],"mod":["parser"],"struct":["Expression","ParseError"]};

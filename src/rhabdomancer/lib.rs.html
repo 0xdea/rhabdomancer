@@ -302,7 +302,11 @@
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
 <a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a></pre></div><pre class="rust"><code><span class="doccomment">//!
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a></pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
 //!
@@ -337,7 +341,7 @@
 //! 3. Install rhabdomancer as follows:
 //!    ```sh
 //!    $ export IDASDKDIR=/path/to/idasdk90
-//!    $ export IDADIR=/path/to/ida # if not set the build script will check common locations
+//!    $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
 //!    $ cargo install rhabdomancer
 //!    ```
 //!
@@ -350,7 +354,7 @@
 //!     $ git clone https://github.com/0xdea/rhabdomancer
 //!     $ cd rhabdomancer
 //!     $ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
-//!     $ export IDADIR=/path/to/ida # if not set the build script will check common locations
+//!     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
 //!     $ cargo build --release
 //!     ```
 //!
@@ -368,7 +372,11 @@
 //! *Note: rhabdomancer also adds comments at marked call locations.*
 //!
 //! ## Tested with
-//! * IDA Pro 9.0.240925 on macOS arm64.
+//! * IDA Pro 9.0.240925 on macOS arm64 and Linux x64.
+//! * IDA Pro 9.0.241217 on macOS arm64 and Linux x64.
+//!
+//! *Note: not tested on Windows, check [idalib](https://github.com/binarly-io/idalib)
+//! documentation if you want to try it yourself.*
 //!
 //! ## Changelog
 //! * &lt;https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md&gt;

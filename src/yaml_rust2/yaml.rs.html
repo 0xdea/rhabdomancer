@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/yaml-rust2-0.8.1/src/yaml.rs`."><title>yaml.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="yaml_rust2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">yaml_rust2/</div>yaml.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/yaml-rust2-0.9.0/src/yaml.rs`."><title>yaml.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="yaml_rust2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">yaml_rust2/</div>yaml.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -854,7 +854,82 @@
 <a href="#853" id="853">853</a>
 <a href="#854" id="854">854</a>
 <a href="#855" id="855">855</a>
-<a href="#856" id="856">856</a></pre></div><pre class="rust"><code><span class="doccomment">//! YAML objects manipulation utilities.
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
+<a href="#884" id="884">884</a>
+<a href="#885" id="885">885</a>
+<a href="#886" id="886">886</a>
+<a href="#887" id="887">887</a>
+<a href="#888" id="888">888</a>
+<a href="#889" id="889">889</a>
+<a href="#890" id="890">890</a>
+<a href="#891" id="891">891</a>
+<a href="#892" id="892">892</a>
+<a href="#893" id="893">893</a>
+<a href="#894" id="894">894</a>
+<a href="#895" id="895">895</a>
+<a href="#896" id="896">896</a>
+<a href="#897" id="897">897</a>
+<a href="#898" id="898">898</a>
+<a href="#899" id="899">899</a>
+<a href="#900" id="900">900</a>
+<a href="#901" id="901">901</a>
+<a href="#902" id="902">902</a>
+<a href="#903" id="903">903</a>
+<a href="#904" id="904">904</a>
+<a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
+<a href="#907" id="907">907</a>
+<a href="#908" id="908">908</a>
+<a href="#909" id="909">909</a>
+<a href="#910" id="910">910</a>
+<a href="#911" id="911">911</a>
+<a href="#912" id="912">912</a>
+<a href="#913" id="913">913</a>
+<a href="#914" id="914">914</a>
+<a href="#915" id="915">915</a>
+<a href="#916" id="916">916</a>
+<a href="#917" id="917">917</a>
+<a href="#918" id="918">918</a>
+<a href="#919" id="919">919</a>
+<a href="#920" id="920">920</a>
+<a href="#921" id="921">921</a>
+<a href="#922" id="922">922</a>
+<a href="#923" id="923">923</a>
+<a href="#924" id="924">924</a>
+<a href="#925" id="925">925</a>
+<a href="#926" id="926">926</a>
+<a href="#927" id="927">927</a>
+<a href="#928" id="928">928</a>
+<a href="#929" id="929">929</a>
+<a href="#930" id="930">930</a>
+<a href="#931" id="931">931</a></pre></div><pre class="rust"><code><span class="doccomment">//! YAML objects manipulation utilities.
 
 </span><span class="attr">#![allow(clippy::module_name_repetitions)]
 
@@ -896,9 +971,9 @@
     </span>String(String),
     <span class="doccomment">/// YAML bool, e.g. `true` or `false`.
     </span>Boolean(bool),
-    <span class="doccomment">/// YAML array, can be accessed as a `Vec`.
+    <span class="doccomment">/// YAML array, can be accessed as a [`Vec`].
     </span>Array(Array),
-    <span class="doccomment">/// YAML hash, can be accessed as a `LinkedHashMap`.
+    <span class="doccomment">/// YAML hash, can be accessed as a [`LinkedHashMap`].
     ///
     /// Insertion order will match the order of insertion into the map.
     </span>Hash(Hash),
@@ -1433,6 +1508,12 @@
         <span class="macro">matches!</span>(<span class="kw-2">*</span><span class="self">self</span>, Yaml::Array(<span class="kw">_</span>))
     }
 
+    <span class="doccomment">/// Return whether `self` is a [`Yaml::Hash`] node.
+    </span><span class="attr">#[must_use]
+    </span><span class="kw">pub fn </span>is_hash(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="macro">matches!</span>(<span class="kw-2">*</span><span class="self">self</span>, Yaml::Hash(<span class="kw">_</span>))
+    }
+
     <span class="doccomment">/// Return the `f64` value contained in this YAML node.
     ///
     /// If the node is not a [`Yaml::Real`] YAML node or its contents is not a valid `f64` string,
@@ -1518,7 +1599,7 @@
             }
         }
         <span class="kw">match </span>v {
-            <span class="string">"~" </span>| <span class="string">"null" </span>=&gt; Yaml::Null,
+            <span class="string">"" </span>| <span class="string">"~" </span>| <span class="string">"null" </span>=&gt; Yaml::Null,
             <span class="string">"true" </span>=&gt; Yaml::Boolean(<span class="bool-val">true</span>),
             <span class="string">"false" </span>=&gt; Yaml::Boolean(<span class="bool-val">false</span>),
             <span class="kw">_ </span>=&gt; {
@@ -1538,7 +1619,17 @@
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Index&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>str&gt; <span class="kw">for </span>Yaml {
     <span class="kw">type </span>Output = Yaml;
 
-    <span class="kw">fn </span>index(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="kw-2">&amp;</span>Yaml {
+    <span class="doccomment">/// Perform indexing if `self` is a mapping.
+    ///
+    /// # Return
+    /// If `self` is a [`Yaml::Hash`], returns an immutable borrow to the value associated to the
+    /// given key in the hash.
+    ///
+    /// This function returns a [`Yaml::BadValue`] if the underlying [`type@Hash`] does not contain
+    /// [`Yaml::String`]`{idx}` as a key.
+    ///
+    /// This function also returns a [`Yaml::BadValue`] if `self` is not a [`Yaml::Hash`].
+    </span><span class="kw">fn </span>index(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="kw-2">&amp;</span>Yaml {
         <span class="kw">let </span>key = Yaml::String(idx.to_owned());
         <span class="kw">match </span><span class="self">self</span>.as_hash() {
             <span class="prelude-val">Some</span>(h) =&gt; h.get(<span class="kw-2">&amp;</span>key).unwrap_or(<span class="kw-2">&amp;</span>BAD_VALUE),
@@ -1548,7 +1639,16 @@
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; IndexMut&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>str&gt; <span class="kw">for </span>Yaml {
-    <span class="kw">fn </span>index_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, idx: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="kw-2">&amp;mut </span>Yaml {
+    <span class="doccomment">/// Perform indexing if `self` is a mapping.
+    ///
+    /// Since we cannot return a mutable borrow to a static [`Yaml::BadValue`] as we return an
+    /// immutable one in [`Index&lt;&amp;'a str&gt;`], this function panics on out of bounds.
+    ///
+    /// # Panics
+    /// This function panics if the given key is not contained in `self` (as per [`IndexMut`]).
+    ///
+    /// This function also panics if `self` is not a [`Yaml::Hash`].
+    </span><span class="kw">fn </span>index_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, idx: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="kw-2">&amp;mut </span>Yaml {
         <span class="kw">let </span>key = Yaml::String(idx.to_owned());
         <span class="kw">match </span><span class="self">self</span>.as_mut_hash() {
             <span class="prelude-val">Some</span>(h) =&gt; h.get_mut(<span class="kw-2">&amp;</span>key).unwrap(),
@@ -1560,7 +1660,23 @@
 <span class="kw">impl </span>Index&lt;usize&gt; <span class="kw">for </span>Yaml {
     <span class="kw">type </span>Output = Yaml;
 
-    <span class="kw">fn </span>index(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: usize) -&gt; <span class="kw-2">&amp;</span>Yaml {
+    <span class="doccomment">/// Perform indexing if `self` is a sequence or a mapping.
+    ///
+    /// # Return
+    /// If `self` is a [`Yaml::Array`], returns an immutable borrow to the value located at the
+    /// given index in the array.
+    ///
+    /// Otherwise, if `self` is a [`Yaml::Hash`], returns a borrow to the value whose key is
+    /// [`Yaml::Integer`]`(idx)` (this would not work if the key is [`Yaml::String`]`("1")`.
+    ///
+    /// This function returns a [`Yaml::BadValue`] if the index given is out of range. If `self` is
+    /// a [`Yaml::Array`], this is when the index is bigger or equal to the length of the
+    /// underlying `Vec`. If `self` is a [`Yaml::Hash`], this is when the mapping sequence does not
+    /// contain [`Yaml::Integer`]`(idx)` as a key.
+    ///
+    /// This function also returns a [`Yaml::BadValue`] if `self` is not a [`Yaml::Array`] nor a
+    /// [`Yaml::Hash`].
+    </span><span class="kw">fn </span>index(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: usize) -&gt; <span class="kw-2">&amp;</span>Yaml {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = <span class="self">self</span>.as_vec() {
             v.get(idx).unwrap_or(<span class="kw-2">&amp;</span>BAD_VALUE)
         } <span class="kw">else if let </span><span class="prelude-val">Some</span>(v) = <span class="self">self</span>.as_hash() {
@@ -1575,10 +1691,13 @@
 <span class="kw">impl </span>IndexMut&lt;usize&gt; <span class="kw">for </span>Yaml {
     <span class="doccomment">/// Perform indexing if `self` is a sequence or a mapping.
     ///
+    /// Since we cannot return a mutable borrow to a static [`Yaml::BadValue`] as we return an
+    /// immutable one in [`Index&lt;usize&gt;`], this function panics on out of bounds.
+    ///
     /// # Panics
-    /// This function panics if the index given is out of range (as per [`IndexMut`]). If `self` i
+    /// This function panics if the index given is out of range (as per [`IndexMut`]). If `self` is
     /// a [`Yaml::Array`], this is when the index is bigger or equal to the length of the
-    /// underlying `Vec`. If `self` is a [`Yaml::Hash`], this is when the mapping sequence does no
+    /// underlying `Vec`. If `self` is a [`Yaml::Hash`], this is when the mapping sequence does not
     /// contain [`Yaml::Integer`]`(idx)` as a key.
     ///
     /// This function also panics if `self` is not a [`Yaml::Array`] nor a [`Yaml::Hash`].
@@ -1598,7 +1717,38 @@
     <span class="kw">type </span>Item = Yaml;
     <span class="kw">type </span>IntoIter = YamlIter;
 
-    <span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; <span class="self">Self</span>::IntoIter {
+    <span class="doccomment">/// Extract the [`Array`] from `self` and iterate over it.
+    ///
+    /// If `self` is **not** of the [`Yaml::Array`] variant, this function will not panic or return
+    /// an error (as per the [`IntoIterator`] trait it cannot) but will instead return an iterator
+    /// over an empty [`Array`]. Callers have to ensure (using [`Yaml::is_array`], [`matches`] or
+    /// something similar) that the [`Yaml`] object is a [`Yaml::Array`] if they want to do error
+    /// handling.
+    ///
+    /// # Examples
+    /// ```
+    /// # use yaml_rust2::{Yaml, YamlLoader};
+    ///
+    /// // An array of 2 integers, 1 and 2.
+    /// let arr = &amp;YamlLoader::load_from_str("- 1\n- 2").unwrap()[0];
+    ///
+    /// assert_eq!(arr.clone().into_iter().count(), 2);
+    /// assert_eq!(arr.clone().into_iter().next(), Some(Yaml::Integer(1)));
+    /// assert_eq!(arr.clone().into_iter().nth(1), Some(Yaml::Integer(2)));
+    ///
+    /// // An empty array returns an empty iterator.
+    /// let empty = Yaml::Array(vec![]);
+    /// assert_eq!(empty.into_iter().count(), 0);
+    ///
+    /// // A hash with 2 key-value pairs, `(a, b)` and `(c, d)`.
+    /// let hash = YamlLoader::load_from_str("a: b\nc: d").unwrap().remove(0);
+    /// // The hash has 2 elements.
+    /// assert_eq!(hash.as_hash().unwrap().iter().count(), 2);
+    /// // But since `into_iter` can't be used with a `Yaml::Hash`, `into_iter` returns an empty
+    /// // iterator.
+    /// assert_eq!(hash.into_iter().count(), 0);
+    /// ```
+    </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; <span class="self">Self</span>::IntoIter {
         YamlIter {
             yaml: <span class="self">self</span>.into_vec().unwrap_or_default().into_iter(),
         }
