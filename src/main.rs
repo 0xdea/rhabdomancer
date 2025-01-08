@@ -2,11 +2,12 @@ use std::env;
 use std::path::Path;
 use std::process;
 
-const PROG: &str = env!("CARGO_PKG_NAME");
+const PROGRAM: &str = env!("CARGO_PKG_NAME");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() {
-    println!("{PROG} - IDA Pro vulnerability research assistant");
-    println!("Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>");
+    println!("{PROGRAM} {VERSION} - IDA Pro vulnerability research assistant");
+    println!("Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>");
     println!();
 
     // Force IDA Pro to stay quiet
@@ -19,7 +20,7 @@ fn main() {
         .file_name()
         .unwrap()
         .to_str()
-        .unwrap_or(PROG);
+        .unwrap_or(PROGRAM);
 
     let filename = match args.len() {
         2 => &args[1],

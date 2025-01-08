@@ -1,6 +1,6 @@
 //!
 //! rhabdomancer - IDA Pro vulnerability research assistant
-//! Copyright (c) 2024 Marco Ivaldi <raptor@0xdeadbeef.info>
+//! Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>
 //!
 //! > "The road to exploitable bugs is paved with unexploitable bugs."
 //! >
