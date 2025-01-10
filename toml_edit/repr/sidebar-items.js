@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Decor","Formatted","Repr"],"trait":["ValueRepr"]};
+window.SIDEBAR_ITEMS = {"mod":["inner"],"struct":["Decor","Formatted","Repr"],"trait":["ValueRepr"]};

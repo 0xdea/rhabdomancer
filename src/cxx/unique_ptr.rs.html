@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cxx-1.0.135/src/unique_ptr.rs`."><title>unique_ptr.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxx/</div>unique_ptr.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cxx-1.0.136/src/unique_ptr.rs`."><title>unique_ptr.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxx/</div>unique_ptr.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -371,7 +371,25 @@
 <a href="#370" id="370">370</a>
 <a href="#371" id="371">371</a>
 <a href="#372" id="372">372</a>
-<a href="#373" id="373">373</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::cxx_vector::{CxxVector, VectorElement};
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::cxx_vector::{CxxVector, VectorElement};
 <span class="kw">use </span><span class="kw">crate</span>::fmt::display;
 <span class="kw">use </span><span class="kw">crate</span>::kind::Trivial;
 <span class="kw">use </span><span class="kw">crate</span>::string::CxxString;
@@ -428,21 +446,22 @@
     ///
     /// This is the opposite of [std::unique_ptr\&lt;T\&gt;::operator bool](https://en.cppreference.com/w/cpp/memory/unique_ptr/operator_bool).
     </span><span class="kw">pub fn </span>is_null(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">let </span>ptr = <span class="kw">unsafe </span>{ T::__get(<span class="self">self</span>.repr) };
-        ptr.is_null()
+        <span class="self">self</span>.as_ptr().is_null()
     }
 
     <span class="doccomment">/// Returns a reference to the object owned by this UniquePtr if any,
     /// otherwise None.
     </span><span class="kw">pub fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>T&gt; {
-        <span class="kw">unsafe </span>{ T::__get(<span class="self">self</span>.repr).as_ref() }
+        <span class="kw">let </span>ptr = <span class="self">self</span>.as_ptr();
+        <span class="kw">unsafe </span>{ ptr.as_ref() }
     }
 
     <span class="doccomment">/// Returns a mutable pinned reference to the object owned by this UniquePtr
     /// if any, otherwise None.
     </span><span class="kw">pub fn </span>as_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Pin&lt;<span class="kw-2">&amp;mut </span>T&gt;&gt; {
+        <span class="kw">let </span>ptr = <span class="self">self</span>.as_mut_ptr();
         <span class="kw">unsafe </span>{
-            <span class="kw">let </span>mut_reference = (T::__get(<span class="self">self</span>.repr) <span class="kw">as </span><span class="kw-2">*mut </span>T).as_mut()<span class="question-mark">?</span>;
+            <span class="kw">let </span>mut_reference = ptr.as_mut()<span class="question-mark">?</span>;
             <span class="prelude-val">Some</span>(Pin::new_unchecked(mut_reference))
         }
     }
@@ -461,6 +480,23 @@
                 display(T::__typename),
             ),
         }
+    }
+
+    <span class="doccomment">/// Returns a raw const pointer to the object owned by this UniquePtr if
+    /// any, otherwise the null pointer.
+    </span><span class="kw">pub fn </span>as_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*const </span>T {
+        <span class="kw">unsafe </span>{ T::__get(<span class="self">self</span>.repr) }
+    }
+
+    <span class="doccomment">/// Returns a raw mutable pointer to the object owned by this UniquePtr if
+    /// any, otherwise the null pointer.
+    ///
+    /// As with [std::unique_ptr\&lt;T\&gt;::get](https://en.cppreference.com/w/cpp/memory/unique_ptr/get),
+    /// this doesn't require that you hold an exclusive reference to the
+    /// UniquePtr. This differs from Rust norms, so extra care should be taken
+    /// in the way the pointer is used.
+    </span><span class="kw">pub fn </span>as_mut_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>T {
+        <span class="self">self</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>T
     }
 
     <span class="doccomment">/// Consumes the UniquePtr, releasing its ownership of the heap-allocated T.

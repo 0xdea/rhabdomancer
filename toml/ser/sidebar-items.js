@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["to_string","to_string_pretty"],"mod":["internal"],"struct":["Error","Serializer","ValueSerializer"]};
+window.SIDEBAR_ITEMS = {"struct":["Error"]};

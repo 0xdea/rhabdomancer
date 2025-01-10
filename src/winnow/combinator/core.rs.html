@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.20/src/combinator/core.rs`."><title>core.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/combinator/</div>core.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.22/src/combinator/core.rs`."><title>core.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/combinator/</div>core.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -562,7 +562,23 @@
 <a href="#561" id="561">561</a>
 <a href="#562" id="562">562</a>
 <a href="#563" id="563">563</a>
-<a href="#564" id="564">564</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::combinator::trace;
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::combinator::trace;
 <span class="kw">use </span><span class="kw">crate</span>::error::{ErrMode, ErrorKind, Needed, ParserError};
 <span class="kw">use </span><span class="kw">crate</span>::stream::Stream;
 <span class="kw">use crate</span>::<span class="kw-2">*</span>;
@@ -601,7 +617,11 @@
 
 <span class="doccomment">/// Return the length of the remaining input.
 ///
+/// &lt;div class="warning"&gt;
+///
 /// Note: this does not advance the [`Stream`]
+///
+/// &lt;/div&gt;
 ///
 /// # Effective Signature
 ///
@@ -717,7 +737,9 @@
     })
 }
 
-<span class="doccomment">/// Tries to apply its parser without consuming the input.
+<span class="doccomment">/// Apply the parser without advancing the input.
+///
+/// To lookahead and only advance on success, see [`opt`].
 ///
 /// # Example
 ///
@@ -798,7 +820,11 @@
 
 <span class="doccomment">/// Succeeds if the child parser returns an error.
 ///
+/// &lt;div class="warning"&gt;
+///
 /// **Note:** This does not advance the [`Stream`]
+///
+/// &lt;/div&gt;
 ///
 /// # Example
 ///
@@ -1016,7 +1042,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, F, I, O, E&gt; core::iter::Iterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>ParserIterator&lt;F, I, O, E&gt;
+<span class="kw">impl</span>&lt;F, I, O, E&gt; core::iter::Iterator <span class="kw">for </span><span class="kw-2">&amp;mut </span>ParserIterator&lt;F, I, O, E&gt;
 <span class="kw">where
     </span>F: Parser&lt;I, O, E&gt;,
     I: Stream,
@@ -1069,7 +1095,11 @@
 /// - [`Parser::default_value`]
 /// - [`Parser::map`]
 ///
+/// &lt;div class="warning"&gt;
+///
 /// **Note:** This never advances the [`Stream`]
+///
+/// &lt;/div&gt;
 ///
 /// # Example
 ///
@@ -1092,6 +1122,7 @@
 /// ```
 </span><span class="attr">#[doc(alias = <span class="string">"value"</span>)]
 #[doc(alias = <span class="string">"success"</span>)]
+#[inline]
 </span><span class="kw">pub fn </span>empty&lt;Input, Error&gt;(_input: <span class="kw-2">&amp;mut </span>Input) -&gt; PResult&lt;(), Error&gt;
 <span class="kw">where
     </span>Input: Stream,
@@ -1116,6 +1147,7 @@
 /// assert_eq!(fail::&lt;_, &amp;str, _&gt;.parse_peek(s), Err(ErrMode::Backtrack(InputError::new(s, ErrorKind::Fail))));
 /// ```
 </span><span class="attr">#[doc(alias = <span class="string">"unexpected"</span>)]
+#[inline]
 </span><span class="kw">pub fn </span>fail&lt;Input, Output, Error&gt;(i: <span class="kw-2">&amp;mut </span>Input) -&gt; PResult&lt;Output, Error&gt;
 <span class="kw">where
     </span>Input: Stream,

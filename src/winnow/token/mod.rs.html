@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.20/src/token/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/token/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.22/src/token/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/token/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -1029,68 +1029,7 @@
 <a href="#1028" id="1028">1028</a>
 <a href="#1029" id="1029">1029</a>
 <a href="#1030" id="1030">1030</a>
-<a href="#1031" id="1031">1031</a>
-<a href="#1032" id="1032">1032</a>
-<a href="#1033" id="1033">1033</a>
-<a href="#1034" id="1034">1034</a>
-<a href="#1035" id="1035">1035</a>
-<a href="#1036" id="1036">1036</a>
-<a href="#1037" id="1037">1037</a>
-<a href="#1038" id="1038">1038</a>
-<a href="#1039" id="1039">1039</a>
-<a href="#1040" id="1040">1040</a>
-<a href="#1041" id="1041">1041</a>
-<a href="#1042" id="1042">1042</a>
-<a href="#1043" id="1043">1043</a>
-<a href="#1044" id="1044">1044</a>
-<a href="#1045" id="1045">1045</a>
-<a href="#1046" id="1046">1046</a>
-<a href="#1047" id="1047">1047</a>
-<a href="#1048" id="1048">1048</a>
-<a href="#1049" id="1049">1049</a>
-<a href="#1050" id="1050">1050</a>
-<a href="#1051" id="1051">1051</a>
-<a href="#1052" id="1052">1052</a>
-<a href="#1053" id="1053">1053</a>
-<a href="#1054" id="1054">1054</a>
-<a href="#1055" id="1055">1055</a>
-<a href="#1056" id="1056">1056</a>
-<a href="#1057" id="1057">1057</a>
-<a href="#1058" id="1058">1058</a>
-<a href="#1059" id="1059">1059</a>
-<a href="#1060" id="1060">1060</a>
-<a href="#1061" id="1061">1061</a>
-<a href="#1062" id="1062">1062</a>
-<a href="#1063" id="1063">1063</a>
-<a href="#1064" id="1064">1064</a>
-<a href="#1065" id="1065">1065</a>
-<a href="#1066" id="1066">1066</a>
-<a href="#1067" id="1067">1067</a>
-<a href="#1068" id="1068">1068</a>
-<a href="#1069" id="1069">1069</a>
-<a href="#1070" id="1070">1070</a>
-<a href="#1071" id="1071">1071</a>
-<a href="#1072" id="1072">1072</a>
-<a href="#1073" id="1073">1073</a>
-<a href="#1074" id="1074">1074</a>
-<a href="#1075" id="1075">1075</a>
-<a href="#1076" id="1076">1076</a>
-<a href="#1077" id="1077">1077</a>
-<a href="#1078" id="1078">1078</a>
-<a href="#1079" id="1079">1079</a>
-<a href="#1080" id="1080">1080</a>
-<a href="#1081" id="1081">1081</a>
-<a href="#1082" id="1082">1082</a>
-<a href="#1083" id="1083">1083</a>
-<a href="#1084" id="1084">1084</a>
-<a href="#1085" id="1085">1085</a>
-<a href="#1086" id="1086">1086</a>
-<a href="#1087" id="1087">1087</a>
-<a href="#1088" id="1088">1088</a>
-<a href="#1089" id="1089">1089</a>
-<a href="#1090" id="1090">1090</a>
-<a href="#1091" id="1091">1091</a>
-<a href="#1092" id="1092">1092</a></pre></div><pre class="rust"><code><span class="doccomment">//! Parsers extracting tokens from the stream
+<a href="#1031" id="1031">1031</a></pre></div><pre class="rust"><code><span class="doccomment">//! Parsers extracting tokens from the stream
 
 </span><span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests;
@@ -1185,8 +1124,12 @@
 ///
 /// It will return `Err(ErrMode::Backtrack(InputError::new(_, ErrorKind::Tag)))` if the input doesn't match the literal
 ///
+/// &lt;div class="warning"&gt;
+///
 /// **Note:** [`Parser`] is implemented for strings and byte strings as a convenience (complete
 /// only)
+///
+/// &lt;/div&gt;
 ///
 /// # Effective Signature
 ///
@@ -1291,10 +1234,14 @@
 
 <span class="doccomment">/// Recognize a token that matches a [set of tokens][ContainsToken]
 ///
+/// &lt;div class="warning"&gt;
+///
 /// **Note:** [`Parser`] is implemented as a convenience (complete
 /// only) for
 /// - `u8`
 /// - `char`
+///
+/// &lt;/div&gt;
 ///
 /// *Complete version*: Will return an error if there's not enough input data.
 ///
@@ -1584,90 +1531,48 @@
         <span class="kw">match </span>(start_inclusive, end_inclusive) {
             (<span class="number">0</span>, <span class="prelude-val">None</span>) =&gt; {
                 <span class="kw">if </span>&lt;Input <span class="kw">as </span>StreamIsPartial&gt;::is_partial_supported() {
-                    take_while0_::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">true</span>&gt;(i, <span class="kw-2">&amp;</span>set)
+                    take_till0::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">true</span>&gt;(i, |c| !set.contains_token(c))
                 } <span class="kw">else </span>{
-                    take_while0_::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">false</span>&gt;(i, <span class="kw-2">&amp;</span>set)
+                    take_till0::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">false</span>&gt;(i, |c| !set.contains_token(c))
                 }
             }
             (<span class="number">1</span>, <span class="prelude-val">None</span>) =&gt; {
                 <span class="kw">if </span>&lt;Input <span class="kw">as </span>StreamIsPartial&gt;::is_partial_supported() {
-                    take_while1_::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">true</span>&gt;(i, <span class="kw-2">&amp;</span>set)
+                    take_till1::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">true</span>&gt;(i, |c| !set.contains_token(c))
                 } <span class="kw">else </span>{
-                    take_while1_::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">false</span>&gt;(i, <span class="kw-2">&amp;</span>set)
+                    take_till1::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">false</span>&gt;(i, |c| !set.contains_token(c))
                 }
             }
             (start, end) =&gt; {
                 <span class="kw">let </span>end = end.unwrap_or(usize::MAX);
                 <span class="kw">if </span>&lt;Input <span class="kw">as </span>StreamIsPartial&gt;::is_partial_supported() {
-                    take_while_m_n_::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">true</span>&gt;(i, start, end, <span class="kw-2">&amp;</span>set)
+                    take_till_m_n::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">true</span>&gt;(i, start, end, |c| !set.contains_token(c))
                 } <span class="kw">else </span>{
-                    take_while_m_n_::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">false</span>&gt;(i, start, end, <span class="kw-2">&amp;</span>set)
+                    take_till_m_n::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">false</span>&gt;(i, start, end, |c| !set.contains_token(c))
                 }
             }
         }
     })
 }
 
-<span class="kw">fn </span>take_while0_&lt;T, I, Error: ParserError&lt;I&gt;, <span class="kw">const </span>PARTIAL: bool&gt;(
-    input: <span class="kw-2">&amp;mut </span>I,
-    list: <span class="kw-2">&amp;</span>T,
-) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, Error&gt;
-<span class="kw">where
-    </span>I: StreamIsPartial,
-    I: Stream,
-    T: ContainsToken&lt;&lt;I <span class="kw">as </span>Stream&gt;::Token&gt;,
-{
-    <span class="kw">if </span>PARTIAL &amp;&amp; input.is_partial() {
-        take_till0_partial(input, |c| !list.contains_token(c))
-    } <span class="kw">else </span>{
-        take_till0_complete(input, |c| !list.contains_token(c))
-    }
-}
-
-<span class="kw">fn </span>take_while1_&lt;T, I, Error: ParserError&lt;I&gt;, <span class="kw">const </span>PARTIAL: bool&gt;(
-    input: <span class="kw-2">&amp;mut </span>I,
-    list: <span class="kw-2">&amp;</span>T,
-) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, Error&gt;
-<span class="kw">where
-    </span>I: StreamIsPartial,
-    I: Stream,
-    T: ContainsToken&lt;&lt;I <span class="kw">as </span>Stream&gt;::Token&gt;,
-{
-    <span class="kw">if </span>PARTIAL &amp;&amp; input.is_partial() {
-        take_till1_partial(input, |c| !list.contains_token(c))
-    } <span class="kw">else </span>{
-        take_till1_complete(input, |c| !list.contains_token(c))
-    }
-}
-
-<span class="kw">fn </span>take_while_m_n_&lt;T, I, Error: ParserError&lt;I&gt;, <span class="kw">const </span>PARTIAL: bool&gt;(
-    input: <span class="kw-2">&amp;mut </span>I,
-    m: usize,
-    n: usize,
-    list: <span class="kw-2">&amp;</span>T,
-) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, Error&gt;
-<span class="kw">where
-    </span>I: StreamIsPartial,
-    I: Stream,
-    T: ContainsToken&lt;&lt;I <span class="kw">as </span>Stream&gt;::Token&gt;,
-{
-    take_till_m_n::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, PARTIAL&gt;(input, m, n, |c| !list.contains_token(c))
-}
-
-<span class="kw">fn </span>take_till0_partial&lt;P, I: Stream, E: ParserError&lt;I&gt;&gt;(
+<span class="kw">fn </span>take_till0&lt;P, I: StreamIsPartial + Stream, E: ParserError&lt;I&gt;, <span class="kw">const </span>PARTIAL: bool&gt;(
     input: <span class="kw-2">&amp;mut </span>I,
     predicate: P,
 ) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt;
 <span class="kw">where
     </span>P: Fn(I::Token) -&gt; bool,
 {
-    <span class="kw">let </span>offset = input
-        .offset_for(predicate)
-        .ok_or_else(|| ErrMode::Incomplete(Needed::new(<span class="number">1</span>)))<span class="question-mark">?</span>;
+    <span class="kw">let </span>offset = <span class="kw">match </span>input.offset_for(predicate) {
+        <span class="prelude-val">Some</span>(offset) =&gt; offset,
+        <span class="prelude-val">None </span><span class="kw">if </span>PARTIAL &amp;&amp; input.is_partial() =&gt; {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ErrMode::Incomplete(Needed::new(<span class="number">1</span>)));
+        }
+        <span class="prelude-val">None </span>=&gt; input.eof_offset(),
+    };
     <span class="prelude-val">Ok</span>(input.next_slice(offset))
 }
 
-<span class="kw">fn </span>take_till1_partial&lt;P, I: Stream, E: ParserError&lt;I&gt;&gt;(
+<span class="kw">fn </span>take_till1&lt;P, I: StreamIsPartial + Stream, E: ParserError&lt;I&gt;, <span class="kw">const </span>PARTIAL: bool&gt;(
     input: <span class="kw-2">&amp;mut </span>I,
     predicate: P,
 ) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt;
@@ -1675,40 +1580,13 @@
     </span>P: Fn(I::Token) -&gt; bool,
 {
     <span class="kw">let </span>e: ErrorKind = ErrorKind::Slice;
-    <span class="kw">let </span>offset = input
-        .offset_for(predicate)
-        .ok_or_else(|| ErrMode::Incomplete(Needed::new(<span class="number">1</span>)))<span class="question-mark">?</span>;
-    <span class="kw">if </span>offset == <span class="number">0 </span>{
-        <span class="prelude-val">Err</span>(ErrMode::from_error_kind(input, e))
-    } <span class="kw">else </span>{
-        <span class="prelude-val">Ok</span>(input.next_slice(offset))
-    }
-}
-
-<span class="kw">fn </span>take_till0_complete&lt;P, I: Stream, E: ParserError&lt;I&gt;&gt;(
-    input: <span class="kw-2">&amp;mut </span>I,
-    predicate: P,
-) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt;
-<span class="kw">where
-    </span>P: Fn(I::Token) -&gt; bool,
-{
-    <span class="kw">let </span>offset = input
-        .offset_for(predicate)
-        .unwrap_or_else(|| input.eof_offset());
-    <span class="prelude-val">Ok</span>(input.next_slice(offset))
-}
-
-<span class="kw">fn </span>take_till1_complete&lt;P, I: Stream, E: ParserError&lt;I&gt;&gt;(
-    input: <span class="kw-2">&amp;mut </span>I,
-    predicate: P,
-) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt;
-<span class="kw">where
-    </span>P: Fn(I::Token) -&gt; bool,
-{
-    <span class="kw">let </span>e: ErrorKind = ErrorKind::Slice;
-    <span class="kw">let </span>offset = input
-        .offset_for(predicate)
-        .unwrap_or_else(|| input.eof_offset());
+    <span class="kw">let </span>offset = <span class="kw">match </span>input.offset_for(predicate) {
+        <span class="prelude-val">Some</span>(offset) =&gt; offset,
+        <span class="prelude-val">None </span><span class="kw">if </span>PARTIAL &amp;&amp; input.is_partial() =&gt; {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ErrMode::Incomplete(Needed::new(<span class="number">1</span>)));
+        }
+        <span class="prelude-val">None </span>=&gt; input.eof_offset(),
+    };
     <span class="kw">if </span>offset == <span class="number">0 </span>{
         <span class="prelude-val">Err</span>(ErrMode::from_error_kind(input, e))
     } <span class="kw">else </span>{
@@ -1845,16 +1723,16 @@
         <span class="kw">match </span>(start_inclusive, end_inclusive) {
             (<span class="number">0</span>, <span class="prelude-val">None</span>) =&gt; {
                 <span class="kw">if </span>&lt;Input <span class="kw">as </span>StreamIsPartial&gt;::is_partial_supported() {
-                    take_till0_partial(i, |c| set.contains_token(c))
+                    take_till0::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">true</span>&gt;(i, |c| set.contains_token(c))
                 } <span class="kw">else </span>{
-                    take_till0_complete(i, |c| set.contains_token(c))
+                    take_till0::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">false</span>&gt;(i, |c| set.contains_token(c))
                 }
             }
             (<span class="number">1</span>, <span class="prelude-val">None</span>) =&gt; {
                 <span class="kw">if </span>&lt;Input <span class="kw">as </span>StreamIsPartial&gt;::is_partial_supported() {
-                    take_till1_partial(i, |c| set.contains_token(c))
+                    take_till1::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">true</span>&gt;(i, |c| set.contains_token(c))
                 } <span class="kw">else </span>{
-                    take_till1_complete(i, |c| set.contains_token(c))
+                    take_till1::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="bool-val">false</span>&gt;(i, |c| set.contains_token(c))
                 }
             }
             (start, end) =&gt; {

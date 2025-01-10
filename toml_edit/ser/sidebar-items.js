@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["to_document","to_string","to_string_pretty","to_vec"],"mod":["array","key","map","pretty","value"],"struct":["ValueSerializer"]};
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["to_document"],"mod":["array","key","map","pretty","value"],"struct":["ValueSerializer"]};

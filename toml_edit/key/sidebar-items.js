@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["to_key_repr"],"struct":["Key","KeyMut"]};
+window.SIDEBAR_ITEMS = {"struct":["Key","KeyMut"]};

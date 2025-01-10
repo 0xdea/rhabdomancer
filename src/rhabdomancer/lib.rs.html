@@ -306,9 +306,13 @@
 <a href="#305" id="305">305</a>
 <a href="#306" id="306">306</a>
 <a href="#307" id="307">307</a>
-<a href="#308" id="308">308</a></pre></div><pre class="rust"><code><span class="doccomment">//!
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a></pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
-//! Copyright (c) 2024 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
+//! Copyright (c) 2024-2025 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
 //!
 //! &gt; "The road to exploitable bugs is paved with unexploitable bugs."
 //! &gt;
@@ -323,6 +327,9 @@
 //! * Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
 //! * Bad API function call locations are printed to stdout and marked in the IDB.
 //! * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
+//!     * [BAD 0] High priority - Functions that are generally considered insecure
+//!     * [BAD 1] Medium priority - Interesting functions that should be checked for insecure use cases.
+//!     * [BAD 2] Low priority - Code paths involving these functions should be carefully checked.
 //! * The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
 //!
 //! ## Blog post
@@ -365,6 +372,7 @@
 //!     ```sh
 //!     $ rhabdomancer &lt;binary_file&gt;
 //!     ```
+//!    Any existing `.i64` IDB file will be updated; otherwise, a new file will be created.
 //! 4. Open the resulting `.i64` IDB file with IDA Pro.
 //! 5. Select `View` &gt; `Open subviews` &gt; `Bookmarks`
 //! 6. Enjoy your results conveniently collected in an IDA Pro window.

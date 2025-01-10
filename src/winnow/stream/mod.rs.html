@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.20/src/stream/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/stream/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.22/src/stream/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/stream/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -3782,7 +3782,45 @@
 <a href="#3781" id="3781">3781</a>
 <a href="#3782" id="3782">3782</a>
 <a href="#3783" id="3783">3783</a>
-<a href="#3784" id="3784">3784</a></pre></div><pre class="rust"><code><span class="doccomment">//! Stream capability for combinators to parse
+<a href="#3784" id="3784">3784</a>
+<a href="#3785" id="3785">3785</a>
+<a href="#3786" id="3786">3786</a>
+<a href="#3787" id="3787">3787</a>
+<a href="#3788" id="3788">3788</a>
+<a href="#3789" id="3789">3789</a>
+<a href="#3790" id="3790">3790</a>
+<a href="#3791" id="3791">3791</a>
+<a href="#3792" id="3792">3792</a>
+<a href="#3793" id="3793">3793</a>
+<a href="#3794" id="3794">3794</a>
+<a href="#3795" id="3795">3795</a>
+<a href="#3796" id="3796">3796</a>
+<a href="#3797" id="3797">3797</a>
+<a href="#3798" id="3798">3798</a>
+<a href="#3799" id="3799">3799</a>
+<a href="#3800" id="3800">3800</a>
+<a href="#3801" id="3801">3801</a>
+<a href="#3802" id="3802">3802</a>
+<a href="#3803" id="3803">3803</a>
+<a href="#3804" id="3804">3804</a>
+<a href="#3805" id="3805">3805</a>
+<a href="#3806" id="3806">3806</a>
+<a href="#3807" id="3807">3807</a>
+<a href="#3808" id="3808">3808</a>
+<a href="#3809" id="3809">3809</a>
+<a href="#3810" id="3810">3810</a>
+<a href="#3811" id="3811">3811</a>
+<a href="#3812" id="3812">3812</a>
+<a href="#3813" id="3813">3813</a>
+<a href="#3814" id="3814">3814</a>
+<a href="#3815" id="3815">3815</a>
+<a href="#3816" id="3816">3816</a>
+<a href="#3817" id="3817">3817</a>
+<a href="#3818" id="3818">3818</a>
+<a href="#3819" id="3819">3819</a>
+<a href="#3820" id="3820">3820</a>
+<a href="#3821" id="3821">3821</a>
+<a href="#3822" id="3822">3822</a></pre></div><pre class="rust"><code><span class="doccomment">//! Stream capability for combinators to parse
 //!
 //! Stream types include:
 //! - `&amp;[u8]` and [`Bytes`] for binary data
@@ -3908,7 +3946,8 @@
         <span class="self">Self </span>{ initial, input }
     }
 
-    <span class="kw">fn </span>location(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>location(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.input.offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>.initial)
     }
 }
@@ -3922,6 +3961,7 @@
     /// This is useful for formats that encode a graph with addresses relative to the start of the
     /// input.
     </span><span class="attr">#[doc(alias = <span class="string">"fseek"</span>)]
+    #[inline]
     </span><span class="kw">pub fn </span>reset_to_start(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let </span>start = <span class="self">self</span>.initial.checkpoint();
         <span class="self">self</span>.input.reset(<span class="kw-2">&amp;</span>start);
@@ -3979,7 +4019,8 @@
 <span class="kw">where
     </span>I: Default + Stream,
 {
-    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(I::default())
     }
 }
@@ -3991,6 +4032,7 @@
     </span>I: Stream,
 {
     <span class="doccomment">/// Track recoverable errors with the stream
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>new(input: I) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             input,
@@ -4000,6 +4042,7 @@
     }
 
     <span class="doccomment">/// Act as a normal stream
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>unrecoverable(input: I) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             input,
@@ -4009,6 +4052,7 @@
     }
 
     <span class="doccomment">/// Access the current input and errors
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>into_parts(<span class="self">self</span>) -&gt; (I, Vec&lt;E&gt;) {
         (<span class="self">self</span>.input, <span class="self">self</span>.errors)
     }
@@ -4230,6 +4274,7 @@
     </span>I: StreamIsPartial,
 {
     <span class="doccomment">/// Create a partial input
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>new(input: I) -&gt; <span class="self">Self </span>{
         <span class="macro">debug_assert!</span>(
             !I::is_partial_supported(),
@@ -4250,7 +4295,8 @@
 <span class="kw">where
     </span>I: Default + StreamIsPartial,
 {
-    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(I::default())
     }
 }
@@ -4298,7 +4344,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[T] {
+<span class="kw">impl</span>&lt;T&gt; SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span>[T] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>slice_len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.len()
@@ -4312,14 +4358,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T, <span class="kw">const </span>LEN: usize&gt; SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[T; LEN] {
+<span class="kw">impl</span>&lt;T, <span class="kw">const </span>LEN: usize&gt; SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span>[T; LEN] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>slice_len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.len()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl </span>SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>slice_len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.len()
@@ -4340,14 +4386,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>Bytes {
+<span class="kw">impl </span>SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span>Bytes {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>slice_len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.len()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>BStr {
+<span class="kw">impl </span>SliceLen <span class="kw">for </span><span class="kw-2">&amp;</span>BStr {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>slice_len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.len()
@@ -4453,12 +4499,16 @@
     </span><span class="kw">fn </span>offset_at(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: usize) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Needed&gt;;
     <span class="doccomment">/// Split off a slice of tokens from the input
     ///
-    /// **NOTE:** For inputs with variable width tokens, like `&amp;str`'s `char`, `offset` might not correspond
+    /// &lt;div class="warning"&gt;
+    ///
+    /// **Note:** For inputs with variable width tokens, like `&amp;str`'s `char`, `offset` might not correspond
     /// with the number of tokens. To get a valid offset, use:
     /// - [`Stream::eof_offset`]
     /// - [`Stream::iter_offsets`]
     /// - [`Stream::offset_for`]
     /// - [`Stream::offset_at`]
+    ///
+    /// &lt;/div&gt;
     ///
     /// # Panic
     ///
@@ -5215,7 +5265,7 @@
 
 <span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
 #[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, E&gt; Recover&lt;E&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+</span><span class="kw">impl</span>&lt;E&gt; Recover&lt;E&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>record_err(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -5235,7 +5285,7 @@
 
 <span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
 #[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, E&gt; Recover&lt;E&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>Bytes {
+</span><span class="kw">impl</span>&lt;E&gt; Recover&lt;E&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>Bytes {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>record_err(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -5255,7 +5305,7 @@
 
 <span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
 #[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, E&gt; Recover&lt;E&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>BStr {
+</span><span class="kw">impl</span>&lt;E&gt; Recover&lt;E&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>BStr {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>record_err(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -5429,12 +5479,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; StreamIsPartial <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[T] {
+<span class="kw">impl</span>&lt;T&gt; StreamIsPartial <span class="kw">for </span><span class="kw-2">&amp;</span>[T] {
     <span class="kw">type </span>PartialState = ();
 
-    <span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {}
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {}
 
-    <span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="self">Self</span>::PartialState) {}
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="self">Self</span>::PartialState) {}
 
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>is_partial_supported() -&gt; bool {
@@ -5442,14 +5494,16 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; StreamIsPartial <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl </span>StreamIsPartial <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="kw">type </span>PartialState = ();
 
-    <span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
         <span class="comment">// Already complete
     </span>}
 
-    <span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="self">Self</span>::PartialState) {}
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="self">Self</span>::PartialState) {}
 
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>is_partial_supported() -&gt; bool {
@@ -5457,14 +5511,16 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; StreamIsPartial <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>Bytes {
+<span class="kw">impl </span>StreamIsPartial <span class="kw">for </span><span class="kw-2">&amp;</span>Bytes {
     <span class="kw">type </span>PartialState = ();
 
-    <span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
         <span class="comment">// Already complete
     </span>}
 
-    <span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="self">Self</span>::PartialState) {}
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="self">Self</span>::PartialState) {}
 
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>is_partial_supported() -&gt; bool {
@@ -5472,14 +5528,16 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; StreamIsPartial <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>BStr {
+<span class="kw">impl </span>StreamIsPartial <span class="kw">for </span><span class="kw-2">&amp;</span>BStr {
     <span class="kw">type </span>PartialState = ();
 
-    <span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
         <span class="comment">// Already complete
     </span>}
 
-    <span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="self">Self</span>::PartialState) {}
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="self">Self</span>::PartialState) {}
 
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>is_partial_supported() -&gt; bool {
@@ -5493,11 +5551,13 @@
 {
     <span class="kw">type </span>PartialState = I::PartialState;
 
-    <span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
         <span class="self">self</span>.<span class="number">0</span>.complete()
     }
 
-    <span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
         <span class="self">self</span>.<span class="number">0</span>.restore_partial(state);
     }
 
@@ -5518,11 +5578,13 @@
 {
     <span class="kw">type </span>PartialState = I::PartialState;
 
-    <span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
         <span class="self">self</span>.input.complete()
     }
 
-    <span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
         <span class="self">self</span>.input.restore_partial(state);
     }
 
@@ -5546,11 +5608,13 @@
 {
     <span class="kw">type </span>PartialState = I::PartialState;
 
-    <span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
         <span class="self">self</span>.input.complete()
     }
 
-    <span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
         <span class="self">self</span>.input.restore_partial(state);
     }
 
@@ -5571,11 +5635,13 @@
 {
     <span class="kw">type </span>PartialState = I::PartialState;
 
-    <span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
         <span class="self">self</span>.input.complete()
     }
 
-    <span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
         <span class="self">self</span>.input.restore_partial(state);
     }
 
@@ -5596,11 +5662,13 @@
 {
     <span class="kw">type </span>PartialState = bool;
 
-    <span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>complete(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="self">Self</span>::PartialState {
         core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.partial, <span class="bool-val">false</span>)
     }
 
-    <span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>restore_partial(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="self">Self</span>::PartialState) {
         <span class="self">self</span>.partial = state;
     }
 
@@ -5619,12 +5687,16 @@
 </span><span class="kw">pub trait </span>Offset&lt;Start = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// Offset between the first byte of `start` and the first byte of `self`a
     ///
+    /// &lt;div class="warning"&gt;
+    ///
     /// **Note:** This is an offset, not an index, and may point to the end of input
     /// (`start.len()`) when `self` is exhausted.
+    ///
+    /// &lt;/div&gt;
     </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, start: <span class="kw-2">&amp;</span>Start) -&gt; usize;
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Offset <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[T] {
+<span class="kw">impl</span>&lt;T&gt; Offset <span class="kw">for </span><span class="kw-2">&amp;</span>[T] {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, start: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; usize {
         <span class="kw">let </span>fst = (<span class="kw-2">*</span>start).as_ptr();
@@ -5648,7 +5720,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Offset <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl </span>Offset <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, start: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; usize {
         <span class="self">self</span>.as_bytes().offset_from(<span class="kw-2">&amp;</span>start.as_bytes())
@@ -5662,7 +5734,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Offset <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>Bytes {
+<span class="kw">impl </span>Offset <span class="kw">for </span><span class="kw-2">&amp;</span>Bytes {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, start: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; usize {
         <span class="self">self</span>.as_bytes().offset_from(<span class="kw-2">&amp;</span>start.as_bytes())
@@ -5676,7 +5748,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Offset <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>BStr {
+<span class="kw">impl </span>Offset <span class="kw">for </span><span class="kw-2">&amp;</span>BStr {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, start: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; usize {
         <span class="self">self</span>.as_bytes().offset_from(<span class="kw-2">&amp;</span>start.as_bytes())
@@ -5814,14 +5886,14 @@
     </span><span class="kw">fn </span>as_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8];
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AsBytes <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl </span>AsBytes <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>as_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
         <span class="self">self
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AsBytes <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>Bytes {
+<span class="kw">impl </span>AsBytes <span class="kw">for </span><span class="kw-2">&amp;</span>Bytes {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>as_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
         (<span class="kw-2">*</span><span class="self">self</span>).as_bytes()
@@ -5877,21 +5949,21 @@
     </span><span class="kw">fn </span>as_bstr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8];
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AsBStr <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl </span>AsBStr <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>as_bstr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
         <span class="self">self
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AsBStr <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>BStr {
+<span class="kw">impl </span>AsBStr <span class="kw">for </span><span class="kw-2">&amp;</span>BStr {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>as_bstr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
         (<span class="kw-2">*</span><span class="self">self</span>).as_bytes()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AsBStr <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl </span>AsBStr <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>as_bstr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
         (<span class="kw-2">*</span><span class="self">self</span>).as_bytes()
@@ -5962,7 +6034,7 @@
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: T) -&gt; CompareResult;
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; Compare&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'b</span>&gt; Compare&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: <span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8]) -&gt; CompareResult {
         <span class="kw">if </span>t.iter().zip(<span class="kw-2">*</span><span class="self">self</span>).any(|(a, b)| a != b) {
@@ -5975,7 +6047,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; Compare&lt;AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8]&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'b</span>&gt; Compare&lt;AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8]&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8]&gt;) -&gt; CompareResult {
         <span class="kw">if </span>t.<span class="number">0
@@ -5992,49 +6064,49 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="kw">const </span>LEN: usize&gt; Compare&lt;[u8; LEN]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>LEN: usize&gt; Compare&lt;[u8; LEN]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: [u8; LEN]) -&gt; CompareResult {
         <span class="self">self</span>.compare(<span class="kw-2">&amp;</span>t[..])
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="kw">const </span>LEN: usize&gt; Compare&lt;AsciiCaseless&lt;[u8; LEN]&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>LEN: usize&gt; Compare&lt;AsciiCaseless&lt;[u8; LEN]&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: AsciiCaseless&lt;[u8; LEN]&gt;) -&gt; CompareResult {
         <span class="self">self</span>.compare(AsciiCaseless(<span class="kw-2">&amp;</span>t.<span class="number">0</span>[..]))
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>, <span class="kw">const </span>LEN: usize&gt; Compare&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8; LEN]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'b</span>, <span class="kw">const </span>LEN: usize&gt; Compare&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8; LEN]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: <span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8; LEN]) -&gt; CompareResult {
         <span class="self">self</span>.compare(<span class="kw-2">&amp;</span>t[..])
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>, <span class="kw">const </span>LEN: usize&gt; Compare&lt;AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8; LEN]&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'b</span>, <span class="kw">const </span>LEN: usize&gt; Compare&lt;AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8; LEN]&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>[u8; LEN]&gt;) -&gt; CompareResult {
         <span class="self">self</span>.compare(AsciiCaseless(<span class="kw-2">&amp;</span>t.<span class="number">0</span>[..]))
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; Compare&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'b</span>&gt; Compare&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: <span class="kw-2">&amp;</span><span class="lifetime">'b </span>str) -&gt; CompareResult {
         <span class="self">self</span>.compare(t.as_bytes())
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; Compare&lt;AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'b</span>&gt; Compare&lt;AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt;) -&gt; CompareResult {
         <span class="self">self</span>.compare(AsciiCaseless(t.<span class="number">0</span>.as_bytes()))
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Compare&lt;u8&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl </span>Compare&lt;u8&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: u8) -&gt; CompareResult {
         <span class="kw">match </span><span class="self">self</span>.first().copied() {
@@ -6045,7 +6117,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Compare&lt;AsciiCaseless&lt;u8&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl </span>Compare&lt;AsciiCaseless&lt;u8&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: AsciiCaseless&lt;u8&gt;) -&gt; CompareResult {
         <span class="kw">match </span><span class="self">self</span>.first() {
@@ -6056,42 +6128,42 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Compare&lt;char&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl </span>Compare&lt;char&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: char) -&gt; CompareResult {
         <span class="self">self</span>.compare(t.encode_utf8(<span class="kw-2">&amp;mut </span>[<span class="number">0</span>; <span class="number">4</span>]).as_bytes())
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Compare&lt;AsciiCaseless&lt;char&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl </span>Compare&lt;AsciiCaseless&lt;char&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: AsciiCaseless&lt;char&gt;) -&gt; CompareResult {
         <span class="self">self</span>.compare(AsciiCaseless(t.<span class="number">0</span>.encode_utf8(<span class="kw-2">&amp;mut </span>[<span class="number">0</span>; <span class="number">4</span>]).as_bytes()))
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; Compare&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl</span>&lt;<span class="lifetime">'b</span>&gt; Compare&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: <span class="kw-2">&amp;</span><span class="lifetime">'b </span>str) -&gt; CompareResult {
         <span class="self">self</span>.as_bytes().compare(t.as_bytes())
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; Compare&lt;AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl</span>&lt;<span class="lifetime">'b</span>&gt; Compare&lt;AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'b </span>str&gt;) -&gt; CompareResult {
         <span class="self">self</span>.as_bytes().compare(t.as_bytes())
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Compare&lt;char&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl </span>Compare&lt;char&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: char) -&gt; CompareResult {
         <span class="self">self</span>.as_bytes().compare(t)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Compare&lt;AsciiCaseless&lt;char&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl </span>Compare&lt;AsciiCaseless&lt;char&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>compare(<span class="kw-2">&amp;</span><span class="self">self</span>, t: AsciiCaseless&lt;char&gt;) -&gt; CompareResult {
         <span class="self">self</span>.as_bytes().compare(t)
@@ -6169,21 +6241,21 @@
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: T) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt;;
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8]) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         memmem(<span class="self">self</span>, substr)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8],)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8],)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8],)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         memmem(<span class="self">self</span>, substr.<span class="number">0</span>)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8])&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8])&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -6193,7 +6265,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8])&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8])&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -6203,7 +6275,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;char&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl </span>FindSlice&lt;char&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: char) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>b = [<span class="number">0</span>; <span class="number">4</span>];
@@ -6212,7 +6284,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;(char,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl </span>FindSlice&lt;(char,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (char,)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>b = [<span class="number">0</span>; <span class="number">4</span>];
@@ -6221,7 +6293,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;(char, char)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl </span>FindSlice&lt;(char, char)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (char, char)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>b = [<span class="number">0</span>; <span class="number">4</span>];
@@ -6232,7 +6304,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;(char, char, char)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl </span>FindSlice&lt;(char, char, char)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (char, char, char)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>b = [<span class="number">0</span>; <span class="number">4</span>];
@@ -6245,56 +6317,56 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;u8&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl </span>FindSlice&lt;u8&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: u8) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         memchr(substr, <span class="self">self</span>).map(|i| i..i + <span class="number">1</span>)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;(u8,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl </span>FindSlice&lt;(u8,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (u8,)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         memchr(substr.<span class="number">0</span>, <span class="self">self</span>).map(|i| i..i + <span class="number">1</span>)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;(u8, u8)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl </span>FindSlice&lt;(u8, u8)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (u8, u8)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         memchr2(substr, <span class="self">self</span>).map(|i| i..i + <span class="number">1</span>)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;(u8, u8, u8)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl </span>FindSlice&lt;(u8, u8, u8)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (u8, u8, u8)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         memchr3(substr, <span class="self">self</span>).map(|i| i..i + <span class="number">1</span>)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="self">self</span>.find_slice(substr.as_bytes())
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str,)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         memmem(<span class="self">self</span>, substr.<span class="number">0</span>.as_bytes())
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         memmem2(<span class="self">self</span>, (substr.<span class="number">0</span>.as_bytes(), substr.<span class="number">1</span>.as_bytes()))
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8] {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -6311,28 +6383,28 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="self">self</span>.as_bytes().find_slice(substr)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str,)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="self">self</span>.as_bytes().find_slice(substr)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="self">self</span>.as_bytes().find_slice(substr)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; FindSlice&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str, <span class="kw-2">&amp;</span><span class="lifetime">'s </span>str)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -6342,28 +6414,28 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;char&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
+<span class="kw">impl </span>FindSlice&lt;char&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: char) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="self">self</span>.as_bytes().find_slice(substr)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;(char,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
+<span class="kw">impl </span>FindSlice&lt;(char,)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (char,)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="self">self</span>.as_bytes().find_slice(substr)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;(char, char)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
+<span class="kw">impl </span>FindSlice&lt;(char, char)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (char, char)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="self">self</span>.as_bytes().find_slice(substr)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; FindSlice&lt;(char, char, char)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
+<span class="kw">impl </span>FindSlice&lt;(char, char, char)&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>find_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, substr: (char, char, char)) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::lib::std::ops::Range&lt;usize&gt;&gt; {
         <span class="self">self</span>.as_bytes().find_slice(substr)
@@ -6446,14 +6518,14 @@
     </span><span class="kw">fn </span>parse_slice(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;R&gt;;
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, R: FromStr&gt; ParseSlice&lt;R&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
+<span class="kw">impl</span>&lt;R: FromStr&gt; ParseSlice&lt;R&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>parse_slice(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;R&gt; {
         from_utf8(<span class="self">self</span>).ok().and_then(|s| s.parse().ok())
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, R: FromStr&gt; ParseSlice&lt;R&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl</span>&lt;R: FromStr&gt; ParseSlice&lt;R&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>parse_slice(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;R&gt; {
         <span class="self">self</span>.parse().ok()
@@ -6466,7 +6538,7 @@
     </span><span class="kw">fn </span>update_slice(<span class="self">self</span>, inner: <span class="self">Self</span>::Slice) -&gt; <span class="self">Self</span>;
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; UpdateSlice <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>[T]
+<span class="kw">impl</span>&lt;T&gt; UpdateSlice <span class="kw">for </span><span class="kw-2">&amp;</span>[T]
 <span class="kw">where
     </span>T: Clone + <span class="kw">crate</span>::lib::std::fmt::Debug,
 {
@@ -6476,21 +6548,21 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; UpdateSlice <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
+<span class="kw">impl </span>UpdateSlice <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>update_slice(<span class="self">self</span>, inner: <span class="self">Self</span>::Slice) -&gt; <span class="self">Self </span>{
         inner
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; UpdateSlice <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>Bytes {
+<span class="kw">impl </span>UpdateSlice <span class="kw">for </span><span class="kw-2">&amp;</span>Bytes {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>update_slice(<span class="self">self</span>, inner: <span class="self">Self</span>::Slice) -&gt; <span class="self">Self </span>{
         Bytes::new(inner)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; UpdateSlice <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>BStr {
+<span class="kw">impl </span>UpdateSlice <span class="kw">for </span><span class="kw-2">&amp;</span>BStr {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>update_slice(<span class="self">self</span>, inner: <span class="self">Self</span>::Slice) -&gt; <span class="self">Self </span>{
         BStr::new(inner)
@@ -6992,8 +7064,12 @@
 
     <span class="doccomment">/// Tests that self is an alphabetic character
     ///
+    /// &lt;div class="warning"&gt;
+    ///
     /// **Warning:** for `&amp;str` it matches alphabetic
     /// characters outside of the 52 ASCII letters
+    ///
+    /// &lt;/div&gt;
     </span><span class="kw">fn </span>is_alpha(<span class="self">self</span>) -&gt; bool;
 
     <span class="doccomment">/// Tests that self is an alphabetic character
@@ -7052,7 +7128,7 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AsChar <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>u8 {
+<span class="kw">impl </span>AsChar <span class="kw">for </span><span class="kw-2">&amp;</span>u8 {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>as_char(<span class="self">self</span>) -&gt; char {
         (<span class="kw-2">*</span><span class="self">self</span>).as_char()
@@ -7130,7 +7206,7 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AsChar <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>char {
+<span class="kw">impl </span>AsChar <span class="kw">for </span><span class="kw-2">&amp;</span>char {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>as_char(<span class="self">self</span>) -&gt; char {
         (<span class="kw-2">*</span><span class="self">self</span>).as_char()
@@ -7205,7 +7281,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ContainsToken&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>u8&gt; <span class="kw">for </span>u8 {
+<span class="kw">impl </span>ContainsToken&lt;<span class="kw-2">&amp;</span>u8&gt; <span class="kw">for </span>u8 {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>contains_token(<span class="kw-2">&amp;</span><span class="self">self</span>, token: <span class="kw-2">&amp;</span>u8) -&gt; bool {
         <span class="self">self</span>.contains_token(<span class="kw-2">*</span>token)
@@ -7219,7 +7295,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ContainsToken&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>char&gt; <span class="kw">for </span>u8 {
+<span class="kw">impl </span>ContainsToken&lt;<span class="kw-2">&amp;</span>char&gt; <span class="kw">for </span>u8 {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>contains_token(<span class="kw-2">&amp;</span><span class="self">self</span>, token: <span class="kw-2">&amp;</span>char) -&gt; bool {
         <span class="self">self</span>.contains_token(<span class="kw-2">*</span>token)
