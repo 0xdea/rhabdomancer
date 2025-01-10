@@ -60,6 +60,7 @@
 //!     ```sh
 //!     $ rhabdomancer <binary_file>
 //!     ```
+//!    Any existing `.i64` IDB file will be updated; otherwise, a new file will be created.
 //! 4. Open the resulting `.i64` IDB file with IDA Pro.
 //! 5. Select `View` > `Open subviews` > `Bookmarks`
 //! 6. Enjoy your results conveniently collected in an IDA Pro window.
