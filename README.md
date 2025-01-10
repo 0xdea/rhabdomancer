@@ -23,6 +23,9 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 * Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
 * Bad API function call locations are printed to stdout and marked in the IDB.
 * Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
+    * [BAD 0] High priority - Functions that are generally considered insecure
+    * [BAD 1] Medium priority - Interesting functions that should be checked for insecure use cases.
+    * [BAD 2] Low priority - Code paths involving these functions should be carefully checked.
 * The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
 
 ## Blog post
