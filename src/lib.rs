@@ -84,8 +84,10 @@
 //!   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
 //!
 
-#![cfg(unix)]
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
+
+#[cfg(not(unix))]
+compile_error!("only the `unix` target family is currently supported");
 
 use std::collections::BTreeMap;
 use std::env;

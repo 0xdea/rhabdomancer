@@ -96,6 +96,7 @@ documentation if you want to port it yourself to `windows` (or `wasm`).*
 
 ## TODO
 
+* Implement support for the `windows` target family.
 * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
 * Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
