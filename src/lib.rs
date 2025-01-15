@@ -71,18 +71,20 @@
 //! * IDA Pro 9.0.240925 on macOS arm64 and Linux x64.
 //! * IDA Pro 9.0.241217 on macOS arm64 and Linux x64.
 //!
-//! *Note: not tested on Windows, check [idalib](https://github.com/binarly-io/idalib)
-//! documentation if you want to port it yourself.*
+//! *Note: only the `unix` target family is currently supported, check [idalib](https://github.com/binarly-io/idalib)
+//! documentation if you want to port it yourself to `windows` (or `wasm`).*
 //!
 //! ## Changelog
 //! * <https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md>
 //!
 //! ## TODO
+//! * Implement support for the `windows` target family.
 //! * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
 //! * Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
 //!   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
 //!
 
+#![cfg(unix)]
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
 
 use std::collections::BTreeMap;
