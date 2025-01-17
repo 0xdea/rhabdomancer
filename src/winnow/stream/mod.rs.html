@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.22/src/stream/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/stream/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.24/src/stream/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/stream/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -3820,12 +3820,17 @@
 <a href="#3819" id="3819">3819</a>
 <a href="#3820" id="3820">3820</a>
 <a href="#3821" id="3821">3821</a>
-<a href="#3822" id="3822">3822</a></pre></div><pre class="rust"><code><span class="doccomment">//! Stream capability for combinators to parse
+<a href="#3822" id="3822">3822</a>
+<a href="#3823" id="3823">3823</a>
+<a href="#3824" id="3824">3824</a>
+<a href="#3825" id="3825">3825</a>
+<a href="#3826" id="3826">3826</a>
+<a href="#3827" id="3827">3827</a></pre></div><pre class="rust"><code><span class="doccomment">//! Stream capability for combinators to parse
 //!
 //! Stream types include:
 //! - `&amp;[u8]` and [`Bytes`] for binary data
 //! - `&amp;str` (aliased as [`Str`]) and [`BStr`] for UTF-8 data
-//! - [`Located`] can track the location within the original buffer to report
+//! - [`LocatingSlice`] can track the location within the original buffer to report
 //!   [spans][crate::Parser::with_span]
 //! - [`Stateful`] to thread global state through your parsers
 //! - [`Partial`] can mark an input as partial buffer that is being streamed into
@@ -3917,7 +3922,11 @@
     </span>}
 }
 
-<span class="doccomment">/// Allow collecting the span of a parsed token
+<span class="doccomment">/// Deprecated, replaced with [`LocatingSlice`]
+</span><span class="attr">#[deprecated(since = <span class="string">"0.6.23"</span>, note = <span class="string">"Replaced with `LocatingSlice`"</span>)]
+</span><span class="kw">pub type </span>Located&lt;I&gt; = LocatingSlice&lt;I&gt;;
+
+<span class="doccomment">/// Allow collecting the span of a parsed token within a slice
 ///
 /// Spans are tracked as a [`Range&lt;usize&gt;`] of byte offsets.
 ///
@@ -3930,13 +3939,14 @@
 ///
 /// See [`Parser::span`][crate::Parser::span] and [`Parser::with_span`][crate::Parser::with_span] for more details
 </span><span class="attr">#[derive(Copy, Clone, Default, PartialEq, Eq, PartialOrd, Ord)]
-#[doc(alias = <span class="string">"LocatedSpan"</span>)]
-</span><span class="kw">pub struct </span>Located&lt;I&gt; {
+#[doc(alias = <span class="string">"LocatingSliceSpan"</span>)]
+#[doc(alias = <span class="string">"Located"</span>)]
+</span><span class="kw">pub struct </span>LocatingSlice&lt;I&gt; {
     initial: I,
     input: I,
 }
 
-<span class="kw">impl</span>&lt;I&gt; Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: Clone + Offset,
 {
@@ -3952,7 +3962,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I&gt; Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: Clone + Stream + Offset,
 {
@@ -3968,14 +3978,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I&gt; AsRef&lt;I&gt; <span class="kw">for </span>Located&lt;I&gt; {
+<span class="kw">impl</span>&lt;I&gt; AsRef&lt;I&gt; <span class="kw">for </span>LocatingSlice&lt;I&gt; {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>I {
         <span class="kw-2">&amp;</span><span class="self">self</span>.input
     }
 }
 
-<span class="kw">impl</span>&lt;I&gt; <span class="kw">crate</span>::lib::std::ops::Deref <span class="kw">for </span>Located&lt;I&gt; {
+<span class="kw">impl</span>&lt;I&gt; <span class="kw">crate</span>::lib::std::ops::Deref <span class="kw">for </span>LocatingSlice&lt;I&gt; {
     <span class="kw">type </span>Target = I;
 
     <span class="attr">#[inline(always)]
@@ -3984,13 +3994,13 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I: <span class="kw">crate</span>::lib::std::fmt::Display&gt; <span class="kw">crate</span>::lib::std::fmt::Display <span class="kw">for </span>Located&lt;I&gt; {
+<span class="kw">impl</span>&lt;I: <span class="kw">crate</span>::lib::std::fmt::Display&gt; <span class="kw">crate</span>::lib::std::fmt::Display <span class="kw">for </span>LocatingSlice&lt;I&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::lib::std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="kw">crate</span>::lib::std::fmt::Result {
         <span class="self">self</span>.input.fmt(f)
     }
 }
 
-<span class="kw">impl</span>&lt;I: <span class="kw">crate</span>::lib::std::fmt::Debug&gt; <span class="kw">crate</span>::lib::std::fmt::Debug <span class="kw">for </span>Located&lt;I&gt; {
+<span class="kw">impl</span>&lt;I: <span class="kw">crate</span>::lib::std::fmt::Debug&gt; <span class="kw">crate</span>::lib::std::fmt::Debug <span class="kw">for </span>LocatingSlice&lt;I&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::lib::std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="kw">crate</span>::lib::std::fmt::Result {
         <span class="self">self</span>.input.fmt(f)
@@ -4153,7 +4163,7 @@
 /// assert_eq!(state, 1);
 /// ```
 </span><span class="attr">#[derive(Clone, Copy, Default, Eq, PartialEq)]
-#[doc(alias = <span class="string">"LocatedSpan"</span>)]
+#[doc(alias = <span class="string">"LocatingSliceSpan"</span>)]
 </span><span class="kw">pub struct </span>Stateful&lt;I, S&gt; {
     <span class="doccomment">/// Inner input being wrapped in state
     </span><span class="kw">pub </span>input: I,
@@ -4410,7 +4420,7 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;I&gt; SliceLen <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; SliceLen <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: SliceLen,
 {
@@ -4461,7 +4471,7 @@
     </span><span class="kw">type </span>Token: <span class="kw">crate</span>::lib::std::fmt::Debug;
     <span class="doccomment">/// Sequence of `Token`s
     ///
-    /// Example: `&amp;[u8]` for `Located&lt;&amp;[u8]&gt;` or `&amp;str` for `Located&lt;&amp;str&gt;`
+    /// Example: `&amp;[u8]` for `LocatingSlice&lt;&amp;[u8]&gt;` or `&amp;str` for `LocatingSlice&lt;&amp;str&gt;`
     </span><span class="kw">type </span>Slice: <span class="kw">crate</span>::lib::std::fmt::Debug;
 
     <span class="doccomment">/// Iterate with the offset from the current location
@@ -4951,7 +4961,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I: Stream&gt; Stream <span class="kw">for </span>Located&lt;I&gt; {
+<span class="kw">impl</span>&lt;I: Stream&gt; Stream <span class="kw">for </span>LocatingSlice&lt;I&gt; {
     <span class="kw">type </span>Token = &lt;I <span class="kw">as </span>Stream&gt;::Token;
     <span class="kw">type </span>Slice = &lt;I <span class="kw">as </span>Stream&gt;::Slice;
 
@@ -5170,13 +5180,13 @@
 
 <span class="doccomment">/// Number of indices input has advanced since start of parsing
 ///
-/// See [`Located`] for adding location tracking to your [`Stream`]
+/// See [`LocatingSlice`] for adding location tracking to your [`Stream`]
 </span><span class="kw">pub trait </span>Location {
     <span class="doccomment">/// Number of indices input has advanced since start of parsing
     </span><span class="kw">fn </span>location(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize;
 }
 
-<span class="kw">impl</span>&lt;I&gt; Location <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; Location <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: Clone + Offset,
 {
@@ -5349,7 +5359,7 @@
 
 <span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
 #[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;I, E&gt; Recover&lt;E&gt; <span class="kw">for </span>Located&lt;I&gt;
+</span><span class="kw">impl</span>&lt;I, E&gt; Recover&lt;E&gt; <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: Recover&lt;E&gt;,
     I: Stream,
@@ -5572,7 +5582,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I&gt; StreamIsPartial <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; StreamIsPartial <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: StreamIsPartial,
 {
@@ -5782,7 +5792,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I&gt; Offset <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; Offset <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: Stream,
 {
@@ -5792,12 +5802,12 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I&gt; Offset&lt;&lt;Located&lt;I&gt; <span class="kw">as </span>Stream&gt;::Checkpoint&gt; <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; Offset&lt;&lt;LocatingSlice&lt;I&gt; <span class="kw">as </span>Stream&gt;::Checkpoint&gt; <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: Stream,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>&lt;Located&lt;I&gt; <span class="kw">as </span>Stream&gt;::Checkpoint) -&gt; usize {
+    </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>&lt;LocatingSlice&lt;I&gt; <span class="kw">as </span>Stream&gt;::Checkpoint) -&gt; usize {
         <span class="self">self</span>.checkpoint().offset_from(other)
     }
 }
@@ -5900,7 +5910,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I&gt; AsBytes <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; AsBytes <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: AsBytes,
 {
@@ -5970,7 +5980,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I&gt; AsBStr <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; AsBStr <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: AsBStr,
 {
@@ -6192,7 +6202,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I, U&gt; Compare&lt;U&gt; <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I, U&gt; Compare&lt;U&gt; <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: Compare&lt;U&gt;,
 {
@@ -6466,7 +6476,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I, T&gt; FindSlice&lt;T&gt; <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I, T&gt; FindSlice&lt;T&gt; <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: FindSlice&lt;T&gt;,
 {
@@ -6569,7 +6579,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I&gt; UpdateSlice <span class="kw">for </span>Located&lt;I&gt;
+<span class="kw">impl</span>&lt;I&gt; UpdateSlice <span class="kw">for </span>LocatingSlice&lt;I&gt;
 <span class="kw">where
     </span>I: UpdateSlice,
 {

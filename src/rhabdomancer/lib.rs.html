@@ -310,7 +310,11 @@
 <a href="#309" id="309">309</a>
 <a href="#310" id="310">310</a>
 <a href="#311" id="311">311</a>
-<a href="#312" id="312">312</a></pre></div><pre class="rust"><code><span class="doccomment">//!
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a></pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024-2025 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
 //!
@@ -333,7 +337,7 @@
 //! * The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
 //!
 //! ## Blog post
-//! * &lt;https://security.humanativaspa.it/doing-vulnerability-research-with-ida-pro-and-rust&gt; (*coming soon*)
+//! * &lt;https://security.humanativaspa.it/streamlining-vulnerability-research-with-ida-pro-and-rust&gt; (*coming soon*)
 //!
 //! ## See also
 //! * &lt;https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java&gt;
@@ -372,7 +376,7 @@
 //!     ```sh
 //!     $ rhabdomancer &lt;binary_file&gt;
 //!     ```
-//!    Any existing `.i64` IDB file will be updated; otherwise, a new file will be created.
+//!    Any existing `.i64` IDB file will be updated; otherwise, a new IDB file will be created.
 //! 4. Open the resulting `.i64` IDB file with IDA Pro.
 //! 5. Select `View` &gt; `Open subviews` &gt; `Bookmarks`
 //! 6. Enjoy your results conveniently collected in an IDA Pro window.
@@ -383,13 +387,14 @@
 //! * IDA Pro 9.0.240925 on macOS arm64 and Linux x64.
 //! * IDA Pro 9.0.241217 on macOS arm64 and Linux x64.
 //!
-//! *Note: not tested on Windows, check [idalib](https://github.com/binarly-io/idalib)
-//! documentation if you want to try it yourself.*
+//! *Note: only the `unix` target family is currently supported, check [idalib](https://github.com/binarly-io/idalib)
+//! documentation if you want to port it yourself to `windows` (or `wasm`).*
 //!
 //! ## Changelog
 //! * &lt;https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md&gt;
 //!
 //! ## TODO
+//! * Implement support for the `windows` target family.
 //! * Enrich the known bad API function list (see &lt;https://github.com/0xdea/semgrep-rules&gt;).
 //! * Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
 //!   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
@@ -397,7 +402,10 @@
 
 </span><span class="attr">#![doc(html_logo_url = <span class="string">"https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png"</span>)]
 
-</span><span class="kw">use </span>std::collections::BTreeMap;
+#[cfg(not(unix))]
+</span><span class="macro">compile_error!</span>(<span class="string">"only the `unix` target family is currently supported"</span>);
+
+<span class="kw">use </span>std::collections::BTreeMap;
 <span class="kw">use </span>std::env;
 <span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>std::sync::atomic::{AtomicU32, Ordering};
