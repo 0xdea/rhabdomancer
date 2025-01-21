@@ -46,11 +46,11 @@ The easiest way to get the latest release is via [crates.io](https://crates.io/c
 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
 3. Install rhabdomancer as follows:
-   ```sh
-   $ export IDASDKDIR=/path/to/idasdk90
-   $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
-   $ cargo install rhabdomancer
-   ```
+    ```sh
+    $ export IDASDKDIR=/path/to/idasdk90
+    $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
+    $ cargo install rhabdomancer
+    ```
 
 ## Compiling
 
