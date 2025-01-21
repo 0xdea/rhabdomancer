@@ -248,7 +248,7 @@ impl<'a> BadFunctions<'a> {
             let caller = idb
                 .function_at(xref.from())
                 .map_or("<unknown>".to_string(), |func| func.name().unwrap());
-            println!("{:#x} in {}", xref.from(), caller);
+            println!("{:#X} in {}", xref.from(), caller);
 
             // Add bookmark if not already present to mark call location
             if !idb
