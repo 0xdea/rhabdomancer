@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Use upper hex in output messages.
+* Use `UpperHex` in output messages.
+* Update dependencies.
 
 ## [0.3.0] - 2025-01-17
 
