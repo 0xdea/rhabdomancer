@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.24/src/combinator/impls.rs`."><title>impls.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/combinator/</div>impls.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.7.0/src/combinator/impls.rs`."><title>impls.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.0 (9fc6b4312 2025-01-07)" data-channel="1.84.0" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/combinator/</div>impls.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -726,7 +726,8 @@
 <a href="#725" id="725">725</a>
 <a href="#726" id="726">726</a>
 <a href="#727" id="727">727</a>
-<a href="#728" id="728">728</a></pre></div><pre class="rust"><code><span class="doccomment">//! Opaque implementations of [`Parser`]
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a></pre></div><pre class="rust"><code><span class="doccomment">//! Opaque implementations of [`Parser`]
 
 </span><span class="kw">use </span><span class="kw">crate</span>::combinator::trace;
 <span class="kw">use </span><span class="kw">crate</span>::combinator::trace_result;
@@ -734,7 +735,7 @@
 <span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
 #[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::error::FromRecoverableError;
-<span class="kw">use </span><span class="kw">crate</span>::error::{AddContext, ErrMode, ErrorKind, FromExternalError, ParserError};
+<span class="kw">use </span><span class="kw">crate</span>::error::{AddContext, FromExternalError, ParserError};
 <span class="kw">use </span><span class="kw">crate</span>::lib::std::borrow::Borrow;
 <span class="kw">use </span><span class="kw">crate</span>::lib::std::ops::Range;
 <span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
@@ -745,16 +746,19 @@
 <span class="kw">use crate</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// [`Parser`] implementation for [`Parser::by_ref`]
-</span><span class="kw">pub struct </span>ByRef&lt;<span class="lifetime">'p</span>, P&gt; {
+</span><span class="kw">pub struct </span>ByRef&lt;<span class="lifetime">'p</span>, P, I, O, E&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) p: <span class="kw-2">&amp;</span><span class="lifetime">'p </span><span class="kw-2">mut </span>P,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) i: core::marker::PhantomData&lt;I&gt;,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) o: core::marker::PhantomData&lt;O&gt;,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) e: core::marker::PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;I, O, E, P&gt; Parser&lt;I, O, E&gt; <span class="kw">for </span>ByRef&lt;<span class="lifetime">'_</span>, P&gt;
+<span class="kw">impl</span>&lt;I, O, E, P&gt; Parser&lt;I, O, E&gt; <span class="kw">for </span>ByRef&lt;<span class="lifetime">'_</span>, P, I, O, E&gt;
 <span class="kw">where
     </span>P: Parser&lt;I, O, E&gt;,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt; {
         <span class="self">self</span>.p.parse_next(i)
     }
 }
@@ -779,7 +783,7 @@
     G: FnMut(O) -&gt; O2,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O2, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E&gt; {
         <span class="kw">match </span><span class="self">self</span>.parser.parse_next(i) {
             <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(e),
             <span class="prelude-val">Ok</span>(o) =&gt; <span class="prelude-val">Ok</span>((<span class="self">self</span>.map)(o)),
@@ -794,6 +798,7 @@
     G: FnMut(O) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E2&gt;,
     I: Stream,
     E: FromExternalError&lt;I, E2&gt;,
+    E: ParserError&lt;I&gt;,
 {
     <span class="kw">pub</span>(<span class="kw">crate</span>) parser: F,
     <span class="kw">pub</span>(<span class="kw">crate</span>) map: G,
@@ -810,14 +815,15 @@
     G: FnMut(O) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E2&gt;,
     I: Stream,
     E: FromExternalError&lt;I, E2&gt;,
+    E: ParserError&lt;I&gt;,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O2, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E&gt; {
         <span class="kw">let </span>start = input.checkpoint();
         <span class="kw">let </span>o = <span class="self">self</span>.parser.parse_next(input)<span class="question-mark">?</span>;
         <span class="kw">let </span>res = (<span class="self">self</span>.map)(o).map_err(|err| {
             input.reset(<span class="kw-2">&amp;</span>start);
-            ErrMode::from_external_error(input, ErrorKind::Verify, err)
+            E::from_external_error(input, err)
         });
         trace_result(<span class="string">"verify"</span>, <span class="kw-2">&amp;</span>res);
         res
@@ -848,12 +854,12 @@
     E: ParserError&lt;I&gt;,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O2, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E&gt; {
         <span class="kw">let </span>start = input.checkpoint();
         <span class="kw">let </span>o = <span class="self">self</span>.parser.parse_next(input)<span class="question-mark">?</span>;
         <span class="kw">let </span>res = (<span class="self">self</span>.map)(o).ok_or_else(|| {
             input.reset(<span class="kw-2">&amp;</span>start);
-            ErrMode::from_error_kind(input, ErrorKind::Verify)
+            ParserError::from_input(input)
         });
         trace_result(<span class="string">"verify"</span>, <span class="kw-2">&amp;</span>res);
         res
@@ -884,7 +890,7 @@
     I: Stream,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O2, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E&gt; {
         <span class="kw">let </span>start = i.checkpoint();
         <span class="kw">let </span><span class="kw-2">mut </span>o = <span class="self">self</span>.outer.parse_next(i)<span class="question-mark">?</span>;
         <span class="kw">let _ </span>= o.complete();
@@ -919,12 +925,12 @@
     E: ParserError&lt;I&gt;,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O2, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E&gt; {
         <span class="kw">let </span>start = i.checkpoint();
         <span class="kw">let </span>o = <span class="self">self</span>.p.parse_next(i)<span class="question-mark">?</span>;
         <span class="kw">let </span>res = o.parse_slice().ok_or_else(|| {
             i.reset(<span class="kw-2">&amp;</span>start);
-            ErrMode::from_error_kind(i, ErrorKind::Verify)
+            ParserError::from_input(i)
         });
         trace_result(<span class="string">"verify"</span>, <span class="kw-2">&amp;</span>res);
         res
@@ -954,30 +960,34 @@
     H: Parser&lt;I, O2, E&gt;,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O2, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E&gt; {
         <span class="kw">let </span>o = <span class="self">self</span>.f.parse_next(i)<span class="question-mark">?</span>;
         (<span class="self">self</span>.g)(o).parse_next(i)
     }
 }
 
 <span class="doccomment">/// [`Parser`] implementation for [`Parser::complete_err`]
-</span><span class="kw">pub struct </span>CompleteErr&lt;F&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) f: F,
+</span><span class="kw">pub struct </span>CompleteErr&lt;P, I, O, E&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) p: P,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) i: core::marker::PhantomData&lt;I&gt;,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) o: core::marker::PhantomData&lt;O&gt;,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) e: core::marker::PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;F, I, O, E&gt; Parser&lt;I, O, E&gt; <span class="kw">for </span>CompleteErr&lt;F&gt;
+<span class="kw">impl</span>&lt;P, I, O, E&gt; Parser&lt;I, O, E&gt; <span class="kw">for </span>CompleteErr&lt;P, I, O, E&gt;
 <span class="kw">where
-    </span>I: Stream,
-    F: Parser&lt;I, O, E&gt;,
+    </span>P: Parser&lt;I, O, E&gt;,
+    I: Stream,
     E: ParserError&lt;I&gt;,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt; {
         trace(<span class="string">"complete_err"</span>, |input: <span class="kw-2">&amp;mut </span>I| {
-            <span class="kw">match </span>(<span class="self">self</span>.f).parse_next(input) {
-                <span class="prelude-val">Err</span>(ErrMode::Incomplete(<span class="kw">_</span>)) =&gt; {
-                    <span class="prelude-val">Err</span>(ErrMode::from_error_kind(input, ErrorKind::Complete))
-                }
+            <span class="kw">match </span>(<span class="self">self</span>.p).parse_next(input) {
+                <span class="prelude-val">Err</span>(err) =&gt; <span class="kw">match </span>err.needed() {
+                    <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(ParserError::from_input(input)),
+                    <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(err),
+                },
                 rest =&gt; rest,
             }
         })
@@ -1013,12 +1023,12 @@
     E: ParserError&lt;I&gt;,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt; {
         <span class="kw">let </span>start = input.checkpoint();
         <span class="kw">let </span>o = <span class="self">self</span>.parser.parse_next(input)<span class="question-mark">?</span>;
         <span class="kw">let </span>res = (<span class="self">self</span>.filter)(o.borrow()).then_some(o).ok_or_else(|| {
             input.reset(<span class="kw-2">&amp;</span>start);
-            ErrMode::from_error_kind(input, ErrorKind::Verify)
+            ParserError::from_input(input)
         });
         trace_result(<span class="string">"verify"</span>, <span class="kw-2">&amp;</span>res);
         res
@@ -1044,7 +1054,7 @@
     O2: Clone,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O2, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E&gt; {
         (<span class="self">self</span>.parser).parse_next(input).map(|<span class="kw">_</span>| <span class="self">self</span>.val.clone())
     }
 }
@@ -1068,7 +1078,7 @@
     O2: core::default::Default,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O2, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E&gt; {
         (<span class="self">self</span>.parser).parse_next(input).map(|<span class="kw">_</span>| O2::default())
     }
 }
@@ -1089,14 +1099,10 @@
     </span>F: Parser&lt;I, O, E&gt;,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;(), E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;(), E&gt; {
         (<span class="self">self</span>.parser).parse_next(input).map(|<span class="kw">_</span>| ())
     }
 }
-
-<span class="doccomment">/// Replaced with [`Take`]
-</span><span class="attr">#[deprecated(since = <span class="string">"0.6.14"</span>, note = <span class="string">"Replaced with `Take`"</span>)]
-</span><span class="kw">pub type </span>Recognize&lt;F, I, O, E&gt; = Take&lt;F, I, O, E&gt;;
 
 <span class="doccomment">/// [`Parser`] implementation for [`Parser::take`]
 </span><span class="kw">pub struct </span>Take&lt;F, I, O, E&gt;
@@ -1116,7 +1122,7 @@
     I: Stream,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
         <span class="kw">let </span>checkpoint = input.checkpoint();
         <span class="kw">match </span>(<span class="self">self</span>.parser).parse_next(input) {
             <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
@@ -1129,10 +1135,6 @@
         }
     }
 }
-
-<span class="doccomment">/// Replaced with [`WithTaken`]
-</span><span class="attr">#[deprecated(since = <span class="string">"0.6.14"</span>, note = <span class="string">"Replaced with `WithTaken`"</span>)]
-</span><span class="kw">pub type </span>WithRecognized&lt;F, I, O, E&gt; = WithTaken&lt;F, I, O, E&gt;;
 
 <span class="doccomment">/// [`Parser`] implementation for [`Parser::with_taken`]
 </span><span class="kw">pub struct </span>WithTaken&lt;F, I, O, E&gt;
@@ -1152,7 +1154,7 @@
     I: Stream,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;(O, &lt;I <span class="kw">as </span>Stream&gt;::Slice), E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;(O, &lt;I <span class="kw">as </span>Stream&gt;::Slice), E&gt; {
         <span class="kw">let </span>checkpoint = input.checkpoint();
         <span class="kw">match </span>(<span class="self">self</span>.parser).parse_next(input) {
             <span class="prelude-val">Ok</span>(result) =&gt; {
@@ -1184,10 +1186,10 @@
     I: Stream + Location,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;Range&lt;usize&gt;, E&gt; {
-        <span class="kw">let </span>start = input.location();
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;Range&lt;usize&gt;, E&gt; {
+        <span class="kw">let </span>start = input.current_token_start();
         <span class="self">self</span>.parser.parse_next(input).map(<span class="kw">move </span>|<span class="kw">_</span>| {
-            <span class="kw">let </span>end = input.location();
+            <span class="kw">let </span>end = input.previous_token_end();
             start..end
         })
     }
@@ -1211,10 +1213,10 @@
     I: Stream + Location,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;(O, Range&lt;usize&gt;), E&gt; {
-        <span class="kw">let </span>start = input.location();
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;(O, Range&lt;usize&gt;), E&gt; {
+        <span class="kw">let </span>start = input.current_token_start();
         <span class="self">self</span>.parser.parse_next(input).map(<span class="kw">move </span>|output| {
-            <span class="kw">let </span>end = input.location();
+            <span class="kw">let </span>end = input.previous_token_end();
             (output, (start..end))
         })
     }
@@ -1239,7 +1241,7 @@
     O: Into&lt;O2&gt;,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O2, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E&gt; {
         <span class="self">self</span>.parser.parse_next(i).map(|o| o.into())
     }
 }
@@ -1263,10 +1265,8 @@
     E: Into&lt;E2&gt;,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E2&gt; {
-        <span class="self">self</span>.parser
-            .parse_next(i)
-            .map_err(|err| err.map(|e| e.into()))
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E2&gt; {
+        <span class="self">self</span>.parser.parse_next(i).map_err(|err| err.into())
     }
 }
 
@@ -1276,6 +1276,7 @@
     </span>F: Parser&lt;I, O, E&gt;,
     I: Stream,
     E: AddContext&lt;I, C&gt;,
+    E: ParserError&lt;I&gt;,
     C: Clone + <span class="kw">crate</span>::lib::std::fmt::Debug,
 {
     <span class="kw">pub</span>(<span class="kw">crate</span>) parser: F,
@@ -1290,10 +1291,11 @@
     </span>F: Parser&lt;I, O, E&gt;,
     I: Stream,
     E: AddContext&lt;I, C&gt;,
+    E: ParserError&lt;I&gt;,
     C: Clone + <span class="kw">crate</span>::lib::std::fmt::Debug,
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt; {
         <span class="kw">let </span>context = <span class="self">self</span>.context.clone();
         trace(DisplayDebug(<span class="self">self</span>.context.clone()), <span class="kw">move </span>|i: <span class="kw-2">&amp;mut </span>I| {
             <span class="kw">let </span>start = i.checkpoint();
@@ -1314,7 +1316,7 @@
     R: Parser&lt;I, (), E&gt;,
     I: Stream,
     I: Recover&lt;E&gt;,
-    E: FromRecoverableError&lt;I, E&gt;,
+    E: ParserError&lt;I&gt; + FromRecoverableError&lt;I, E&gt;,
 {
     <span class="kw">pub</span>(<span class="kw">crate</span>) parser: P,
     <span class="kw">pub</span>(<span class="kw">crate</span>) recover: R,
@@ -1331,10 +1333,10 @@
     R: Parser&lt;I, (), E&gt;,
     I: Stream,
     I: Recover&lt;E&gt;,
-    E: FromRecoverableError&lt;I, E&gt;,
+    E: ParserError&lt;I&gt; + FromRecoverableError&lt;I, E&gt;,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt; {
         <span class="kw">if </span>I::is_recovery_supported() {
             retry_after_inner(<span class="kw-2">&amp;mut </span><span class="self">self</span>.parser, <span class="kw-2">&amp;mut </span><span class="self">self</span>.recover, i)
         } <span class="kw">else </span>{
@@ -1345,13 +1347,13 @@
 
 <span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
 #[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">fn </span>retry_after_inner&lt;P, R, I, O, E&gt;(parser: <span class="kw-2">&amp;mut </span>P, recover: <span class="kw-2">&amp;mut </span>R, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt;
+</span><span class="kw">fn </span>retry_after_inner&lt;P, R, I, O, E&gt;(parser: <span class="kw-2">&amp;mut </span>P, recover: <span class="kw-2">&amp;mut </span>R, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt;
 <span class="kw">where
     </span>P: Parser&lt;I, O, E&gt;,
     R: Parser&lt;I, (), E&gt;,
     I: Stream,
     I: Recover&lt;E&gt;,
-    E: FromRecoverableError&lt;I, E&gt;,
+    E: ParserError&lt;I&gt; + FromRecoverableError&lt;I, E&gt;,
 {
     <span class="kw">loop </span>{
         <span class="kw">let </span>token_start = i.checkpoint();
@@ -1359,7 +1361,7 @@
             <span class="prelude-val">Ok</span>(o) =&gt; {
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(o);
             }
-            <span class="prelude-val">Err</span>(ErrMode::Incomplete(e)) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(ErrMode::Incomplete(e)),
+            <span class="prelude-val">Err</span>(e) <span class="kw">if </span>e.is_incomplete() =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(e),
             <span class="prelude-val">Err</span>(err) =&gt; err,
         };
         <span class="kw">let </span>err_start = i.checkpoint();
@@ -1376,7 +1378,7 @@
         }
 
         i.reset(<span class="kw-2">&amp;</span>err_start);
-        err = err.map(|err| E::from_recoverable_error(<span class="kw-2">&amp;</span>token_start, <span class="kw-2">&amp;</span>err_start, i, err));
+        err = E::from_recoverable_error(<span class="kw-2">&amp;</span>token_start, <span class="kw-2">&amp;</span>err_start, i, err);
         <span class="kw">return </span><span class="prelude-val">Err</span>(err);
     }
 }
@@ -1390,7 +1392,7 @@
     R: Parser&lt;I, (), E&gt;,
     I: Stream,
     I: Recover&lt;E&gt;,
-    E: FromRecoverableError&lt;I, E&gt;,
+    E: ParserError&lt;I&gt; + FromRecoverableError&lt;I, E&gt;,
 {
     <span class="kw">pub</span>(<span class="kw">crate</span>) parser: P,
     <span class="kw">pub</span>(<span class="kw">crate</span>) recover: R,
@@ -1407,10 +1409,10 @@
     R: Parser&lt;I, (), E&gt;,
     I: Stream,
     I: Recover&lt;E&gt;,
-    E: FromRecoverableError&lt;I, E&gt;,
+    E: ParserError&lt;I&gt; + FromRecoverableError&lt;I, E&gt;,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;<span class="prelude-ty">Option</span>&lt;O&gt;, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;O&gt;, E&gt; {
         <span class="kw">if </span>I::is_recovery_supported() {
             resume_after_inner(<span class="kw-2">&amp;mut </span><span class="self">self</span>.parser, <span class="kw-2">&amp;mut </span><span class="self">self</span>.recover, i)
         } <span class="kw">else </span>{
@@ -1425,20 +1427,20 @@
     parser: <span class="kw-2">&amp;mut </span>P,
     recover: <span class="kw-2">&amp;mut </span>R,
     i: <span class="kw-2">&amp;mut </span>I,
-) -&gt; PResult&lt;<span class="prelude-ty">Option</span>&lt;O&gt;, E&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;O&gt;, E&gt;
 <span class="kw">where
     </span>P: Parser&lt;I, O, E&gt;,
     R: Parser&lt;I, (), E&gt;,
     I: Stream,
     I: Recover&lt;E&gt;,
-    E: FromRecoverableError&lt;I, E&gt;,
+    E: ParserError&lt;I&gt; + FromRecoverableError&lt;I, E&gt;,
 {
     <span class="kw">let </span>token_start = i.checkpoint();
     <span class="kw">let </span><span class="kw-2">mut </span>err = <span class="kw">match </span>parser.parse_next(i) {
         <span class="prelude-val">Ok</span>(o) =&gt; {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(o));
         }
-        <span class="prelude-val">Err</span>(ErrMode::Incomplete(e)) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(ErrMode::Incomplete(e)),
+        <span class="prelude-val">Err</span>(e) <span class="kw">if </span>e.is_incomplete() =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(e),
         <span class="prelude-val">Err</span>(err) =&gt; err,
     };
     <span class="kw">let </span>err_start = i.checkpoint();
@@ -1451,7 +1453,7 @@
     }
 
     i.reset(<span class="kw-2">&amp;</span>err_start);
-    err = err.map(|err| E::from_recoverable_error(<span class="kw-2">&amp;</span>token_start, <span class="kw-2">&amp;</span>err_start, i, err));
+    err = FromRecoverableError::from_recoverable_error(<span class="kw-2">&amp;</span>token_start, <span class="kw-2">&amp;</span>err_start, i, err);
     <span class="prelude-val">Err</span>(err)
 }
 </code></pre></div></section></main></body></html>

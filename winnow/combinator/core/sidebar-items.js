@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["State"],"fn":["backtrack_err","cond","cut_err","empty","eof","fail","iterator","not","opt","peek","rest","rest_len","todo"],"struct":["ParserIterator"]};
+window.SIDEBAR_ITEMS = {"enum":["State"],"fn":["backtrack_err","cond","cut_err","empty","eof","fail","iterator","not","opt","peek","todo"],"struct":["ParserIterator"]};

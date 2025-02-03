@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.24/src/parser.rs`."><title>parser.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/</div>parser.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.7.0/src/parser.rs`."><title>parser.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.0 (9fc6b4312 2025-01-07)" data-channel="1.84.0" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/</div>parser.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -1371,14 +1371,102 @@
 <a href="#1370" id="1370">1370</a>
 <a href="#1371" id="1371">1371</a>
 <a href="#1372" id="1372">1372</a>
-<a href="#1373" id="1373">1373</a></pre></div><pre class="rust"><code><span class="doccomment">//! Basic types to build the parsers
+<a href="#1373" id="1373">1373</a>
+<a href="#1374" id="1374">1374</a>
+<a href="#1375" id="1375">1375</a>
+<a href="#1376" id="1376">1376</a>
+<a href="#1377" id="1377">1377</a>
+<a href="#1378" id="1378">1378</a>
+<a href="#1379" id="1379">1379</a>
+<a href="#1380" id="1380">1380</a>
+<a href="#1381" id="1381">1381</a>
+<a href="#1382" id="1382">1382</a>
+<a href="#1383" id="1383">1383</a>
+<a href="#1384" id="1384">1384</a>
+<a href="#1385" id="1385">1385</a>
+<a href="#1386" id="1386">1386</a>
+<a href="#1387" id="1387">1387</a>
+<a href="#1388" id="1388">1388</a>
+<a href="#1389" id="1389">1389</a>
+<a href="#1390" id="1390">1390</a>
+<a href="#1391" id="1391">1391</a>
+<a href="#1392" id="1392">1392</a>
+<a href="#1393" id="1393">1393</a>
+<a href="#1394" id="1394">1394</a>
+<a href="#1395" id="1395">1395</a>
+<a href="#1396" id="1396">1396</a>
+<a href="#1397" id="1397">1397</a>
+<a href="#1398" id="1398">1398</a>
+<a href="#1399" id="1399">1399</a>
+<a href="#1400" id="1400">1400</a>
+<a href="#1401" id="1401">1401</a>
+<a href="#1402" id="1402">1402</a>
+<a href="#1403" id="1403">1403</a>
+<a href="#1404" id="1404">1404</a>
+<a href="#1405" id="1405">1405</a>
+<a href="#1406" id="1406">1406</a>
+<a href="#1407" id="1407">1407</a>
+<a href="#1408" id="1408">1408</a>
+<a href="#1409" id="1409">1409</a>
+<a href="#1410" id="1410">1410</a>
+<a href="#1411" id="1411">1411</a>
+<a href="#1412" id="1412">1412</a>
+<a href="#1413" id="1413">1413</a>
+<a href="#1414" id="1414">1414</a>
+<a href="#1415" id="1415">1415</a>
+<a href="#1416" id="1416">1416</a>
+<a href="#1417" id="1417">1417</a>
+<a href="#1418" id="1418">1418</a>
+<a href="#1419" id="1419">1419</a>
+<a href="#1420" id="1420">1420</a>
+<a href="#1421" id="1421">1421</a>
+<a href="#1422" id="1422">1422</a>
+<a href="#1423" id="1423">1423</a>
+<a href="#1424" id="1424">1424</a>
+<a href="#1425" id="1425">1425</a>
+<a href="#1426" id="1426">1426</a>
+<a href="#1427" id="1427">1427</a>
+<a href="#1428" id="1428">1428</a>
+<a href="#1429" id="1429">1429</a>
+<a href="#1430" id="1430">1430</a>
+<a href="#1431" id="1431">1431</a>
+<a href="#1432" id="1432">1432</a>
+<a href="#1433" id="1433">1433</a>
+<a href="#1434" id="1434">1434</a>
+<a href="#1435" id="1435">1435</a>
+<a href="#1436" id="1436">1436</a>
+<a href="#1437" id="1437">1437</a>
+<a href="#1438" id="1438">1438</a>
+<a href="#1439" id="1439">1439</a>
+<a href="#1440" id="1440">1440</a>
+<a href="#1441" id="1441">1441</a>
+<a href="#1442" id="1442">1442</a>
+<a href="#1443" id="1443">1443</a>
+<a href="#1444" id="1444">1444</a>
+<a href="#1445" id="1445">1445</a>
+<a href="#1446" id="1446">1446</a>
+<a href="#1447" id="1447">1447</a>
+<a href="#1448" id="1448">1448</a>
+<a href="#1449" id="1449">1449</a>
+<a href="#1450" id="1450">1450</a>
+<a href="#1451" id="1451">1451</a>
+<a href="#1452" id="1452">1452</a>
+<a href="#1453" id="1453">1453</a>
+<a href="#1454" id="1454">1454</a>
+<a href="#1455" id="1455">1455</a>
+<a href="#1456" id="1456">1456</a>
+<a href="#1457" id="1457">1457</a>
+<a href="#1458" id="1458">1458</a>
+<a href="#1459" id="1459">1459</a>
+<a href="#1460" id="1460">1460</a>
+<a href="#1461" id="1461">1461</a></pre></div><pre class="rust"><code><span class="doccomment">//! Basic types to build the parsers
 
 </span><span class="kw">use </span><span class="kw">crate</span>::ascii::Caseless <span class="kw">as </span>AsciiCaseless;
 <span class="kw">use </span><span class="kw">crate</span>::combinator::impls;
 <span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
 #[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::error::FromRecoverableError;
-<span class="kw">use </span><span class="kw">crate</span>::error::{AddContext, FromExternalError, IResult, PResult, ParseError, ParserError};
+<span class="kw">use </span><span class="kw">crate</span>::error::{AddContext, FromExternalError, ParseError, ParserError, <span class="prelude-ty">Result</span>};
 <span class="kw">use </span><span class="kw">crate</span>::stream::{Compare, Location, ParseSlice, Stream, StreamIsPartial};
 <span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
 #[cfg(feature = <span class="string">"std"</span>)]
@@ -1390,7 +1478,7 @@
 /// ```rust
 /// use winnow::prelude::*;
 ///
-/// fn empty(input: &amp;mut &amp;str) -&gt; PResult&lt;()&gt; {
+/// fn empty(input: &amp;mut &amp;str) -&gt; ModalResult&lt;()&gt; {
 ///     let output = ();
 ///     Ok(output)
 /// }
@@ -1403,7 +1491,7 @@
 /// ```rust
 /// use winnow::prelude::*;
 ///
-/// fn empty&lt;O: Clone&gt;(output: O) -&gt; impl FnMut(&amp;mut &amp;str) -&gt; PResult&lt;O&gt; {
+/// fn empty&lt;O: Clone&gt;(output: O) -&gt; impl FnMut(&amp;mut &amp;str) -&gt; ModalResult&lt;O&gt; {
 ///     move |input: &amp;mut &amp;str| {
 ///         let output = output.clone();
 ///         Ok(output)
@@ -1421,13 +1509,14 @@
 </span><span class="kw">pub trait </span>Parser&lt;I, O, E&gt; {
     <span class="doccomment">/// Parse all of `input`, generating `O` from it
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>parse(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>input: I) -&gt; <span class="prelude-ty">Result</span>&lt;O, ParseError&lt;I, E&gt;&gt;
+    </span><span class="kw">fn </span>parse(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>input: I) -&gt; <span class="prelude-ty">Result</span>&lt;O, ParseError&lt;I, &lt;E <span class="kw">as </span>ParserError&lt;I&gt;&gt;::Inner&gt;&gt;
     <span class="kw">where
         </span><span class="self">Self</span>: core::marker::Sized,
         I: Stream,
         <span class="comment">// Force users to deal with `Incomplete` when `StreamIsPartial&lt;true&gt;`
         </span>I: StreamIsPartial,
         E: ParserError&lt;I&gt;,
+        &lt;E <span class="kw">as </span>ParserError&lt;I&gt;&gt;::Inner: ParserError&lt;I&gt;,
     {
         <span class="macro">debug_assert!</span>(
             !I::is_partial_supported(),
@@ -1438,9 +1527,9 @@
         <span class="kw">let </span>(o, <span class="kw">_</span>) = (<span class="self">self</span>.by_ref(), <span class="kw">crate</span>::combinator::eof)
             .parse_next(<span class="kw-2">&amp;mut </span>input)
             .map_err(|e| {
-                <span class="kw">let </span>e = e
-                    .into_inner()
-                    .expect(<span class="string">"complete parsers should not report `ErrMode::Incomplete(_)`"</span>);
+                <span class="kw">let </span>e = e.into_inner().unwrap_or_else(|_err| {
+                    <span class="macro">panic!</span>(<span class="string">"complete parsers should not report `ErrMode::Incomplete(_)`"</span>)
+                });
                 ParseError::new(input, start, e)
             })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(o)
@@ -1451,7 +1540,7 @@
     /// This includes advancing the [`Stream`] to the next location.
     ///
     /// On error, `input` will be left pointing at the error location.
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt;;
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt;;
 
     <span class="doccomment">/// Take tokens from the [`Stream`], turning it into the output
     ///
@@ -1468,7 +1557,7 @@
     ///
     /// &lt;/div&gt;
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_peek(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>input: I) -&gt; IResult&lt;I, O, E&gt; {
+    </span><span class="kw">fn </span>parse_peek(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>input: I) -&gt; <span class="prelude-ty">Result</span>&lt;(I, O), E&gt; {
         <span class="kw">match </span><span class="self">self</span>.parse_next(<span class="kw-2">&amp;mut </span>input) {
             <span class="prelude-val">Ok</span>(o) =&gt; <span class="prelude-val">Ok</span>((input, o)),
             <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
@@ -1519,11 +1608,16 @@
     /// }
     /// ```
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>by_ref(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; impls::ByRef&lt;<span class="lifetime">'_</span>, <span class="self">Self</span>&gt;
+    </span><span class="kw">fn </span>by_ref(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; impls::ByRef&lt;<span class="lifetime">'_</span>, <span class="self">Self</span>, I, O, E&gt;
     <span class="kw">where
         </span><span class="self">Self</span>: core::marker::Sized,
     {
-        impls::ByRef { p: <span class="self">self </span>}
+        impls::ByRef {
+            p: <span class="self">self</span>,
+            i: Default::default(),
+            o: Default::default(),
+            e: Default::default(),
+        }
     }
 
     <span class="doccomment">/// Produce the provided value
@@ -1531,14 +1625,17 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
+    /// # use winnow::{error::ErrMode, Parser};
+    /// # use winnow::prelude::*;
     /// use winnow::ascii::alpha1;
     /// # fn main() {
     ///
-    /// let mut parser = alpha1.value(1234);
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;i32&gt; {
+    ///     alpha1.value(1234).parse_next(input)
+    /// }
     ///
     /// assert_eq!(parser.parse_peek("abcd"), Ok(("", 1234)));
-    /// assert_eq!(parser.parse_peek("123abcd;"), Err(ErrMode::Backtrack(InputError::new("123abcd;", ErrorKind::Slice))));
+    /// assert!(parser.parse_peek("123abcd;").is_err());
     /// # }
     /// ```
     </span><span class="attr">#[doc(alias = <span class="string">"to"</span>)]
@@ -1562,14 +1659,17 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
+    /// # use winnow::{error::ErrMode, Parser};
+    /// # use winnow::prelude::*;
     /// use winnow::ascii::alpha1;
     /// # fn main() {
     ///
-    /// let mut parser = alpha1.default_value::&lt;u32&gt;();
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;u32&gt; {
+    ///     alpha1.default_value().parse_next(input)
+    /// }
     ///
     /// assert_eq!(parser.parse_peek("abcd"), Ok(("", 0)));
-    /// assert_eq!(parser.parse_peek("123abcd;"), Err(ErrMode::Backtrack(InputError::new("123abcd;", ErrorKind::Slice))));
+    /// assert!(parser.parse_peek("123abcd;").is_err());
     /// # }
     /// ```
     </span><span class="attr">#[inline(always)]
@@ -1592,14 +1692,17 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
+    /// # use winnow::{error::ErrMode, Parser};
+    /// # use winnow::prelude::*;
     /// use winnow::ascii::alpha1;
     /// # fn main() {
     ///
-    /// let mut parser = alpha1.void();
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;()&gt; {
+    ///     alpha1.void().parse_next(input)
+    /// }
     ///
     /// assert_eq!(parser.parse_peek("abcd"), Ok(("", ())));
-    /// assert_eq!(parser.parse_peek("123abcd;"), Err(ErrMode::Backtrack(InputError::new("123abcd;", ErrorKind::Slice))));
+    /// assert!(parser.parse_peek("123abcd;").is_err());
     /// # }
     /// ```
     </span><span class="attr">#[inline(always)]
@@ -1621,18 +1724,18 @@
     ///
     /// ```rust
     /// # use winnow::prelude::*;
-    /// # use winnow::error::InputError;
+    /// # use winnow::error::ContextError;
     /// use winnow::ascii::alpha1;
     /// # fn main() {
     ///
-    /// fn parser1&lt;'s&gt;(i: &amp;mut &amp;'s str) -&gt; PResult&lt;&amp;'s str, InputError&lt;&amp;'s str&gt;&gt; {
+    /// fn parser1&lt;'s&gt;(i: &amp;mut &amp;'s str) -&gt; ModalResult&lt;&amp;'s str&gt; {
     ///   alpha1(i)
     /// }
     ///
     /// let mut parser2 = parser1.output_into();
     ///
     /// // the parser converts the &amp;str output of the child parser into a Vec&lt;u8&gt;
-    /// let bytes: IResult&lt;&amp;str, Vec&lt;u8&gt;&gt; = parser2.parse_peek("abcd");
+    /// let bytes: ModalResult&lt;(_, Vec&lt;u8&gt;), _&gt; = parser2.parse_peek("abcd");
     /// assert_eq!(bytes, Ok(("", vec![97, 98, 99, 100])));
     /// # }
     /// ```
@@ -1656,37 +1759,24 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
+    /// # use winnow::{error::ErrMode, Parser};
+    /// # use winnow::prelude::*;
     /// use winnow::ascii::{alpha1};
     /// use winnow::combinator::separated_pair;
     /// # fn main() {
     ///
-    /// let mut parser = separated_pair(alpha1, ',', alpha1).take();
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;&amp;'i str&gt; {
+    ///     separated_pair(alpha1, ',', alpha1).take().parse_next(input)
+    /// }
     ///
     /// assert_eq!(parser.parse_peek("abcd,efgh"), Ok(("", "abcd,efgh")));
-    /// assert_eq!(parser.parse_peek("abcd;"),Err(ErrMode::Backtrack(InputError::new(";", ErrorKind::Tag))));
+    /// assert!(parser.parse_peek("abcd;").is_err());
     /// # }
     /// ```
     </span><span class="attr">#[doc(alias = <span class="string">"concat"</span>)]
     #[doc(alias = <span class="string">"recognize"</span>)]
     #[inline(always)]
     </span><span class="kw">fn </span>take(<span class="self">self</span>) -&gt; impls::Take&lt;<span class="self">Self</span>, I, O, E&gt;
-    <span class="kw">where
-        </span><span class="self">Self</span>: core::marker::Sized,
-        I: Stream,
-    {
-        impls::Take {
-            parser: <span class="self">self</span>,
-            i: Default::default(),
-            o: Default::default(),
-            e: Default::default(),
-        }
-    }
-
-    <span class="doccomment">/// Replaced with [`Parser::take`]
-    </span><span class="attr">#[inline(always)]
-    #[deprecated(since = <span class="string">"0.6.14"</span>, note = <span class="string">"Replaced with `Parser::take`"</span>)]
-    </span><span class="kw">fn </span>recognize(<span class="self">self</span>) -&gt; impls::Take&lt;<span class="self">Self</span>, I, O, E&gt;
     <span class="kw">where
         </span><span class="self">Self</span>: core::marker::Sized,
         I: Stream,
@@ -1713,48 +1803,22 @@
     ///
     /// ```rust
     /// # use winnow::prelude::*;
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError};
+    /// # use winnow::{error::ErrMode};
     /// use winnow::ascii::{alpha1};
     /// use winnow::token::literal;
     /// use winnow::combinator::separated_pair;
     ///
-    /// fn inner_parser&lt;'s&gt;(input: &amp;mut &amp;'s str) -&gt; PResult&lt;bool, InputError&lt;&amp;'s str&gt;&gt; {
-    ///     "1234".value(true).parse_next(input)
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;(bool, &amp;'i str)&gt; {
+    ///     separated_pair(alpha1, ',', alpha1).value(true).with_taken().parse_next(input)
     /// }
     ///
-    /// let mut consumed_parser = separated_pair(alpha1, ',', alpha1).value(true).with_taken();
-    ///
-    /// assert_eq!(consumed_parser.parse_peek("abcd,efgh1"), Ok(("1", (true, "abcd,efgh"))));
-    /// assert_eq!(consumed_parser.parse_peek("abcd;"),Err(ErrMode::Backtrack(InputError::new(";", ErrorKind::Tag))));
-    ///
-    /// // the second output (representing the consumed input)
-    /// // should be the same as that of the `take` parser.
-    /// let mut take_parser = inner_parser.take();
-    /// let mut consumed_parser = inner_parser.with_taken().map(|(output, consumed)| consumed);
-    ///
-    /// assert_eq!(take_parser.parse_peek("1234"), consumed_parser.parse_peek("1234"));
-    /// assert_eq!(take_parser.parse_peek("abcd"), consumed_parser.parse_peek("abcd"));
+    /// assert_eq!(parser.parse_peek("abcd,efgh1"), Ok(("1", (true, "abcd,efgh"))));
+    /// assert!(parser.parse_peek("abcd;").is_err());
     /// ```
     </span><span class="attr">#[doc(alias = <span class="string">"consumed"</span>)]
     #[doc(alias = <span class="string">"with_recognized"</span>)]
     #[inline(always)]
     </span><span class="kw">fn </span>with_taken(<span class="self">self</span>) -&gt; impls::WithTaken&lt;<span class="self">Self</span>, I, O, E&gt;
-    <span class="kw">where
-        </span><span class="self">Self</span>: core::marker::Sized,
-        I: Stream,
-    {
-        impls::WithTaken {
-            parser: <span class="self">self</span>,
-            i: Default::default(),
-            o: Default::default(),
-            e: Default::default(),
-        }
-    }
-
-    <span class="doccomment">/// Replaced with [`Parser::with_taken`]
-    </span><span class="attr">#[inline(always)]
-    #[deprecated(since = <span class="string">"0.6.14"</span>, note = <span class="string">"Replaced with `Parser::with_taken`"</span>)]
-    </span><span class="kw">fn </span>with_recognized(<span class="self">self</span>) -&gt; impls::WithTaken&lt;<span class="self">Self</span>, I, O, E&gt;
     <span class="kw">where
         </span><span class="self">Self</span>: core::marker::Sized,
         I: Stream,
@@ -1773,15 +1837,18 @@
     ///
     /// ```rust
     /// # use winnow::prelude::*;
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, stream::Stream};
+    /// # use winnow::{error::ErrMode, stream::Stream};
+    /// # use std::ops::Range;
     /// use winnow::stream::LocatingSlice;
     /// use winnow::ascii::alpha1;
     /// use winnow::combinator::separated_pair;
     ///
-    /// let mut parser = separated_pair(alpha1.span(), ',', alpha1.span());
+    /// fn parser&lt;'i&gt;(input: &amp;mut LocatingSlice&lt;&amp;'i str&gt;) -&gt; ModalResult&lt;(Range&lt;usize&gt;, Range&lt;usize&gt;)&gt; {
+    ///     separated_pair(alpha1.span(), ',', alpha1.span()).parse_next(input)
+    /// }
     ///
     /// assert_eq!(parser.parse(LocatingSlice::new("abcd,efgh")), Ok((0..4, 5..9)));
-    /// assert_eq!(parser.parse_peek(LocatingSlice::new("abcd;")),Err(ErrMode::Backtrack(InputError::new(LocatingSlice::new("abcd;").peek_slice(4).0, ErrorKind::Tag))));
+    /// assert!(parser.parse_peek(LocatingSlice::new("abcd;")).is_err());
     /// ```
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>span(<span class="self">self</span>) -&gt; impls::Span&lt;<span class="self">Self</span>, I, O, E&gt;
@@ -1811,31 +1878,19 @@
     ///
     /// ```rust
     /// # use winnow::prelude::*;
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, stream::Stream};
+    /// # use winnow::{error::ErrMode, stream::Stream};
+    /// # use std::ops::Range;
     /// use winnow::stream::LocatingSlice;
     /// use winnow::ascii::alpha1;
     /// use winnow::token::literal;
     /// use winnow::combinator::separated_pair;
     ///
-    /// fn inner_parser&lt;'s&gt;(input: &amp;mut LocatingSlice&lt;&amp;'s str&gt;) -&gt; PResult&lt;bool, InputError&lt;LocatingSlice&lt;&amp;'s str&gt;&gt;&gt; {
-    ///     "1234".value(true).parse_next(input)
+    /// fn parser&lt;'i&gt;(input: &amp;mut LocatingSlice&lt;&amp;'i str&gt;) -&gt; ModalResult&lt;((usize, Range&lt;usize&gt;), (usize, Range&lt;usize&gt;))&gt; {
+    ///     separated_pair(alpha1.value(1).with_span(), ',', alpha1.value(2).with_span()).parse_next(input)
     /// }
     ///
-    /// # fn main() {
-    ///
-    /// let mut consumed_parser = separated_pair(alpha1.value(1).with_span(), ',', alpha1.value(2).with_span());
-    ///
-    /// assert_eq!(consumed_parser.parse(LocatingSlice::new("abcd,efgh")), Ok(((1, 0..4), (2, 5..9))));
-    /// assert_eq!(consumed_parser.parse_peek(LocatingSlice::new("abcd;")),Err(ErrMode::Backtrack(InputError::new(LocatingSlice::new("abcd;").peek_slice(4).0, ErrorKind::Tag))));
-    ///
-    /// // the second output (representing the consumed input)
-    /// // should be the same as that of the `span` parser.
-    /// let mut span_parser = inner_parser.span();
-    /// let mut consumed_parser = inner_parser.with_span().map(|(output, consumed)| consumed);
-    ///
-    /// assert_eq!(span_parser.parse_peek(LocatingSlice::new("1234")), consumed_parser.parse_peek(LocatingSlice::new("1234")));
-    /// assert_eq!(span_parser.parse_peek(LocatingSlice::new("abcd")), consumed_parser.parse_peek(LocatingSlice::new("abcd")));
-    /// # }
+    /// assert_eq!(parser.parse(LocatingSlice::new("abcd,efgh")), Ok(((1, 0..4), (2, 5..9))));
+    /// assert!(parser.parse_peek(LocatingSlice::new("abcd;")).is_err());
     /// ```
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>with_span(<span class="self">self</span>) -&gt; impls::WithSpan&lt;<span class="self">Self</span>, I, O, E&gt;
@@ -1856,17 +1911,20 @@
     /// # Example
     ///
     /// ```rust
-    /// use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
-    /// use winnow::ascii::digit1;
+    /// # use winnow::prelude::*;
+    /// # use winnow::{error::ErrMode, Parser};
+    /// # use winnow::ascii::digit1;
     /// # fn main() {
     ///
-    /// let mut parser = digit1.map(|s: &amp;str| s.len());
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;usize&gt; {
+    ///     digit1.map(|s: &amp;str| s.len()).parse_next(input)
+    /// }
     ///
     /// // the parser will count how many characters were returned by digit1
     /// assert_eq!(parser.parse_peek("123456"), Ok(("", 6)));
     ///
     /// // this will fail if digit1 fails
-    /// assert_eq!(parser.parse_peek("abc"), Err(ErrMode::Backtrack(InputError::new("abc", ErrorKind::Slice))));
+    /// assert!(parser.parse_peek("abc").is_err());
     /// # }
     /// ```
     </span><span class="attr">#[inline(always)]
@@ -1890,20 +1948,23 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
+    /// # use winnow::{error::ErrMode, Parser};
+    /// # use winnow::prelude::*;
     /// use winnow::ascii::digit1;
     /// # fn main() {
     ///
-    /// let mut parse = digit1.try_map(|s: &amp;str| s.parse::&lt;u8&gt;());
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;u8&gt; {
+    ///     digit1.try_map(|s: &amp;str| s.parse::&lt;u8&gt;()).parse_next(input)
+    /// }
     ///
     /// // the parser will convert the result of digit1 to a number
-    /// assert_eq!(parse.parse_peek("123"), Ok(("", 123)));
+    /// assert_eq!(parser.parse_peek("123"), Ok(("", 123)));
     ///
     /// // this will fail if digit1 fails
-    /// assert_eq!(parse.parse_peek("abc"), Err(ErrMode::Backtrack(InputError::new("abc", ErrorKind::Slice))));
+    /// assert!(parser.parse_peek("abc").is_err());
     ///
     /// // this will fail if the mapped function fails (a `u8` is too small to hold `123456`)
-    /// assert_eq!(parse.parse_peek("123456"), Err(ErrMode::Backtrack(InputError::new("123456", ErrorKind::Verify))));
+    /// assert!(parser.parse_peek("123456").is_err());
     /// # }
     /// ```
     </span><span class="attr">#[inline(always)]
@@ -1913,6 +1974,7 @@
         G: FnMut(O) -&gt; <span class="prelude-ty">Result</span>&lt;O2, E2&gt;,
         I: Stream,
         E: FromExternalError&lt;I, E2&gt;,
+        E: ParserError&lt;I&gt;,
     {
         impls::TryMap {
             parser: <span class="self">self</span>,
@@ -1930,20 +1992,23 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
+    /// # use winnow::{error::ErrMode, Parser};
+    /// # use winnow::prelude::*;
     /// use winnow::ascii::digit1;
     /// # fn main() {
     ///
-    /// let mut parse = digit1.verify_map(|s: &amp;str| s.parse::&lt;u8&gt;().ok());
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;u8&gt; {
+    ///     digit1.verify_map(|s: &amp;str| s.parse::&lt;u8&gt;().ok()).parse_next(input)
+    /// }
     ///
     /// // the parser will convert the result of digit1 to a number
-    /// assert_eq!(parse.parse_peek("123"), Ok(("", 123)));
+    /// assert_eq!(parser.parse_peek("123"), Ok(("", 123)));
     ///
     /// // this will fail if digit1 fails
-    /// assert_eq!(parse.parse_peek("abc"), Err(ErrMode::Backtrack(InputError::new("abc", ErrorKind::Slice))));
+    /// assert!(parser.parse_peek("abc").is_err());
     ///
     /// // this will fail if the mapped function fails (a `u8` is too small to hold `123456`)
-    /// assert_eq!(parse.parse_peek("123456"), Err(ErrMode::Backtrack(InputError::new("123456", ErrorKind::Verify))));
+    /// assert!(parser.parse_peek("123456").is_err());
     /// # }
     /// ```
     </span><span class="attr">#[doc(alias = <span class="string">"satisfy_map"</span>)]
@@ -1972,32 +2037,32 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, PResult, Parser};
+    /// # use winnow::{error::ErrMode, ModalResult, Parser};
     /// use winnow::token::take;
     /// use winnow::binary::u8;
     ///
-    /// fn length_take&lt;'s&gt;(input: &amp;mut &amp;'s [u8]) -&gt; PResult&lt;&amp;'s [u8], InputError&lt;&amp;'s [u8]&gt;&gt; {
+    /// fn length_take&lt;'s&gt;(input: &amp;mut &amp;'s [u8]) -&gt; ModalResult&lt;&amp;'s [u8]&gt; {
     ///     u8.flat_map(take).parse_next(input)
     /// }
     ///
     /// assert_eq!(length_take.parse_peek(&amp;[2, 0, 1, 2][..]), Ok((&amp;[2][..], &amp;[0, 1][..])));
-    /// assert_eq!(length_take.parse_peek(&amp;[4, 0, 1, 2][..]), Err(ErrMode::Backtrack(InputError::new(&amp;[0, 1, 2][..], ErrorKind::Slice))));
+    /// assert!(length_take.parse_peek(&amp;[4, 0, 1, 2][..]).is_err());
     /// ```
     ///
     /// which is the same as
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, PResult, Parser};
+    /// # use winnow::{error::ErrMode, ModalResult, Parser};
     /// use winnow::token::take;
     /// use winnow::binary::u8;
     ///
-    /// fn length_take&lt;'s&gt;(input: &amp;mut &amp;'s [u8]) -&gt; PResult&lt;&amp;'s [u8], InputError&lt;&amp;'s [u8]&gt;&gt; {
+    /// fn length_take&lt;'s&gt;(input: &amp;mut &amp;'s [u8]) -&gt; ModalResult&lt;&amp;'s [u8]&gt; {
     ///     let length = u8.parse_next(input)?;
     ///     let data = take(length).parse_next(input)?;
     ///     Ok(data)
     /// }
     ///
     /// assert_eq!(length_take.parse_peek(&amp;[2, 0, 1, 2][..]), Ok((&amp;[2][..], &amp;[0, 1][..])));
-    /// assert_eq!(length_take.parse_peek(&amp;[4, 0, 1, 2][..]), Err(ErrMode::Backtrack(InputError::new(&amp;[0, 1, 2][..], ErrorKind::Slice))));
+    /// assert!(length_take.parse_peek(&amp;[4, 0, 1, 2][..]).is_err());
     /// ```
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>flat_map&lt;G, H, O2&gt;(<span class="self">self</span>, map: G) -&gt; impls::FlatMap&lt;<span class="self">Self</span>, G, H, I, O, O2, E&gt;
@@ -2022,16 +2087,19 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
+    /// # use winnow::{error::ErrMode, Parser};
+    /// # use winnow::prelude::*;
     /// use winnow::ascii::digit1;
     /// use winnow::token::take;
     /// # fn main() {
     ///
-    /// let mut digits = take(5u8).and_then(digit1);
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;&amp;'i str&gt; {
+    ///     take(5u8).and_then(digit1).parse_next(input)
+    /// }
     ///
-    /// assert_eq!(digits.parse_peek("12345"), Ok(("", "12345")));
-    /// assert_eq!(digits.parse_peek("123ab"), Ok(("", "123")));
-    /// assert_eq!(digits.parse_peek("123"), Err(ErrMode::Backtrack(InputError::new("123", ErrorKind::Slice))));
+    /// assert_eq!(parser.parse_peek("12345"), Ok(("", "12345")));
+    /// assert_eq!(parser.parse_peek("123ab"), Ok(("", "123")));
+    /// assert!(parser.parse_peek("123").is_err());
     /// # }
     /// ```
     </span><span class="attr">#[inline(always)]
@@ -2058,10 +2126,10 @@
     ///
     /// ```rust
     /// # use winnow::prelude::*;
-    /// use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
+    /// use winnow::{error::ErrMode, Parser};
     /// use winnow::ascii::digit1;
     ///
-    /// fn parser&lt;'s&gt;(input: &amp;mut &amp;'s str) -&gt; PResult&lt;u64, InputError&lt;&amp;'s str&gt;&gt; {
+    /// fn parser&lt;'s&gt;(input: &amp;mut &amp;'s str) -&gt; ModalResult&lt;u64&gt; {
     ///     digit1.parse_to().parse_next(input)
     /// }
     ///
@@ -2069,7 +2137,7 @@
     /// assert_eq!(parser.parse_peek("123456"), Ok(("", 123456)));
     ///
     /// // this will fail if digit1 fails
-    /// assert_eq!(parser.parse_peek("abc"), Err(ErrMode::Backtrack(InputError::new("abc", ErrorKind::Slice))));
+    /// assert!(parser.parse_peek("abc").is_err());
     /// ```
     </span><span class="attr">#[doc(alias = <span class="string">"from_str"</span>)]
     #[inline(always)]
@@ -2097,15 +2165,18 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode,error::ErrorKind, error::InputError, Parser};
+    /// # use winnow::{error::ErrMode, Parser};
     /// # use winnow::ascii::alpha1;
+    /// # use winnow::prelude::*;
     /// # fn main() {
     ///
-    /// let mut parser = alpha1.verify(|s: &amp;str| s.len() == 4);
+    /// fn parser&lt;'i&gt;(input: &amp;mut &amp;'i str) -&gt; ModalResult&lt;&amp;'i str&gt; {
+    ///     alpha1.verify(|s: &amp;str| s.len() == 4).parse_next(input)
+    /// }
     ///
     /// assert_eq!(parser.parse_peek("abcd"), Ok(("", "abcd")));
-    /// assert_eq!(parser.parse_peek("abcde"), Err(ErrMode::Backtrack(InputError::new("abcde", ErrorKind::Verify))));
-    /// assert_eq!(parser.parse_peek("123abcd;"),Err(ErrMode::Backtrack(InputError::new("123abcd;", ErrorKind::Slice))));
+    /// assert!(parser.parse_peek("abcde").is_err());
+    /// assert!(parser.parse_peek("123abcd;").is_err());
     /// # }
     /// ```
     </span><span class="attr">#[doc(alias = <span class="string">"satisfy"</span>)]
@@ -2141,6 +2212,7 @@
         </span><span class="self">Self</span>: core::marker::Sized,
         I: Stream,
         E: AddContext&lt;I, C&gt;,
+        E: ParserError&lt;I&gt;,
         C: Clone + <span class="kw">crate</span>::lib::std::fmt::Debug,
     {
         impls::Context {
@@ -2157,22 +2229,30 @@
     /// # Example
     ///
     /// ```rust
-    /// # use winnow::{error::ErrMode, error::ErrorKind, error::InputError, stream::Partial, Parser};
+    /// # use winnow::{error::ErrMode, error::InputError, stream::Partial, Parser};
     /// # use winnow::token::take;
+    /// # use winnow::prelude::*;
     /// # fn main() {
     ///
-    /// let mut parser = take(5u8).complete_err();
+    /// fn parser&lt;'i&gt;(input: &amp;mut Partial&lt;&amp;'i str&gt;) -&gt; ModalResult&lt;&amp;'i str, InputError&lt;Partial&lt;&amp;'i str&gt;&gt;&gt; {
+    ///     take(5u8).complete_err().parse_next(input)
+    /// }
     ///
     /// assert_eq!(parser.parse_peek(Partial::new("abcdefg")), Ok((Partial::new("fg"), "abcde")));
-    /// assert_eq!(parser.parse_peek(Partial::new("abcd")), Err(ErrMode::Backtrack(InputError::new(Partial::new("abcd"), ErrorKind::Complete))));
+    /// assert_eq!(parser.parse_peek(Partial::new("abcd")), Err(ErrMode::Backtrack(InputError::at(Partial::new("abcd")))));
     /// # }
     /// ```
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>complete_err(<span class="self">self</span>) -&gt; impls::CompleteErr&lt;<span class="self">Self</span>&gt;
+    </span><span class="kw">fn </span>complete_err(<span class="self">self</span>) -&gt; impls::CompleteErr&lt;<span class="self">Self</span>, I, O, E&gt;
     <span class="kw">where
         </span><span class="self">Self</span>: core::marker::Sized,
     {
-        impls::CompleteErr { f: <span class="self">self </span>}
+        impls::CompleteErr {
+            p: <span class="self">self</span>,
+            i: Default::default(),
+            o: Default::default(),
+            e: Default::default(),
+        }
     }
 
     <span class="doccomment">/// Convert the parser's error to another type using [`std::convert::From`]
@@ -2207,7 +2287,7 @@
         R: Parser&lt;I, (), E&gt;,
         I: Stream,
         I: Recover&lt;E&gt;,
-        E: FromRecoverableError&lt;I, E&gt;,
+        E: ParserError&lt;I&gt; + FromRecoverableError&lt;I, E&gt;,
     {
         impls::RetryAfter {
             parser: <span class="self">self</span>,
@@ -2231,7 +2311,7 @@
         R: Parser&lt;I, (), E&gt;,
         I: Stream,
         I: Recover&lt;E&gt;,
-        E: FromRecoverableError&lt;I, E&gt;,
+        E: ParserError&lt;I&gt; + FromRecoverableError&lt;I, E&gt;,
     {
         impls::ResumeAfter {
             parser: <span class="self">self</span>,
@@ -2245,11 +2325,11 @@
 
 <span class="kw">impl</span>&lt;I, O, E, F&gt; Parser&lt;I, O, E&gt; <span class="kw">for </span>F
 <span class="kw">where
-    </span>F: FnMut(<span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt;,
+    </span>F: FnMut(<span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt;,
     I: Stream,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt; {
         <span class="self">self</span>(i)
     }
 }
@@ -2258,16 +2338,16 @@
 ///
 /// # Example
 ///
-/// ```
+/// ```rust
 /// # use winnow::prelude::*;
-/// # use winnow::{error::ErrMode, error::{ErrorKind, InputError}};
-/// fn parser&lt;'s&gt;(i: &amp;mut &amp;'s [u8]) -&gt; PResult&lt;u8, InputError&lt;&amp;'s [u8]&gt;&gt;  {
+/// # use winnow::{error::ErrMode, error::ContextError};
+/// fn parser&lt;'s&gt;(i: &amp;mut &amp;'s [u8]) -&gt; ModalResult&lt;u8&gt;  {
 ///     b'a'.parse_next(i)
 /// }
 /// assert_eq!(parser.parse_peek(&amp;b"abc"[..]), Ok((&amp;b"bc"[..], b'a')));
-/// assert_eq!(parser.parse_peek(&amp;b" abc"[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b" abc"[..], ErrorKind::Tag))));
-/// assert_eq!(parser.parse_peek(&amp;b"bc"[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b"bc"[..], ErrorKind::Tag))));
-/// assert_eq!(parser.parse_peek(&amp;b""[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b""[..], ErrorKind::Tag))));
+/// assert!(parser.parse_peek(&amp;b" abc"[..]).is_err());
+/// assert!(parser.parse_peek(&amp;b"bc"[..]).is_err());
+/// assert!(parser.parse_peek(&amp;b""[..]).is_err());
 /// ```
 </span><span class="kw">impl</span>&lt;I, E&gt; Parser&lt;I, u8, E&gt; <span class="kw">for </span>u8
 <span class="kw">where
@@ -2277,7 +2357,7 @@
     E: ParserError&lt;I&gt;,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;u8, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;u8, E&gt; {
         <span class="kw">crate</span>::token::literal(<span class="kw-2">*</span><span class="self">self</span>).value(<span class="kw-2">*</span><span class="self">self</span>).parse_next(i)
     }
 }
@@ -2286,16 +2366,16 @@
 ///
 /// # Example
 ///
-/// ```
+/// ```rust
 /// # use winnow::prelude::*;
-/// # use winnow::{error::ErrMode, error::{ErrorKind, InputError}};
-/// fn parser&lt;'s&gt;(i: &amp;mut &amp;'s str) -&gt; PResult&lt;char, InputError&lt;&amp;'s str&gt;&gt; {
+/// # use winnow::{error::ErrMode, error::ContextError};
+/// fn parser&lt;'s&gt;(i: &amp;mut &amp;'s str) -&gt; ModalResult&lt;char&gt; {
 ///     'a'.parse_next(i)
 /// }
 /// assert_eq!(parser.parse_peek("abc"), Ok(("bc", 'a')));
-/// assert_eq!(parser.parse_peek(" abc"), Err(ErrMode::Backtrack(InputError::new(" abc", ErrorKind::Tag))));
-/// assert_eq!(parser.parse_peek("bc"), Err(ErrMode::Backtrack(InputError::new("bc", ErrorKind::Tag))));
-/// assert_eq!(parser.parse_peek(""), Err(ErrMode::Backtrack(InputError::new("", ErrorKind::Tag))));
+/// assert!(parser.parse_peek(" abc").is_err());
+/// assert!(parser.parse_peek("bc").is_err());
+/// assert!(parser.parse_peek("").is_err());
 /// ```
 </span><span class="kw">impl</span>&lt;I, E&gt; Parser&lt;I, char, E&gt; <span class="kw">for </span>char
 <span class="kw">where
@@ -2305,7 +2385,7 @@
     E: ParserError&lt;I&gt;,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;char, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;char, E&gt; {
         <span class="kw">crate</span>::token::literal(<span class="kw-2">*</span><span class="self">self</span>).value(<span class="kw-2">*</span><span class="self">self</span>).parse_next(i)
     }
 }
@@ -2315,18 +2395,18 @@
 /// # Example
 /// ```rust
 /// # use winnow::prelude::*;
-/// # use winnow::{error::ErrMode, error::{InputError, ErrorKind}, error::Needed};
+/// # use winnow::{error::ErrMode, error::ContextError, error::Needed};
 /// # use winnow::combinator::alt;
 /// # use winnow::token::take;
 ///
-/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s [u8]) -&gt; PResult&lt;&amp;'s [u8], InputError&lt;&amp;'s [u8]&gt;&gt; {
+/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s [u8]) -&gt; ModalResult&lt;&amp;'s [u8]&gt; {
 ///   alt((&amp;"Hello"[..], take(5usize))).parse_next(s)
 /// }
 ///
 /// assert_eq!(parser.parse_peek(&amp;b"Hello, World!"[..]), Ok((&amp;b", World!"[..], &amp;b"Hello"[..])));
 /// assert_eq!(parser.parse_peek(&amp;b"Something"[..]), Ok((&amp;b"hing"[..], &amp;b"Somet"[..])));
-/// assert_eq!(parser.parse_peek(&amp;b"Some"[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b"Some"[..], ErrorKind::Slice))));
-/// assert_eq!(parser.parse_peek(&amp;b""[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b""[..], ErrorKind::Slice))));
+/// assert!(parser.parse_peek(&amp;b"Some"[..]).is_err());
+/// assert!(parser.parse_peek(&amp;b""[..]).is_err());
 /// ```
 </span><span class="kw">impl</span>&lt;<span class="lifetime">'s</span>, I, E: ParserError&lt;I&gt;&gt; Parser&lt;I, &lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8]
 <span class="kw">where
@@ -2334,7 +2414,7 @@
     I: Stream,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
         <span class="kw">crate</span>::token::literal(<span class="kw-2">*</span><span class="self">self</span>).parse_next(i)
     }
 }
@@ -2344,12 +2424,12 @@
 /// # Example
 /// ```rust
 /// # use winnow::prelude::*;
-/// # use winnow::{error::ErrMode, error::{InputError, ErrorKind}, error::Needed};
+/// # use winnow::{error::ErrMode, error::ContextError, error::Needed};
 /// # use winnow::combinator::alt;
 /// # use winnow::token::take;
 /// use winnow::ascii::Caseless;
 ///
-/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s [u8]) -&gt; PResult&lt;&amp;'s [u8], InputError&lt;&amp;'s [u8]&gt;&gt; {
+/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s [u8]) -&gt; ModalResult&lt;&amp;'s [u8]&gt; {
 ///   alt((Caseless(&amp;"hello"[..]), take(5usize))).parse_next(s)
 /// }
 ///
@@ -2357,8 +2437,8 @@
 /// assert_eq!(parser.parse_peek(&amp;b"hello, World!"[..]), Ok((&amp;b", World!"[..], &amp;b"hello"[..])));
 /// assert_eq!(parser.parse_peek(&amp;b"HeLlo, World!"[..]), Ok((&amp;b", World!"[..], &amp;b"HeLlo"[..])));
 /// assert_eq!(parser.parse_peek(&amp;b"Something"[..]), Ok((&amp;b"hing"[..], &amp;b"Somet"[..])));
-/// assert_eq!(parser.parse_peek(&amp;b"Some"[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b"Some"[..], ErrorKind::Slice))));
-/// assert_eq!(parser.parse_peek(&amp;b""[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b""[..], ErrorKind::Slice))));
+/// assert!(parser.parse_peek(&amp;b"Some"[..]).is_err());
+/// assert!(parser.parse_peek(&amp;b""[..]).is_err());
 /// ```
 </span><span class="kw">impl</span>&lt;<span class="lifetime">'s</span>, I, E: ParserError&lt;I&gt;&gt; Parser&lt;I, &lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; <span class="kw">for </span>AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8]&gt;
 <span class="kw">where
@@ -2366,7 +2446,7 @@
     I: Stream,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
         <span class="kw">crate</span>::token::literal(<span class="kw-2">*</span><span class="self">self</span>).parse_next(i)
     }
 }
@@ -2376,18 +2456,18 @@
 /// # Example
 /// ```rust
 /// # use winnow::prelude::*;
-/// # use winnow::{error::ErrMode, error::{InputError, ErrorKind}, error::Needed};
+/// # use winnow::{error::ErrMode, error::ContextError, error::Needed};
 /// # use winnow::combinator::alt;
 /// # use winnow::token::take;
 ///
-/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s [u8]) -&gt; PResult&lt;&amp;'s [u8], InputError&lt;&amp;'s [u8]&gt;&gt; {
+/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s [u8]) -&gt; ModalResult&lt;&amp;'s [u8]&gt; {
 ///   alt((b"Hello", take(5usize))).parse_next(s)
 /// }
 ///
 /// assert_eq!(parser.parse_peek(&amp;b"Hello, World!"[..]), Ok((&amp;b", World!"[..], &amp;b"Hello"[..])));
 /// assert_eq!(parser.parse_peek(&amp;b"Something"[..]), Ok((&amp;b"hing"[..], &amp;b"Somet"[..])));
-/// assert_eq!(parser.parse_peek(&amp;b"Some"[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b"Some"[..], ErrorKind::Slice))));
-/// assert_eq!(parser.parse_peek(&amp;b""[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b""[..], ErrorKind::Slice))));
+/// assert!(parser.parse_peek(&amp;b"Some"[..]).is_err());
+/// assert!(parser.parse_peek(&amp;b""[..]).is_err());
 /// ```
 </span><span class="kw">impl</span>&lt;<span class="lifetime">'s</span>, I, E: ParserError&lt;I&gt;, <span class="kw">const </span>N: usize&gt; Parser&lt;I, &lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8; N]
 <span class="kw">where
@@ -2395,7 +2475,7 @@
     I: Stream,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
         <span class="kw">crate</span>::token::literal(<span class="kw-2">*</span><span class="self">self</span>).parse_next(i)
     }
 }
@@ -2405,12 +2485,12 @@
 /// # Example
 /// ```rust
 /// # use winnow::prelude::*;
-/// # use winnow::{error::ErrMode, error::{InputError, ErrorKind}, error::Needed};
+/// # use winnow::{error::ErrMode, error::ContextError, error::Needed};
 /// # use winnow::combinator::alt;
 /// # use winnow::token::take;
 /// use winnow::ascii::Caseless;
 ///
-/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s [u8]) -&gt; PResult&lt;&amp;'s [u8], InputError&lt;&amp;'s [u8]&gt;&gt; {
+/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s [u8]) -&gt; ModalResult&lt;&amp;'s [u8]&gt; {
 ///   alt((Caseless(b"hello"), take(5usize))).parse_next(s)
 /// }
 ///
@@ -2418,8 +2498,8 @@
 /// assert_eq!(parser.parse_peek(&amp;b"hello, World!"[..]), Ok((&amp;b", World!"[..], &amp;b"hello"[..])));
 /// assert_eq!(parser.parse_peek(&amp;b"HeLlo, World!"[..]), Ok((&amp;b", World!"[..], &amp;b"HeLlo"[..])));
 /// assert_eq!(parser.parse_peek(&amp;b"Something"[..]), Ok((&amp;b"hing"[..], &amp;b"Somet"[..])));
-/// assert_eq!(parser.parse_peek(&amp;b"Some"[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b"Some"[..], ErrorKind::Slice))));
-/// assert_eq!(parser.parse_peek(&amp;b""[..]), Err(ErrMode::Backtrack(InputError::new(&amp;b""[..], ErrorKind::Slice))));
+/// assert!(parser.parse_peek(&amp;b"Some"[..]).is_err());
+/// assert!(parser.parse_peek(&amp;b""[..]).is_err());
 /// ```
 </span><span class="kw">impl</span>&lt;<span class="lifetime">'s</span>, I, E: ParserError&lt;I&gt;, <span class="kw">const </span>N: usize&gt; Parser&lt;I, &lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt;
     <span class="kw">for </span>AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'s </span>[u8; N]&gt;
@@ -2428,7 +2508,7 @@
     I: Stream,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
         <span class="kw">crate</span>::token::literal(<span class="kw-2">*</span><span class="self">self</span>).parse_next(i)
     }
 }
@@ -2438,18 +2518,18 @@
 /// # Example
 /// ```rust
 /// # use winnow::prelude::*;
-/// # use winnow::{error::ErrMode, error::{InputError, ErrorKind}};
+/// # use winnow::{error::ErrMode, error::ContextError};
 /// # use winnow::combinator::alt;
 /// # use winnow::token::take;
 ///
-/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s str) -&gt; PResult&lt;&amp;'s str, InputError&lt;&amp;'s str&gt;&gt; {
+/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s str) -&gt; ModalResult&lt;&amp;'s str&gt; {
 ///   alt(("Hello", take(5usize))).parse_next(s)
 /// }
 ///
 /// assert_eq!(parser.parse_peek("Hello, World!"), Ok((", World!", "Hello")));
 /// assert_eq!(parser.parse_peek("Something"), Ok(("hing", "Somet")));
-/// assert_eq!(parser.parse_peek("Some"), Err(ErrMode::Backtrack(InputError::new("Some", ErrorKind::Slice))));
-/// assert_eq!(parser.parse_peek(""), Err(ErrMode::Backtrack(InputError::new("", ErrorKind::Slice))));
+/// assert!(parser.parse_peek("Some").is_err());
+/// assert!(parser.parse_peek("").is_err());
 /// ```
 </span><span class="kw">impl</span>&lt;<span class="lifetime">'s</span>, I, E: ParserError&lt;I&gt;&gt; Parser&lt;I, &lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'s </span>str
 <span class="kw">where
@@ -2457,7 +2537,7 @@
     I: Stream,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
         <span class="kw">crate</span>::token::literal(<span class="kw-2">*</span><span class="self">self</span>).parse_next(i)
     }
 }
@@ -2467,12 +2547,12 @@
 /// # Example
 /// ```rust
 /// # use winnow::prelude::*;
-/// # use winnow::{error::ErrMode, error::{InputError, ErrorKind}};
+/// # use winnow::{error::ErrMode, error::ContextError};
 /// # use winnow::combinator::alt;
 /// # use winnow::token::take;
 /// # use winnow::ascii::Caseless;
 ///
-/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s str) -&gt; PResult&lt;&amp;'s str, InputError&lt;&amp;'s str&gt;&gt; {
+/// fn parser&lt;'s&gt;(s: &amp;mut &amp;'s str) -&gt; ModalResult&lt;&amp;'s str&gt; {
 ///   alt((Caseless("hello"), take(5usize))).parse_next(s)
 /// }
 ///
@@ -2480,8 +2560,8 @@
 /// assert_eq!(parser.parse_peek("hello, World!"), Ok((", World!", "hello")));
 /// assert_eq!(parser.parse_peek("HeLlo, World!"), Ok((", World!", "HeLlo")));
 /// assert_eq!(parser.parse_peek("Something"), Ok(("hing", "Somet")));
-/// assert_eq!(parser.parse_peek("Some"), Err(ErrMode::Backtrack(InputError::new("Some", ErrorKind::Slice))));
-/// assert_eq!(parser.parse_peek(""), Err(ErrMode::Backtrack(InputError::new("", ErrorKind::Slice))));
+/// assert!(parser.parse_peek("Some").is_err());
+/// assert!(parser.parse_peek("").is_err());
 /// ```
 </span><span class="kw">impl</span>&lt;<span class="lifetime">'s</span>, I, E: ParserError&lt;I&gt;&gt; Parser&lt;I, &lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; <span class="kw">for </span>AsciiCaseless&lt;<span class="kw-2">&amp;</span><span class="lifetime">'s </span>str&gt;
 <span class="kw">where
@@ -2489,30 +2569,28 @@
     I: Stream,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;I <span class="kw">as </span>Stream&gt;::Slice, E&gt; {
         <span class="kw">crate</span>::token::literal(<span class="kw-2">*</span><span class="self">self</span>).parse_next(i)
     }
 }
 
 <span class="kw">impl</span>&lt;I: Stream, E: ParserError&lt;I&gt;&gt; Parser&lt;I, (), E&gt; <span class="kw">for </span>() {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;(), E&gt; {
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;(), E&gt; {
         <span class="prelude-val">Ok</span>(())
     }
 }
 
 <span class="macro">macro_rules!</span> impl_parser_for_tuple {
-  ($(<span class="macro-nonterminal">$parser</span>:ident <span class="macro-nonterminal">$output</span>:ident),+) =&gt; (
+  ($(<span class="macro-nonterminal">$index</span>:tt <span class="macro-nonterminal">$parser</span>:ident <span class="macro-nonterminal">$output</span>:ident),+) =&gt; (
     <span class="attr">#[allow(non_snake_case)]
     </span><span class="kw">impl</span>&lt;I: Stream, $(<span class="macro-nonterminal">$output</span>),+, E: ParserError&lt;I&gt;, $(<span class="macro-nonterminal">$parser</span>),+&gt; Parser&lt;I, ($(<span class="macro-nonterminal">$output</span>),+,), E&gt; <span class="kw">for </span>($(<span class="macro-nonterminal">$parser</span>),+,)
     <span class="kw">where
       </span>$(<span class="macro-nonterminal">$parser</span>: Parser&lt;I, <span class="macro-nonterminal">$output</span>, E&gt;),+
     {
       <span class="attr">#[inline(always)]
-      </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;($(<span class="macro-nonterminal">$output</span>),+,), E&gt; {
-        <span class="kw">let </span>($(<span class="kw-2">ref mut </span><span class="macro-nonterminal">$parser</span>),+,) = <span class="kw-2">*</span><span class="self">self</span>;
-
-        $(<span class="kw">let </span><span class="macro-nonterminal">$output </span>= <span class="macro-nonterminal">$parser</span>.parse_next(i)<span class="question-mark">?</span>;)+
+      </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;($(<span class="macro-nonterminal">$output</span>),+,), E&gt; {
+        $(<span class="kw">let </span><span class="macro-nonterminal">$output </span>= <span class="self">self</span>.<span class="macro-nonterminal">$index</span>.parse_next(i)<span class="question-mark">?</span>;)+
 
         <span class="prelude-val">Ok</span>(($(<span class="macro-nonterminal">$output</span>),+,))
       }
@@ -2521,17 +2599,58 @@
 }
 
 <span class="macro">macro_rules!</span> impl_parser_for_tuples {
-    (<span class="macro-nonterminal">$parser1</span>:ident <span class="macro-nonterminal">$output1</span>:ident, $(<span class="macro-nonterminal">$parser</span>:ident <span class="macro-nonterminal">$output</span>:ident),+) =&gt; {
-        <span class="macro">impl_parser_for_tuples!</span>(__impl <span class="macro-nonterminal">$parser1 $output1</span>; $(<span class="macro-nonterminal">$parser $output</span>),+);
+    (<span class="macro-nonterminal">$index1</span>:tt <span class="macro-nonterminal">$parser1</span>:ident <span class="macro-nonterminal">$output1</span>:ident, $(<span class="macro-nonterminal">$index</span>:tt <span class="macro-nonterminal">$parser</span>:ident <span class="macro-nonterminal">$output</span>:ident),+) =&gt; {
+        <span class="macro">impl_parser_for_tuples!</span>(__impl <span class="macro-nonterminal">$index1 $parser1 $output1</span>; $(<span class="macro-nonterminal">$index $parser $output</span>),+);
     };
-    (__impl $(<span class="macro-nonterminal">$parser</span>:ident <span class="macro-nonterminal">$output</span>:ident),+; <span class="macro-nonterminal">$parser1</span>:ident <span class="macro-nonterminal">$output1</span>:ident $(,<span class="macro-nonterminal">$parser2</span>:ident <span class="macro-nonterminal">$output2</span>:ident)<span class="kw-2">*</span>) =&gt; {
-        <span class="macro">impl_parser_for_tuple!</span>($(<span class="macro-nonterminal">$parser $output</span>),+);
-        <span class="macro">impl_parser_for_tuples!</span>(__impl $(<span class="macro-nonterminal">$parser $output</span>),+, <span class="macro-nonterminal">$parser1 $output1</span>; $(<span class="macro-nonterminal">$parser2 $output2</span>),<span class="kw-2">*</span>);
+    (__impl $(<span class="macro-nonterminal">$index</span>:tt <span class="macro-nonterminal">$parser</span>:ident <span class="macro-nonterminal">$output</span>:ident),+; <span class="macro-nonterminal">$index1</span>:tt <span class="macro-nonterminal">$parser1</span>:ident <span class="macro-nonterminal">$output1</span>:ident $(,<span class="macro-nonterminal">$index2</span>:tt <span class="macro-nonterminal">$parser2</span>:ident <span class="macro-nonterminal">$output2</span>:ident)<span class="kw-2">*</span>) =&gt; {
+        <span class="macro">impl_parser_for_tuple!</span>($(<span class="macro-nonterminal">$index $parser $output</span>),+);
+        <span class="macro">impl_parser_for_tuples!</span>(__impl $(<span class="macro-nonterminal">$index $parser $output</span>),+, <span class="macro-nonterminal">$index1 $parser1 $output1</span>; $(<span class="macro-nonterminal">$index2 $parser2 $output2</span>),<span class="kw-2">*</span>);
     };
-    (__impl $(<span class="macro-nonterminal">$parser</span>:ident <span class="macro-nonterminal">$output</span>:ident),+;) =&gt; {
-        <span class="macro">impl_parser_for_tuple!</span>($(<span class="macro-nonterminal">$parser $output</span>),+);
+    (__impl $(<span class="macro-nonterminal">$index</span>:tt <span class="macro-nonterminal">$parser</span>:ident <span class="macro-nonterminal">$output</span>:ident),+;) =&gt; {
+        <span class="macro">impl_parser_for_tuple!</span>($(<span class="macro-nonterminal">$index $parser $output</span>),+);
     }
 }
+
+<span class="macro">impl_parser_for_tuples!</span>(
+  <span class="number">0 </span>P0 O0,
+  <span class="number">1 </span>P1 O1,
+  <span class="number">2 </span>P2 O2,
+  <span class="number">3 </span>P3 O3,
+  <span class="number">4 </span>P4 O4,
+  <span class="number">5 </span>P5 O5,
+  <span class="number">6 </span>P6 O6,
+  <span class="number">7 </span>P7 O7,
+  <span class="number">8 </span>P8 O8,
+  <span class="number">9 </span>P9 O9,
+  <span class="number">10 </span>P10 O10,
+  <span class="number">11 </span>P11 O11,
+  <span class="number">12 </span>P12 O12,
+  <span class="number">13 </span>P13 O13,
+  <span class="number">14 </span>P14 O14,
+  <span class="number">15 </span>P15 O15,
+  <span class="number">16 </span>P16 O16,
+  <span class="number">17 </span>P17 O17,
+  <span class="number">18 </span>P18 O18,
+  <span class="number">19 </span>P19 O19,
+  <span class="number">20 </span>P20 O20,
+  <span class="number">21 </span>P21 O21
+);
+
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
+</span><span class="kw">use </span><span class="kw">crate</span>::lib::std::boxed::Box;
+
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
+</span><span class="kw">impl</span>&lt;I, O, E&gt; Parser&lt;I, O, E&gt; <span class="kw">for </span>Box&lt;<span class="kw">dyn </span>Parser&lt;I, O, E&gt; + <span class="lifetime">'_</span>&gt; {
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; <span class="prelude-ty">Result</span>&lt;O, E&gt; {
+        (<span class="kw-2">**</span><span class="self">self</span>).parse_next(i)
+    }
+}
+
+<span class="doccomment">/// Trait alias for [`Parser`] to be used with [`ModalResult`][crate::error::ModalResult]
+</span><span class="kw">pub trait </span>ModalParser&lt;I, O, E&gt;: Parser&lt;I, O, <span class="kw">crate</span>::error::ErrMode&lt;E&gt;&gt; {}
+
+<span class="kw">impl</span>&lt;I, O, E, P&gt; ModalParser&lt;I, O, E&gt; <span class="kw">for </span>P <span class="kw">where </span>P: Parser&lt;I, O, <span class="kw">crate</span>::error::ErrMode&lt;E&gt;&gt; {}
 
 <span class="doccomment">/// Collect all errors when parsing the input
 ///
@@ -2580,9 +2699,6 @@
         <span class="kw">let </span>(o, err) = <span class="kw">match </span>result {
             <span class="prelude-val">Ok</span>((o, <span class="kw">_</span>)) =&gt; (<span class="prelude-val">Some</span>(o), <span class="prelude-val">None</span>),
             <span class="prelude-val">Err</span>(err) =&gt; {
-                <span class="kw">let </span>err = err
-                    .into_inner()
-                    .expect(<span class="string">"complete parsers should not report `ErrMode::Incomplete(_)`"</span>);
                 <span class="kw">let </span>err_start = input.checkpoint();
                 <span class="kw">let </span>err = R::from_recoverable_error(<span class="kw-2">&amp;</span>start_token, <span class="kw-2">&amp;</span>err_start, <span class="kw-2">&amp;</span>input, err);
                 (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(err))
@@ -2599,67 +2715,17 @@
     }
 }
 
-<span class="macro">impl_parser_for_tuples!</span>(
-  P1 O1,
-  P2 O2,
-  P3 O3,
-  P4 O4,
-  P5 O5,
-  P6 O6,
-  P7 O7,
-  P8 O8,
-  P9 O9,
-  P10 O10,
-  P11 O11,
-  P12 O12,
-  P13 O13,
-  P14 O14,
-  P15 O15,
-  P16 O16,
-  P17 O17,
-  P18 O18,
-  P19 O19,
-  P20 O20,
-  P21 O21
-);
-
-<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
-</span><span class="kw">use </span><span class="kw">crate</span>::lib::std::boxed::Box;
-
-<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
-</span><span class="kw">impl</span>&lt;I, O, E&gt; Parser&lt;I, O, E&gt; <span class="kw">for </span>Box&lt;<span class="kw">dyn </span>Parser&lt;I, O, E&gt; + <span class="lifetime">'_</span>&gt; {
-    <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>parse_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: <span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt; {
-        (<span class="kw-2">**</span><span class="self">self</span>).parse_next(i)
-    }
-}
-
-<span class="doccomment">/// Deprecated
-</span><span class="attr">#[inline(always)]
-#[deprecated(since = <span class="string">"0.6.23"</span>)]
-</span><span class="kw">pub fn </span>unpeek&lt;<span class="lifetime">'a</span>, I, O, E&gt;(
-    <span class="kw-2">mut </span>peek: <span class="kw">impl </span>FnMut(I) -&gt; IResult&lt;I, O, E&gt; + <span class="lifetime">'a</span>,
-) -&gt; <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>I) -&gt; PResult&lt;O, E&gt;
-<span class="kw">where
-    </span>I: Clone,
-{
-    <span class="kw">move </span>|input| <span class="kw">match </span>peek((<span class="kw-2">*</span>input).clone()) {
-        <span class="prelude-val">Ok</span>((i, o)) =&gt; {
-            <span class="kw-2">*</span>input = i;
-            <span class="prelude-val">Ok</span>(o)
-        }
-        <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
-    }
-}
-
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">use </span>snapbox::prelude::<span class="kw-2">*</span>;
+    <span class="kw">use </span>snapbox::str;
+
     <span class="kw">use </span><span class="kw">crate</span>::binary::be_u16;
     <span class="kw">use </span><span class="kw">crate</span>::error::ErrMode;
-    <span class="kw">use </span><span class="kw">crate</span>::error::ErrorKind;
-    <span class="kw">use </span><span class="kw">crate</span>::error::InputError;
     <span class="kw">use </span><span class="kw">crate</span>::error::Needed;
+    <span class="kw">use </span><span class="kw">crate</span>::error::TestResult;
     <span class="kw">use </span><span class="kw">crate</span>::token::take;
     <span class="kw">use </span><span class="kw">crate</span>::Partial;
 
@@ -2674,11 +2740,10 @@
     <span class="attr">#[test]
     #[cfg(target_pointer_width = <span class="string">"64"</span>)]
     </span><span class="kw">fn </span>size_test() {
-        <span class="macro">assert_size!</span>(IResult&lt;<span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span>[u8], (<span class="kw-2">&amp;</span>[u8], u32)&gt;, <span class="number">40</span>);
-        <span class="macro">assert_size!</span>(IResult&lt;<span class="kw-2">&amp;</span>str, <span class="kw-2">&amp;</span>str, u32&gt;, <span class="number">40</span>);
+        <span class="macro">assert_size!</span>(<span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>[u8], (<span class="kw-2">&amp;</span>[u8], u32)&gt;, <span class="number">40</span>);
+        <span class="macro">assert_size!</span>(<span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>str, u32&gt;, <span class="number">40</span>);
         <span class="macro">assert_size!</span>(Needed, <span class="number">8</span>);
         <span class="macro">assert_size!</span>(ErrMode&lt;u32&gt;, <span class="number">16</span>);
-        <span class="macro">assert_size!</span>(ErrorKind, <span class="number">1</span>);
     }
 
     <span class="attr">#[test]
@@ -2690,58 +2755,169 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>single_element_tuples() {
         <span class="kw">use </span><span class="kw">crate</span>::ascii::alpha1;
-        <span class="kw">use </span><span class="kw">crate</span>::error::ErrorKind;
 
         <span class="kw">let </span><span class="kw-2">mut </span>parser = (alpha1,);
-        <span class="macro">assert_eq!</span>(parser.parse_peek(<span class="string">"abc123def"</span>), <span class="prelude-val">Ok</span>((<span class="string">"123def"</span>, (<span class="string">"abc"</span>,))));
-        <span class="macro">assert_eq!</span>(
+        <span class="macro">assert_parse!</span>(
+            parser.parse_peek(<span class="string">"abc123def"</span>),
+            <span class="macro">str!</span>[[<span class="string">r#"
+Ok(
+    (
+        "123def",
+        (
+            "abc",
+        ),
+    ),
+)
+
+"#</span>]]
+            .raw()
+        );
+        <span class="macro">assert_parse!</span>(
             parser.parse_peek(<span class="string">"123def"</span>),
-            <span class="prelude-val">Err</span>(ErrMode::Backtrack(InputError::new(
-                <span class="string">"123def"</span>,
-                ErrorKind::Slice
-            )))
+            <span class="macro">str!</span>[[<span class="string">r#"
+Err(
+    Backtrack(
+        InputError {
+            input: "123def",
+        },
+    ),
+)
+
+"#</span>]]
+            .raw()
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>tuple_test() {
         <span class="attr">#[allow(clippy::type_complexity)]
-        </span><span class="kw">fn </span>tuple_3(i: Partial&lt;<span class="kw-2">&amp;</span>[u8]&gt;) -&gt; IResult&lt;Partial&lt;<span class="kw-2">&amp;</span>[u8]&gt;, (u16, <span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span>[u8])&gt; {
-            (be_u16, take(<span class="number">3u8</span>), <span class="string">"fg"</span>).parse_peek(i)
+        </span><span class="kw">fn </span>tuple_3&lt;<span class="lifetime">'i</span>&gt;(
+            i: <span class="kw-2">&amp;mut </span>Partial&lt;<span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8]&gt;,
+        ) -&gt; TestResult&lt;Partial&lt;<span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8]&gt;, (u16, <span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">'i </span>[u8])&gt; {
+            (be_u16, take(<span class="number">3u8</span>), <span class="string">"fg"</span>).parse_next(i)
         }
 
-        <span class="macro">assert_eq!</span>(
-            tuple_3(Partial::new(<span class="kw-2">&amp;</span><span class="string">b"abcdefgh"</span>[..])),
-            <span class="prelude-val">Ok</span>((
-                Partial::new(<span class="kw-2">&amp;</span><span class="string">b"h"</span>[..]),
-                (<span class="number">0x6162u16</span>, <span class="kw-2">&amp;</span><span class="string">b"cde"</span>[..], <span class="kw-2">&amp;</span><span class="string">b"fg"</span>[..])
-            ))
+        <span class="macro">assert_parse!</span>(
+            tuple_3.parse_peek(Partial::new(<span class="kw-2">&amp;</span><span class="string">b"abcdefgh"</span>[..])),
+            <span class="macro">str!</span>[[<span class="string">r#"
+Ok(
+    (
+        Partial {
+            input: [
+                104,
+            ],
+            partial: true,
+        },
+        (
+            24930,
+            [
+                99,
+                100,
+                101,
+            ],
+            [
+                102,
+                103,
+            ],
+        ),
+    ),
+)
+
+"#</span>]]
+            .raw()
         );
-        <span class="macro">assert_eq!</span>(
-            tuple_3(Partial::new(<span class="kw-2">&amp;</span><span class="string">b"abcd"</span>[..])),
-            <span class="prelude-val">Err</span>(ErrMode::Incomplete(Needed::new(<span class="number">1</span>)))
+        <span class="macro">assert_parse!</span>(
+            tuple_3.parse_peek(Partial::new(<span class="kw-2">&amp;</span><span class="string">b"abcd"</span>[..])),
+            <span class="macro">str!</span>[[<span class="string">r#"
+Err(
+    Incomplete(
+        Size(
+            1,
+        ),
+    ),
+)
+
+"#</span>]]
+            .raw()
         );
-        <span class="macro">assert_eq!</span>(
-            tuple_3(Partial::new(<span class="kw-2">&amp;</span><span class="string">b"abcde"</span>[..])),
-            <span class="prelude-val">Err</span>(ErrMode::Incomplete(Needed::new(<span class="number">2</span>)))
+        <span class="macro">assert_parse!</span>(
+            tuple_3.parse_peek(Partial::new(<span class="kw-2">&amp;</span><span class="string">b"abcde"</span>[..])),
+            <span class="macro">str!</span>[[<span class="string">r#"
+Err(
+    Incomplete(
+        Unknown,
+    ),
+)
+
+"#</span>]]
+            .raw()
         );
-        <span class="macro">assert_eq!</span>(
-            tuple_3(Partial::new(<span class="kw-2">&amp;</span><span class="string">b"abcdejk"</span>[..])),
-            <span class="prelude-val">Err</span>(ErrMode::Backtrack(<span class="macro">error_position!</span>(
-                <span class="kw-2">&amp;</span>Partial::new(<span class="kw-2">&amp;</span><span class="string">b"jk"</span>[..]),
-                ErrorKind::Tag
-            )))
+        <span class="macro">assert_parse!</span>(
+            tuple_3.parse_peek(Partial::new(<span class="kw-2">&amp;</span><span class="string">b"abcdejk"</span>[..])),
+            <span class="macro">str!</span>[[<span class="string">r#"
+Err(
+    Backtrack(
+        InputError {
+            input: Partial {
+                input: [
+                    106,
+                    107,
+                ],
+                partial: true,
+            },
+        },
+    ),
+)
+
+"#</span>]]
+            .raw()
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>unit_type() {
-        <span class="kw">fn </span>parser(i: <span class="kw-2">&amp;mut &amp;</span>str) -&gt; PResult&lt;()&gt; {
+        <span class="kw">fn </span>parser&lt;<span class="lifetime">'i</span>&gt;(i: <span class="kw-2">&amp;mut &amp;</span><span class="lifetime">'i </span>str) -&gt; TestResult&lt;<span class="kw-2">&amp;</span><span class="lifetime">'i </span>str, ()&gt; {
             ().parse_next(i)
         }
-        <span class="macro">assert_eq!</span>(parser.parse_peek(<span class="string">"abxsbsh"</span>), <span class="prelude-val">Ok</span>((<span class="string">"abxsbsh"</span>, ())));
-        <span class="macro">assert_eq!</span>(parser.parse_peek(<span class="string">"sdfjakdsas"</span>), <span class="prelude-val">Ok</span>((<span class="string">"sdfjakdsas"</span>, ())));
-        <span class="macro">assert_eq!</span>(parser.parse_peek(<span class="string">""</span>), <span class="prelude-val">Ok</span>((<span class="string">""</span>, ())));
+        <span class="macro">assert_parse!</span>(
+            parser.parse_peek(<span class="string">"abxsbsh"</span>),
+            <span class="macro">str!</span>[[<span class="string">r#"
+Ok(
+    (
+        "abxsbsh",
+        (),
+    ),
+)
+
+"#</span>]]
+            .raw()
+        );
+        <span class="macro">assert_parse!</span>(
+            parser.parse_peek(<span class="string">"sdfjakdsas"</span>),
+            <span class="macro">str!</span>[[<span class="string">r#"
+Ok(
+    (
+        "sdfjakdsas",
+        (),
+    ),
+)
+
+"#</span>]]
+            .raw()
+        );
+        <span class="macro">assert_parse!</span>(
+            parser.parse_peek(<span class="string">""</span>),
+            <span class="macro">str!</span>[[<span class="string">r#"
+Ok(
+    (
+        "",
+        (),
+    ),
+)
+
+"#</span>]]
+            .raw()
+        );
     }
 }
 </code></pre></div></section></main></body></html>

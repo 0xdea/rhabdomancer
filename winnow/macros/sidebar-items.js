@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["dispatch","seq"]};
+window.SIDEBAR_ITEMS = {"macro":["impl_partial_eq","impl_partial_ord"],"mod":["dispatch","seq"]};

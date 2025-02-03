@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.6.24/src/error.rs`."><title>error.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/</div>error.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/winnow-0.7.0/src/error.rs`."><title>error.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="winnow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.0 (9fc6b4312 2025-01-07)" data-channel="1.84.0" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">winnow/</div>error.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -1420,7 +1420,56 @@
 <a href="#1419" id="1419">1419</a>
 <a href="#1420" id="1420">1420</a>
 <a href="#1421" id="1421">1421</a>
-<a href="#1422" id="1422">1422</a></pre></div><pre class="rust"><code><span class="doccomment">//! # Error management
+<a href="#1422" id="1422">1422</a>
+<a href="#1423" id="1423">1423</a>
+<a href="#1424" id="1424">1424</a>
+<a href="#1425" id="1425">1425</a>
+<a href="#1426" id="1426">1426</a>
+<a href="#1427" id="1427">1427</a>
+<a href="#1428" id="1428">1428</a>
+<a href="#1429" id="1429">1429</a>
+<a href="#1430" id="1430">1430</a>
+<a href="#1431" id="1431">1431</a>
+<a href="#1432" id="1432">1432</a>
+<a href="#1433" id="1433">1433</a>
+<a href="#1434" id="1434">1434</a>
+<a href="#1435" id="1435">1435</a>
+<a href="#1436" id="1436">1436</a>
+<a href="#1437" id="1437">1437</a>
+<a href="#1438" id="1438">1438</a>
+<a href="#1439" id="1439">1439</a>
+<a href="#1440" id="1440">1440</a>
+<a href="#1441" id="1441">1441</a>
+<a href="#1442" id="1442">1442</a>
+<a href="#1443" id="1443">1443</a>
+<a href="#1444" id="1444">1444</a>
+<a href="#1445" id="1445">1445</a>
+<a href="#1446" id="1446">1446</a>
+<a href="#1447" id="1447">1447</a>
+<a href="#1448" id="1448">1448</a>
+<a href="#1449" id="1449">1449</a>
+<a href="#1450" id="1450">1450</a>
+<a href="#1451" id="1451">1451</a>
+<a href="#1452" id="1452">1452</a>
+<a href="#1453" id="1453">1453</a>
+<a href="#1454" id="1454">1454</a>
+<a href="#1455" id="1455">1455</a>
+<a href="#1456" id="1456">1456</a>
+<a href="#1457" id="1457">1457</a>
+<a href="#1458" id="1458">1458</a>
+<a href="#1459" id="1459">1459</a>
+<a href="#1460" id="1460">1460</a>
+<a href="#1461" id="1461">1461</a>
+<a href="#1462" id="1462">1462</a>
+<a href="#1463" id="1463">1463</a>
+<a href="#1464" id="1464">1464</a>
+<a href="#1465" id="1465">1465</a>
+<a href="#1466" id="1466">1466</a>
+<a href="#1467" id="1467">1467</a>
+<a href="#1468" id="1468">1468</a>
+<a href="#1469" id="1469">1469</a>
+<a href="#1470" id="1470">1470</a>
+<a href="#1471" id="1471">1471</a></pre></div><pre class="rust"><code><span class="doccomment">//! # Error management
 //!
 //! Errors are designed with multiple needs in mind:
 //! - Accumulate more [context][Parser::context] as the error goes up the parser chain
@@ -1430,15 +1479,14 @@
 //! - Can be modified according to the user's needs, because some languages need a lot more information
 //! - Help thread-through the [stream][crate::stream]
 //!
-//! To abstract these needs away from the user, generally `winnow` parsers use the [`PResult`]
+//! To abstract these needs away from the user, generally `winnow` parsers use the [`ModalResult`]
 //! alias, rather than [`Result`].  [`Parser::parse`] is a top-level operation
 //! that can help convert to a `Result` for integrating with your application's error reporting.
 //!
 //! Error types include:
-//! - `()`
-//! - [`ErrorKind`]
-//! - [`InputError`] (mostly for testing)
+//! - [`EmptyError`] when the reason for failure doesn't matter
 //! - [`ContextError`]
+//! - [`InputError`] (mostly for testing)
 //! - [`TreeError`] (mostly for testing)
 //! - [Custom errors][crate::_topic::error]
 
@@ -1452,7 +1500,14 @@
 <span class="attr">#[allow(unused_imports)] </span><span class="comment">// Here for intra-doc links
 </span><span class="kw">use </span><span class="kw">crate</span>::Parser;
 
-<span class="doccomment">/// For use with [`Parser::parse_next`]
+<span class="doccomment">/// By default, the error type (`E`) is [`ContextError`].
+///
+/// When integrating into the result of the application, see
+/// - [`Parser::parse`]
+/// - [`ParserError::into_inner`]
+</span><span class="kw">pub type </span><span class="prelude-ty">Result</span>&lt;O, E = ContextError&gt; = core::result::Result&lt;O, E&gt;;
+
+<span class="doccomment">/// [Modal error reporting][ErrMode] for [`Parser::parse_next`]
 ///
 /// - `Ok(O)` is the parsed value
 /// - [`Err(ErrMode&lt;E&gt;)`][ErrMode] is the error along with how to respond to it
@@ -1461,21 +1516,11 @@
 ///
 /// When integrating into the result of the application, see
 /// - [`Parser::parse`]
-/// - [`ErrMode::into_inner`]
-</span><span class="kw">pub type </span>PResult&lt;O, E = ContextError&gt; = <span class="prelude-ty">Result</span>&lt;O, ErrMode&lt;E&gt;&gt;;
+/// - [`ParserError::into_inner`]
+</span><span class="kw">pub type </span>ModalResult&lt;O, E = ContextError&gt; = <span class="prelude-ty">Result</span>&lt;O, ErrMode&lt;E&gt;&gt;;
 
-<span class="doccomment">/// For use with [`Parser::parse_peek`] which allows the input stream to be threaded through a
-/// parser.
-///
-/// - `Ok((I, O))` is the remaining [input][crate::stream] and the parsed value
-/// - [`Err(ErrMode&lt;E&gt;)`][ErrMode] is the error along with how to respond to it
-///
-/// By default, the error type (`E`) is [`InputError`]
-///
-/// When integrating into the result of the application, see
-/// - [`Parser::parse`]
-/// - [`ErrMode::into_inner`]
-</span><span class="kw">pub type </span>IResult&lt;I, O, E = InputError&lt;I&gt;&gt; = PResult&lt;(I, O), E&gt;;
+<span class="attr">#[cfg(test)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>TestResult&lt;I, O&gt; = ModalResult&lt;O, InputError&lt;I&gt;&gt;;
 
 <span class="doccomment">/// Contains information on needed data if a parser returned `Incomplete`
 ///
@@ -1588,29 +1633,30 @@
     <span class="kw">where
         </span>E: ErrorConvert&lt;F&gt;,
     {
-        <span class="self">self</span>.map(ErrorConvert::convert)
+        ErrorConvert::convert(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Unwrap the mode, returning the underlying error
     ///
     /// Returns `None` for [`ErrMode::Incomplete`]
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;E&gt; {
+    </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;E, <span class="self">Self</span>&gt; {
         <span class="kw">match </span><span class="self">self </span>{
-            ErrMode::Backtrack(e) | ErrMode::Cut(e) =&gt; <span class="prelude-val">Some</span>(e),
-            ErrMode::Incomplete(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
+            ErrMode::Backtrack(e) | ErrMode::Cut(e) =&gt; <span class="prelude-val">Ok</span>(e),
+            err @ ErrMode::Incomplete(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(err),
         }
     }
 }
 
 <span class="kw">impl</span>&lt;I: Stream, E: ParserError&lt;I&gt;&gt; ParserError&lt;I&gt; <span class="kw">for </span>ErrMode&lt;E&gt; {
+    <span class="kw">type </span>Inner = E;
+
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>from_error_kind(input: <span class="kw-2">&amp;</span>I, kind: ErrorKind) -&gt; <span class="self">Self </span>{
-        ErrMode::Backtrack(E::from_error_kind(input, kind))
+    </span><span class="kw">fn </span>from_input(input: <span class="kw-2">&amp;</span>I) -&gt; <span class="self">Self </span>{
+        ErrMode::Backtrack(E::from_input(input))
     }
 
-    <span class="attr">#[cfg_attr(debug_assertions, track_caller)]
-    #[inline(always)]
+    <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>assert(input: <span class="kw-2">&amp;</span>I, message: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; <span class="self">Self
     </span><span class="kw">where
         </span>I: <span class="kw">crate</span>::lib::std::fmt::Debug,
@@ -1618,10 +1664,15 @@
         ErrMode::Cut(E::assert(input, message))
     }
 
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>incomplete(_input: <span class="kw-2">&amp;</span>I, needed: Needed) -&gt; <span class="self">Self </span>{
+        ErrMode::Incomplete(needed)
+    }
+
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>append(<span class="self">self</span>, input: <span class="kw-2">&amp;</span>I, token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint, kind: ErrorKind) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>append(<span class="self">self</span>, input: <span class="kw-2">&amp;</span>I, token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span><span class="self">self </span>{
-            ErrMode::Backtrack(e) =&gt; ErrMode::Backtrack(e.append(input, token_start, kind)),
+            ErrMode::Backtrack(e) =&gt; ErrMode::Backtrack(e.append(input, token_start)),
             e =&gt; e,
         }
     }
@@ -1633,6 +1684,53 @@
             (ErrMode::Cut(e), <span class="kw">_</span>) | (<span class="kw">_</span>, ErrMode::Cut(e)) =&gt; ErrMode::Cut(e),
         }
     }
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>is_backtrack(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="macro">matches!</span>(<span class="self">self</span>, ErrMode::Backtrack(<span class="kw">_</span>))
+    }
+
+    <span class="doccomment">/// Unwrap the mode, returning the underlying error
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Inner, <span class="self">Self</span>&gt; {
+        <span class="kw">match </span><span class="self">self </span>{
+            ErrMode::Backtrack(e) | ErrMode::Cut(e) =&gt; <span class="prelude-val">Ok</span>(e),
+            err @ ErrMode::Incomplete(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(err),
+        }
+    }
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>is_incomplete(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="macro">matches!</span>(<span class="self">self</span>, ErrMode::Incomplete(<span class="kw">_</span>))
+    }
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>needed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Needed&gt; {
+        <span class="kw">match </span><span class="self">self </span>{
+            ErrMode::Incomplete(needed) =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">*</span>needed),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;E&gt; ModalError <span class="kw">for </span>ErrMode&lt;E&gt; {
+    <span class="kw">fn </span>cut(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.cut()
+    }
+
+    <span class="kw">fn </span>backtrack(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.backtrack()
+    }
+}
+
+<span class="kw">impl</span>&lt;E1, E2&gt; ErrorConvert&lt;ErrMode&lt;E2&gt;&gt; <span class="kw">for </span>ErrMode&lt;E1&gt;
+<span class="kw">where
+    </span>E1: ErrorConvert&lt;E2&gt;,
+{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>convert(<span class="self">self</span>) -&gt; ErrMode&lt;E2&gt; {
+        <span class="self">self</span>.map(|e| e.convert())
+    }
 }
 
 <span class="kw">impl</span>&lt;I, EXT, E&gt; FromExternalError&lt;I, EXT&gt; <span class="kw">for </span>ErrMode&lt;E&gt;
@@ -1640,8 +1738,8 @@
     </span>E: FromExternalError&lt;I, EXT&gt;,
 {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>from_external_error(input: <span class="kw-2">&amp;</span>I, kind: ErrorKind, e: EXT) -&gt; <span class="self">Self </span>{
-        ErrMode::Backtrack(E::from_external_error(input, kind, e))
+    </span><span class="kw">fn </span>from_external_error(input: <span class="kw-2">&amp;</span>I, e: EXT) -&gt; <span class="self">Self </span>{
+        ErrMode::Backtrack(E::from_external_error(input, e))
     }
 }
 
@@ -1649,6 +1747,22 @@
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>add_context(<span class="self">self</span>, input: <span class="kw-2">&amp;</span>I, token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint, context: C) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.map(|err| err.add_context(input, token_start, context))
+    }
+}
+
+<span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
+#[cfg(feature = <span class="string">"std"</span>)]
+</span><span class="kw">impl</span>&lt;I: Stream, E1: FromRecoverableError&lt;I, E2&gt;, E2&gt; FromRecoverableError&lt;I, ErrMode&lt;E2&gt;&gt;
+    <span class="kw">for </span>ErrMode&lt;E1&gt;
+{
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>from_recoverable_error(
+        token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint,
+        err_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint,
+        input: <span class="kw-2">&amp;</span>I,
+        e: ErrMode&lt;E2&gt;,
+    ) -&gt; <span class="self">Self </span>{
+        e.map(|e| E1::from_recoverable_error(token_start, err_start, input, e))
     }
 }
 
@@ -1660,14 +1774,10 @@
     {
         <span class="kw">match </span><span class="self">self </span>{
             ErrMode::Incomplete(n) =&gt; ErrMode::Incomplete(n),
-            ErrMode::Cut(InputError { input, kind }) =&gt; ErrMode::Cut(InputError {
-                input: f(input),
-                kind,
-            }),
-            ErrMode::Backtrack(InputError { input, kind }) =&gt; ErrMode::Backtrack(InputError {
-                input: f(input),
-                kind,
-            }),
+            ErrMode::Cut(InputError { input }) =&gt; ErrMode::Cut(InputError { input: f(input) }),
+            ErrMode::Backtrack(InputError { input }) =&gt; {
+                ErrMode::Backtrack(InputError { input: f(input) })
+            }
         }
     }
 }
@@ -1693,12 +1803,16 @@
 /// It provides methods to create an error from some combinators,
 /// and combine existing errors in combinators like `alt`.
 </span><span class="kw">pub trait </span>ParserError&lt;I: Stream&gt;: Sized {
-    <span class="doccomment">/// Creates an error from the input position and an [`ErrorKind`]
-    </span><span class="kw">fn </span>from_error_kind(input: <span class="kw-2">&amp;</span>I, kind: ErrorKind) -&gt; <span class="self">Self</span>;
+    <span class="doccomment">/// Generally, `Self`
+    ///
+    /// Mostly used for [`ErrMode`]
+    </span><span class="kw">type </span>Inner;
+
+    <span class="doccomment">/// Creates an error from the input position
+    </span><span class="kw">fn </span>from_input(input: <span class="kw-2">&amp;</span>I) -&gt; <span class="self">Self</span>;
 
     <span class="doccomment">/// Process a parser assertion
-    </span><span class="attr">#[cfg_attr(debug_assertions, track_caller)]
-    #[inline(always)]
+    </span><span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>assert(input: <span class="kw-2">&amp;</span>I, _message: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; <span class="self">Self
     </span><span class="kw">where
         </span>I: <span class="kw">crate</span>::lib::std::fmt::Debug,
@@ -1706,14 +1820,30 @@
         <span class="attr">#[cfg(debug_assertions)]
         </span><span class="macro">panic!</span>(<span class="string">"assert `{_message}` failed at {input:#?}"</span>);
         <span class="attr">#[cfg(not(debug_assertions))]
-        </span><span class="self">Self</span>::from_error_kind(input, ErrorKind::Assert)
+        </span><span class="self">Self</span>::from_input(input)
     }
 
-    <span class="doccomment">/// Like [`ParserError::from_error_kind`] but merges it with the existing error.
+    <span class="doccomment">/// There was not enough data to determine the appropriate action
+    ///
+    /// More data needs to be buffered before retrying the parse.
+    ///
+    /// This must only be set when the [`Stream`] is [partial][`crate::stream::StreamIsPartial`], like with
+    /// [`Partial`][crate::Partial]
+    ///
+    /// Convert this into an `Backtrack` with [`Parser::complete_err`]
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>incomplete(input: <span class="kw-2">&amp;</span>I, _needed: Needed) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::from_input(input)
+    }
+
+    <span class="doccomment">/// Like [`ParserError::from_input`] but merges it with the existing error.
     ///
     /// This is useful when backtracking through a parse tree, accumulating error context on the
     /// way.
-    </span><span class="kw">fn </span>append(<span class="self">self</span>, input: <span class="kw-2">&amp;</span>I, token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint, kind: ErrorKind) -&gt; <span class="self">Self</span>;
+    </span><span class="attr">#[inline]
+    </span><span class="kw">fn </span>append(<span class="self">self</span>, _input: <span class="kw-2">&amp;</span>I, _token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint) -&gt; <span class="self">Self </span>{
+        <span class="self">self
+    </span>}
 
     <span class="doccomment">/// Combines errors from two different parse branches.
     ///
@@ -1723,6 +1853,40 @@
     </span><span class="kw">fn </span>or(<span class="self">self</span>, other: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
         other
     }
+
+    <span class="doccomment">/// Is backtracking and trying new parse branches allowed?
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>is_backtrack(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="bool-val">true
+    </span>}
+
+    <span class="doccomment">/// Unwrap the mode, returning the underlying error, if present
+    </span><span class="kw">fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Inner, <span class="self">Self</span>&gt;;
+
+    <span class="doccomment">/// Is more data [`Needed`]
+    ///
+    /// This must be the same as [`err.needed().is_some()`][ParserError::needed]
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>is_incomplete(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="bool-val">false
+    </span>}
+
+    <span class="doccomment">/// Extract the [`Needed`] data, if present
+    ///
+    /// `Self::needed().is_some()` must be the same as
+    /// [`err.is_incomplete()`][ParserError::is_incomplete]
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>needed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Needed&gt; {
+        <span class="prelude-val">None
+    </span>}
+}
+
+<span class="doccomment">/// Manipulate the how parsers respond to this error
+</span><span class="kw">pub trait </span>ModalError {
+    <span class="doccomment">/// Prevent backtracking, bubbling the error up to the top
+    </span><span class="kw">fn </span>cut(<span class="self">self</span>) -&gt; <span class="self">Self</span>;
+    <span class="doccomment">/// Enable backtracking support
+    </span><span class="kw">fn </span>backtrack(<span class="self">self</span>) -&gt; <span class="self">Self</span>;
 }
 
 <span class="doccomment">/// Used by [`Parser::context`] to add custom data to error while backtracking
@@ -1761,8 +1925,8 @@
 ///
 /// This trait is required by the [`Parser::try_map`] combinator.
 </span><span class="kw">pub trait </span>FromExternalError&lt;I, E&gt; {
-    <span class="doccomment">/// Like [`ParserError::from_error_kind`] but also include an external error.
-    </span><span class="kw">fn </span>from_external_error(input: <span class="kw-2">&amp;</span>I, kind: ErrorKind, e: E) -&gt; <span class="self">Self</span>;
+    <span class="doccomment">/// Like [`ParserError::from_input`] but also include an external error.
+    </span><span class="kw">fn </span>from_external_error(input: <span class="kw-2">&amp;</span>I, e: E) -&gt; <span class="self">Self</span>;
 }
 
 <span class="doccomment">/// Equivalent of `From` implementation to avoid orphan rules in bits parsers
@@ -1786,15 +1950,13 @@
 </span><span class="kw">pub struct </span>InputError&lt;I: Clone&gt; {
     <span class="doccomment">/// The input stream, pointing to the location where the error occurred
     </span><span class="kw">pub </span>input: I,
-    <span class="doccomment">/// A rudimentary error kind
-    </span><span class="kw">pub </span>kind: ErrorKind,
 }
 
 <span class="kw">impl</span>&lt;I: Clone&gt; InputError&lt;I&gt; {
     <span class="doccomment">/// Creates a new basic error
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new(input: I, kind: ErrorKind) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ input, kind }
+    </span><span class="kw">pub fn </span>at(input: I) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ input }
     }
 
     <span class="doccomment">/// Translate the input type
@@ -1802,7 +1964,6 @@
     </span><span class="kw">pub fn </span>map_input&lt;I2: Clone, O: Fn(I) -&gt; I2&gt;(<span class="self">self</span>, op: O) -&gt; InputError&lt;I2&gt; {
         InputError {
             input: op(<span class="self">self</span>.input),
-            kind: <span class="self">self</span>.kind,
         }
     }
 }
@@ -1819,23 +1980,19 @@
 }
 
 <span class="kw">impl</span>&lt;I: Stream + Clone&gt; ParserError&lt;I&gt; <span class="kw">for </span>InputError&lt;I&gt; {
+    <span class="kw">type </span>Inner = <span class="self">Self</span>;
+
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from_error_kind(input: <span class="kw-2">&amp;</span>I, kind: ErrorKind) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>from_input(input: <span class="kw-2">&amp;</span>I) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             input: input.clone(),
-            kind,
         }
     }
 
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>append(
-        <span class="self">self</span>,
-        _input: <span class="kw-2">&amp;</span>I,
-        _token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint,
-        _kind: ErrorKind,
-    ) -&gt; <span class="self">Self </span>{
-        <span class="self">self
-    </span>}
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Inner, <span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>)
+    }
 }
 
 <span class="kw">impl</span>&lt;I: Stream + Clone, C&gt; AddContext&lt;I, C&gt; <span class="kw">for </span>InputError&lt;I&gt; {}
@@ -1857,10 +2014,9 @@
 <span class="kw">impl</span>&lt;I: Clone, E&gt; FromExternalError&lt;I, E&gt; <span class="kw">for </span>InputError&lt;I&gt; {
     <span class="doccomment">/// Create a new error from an input position and an external error
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>from_external_error(input: <span class="kw-2">&amp;</span>I, kind: ErrorKind, _e: E) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>from_external_error(input: <span class="kw-2">&amp;</span>I, _e: E) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             input: input.clone(),
-            kind,
         }
     }
 }
@@ -1868,32 +2024,21 @@
 <span class="kw">impl</span>&lt;I: Clone&gt; ErrorConvert&lt;InputError&lt;(I, usize)&gt;&gt; <span class="kw">for </span>InputError&lt;I&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>convert(<span class="self">self</span>) -&gt; InputError&lt;(I, usize)&gt; {
-        InputError {
-            input: (<span class="self">self</span>.input, <span class="number">0</span>),
-            kind: <span class="self">self</span>.kind,
-        }
+        <span class="self">self</span>.map_input(|i| (i, <span class="number">0</span>))
     }
 }
 
 <span class="kw">impl</span>&lt;I: Clone&gt; ErrorConvert&lt;InputError&lt;I&gt;&gt; <span class="kw">for </span>InputError&lt;(I, usize)&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>convert(<span class="self">self</span>) -&gt; InputError&lt;I&gt; {
-        InputError {
-            input: <span class="self">self</span>.input.<span class="number">0</span>,
-            kind: <span class="self">self</span>.kind,
-        }
+        <span class="self">self</span>.map_input(|(i, _o)| i)
     }
 }
 
 <span class="doccomment">/// The Display implementation allows the `std::error::Error` implementation
 </span><span class="kw">impl</span>&lt;I: Clone + fmt::Display&gt; fmt::Display <span class="kw">for </span>InputError&lt;I&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
-        <span class="macro">write!</span>(
-            f,
-            <span class="string">"{} error starting at: {}"</span>,
-            <span class="self">self</span>.kind.description(),
-            <span class="self">self</span>.input
-        )
+        <span class="macro">write!</span>(f, <span class="string">"failed to parse starting at: {}"</span>, <span class="self">self</span>.input)
     }
 }
 
@@ -1903,17 +2048,69 @@
 {
 }
 
+<span class="doccomment">/// Track an error occurred without any other [`StrContext`]
+</span><span class="attr">#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+</span><span class="kw">pub struct </span>EmptyError;
+
+<span class="kw">impl</span>&lt;I: Stream&gt; ParserError&lt;I&gt; <span class="kw">for </span>EmptyError {
+    <span class="kw">type </span>Inner = <span class="self">Self</span>;
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>from_input(<span class="kw">_</span>: <span class="kw-2">&amp;</span>I) -&gt; <span class="self">Self </span>{
+        <span class="self">Self
+    </span>}
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Inner, <span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>)
+    }
+}
+
+<span class="kw">impl</span>&lt;I: Stream, C&gt; AddContext&lt;I, C&gt; <span class="kw">for </span>EmptyError {}
+
+<span class="attr">#[cfg(feature = <span class="string">"unstable-recover"</span>)]
+#[cfg(feature = <span class="string">"std"</span>)]
+</span><span class="kw">impl</span>&lt;I: Stream&gt; FromRecoverableError&lt;I, <span class="self">Self</span>&gt; <span class="kw">for </span>EmptyError {
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>from_recoverable_error(
+        _token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint,
+        _err_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint,
+        _input: <span class="kw-2">&amp;</span>I,
+        e: <span class="self">Self</span>,
+    ) -&gt; <span class="self">Self </span>{
+        e
+    }
+}
+
+<span class="kw">impl</span>&lt;I, E&gt; FromExternalError&lt;I, E&gt; <span class="kw">for </span>EmptyError {
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>from_external_error(_input: <span class="kw-2">&amp;</span>I, _e: E) -&gt; <span class="self">Self </span>{
+        <span class="self">Self
+    </span>}
+}
+
+<span class="kw">impl </span>ErrorConvert&lt;EmptyError&gt; <span class="kw">for </span>EmptyError {
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>convert(<span class="self">self</span>) -&gt; EmptyError {
+        <span class="self">self
+    </span>}
+}
+
+<span class="kw">impl </span><span class="kw">crate</span>::lib::std::fmt::Display <span class="kw">for </span>EmptyError {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::lib::std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="kw">crate</span>::lib::std::fmt::Result {
+        <span class="string">"failed to parse"</span>.fmt(f)
+    }
+}
+
 <span class="kw">impl</span>&lt;I: Stream&gt; ParserError&lt;I&gt; <span class="kw">for </span>() {
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from_error_kind(<span class="kw">_</span>: <span class="kw-2">&amp;</span>I, <span class="kw">_</span>: ErrorKind) -&gt; <span class="self">Self </span>{}
+    <span class="kw">type </span>Inner = <span class="self">Self</span>;
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>append(
-        <span class="self">self</span>,
-        _input: <span class="kw-2">&amp;</span>I,
-        _token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint,
-        _kind: ErrorKind,
-    ) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>from_input(<span class="kw">_</span>: <span class="kw-2">&amp;</span>I) -&gt; <span class="self">Self </span>{}
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Inner, <span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>)
     }
 }
 
@@ -1934,7 +2131,7 @@
 
 <span class="kw">impl</span>&lt;I, E&gt; FromExternalError&lt;I, E&gt; <span class="kw">for </span>() {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from_external_error(_input: <span class="kw-2">&amp;</span>I, _kind: ErrorKind, _e: E) -&gt; <span class="self">Self </span>{}
+    </span><span class="kw">fn </span>from_external_error(_input: <span class="kw-2">&amp;</span>I, _e: E) -&gt; <span class="self">Self </span>{}
 }
 
 <span class="kw">impl </span>ErrorConvert&lt;()&gt; <span class="kw">for </span>() {
@@ -1997,24 +2194,16 @@
 }
 
 <span class="kw">impl</span>&lt;I: Stream, C&gt; ParserError&lt;I&gt; <span class="kw">for </span>ContextError&lt;C&gt; {
+    <span class="kw">type </span>Inner = <span class="self">Self</span>;
+
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from_error_kind(_input: <span class="kw-2">&amp;</span>I, _kind: ErrorKind) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>from_input(_input: <span class="kw-2">&amp;</span>I) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new()
     }
 
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>append(
-        <span class="self">self</span>,
-        _input: <span class="kw-2">&amp;</span>I,
-        _token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint,
-        _kind: ErrorKind,
-    ) -&gt; <span class="self">Self </span>{
-        <span class="self">self
-    </span>}
-
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>or(<span class="self">self</span>, other: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
-        other
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Inner, <span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>)
     }
 }
 
@@ -2051,7 +2240,7 @@
     <span class="kw">for </span>ContextError&lt;C&gt;
 {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from_external_error(_input: <span class="kw-2">&amp;</span>I, _kind: ErrorKind, e: E) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>from_external_error(_input: <span class="kw-2">&amp;</span>I, e: E) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>err = <span class="self">Self</span>::new();
         {
             err.cause = <span class="prelude-val">Some</span>(Box::new(e));
@@ -2064,7 +2253,7 @@
 </span><span class="attr">#[cfg(not(feature = <span class="string">"std"</span>))]
 </span><span class="kw">impl</span>&lt;C, I, E: Send + Sync + <span class="lifetime">'static</span>&gt; FromExternalError&lt;I, E&gt; <span class="kw">for </span>ContextError&lt;C&gt; {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from_external_error(_input: <span class="kw-2">&amp;</span>I, _kind: ErrorKind, _e: E) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>from_external_error(_input: <span class="kw-2">&amp;</span>I, _e: E) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>err = <span class="self">Self</span>::new();
         err
     }
@@ -2245,8 +2434,6 @@
 </span><span class="kw">pub struct </span>TreeErrorBase&lt;I&gt; {
     <span class="doccomment">/// Parsed input, at the location where the error occurred
     </span><span class="kw">pub </span>input: I,
-    <span class="doccomment">/// Debug context
-    </span><span class="kw">pub </span>kind: ErrorKind,
     <span class="doccomment">/// See [`FromExternalError::from_external_error`]
     </span><span class="kw">pub </span>cause: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>std::error::Error + Send + Sync + <span class="lifetime">'static</span>&gt;&gt;,
 }
@@ -2262,11 +2449,7 @@
 }
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, I: ToOwned, C&gt; TreeError&lt;<span class="kw-2">&amp;</span><span class="lifetime">'i </span>I, C&gt;
-<span class="kw">where
-    </span><span class="kw-2">&amp;</span><span class="lifetime">'i </span>I: Stream + Clone,
-    &lt;I <span class="kw">as </span>ToOwned&gt;::Owned: Clone,
-{
+</span><span class="kw">impl</span>&lt;I: ToOwned, C&gt; TreeError&lt;<span class="kw-2">&amp;</span>I, C&gt; {
     <span class="doccomment">/// Obtaining ownership
     </span><span class="kw">pub fn </span>into_owned(<span class="self">self</span>) -&gt; TreeError&lt;&lt;I <span class="kw">as </span>ToOwned&gt;::Owned, C&gt; {
         <span class="self">self</span>.map_input(ToOwned::to_owned)
@@ -2274,16 +2457,12 @@
 }
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;I, C&gt; TreeError&lt;I, C&gt;
-<span class="kw">where
-    </span>I: Stream + Clone,
-{
+</span><span class="kw">impl</span>&lt;I, C&gt; TreeError&lt;I, C&gt; {
     <span class="doccomment">/// Translate the input type
-    </span><span class="kw">pub fn </span>map_input&lt;I2: Clone, O: Clone + Fn(I) -&gt; I2&gt;(<span class="self">self</span>, op: O) -&gt; TreeError&lt;I2, C&gt; {
+    </span><span class="kw">pub fn </span>map_input&lt;I2, O: Clone + Fn(I) -&gt; I2&gt;(<span class="self">self</span>, op: O) -&gt; TreeError&lt;I2, C&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             TreeError::Base(base) =&gt; TreeError::Base(TreeErrorBase {
                 input: op(base.input),
-                kind: base.kind,
                 cause: base.cause,
             }),
             TreeError::Stack { base, stack } =&gt; {
@@ -2293,7 +2472,6 @@
                     .map(|frame| <span class="kw">match </span>frame {
                         TreeErrorFrame::Kind(kind) =&gt; TreeErrorFrame::Kind(TreeErrorBase {
                             input: op(kind.input),
-                            kind: kind.kind,
                             cause: kind.cause,
                         }),
                         TreeErrorFrame::Context(context) =&gt; {
@@ -2331,22 +2509,19 @@
 <span class="kw">where
     </span>I: Stream + Clone,
 {
-    <span class="kw">fn </span>from_error_kind(input: <span class="kw-2">&amp;</span>I, kind: ErrorKind) -&gt; <span class="self">Self </span>{
+    <span class="kw">type </span>Inner = <span class="self">Self</span>;
+
+    <span class="kw">fn </span>from_input(input: <span class="kw-2">&amp;</span>I) -&gt; <span class="self">Self </span>{
         TreeError::Base(TreeErrorBase {
             input: input.clone(),
-            kind,
             cause: <span class="prelude-val">None</span>,
         })
     }
 
-    <span class="kw">fn </span>append(<span class="self">self</span>, input: <span class="kw-2">&amp;</span>I, token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint, kind: ErrorKind) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>append(<span class="self">self</span>, input: <span class="kw-2">&amp;</span>I, token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>input = input.clone();
         input.reset(token_start);
-        <span class="kw">let </span>frame = TreeErrorFrame::Kind(TreeErrorBase {
-            input,
-            kind,
-            cause: <span class="prelude-val">None</span>,
-        });
+        <span class="kw">let </span>frame = TreeErrorFrame::Kind(TreeErrorBase { input, cause: <span class="prelude-val">None </span>});
         <span class="self">self</span>.append_frame(frame)
     }
 
@@ -2356,7 +2531,7 @@
                 <span class="comment">// Just in case an implementation does a divide-and-conquer algorithm
                 //
                 // To prevent mixing `alt`s at different levels, parsers should
-                // `alt_err.append(input, ErrorKind::Alt)`.
+                // `alt_err.append(input)`.
                 </span>first.extend(second);
                 TreeError::Alt(first)
             }
@@ -2366,6 +2541,11 @@
             }
             (first, second) =&gt; TreeError::Alt(<span class="macro">vec!</span>[first, second]),
         }
+    }
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>into_inner(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Inner, <span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>)
     }
 }
 
@@ -2384,7 +2564,7 @@
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 #[cfg(feature = <span class="string">"unstable-recover"</span>)]
-</span><span class="kw">impl</span>&lt;I: Stream + Clone, C&gt; FromRecoverableError&lt;I, <span class="self">Self</span>&gt; <span class="kw">for </span>TreeError&lt;I, C&gt; {
+</span><span class="kw">impl</span>&lt;I: Stream, C&gt; FromRecoverableError&lt;I, <span class="self">Self</span>&gt; <span class="kw">for </span>TreeError&lt;I, C&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>from_recoverable_error(
         _token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint,
@@ -2399,21 +2579,36 @@
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl</span>&lt;I, C, E: std::error::Error + Send + Sync + <span class="lifetime">'static</span>&gt; FromExternalError&lt;I, E&gt; <span class="kw">for </span>TreeError&lt;I, C&gt;
 <span class="kw">where
-    </span>I: Stream + Clone,
+    </span>I: Clone,
 {
-    <span class="kw">fn </span>from_external_error(input: <span class="kw-2">&amp;</span>I, kind: ErrorKind, e: E) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>from_external_error(input: <span class="kw-2">&amp;</span>I, e: E) -&gt; <span class="self">Self </span>{
         TreeError::Base(TreeErrorBase {
             input: input.clone(),
-            kind,
             cause: <span class="prelude-val">Some</span>(Box::new(e)),
         })
     }
 }
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
+</span><span class="kw">impl</span>&lt;I, C&gt; ErrorConvert&lt;TreeError&lt;(I, usize), C&gt;&gt; <span class="kw">for </span>TreeError&lt;I, C&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>convert(<span class="self">self</span>) -&gt; TreeError&lt;(I, usize), C&gt; {
+        <span class="self">self</span>.map_input(|i| (i, <span class="number">0</span>))
+    }
+}
+
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
+</span><span class="kw">impl</span>&lt;I, C&gt; ErrorConvert&lt;TreeError&lt;I, C&gt;&gt; <span class="kw">for </span>TreeError&lt;(I, usize), C&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>convert(<span class="self">self</span>) -&gt; TreeError&lt;I, C&gt; {
+        <span class="self">self</span>.map_input(|(i, _o)| i)
+    }
+}
+
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl</span>&lt;I, C&gt; TreeError&lt;I, C&gt;
 <span class="kw">where
-    </span>I: Stream + Clone + <span class="kw">crate</span>::lib::std::fmt::Display,
+    </span>I: <span class="kw">crate</span>::lib::std::fmt::Display,
     C: fmt::Display,
 {
     <span class="kw">fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;, indent: usize) -&gt; fmt::Result {
@@ -2448,13 +2643,10 @@
 }
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;I: Stream + Clone + fmt::Display&gt; fmt::Display <span class="kw">for </span>TreeErrorBase&lt;I&gt; {
+</span><span class="kw">impl</span>&lt;I: fmt::Display&gt; fmt::Display <span class="kw">for </span>TreeErrorBase&lt;I&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(cause) = <span class="self">self</span>.cause.as_ref() {
             <span class="macro">write!</span>(f, <span class="string">"caused by {cause}"</span>)<span class="question-mark">?</span>;
-        } <span class="kw">else </span>{
-            <span class="kw">let </span>kind = <span class="self">self</span>.kind.description();
-            <span class="macro">write!</span>(f, <span class="string">"in {kind}"</span>)<span class="question-mark">?</span>;
         }
         <span class="kw">let </span>input = abbreviate(<span class="self">self</span>.input.to_string());
         <span class="macro">write!</span>(f, <span class="string">" at '{input}'"</span>)<span class="question-mark">?</span>;
@@ -2463,7 +2655,7 @@
 }
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;I: Stream + Clone + fmt::Display, C: fmt::Display&gt; fmt::Display <span class="kw">for </span>TreeErrorContext&lt;I, C&gt; {
+</span><span class="kw">impl</span>&lt;I: fmt::Display, C: fmt::Display&gt; fmt::Display <span class="kw">for </span>TreeErrorContext&lt;I, C&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">let </span>context = <span class="kw-2">&amp;</span><span class="self">self</span>.context;
         <span class="kw">let </span>input = abbreviate(<span class="self">self</span>.input.to_string());
@@ -2473,10 +2665,8 @@
 }
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;
-        I: Stream + Clone + fmt::Debug + fmt::Display + Sync + Send + <span class="lifetime">'static</span>,
-        C: fmt::Display + fmt::Debug,
-    &gt; std::error::Error <span class="kw">for </span>TreeError&lt;I, C&gt;
+</span><span class="kw">impl</span>&lt;I: fmt::Debug + fmt::Display + Sync + Send + <span class="lifetime">'static</span>, C: fmt::Display + fmt::Debug&gt;
+    std::error::Error <span class="kw">for </span>TreeError&lt;I, C&gt;
 {
 }
 
@@ -2504,86 +2694,11 @@
 }
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl</span>&lt;I: Stream + Clone + fmt::Display, C: fmt::Display&gt; fmt::Display <span class="kw">for </span>TreeError&lt;I, C&gt; {
+</span><span class="kw">impl</span>&lt;I: fmt::Display, C: fmt::Display&gt; fmt::Display <span class="kw">for </span>TreeError&lt;I, C&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="self">self</span>.write(f, <span class="number">0</span>)
     }
 }
-
-<span class="doccomment">/// Provide some minor debug context for errors
-</span><span class="attr">#[rustfmt::skip]
-#[derive(Debug,PartialEq,Eq,Hash,Clone,Copy)]
-#[allow(missing_docs)]
-</span><span class="kw">pub enum </span>ErrorKind {
-  Assert,
-  Token,
-  Tag,
-  Alt,
-  Many,
-  Eof,
-  Slice,
-  Complete,
-  Not,
-  Verify,
-  Fail,
-}
-
-<span class="kw">impl </span>ErrorKind {
-    <span class="attr">#[rustfmt::skip]
-    </span><span class="doccomment">/// Converts an `ErrorKind` to a text description
-    </span><span class="kw">pub fn </span>description(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-    <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-      ErrorKind::Assert                    =&gt; <span class="string">"assert"</span>,
-      ErrorKind::Token                     =&gt; <span class="string">"token"</span>,
-      ErrorKind::Tag                       =&gt; <span class="string">"tag"</span>,
-      ErrorKind::Alt                       =&gt; <span class="string">"alternative"</span>,
-      ErrorKind::Many                      =&gt; <span class="string">"many"</span>,
-      ErrorKind::Eof                       =&gt; <span class="string">"end of file"</span>,
-      ErrorKind::Slice                     =&gt; <span class="string">"slice"</span>,
-      ErrorKind::Complete                  =&gt; <span class="string">"complete"</span>,
-      ErrorKind::Not                       =&gt; <span class="string">"negation"</span>,
-      ErrorKind::Verify                    =&gt; <span class="string">"predicate verification"</span>,
-      ErrorKind::Fail                      =&gt; <span class="string">"fail"</span>,
-    }
-  }
-}
-
-<span class="kw">impl</span>&lt;I: Stream&gt; ParserError&lt;I&gt; <span class="kw">for </span>ErrorKind {
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from_error_kind(_input: <span class="kw-2">&amp;</span>I, kind: ErrorKind) -&gt; <span class="self">Self </span>{
-        kind
-    }
-
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>append(
-        <span class="self">self</span>,
-        _input: <span class="kw-2">&amp;</span>I,
-        _token_start: <span class="kw-2">&amp;</span>&lt;I <span class="kw">as </span>Stream&gt;::Checkpoint,
-        _kind: ErrorKind,
-    ) -&gt; <span class="self">Self </span>{
-        <span class="self">self
-    </span>}
-}
-
-<span class="kw">impl</span>&lt;I: Stream, C&gt; AddContext&lt;I, C&gt; <span class="kw">for </span>ErrorKind {}
-
-<span class="kw">impl</span>&lt;I, E&gt; FromExternalError&lt;I, E&gt; <span class="kw">for </span>ErrorKind {
-    <span class="doccomment">/// Create a new error from an input position and an external error
-    </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>from_external_error(_input: <span class="kw-2">&amp;</span>I, kind: ErrorKind, _e: E) -&gt; <span class="self">Self </span>{
-        kind
-    }
-}
-
-<span class="doccomment">/// The Display implementation allows the `std::error::Error` implementation
-</span><span class="kw">impl </span>fmt::Display <span class="kw">for </span>ErrorKind {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
-        <span class="macro">write!</span>(f, <span class="string">"error {self:?}"</span>)
-    }
-}
-
-<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">impl </span>std::error::Error <span class="kw">for </span>ErrorKind {}
 
 <span class="doccomment">/// See [`Parser::parse`]
 </span><span class="attr">#[derive(Clone, Debug, PartialEq, Eq)]
@@ -2746,12 +2861,12 @@
         <span class="kw">let </span>start = input.checkpoint();
         <span class="kw">let _ </span>= input.next_token().unwrap();
         <span class="kw">let _ </span>= input.next_token().unwrap();
-        <span class="kw">let </span>inner = InputError::new(input, ErrorKind::Slice);
+        <span class="kw">let </span>inner = InputError::at(input);
         <span class="kw">let </span>error = ParseError::new(input, start, inner);
         <span class="kw">let </span>expected = <span class="string">"\
 0xZ123
   ^
-slice error starting at: Z123"</span>;
+failed to parse starting at: Z123"</span>;
         <span class="macro">assert_eq!</span>(error.to_string(), expected);
     }
 }
@@ -2825,21 +2940,4 @@ slice error starting at: Z123"</span>;
         <span class="macro">assert_eq!</span>(position, (<span class="number">1</span>, <span class="number">2</span>));
     }
 }
-
-<span class="doccomment">/// Creates a parse error from a [`ErrorKind`]
-/// and the position in the input
-</span><span class="attr">#[cfg(test)]
-</span><span class="macro">macro_rules!</span> error_position(
-  (<span class="macro-nonterminal">$input</span>:expr, <span class="macro-nonterminal">$code</span>:expr) =&gt; ({
-    <span class="macro-nonterminal">$crate::error::ParserError::from_error_kind</span>(<span class="macro-nonterminal">$input</span>, <span class="macro-nonterminal">$code</span>)
-  });
-);
-
-<span class="attr">#[cfg(test)]
-</span><span class="macro">macro_rules!</span> error_node_position(
-  (<span class="macro-nonterminal">$input</span>:expr, <span class="macro-nonterminal">$code</span>:expr, <span class="macro-nonterminal">$next</span>:expr) =&gt; ({
-    <span class="kw">let </span>start = <span class="macro-nonterminal">$input</span>.checkpoint();
-    <span class="macro-nonterminal">$crate::error::ParserError::append</span>(<span class="macro-nonterminal">$next</span>, <span class="macro-nonterminal">$input</span>, <span class="kw-2">&amp;</span>start, <span class="macro-nonterminal">$code</span>)
-  });
-);
 </code></pre></div></section></main></body></html>
