@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rhabdomancer" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.0 (9fc6b4312 2025-01-07)" data-channel="1.84.0" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">rhabdomancer/</div>lib.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="rhabdomancer" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.1 (e71f9a9a9 2025-01-27)" data-channel="1.84.1" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">rhabdomancer/</div>lib.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -315,7 +315,13 @@
 <a href="#314" id="314">314</a>
 <a href="#315" id="315">315</a>
 <a href="#316" id="316">316</a>
-<a href="#317" id="317">317</a></pre></div><pre class="rust"><code><span class="doccomment">//!
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a></pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024-2025 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
 //!
@@ -389,7 +395,7 @@
 //! * IDA Pro 9.0.241217 on macOS arm64 and Linux x64.
 //!
 //! *Note: only the `unix` target family is currently supported, check [idalib](https://github.com/binarly-io/idalib)
-//! documentation if you want to port it yourself to `windows` (or `wasm`).*
+//! documentation if you want to port it to `windows` yourself.*
 //!
 //! ## Changelog
 //! * &lt;https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md&gt;
@@ -455,7 +461,7 @@
 
     <span class="doccomment">/// Check if a function is in the list of known bad API function names and return its priority
     </span><span class="kw">fn </span>check_function(<span class="kw-2">&amp;</span><span class="self">self</span>, func: <span class="kw-2">&amp;</span>Function) -&gt; <span class="prelude-ty">Option</span>&lt;Priority&gt; {
-        <span class="kw">let </span>re = Regex::new(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">r"^[._]?{}$"</span>, <span class="kw-2">&amp;</span>func.name().unwrap())).unwrap();
+        <span class="kw">let </span>re = Regex::new(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">r"^[._]?{}$"</span>, <span class="kw-2">&amp;</span>func.name()<span class="question-mark">?</span>)).unwrap();
 
         <span class="kw">if </span><span class="self">self</span>.high.iter().any(|bad| re.is_match(bad)) {
             <span class="kw">return </span><span class="prelude-val">Some</span>(Priority::High);
@@ -531,16 +537,21 @@
 
     <span class="doccomment">/// Locate all calls to the specified function and mark them
     </span><span class="kw">fn </span>mark_calls(idb: <span class="kw-2">&amp;</span>IDB, func: <span class="kw-2">&amp;</span>Function, priority: <span class="kw-2">&amp;</span>Priority) -&gt; <span class="prelude-ty">Result</span>&lt;(), IDAError&gt; {
+        <span class="comment">// Return an error if function name is empty
+        </span><span class="kw">let </span><span class="prelude-val">Some</span>(func_name) = func.name() <span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(IDAError::ffi_with(<span class="string">"empty function name"</span>));
+        };
+
         <span class="comment">// Prepare description
         </span><span class="kw">let </span>desc = <span class="kw">match </span>priority {
             Priority::High =&gt; {
-                <span class="macro">format!</span>(<span class="string">"[BAD 0] {}"</span>, func.name().unwrap().trim_start_matches(<span class="string">'.'</span>))
+                <span class="macro">format!</span>(<span class="string">"[BAD 0] {}"</span>, func_name.trim_start_matches(<span class="string">'.'</span>))
             }
             Priority::Medium =&gt; {
-                <span class="macro">format!</span>(<span class="string">"[BAD 1] {}"</span>, func.name().unwrap().trim_start_matches(<span class="string">'.'</span>))
+                <span class="macro">format!</span>(<span class="string">"[BAD 1] {}"</span>, func_name.trim_start_matches(<span class="string">'.'</span>))
             }
             Priority::Low =&gt; {
-                <span class="macro">format!</span>(<span class="string">"[BAD 2] {}"</span>, func.name().unwrap().trim_start_matches(<span class="string">'.'</span>))
+                <span class="macro">format!</span>(<span class="string">"[BAD 2] {}"</span>, func_name.trim_start_matches(<span class="string">'.'</span>))
             }
         };
         <span class="macro">println!</span>(<span class="string">"\n{desc}"</span>);
@@ -556,15 +567,16 @@
         </span><span class="kw">if </span>is_in_plt(idb, xref.from()) {
             idb.first_xref_to(
                 idb.function_at(xref.from())
-                    .map_or(BADADDR.into(), |func| func.start_address()),
+                    .map_or_else(|| BADADDR.into(), |func| func.start_address()),
                 XRefQuery::ALL,
             )
             .map(|thunk| <span class="self">Self</span>::traverse_xrefs(idb, <span class="kw-2">&amp;</span>thunk, desc));
         } <span class="kw">else if </span>xref.is_code() {
             <span class="comment">// Print address with caller function name if available
-            </span><span class="kw">let </span>caller = idb
-                .function_at(xref.from())
-                .map_or(<span class="string">"&lt;unknown&gt;"</span>.to_string(), |func| func.name().unwrap());
+            </span><span class="kw">let </span>caller = idb.function_at(xref.from()).map_or_else(
+                || <span class="string">"&lt;unknown&gt;"</span>.into(),
+                |func| func.name().unwrap_or_else(|| <span class="string">"&lt;no name&gt;"</span>.into()),
+            );
             <span class="macro">println!</span>(<span class="string">"{:#X} in {}"</span>, xref.from(), caller);
 
             <span class="comment">// Add bookmark if not already present to mark call location
@@ -630,6 +642,6 @@
 <span class="doccomment">/// Check if an address is in the .plt segment
 </span><span class="kw">fn </span>is_in_plt(idb: <span class="kw-2">&amp;</span>IDB, addr: Address) -&gt; bool {
     idb.segment_at(addr)
-        .is_some_and(|segm| segm.name().unwrap().contains(<span class="string">"plt"</span>))
+        .is_some_and(|segm| segm.name().unwrap_or_default().contains(<span class="string">"plt"</span>))
 }
 </code></pre></div></section></main></body></html>
