@@ -216,7 +216,7 @@ impl<'a> BadFunctions<'a> {
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
         // Return an error if function name is empty
         let Some(func_name) = func.name() else {
-            return Err(IDAError::ffi_with("Empty function name"));
+            return Err(IDAError::ffi_with("empty function name"));
         };
 
         // Prepare description
