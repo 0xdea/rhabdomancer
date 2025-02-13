@@ -138,7 +138,7 @@ impl KnownBadFunctions {
 
     /// Check if a function is in the list of known bad API function names and return its priority
     fn check_function(&self, func: &Function) -> Option<Priority> {
-        let re = Regex::new(&format!(r"^[._]?{}$", &func.name().unwrap())).unwrap();
+        let re = Regex::new(&format!(r"^[._]?{}$", &func.name()?)).unwrap();
 
         if self.high.iter().any(|bad| re.is_match(bad)) {
             return Some(Priority::High);
@@ -214,16 +214,21 @@ impl<'a> BadFunctions<'a> {
 
     /// Locate all calls to the specified function and mark them
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
+        // Return an error if function name is empty
+        let Some(func_name) = func.name() else {
+            return Err(IDAError::ffi_with("Empty function name"));
+        };
+
         // Prepare description
         let desc = match priority {
             Priority::High => {
-                format!("[BAD 0] {}", func.name().unwrap().trim_start_matches('.'))
+                format!("[BAD 0] {}", func_name.trim_start_matches('.'))
             }
             Priority::Medium => {
-                format!("[BAD 1] {}", func.name().unwrap().trim_start_matches('.'))
+                format!("[BAD 1] {}", func_name.trim_start_matches('.'))
             }
             Priority::Low => {
-                format!("[BAD 2] {}", func.name().unwrap().trim_start_matches('.'))
+                format!("[BAD 2] {}", func_name.trim_start_matches('.'))
             }
         };
         println!("\n{desc}");
@@ -239,15 +244,16 @@ impl<'a> BadFunctions<'a> {
         if is_in_plt(idb, xref.from()) {
             idb.first_xref_to(
                 idb.function_at(xref.from())
-                    .map_or(BADADDR.into(), |func| func.start_address()),
+                    .map_or_else(|| BADADDR.into(), |func| func.start_address()),
                 XRefQuery::ALL,
             )
             .map(|thunk| Self::traverse_xrefs(idb, &thunk, desc));
         } else if xref.is_code() {
             // Print address with caller function name if available
-            let caller = idb
-                .function_at(xref.from())
-                .map_or("<unknown>".to_string(), |func| func.name().unwrap());
+            let caller = idb.function_at(xref.from()).map_or_else(
+                || "<unknown>".into(),
+                |func| func.name().unwrap_or_else(|| "<no name>".into()),
+            );
             println!("{:#X} in {}", xref.from(), caller);
 
             // Add bookmark if not already present to mark call location
@@ -313,5 +319,5 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
 /// Check if an address is in the .plt segment
 fn is_in_plt(idb: &IDB, addr: Address) -> bool {
     idb.segment_at(addr)
-        .is_some_and(|segm| segm.name().unwrap().contains("plt"))
+        .is_some_and(|segm| segm.name().unwrap_or_default().contains("plt"))
 }

@@ -1,6 +1,6 @@
 [package]
 name = "rhabdomancer"
-version = "0.3.1"
+version = "0.3.2-alpha"
 authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2021"
 description = "Vulnerability research assistant that locates all calls to potentially insecure API functions in a binary file."

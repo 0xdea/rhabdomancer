@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Refactor code to avoid unwrapping Options.
+* Update dependencies.
 * Improve documentation.
 
 ## [0.3.1] - 2025-02-03
