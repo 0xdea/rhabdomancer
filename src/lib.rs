@@ -138,7 +138,7 @@ impl KnownBadFunctions {
 
     /// Check if a function is in the list of known bad API function names and return its priority
     fn check_function(&self, func: &Function) -> Option<Priority> {
-        let re = Regex::new(&format!(r"^[._]?{}$", &func.name()?)).unwrap();
+        let re = Regex::new(&format!(r"^[._]?{}$", &func.name()?)).ok()?;
 
         if self.high.iter().any(|bad| re.is_match(bad)) {
             return Some(Priority::High);
@@ -214,7 +214,7 @@ impl<'a> BadFunctions<'a> {
 
     /// Locate all calls to the specified function and mark them
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
-        // Return an error if function name is empty
+        // Return an error if function name is empty (shouldn't happen)
         let Some(func_name) = func.name() else {
             return Err(IDAError::ffi_with("empty function name"));
         };
