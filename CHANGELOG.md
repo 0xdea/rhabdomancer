@@ -129,7 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.3.3...HEAD
 
-[0.3.2]: https://github.com/0xdea/rhabdomancer/compare/v0.3.2...v0.3.3
+[0.3.3]: https://github.com/0xdea/rhabdomancer/compare/v0.3.2...v0.3.3
 
 [0.3.2]: https://github.com/0xdea/rhabdomancer/compare/v0.3.1...v0.3.2
 
