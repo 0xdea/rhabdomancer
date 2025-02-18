@@ -461,7 +461,7 @@
 
     <span class="doccomment">/// Check if a function is in the list of known bad API function names and return its priority
     </span><span class="kw">fn </span>check_function(<span class="kw-2">&amp;</span><span class="self">self</span>, func: <span class="kw-2">&amp;</span>Function) -&gt; <span class="prelude-ty">Option</span>&lt;Priority&gt; {
-        <span class="kw">let </span>re = Regex::new(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">r"^[._]?{}$"</span>, <span class="kw-2">&amp;</span>func.name()<span class="question-mark">?</span>)).unwrap();
+        <span class="kw">let </span>re = Regex::new(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">r"^[._]?{}$"</span>, <span class="kw-2">&amp;</span>func.name()<span class="question-mark">?</span>)).ok()<span class="question-mark">?</span>;
 
         <span class="kw">if </span><span class="self">self</span>.high.iter().any(|bad| re.is_match(bad)) {
             <span class="kw">return </span><span class="prelude-val">Some</span>(Priority::High);
@@ -537,7 +537,7 @@
 
     <span class="doccomment">/// Locate all calls to the specified function and mark them
     </span><span class="kw">fn </span>mark_calls(idb: <span class="kw-2">&amp;</span>IDB, func: <span class="kw-2">&amp;</span>Function, priority: <span class="kw-2">&amp;</span>Priority) -&gt; <span class="prelude-ty">Result</span>&lt;(), IDAError&gt; {
-        <span class="comment">// Return an error if function name is empty
+        <span class="comment">// Return an error if function name is empty (shouldn't happen)
         </span><span class="kw">let </span><span class="prelude-val">Some</span>(func_name) = func.name() <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(IDAError::ffi_with(<span class="string">"empty function name"</span>));
         };
