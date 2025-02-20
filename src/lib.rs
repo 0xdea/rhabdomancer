@@ -126,7 +126,7 @@ struct KnownBadFunctions {
 
 impl KnownBadFunctions {
     /// Populate the list of bad API function names from configuration file
-    pub fn load() -> Result<Self, ConfigError> {
+    fn load() -> Result<Self, ConfigError> {
         let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml");
 
         println!("[*] Using configuration file {path:?}");
