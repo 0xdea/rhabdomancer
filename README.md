@@ -30,7 +30,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 ## Blog post
 
-* <https://security.humanativaspa.it/streamlining-vulnerability-research-with-ida-pro-and-rust> (*coming soon*)
+* <https://security.humanativaspa.it/streamlining-vulnerability-research-with-ida-pro-and-rust>
 
 ## See also
 
