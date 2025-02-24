@@ -329,7 +329,7 @@
 //! &gt;
 //! &gt; -- Mark Dowd
 //!
-//! Rhabdomancer is a blazing fast IDA Pro headless plugin that locates all calls to potentially
+//! Rhabdomancer is a blazing fast IDA Pro headless plugin that locates calls to potentially
 //! insecure API functions in a binary file. Auditors can backtrace from these candidate points to
 //! find pathways allowing access from untrusted input.
 //!
@@ -344,7 +344,7 @@
 //! * The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
 //!
 //! ## Blog post
-//! * &lt;https://security.humanativaspa.it/streamlining-vulnerability-research-with-ida-pro-and-rust&gt; (*coming soon*)
+//! * &lt;https://security.humanativaspa.it/streamlining-vulnerability-research-with-ida-pro-and-rust&gt;
 //!
 //! ## See also
 //! * &lt;https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java&gt;
@@ -449,7 +449,7 @@
 
 <span class="kw">impl </span>KnownBadFunctions {
     <span class="doccomment">/// Populate the list of bad API function names from configuration file
-    </span><span class="kw">pub fn </span>load() -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ConfigError&gt; {
+    </span><span class="kw">fn </span>load() -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ConfigError&gt; {
         <span class="kw">let </span>path = Path::new(<span class="macro">env!</span>(<span class="string">"CARGO_MANIFEST_DIR"</span>)).join(<span class="string">"conf/rhabdomancer.toml"</span>);
 
         <span class="macro">println!</span>(<span class="string">"[*] Using configuration file {path:?}"</span>);
@@ -485,7 +485,7 @@
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; BadFunctions&lt;<span class="lifetime">'a</span>&gt; {
-    <span class="doccomment">/// Find all bad API functions in target binary
+    <span class="doccomment">/// Find bad API functions in target binary
     </span><span class="kw">fn </span>find_all(idb: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>IDB, bad: <span class="kw-2">&amp;</span>KnownBadFunctions) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>found = <span class="self">Self </span>{
             high: BTreeMap::new(),
@@ -520,7 +520,7 @@
         }
     }
 
-    <span class="doccomment">/// Locate all calls to bad API functions and mark them
+    <span class="doccomment">/// Locate calls to bad API functions and mark them
     </span><span class="kw">fn </span>locate_calls(<span class="kw-2">&amp;</span><span class="self">self</span>, idb: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>IDB) -&gt; anyhow::Result&lt;()&gt; {
         <span class="kw">for </span>f <span class="kw">in </span><span class="self">self</span>.high.values() {
             <span class="self">Self</span>::mark_calls(idb, f, <span class="kw-2">&amp;</span>Priority::High)<span class="question-mark">?</span>;
@@ -535,7 +535,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Locate all calls to the specified function and mark them
+    <span class="doccomment">/// Locate calls to the specified function and mark them
     </span><span class="kw">fn </span>mark_calls(idb: <span class="kw-2">&amp;</span>IDB, func: <span class="kw-2">&amp;</span>Function, priority: <span class="kw-2">&amp;</span>Priority) -&gt; <span class="prelude-ty">Result</span>&lt;(), IDAError&gt; {
         <span class="comment">// Return an error if function name is empty (shouldn't happen)
         </span><span class="kw">let </span><span class="prelude-val">Some</span>(func_name) = func.name() <span class="kw">else </span>{
@@ -606,7 +606,7 @@
     }
 }
 
-<span class="doccomment">/// Locate all calls to potentially insecure API functions in the binary file at `filepath`.
+<span class="doccomment">/// Locate calls to potentially insecure API functions in the binary file at `filepath`.
 ///
 /// Return how many call locations were marked or an error in case something goes wrong.
 </span><span class="kw">pub fn </span>run(filepath: <span class="kw-2">&amp;</span>Path) -&gt; anyhow::Result&lt;BookmarkIndex&gt; {
