@@ -84,9 +84,9 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
 name = "autocxx"
-version = "0.27.0"
+version = "0.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54119c5e38d82c13a66cf6c6e6d089ff61c2a8f956b61f50485fd636e8f64656"
+checksum = "68c55316bd7d6560588498fe43b1aee3fd36c17c7cd440d69a5b4ba7df33978f"
 dependencies = [
  "aquamarine",
  "autocxx-macro",
@@ -96,9 +96,9 @@ dependencies = [
 
 [[package]]
 name = "autocxx-bindgen"
-version = "0.69.5"
+version = "0.72.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d81238f7571a7fe1743bebbfaf218ad9aeceaec0f1f25c74b2d3f42b16fa17ea"
+checksum = "537ef6dffea4311d04a313f645bdd04d2c88b356a6eb7afd4258e5aee70dea8c"
 dependencies = [
  "bitflags",
  "cexpr",
@@ -109,35 +109,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "regex",
- "rustc-hash 1.1.0",
- "shlex",
- "syn 2.0.98",
-]
-
-[[package]]
-name = "autocxx-bindgen"
-version = "0.71.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a7d41cf081e31a74378456586b47a5bae2b75a98e5f7c248c9d9bf433e3637f4"
-dependencies = [
- "bitflags",
- "cexpr",
- "clang-sys",
- "itertools 0.13.0",
- "log",
- "proc-macro2",
- "quote",
- "regex",
- "rustc-hash 2.1.1",
+ "rustc-hash",
  "shlex",
  "syn 2.0.98",
 ]
 
 [[package]]
 name = "autocxx-build"
-version = "0.27.1"
+version = "0.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d123397e75f904758fef490775a00b0ada545ab409cb0163d919799e5a30119b"
+checksum = "fab383d79e3f1fe444c2161c3a0331d0e1478f7fb74bde75e3f5032577a3f706"
 dependencies = [
  "autocxx-engine",
  "env_logger",
@@ -147,12 +128,12 @@ dependencies = [
 
 [[package]]
 name = "autocxx-engine"
-version = "0.27.1"
+version = "0.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8d8f30534af0f55d56743806ea9d49fbd85559f2bd3ec074fb3268ad1827fa92"
+checksum = "c00c4e7d232a15552eba90ec47c9a22c65e62816aef2ae4301801c3e1017737b"
 dependencies = [
  "aquamarine",
- "autocxx-bindgen 0.71.1",
+ "autocxx-bindgen",
  "autocxx-parser",
  "cc",
  "cxx-gen",
@@ -176,9 +157,9 @@ dependencies = [
 
 [[package]]
 name = "autocxx-macro"
-version = "0.27.1"
+version = "0.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a3c6868514727e4da46049b79941d989606e9eb054fb1915f02cad10a356b37"
+checksum = "14586f9015555a8d257259713ac4914184a5c8c3f0c22efb8e538f79d2b3d968"
 dependencies = [
  "autocxx-parser",
  "proc-macro-error",
@@ -189,9 +170,9 @@ dependencies = [
 
 [[package]]
 name = "autocxx-parser"
-version = "0.27.1"
+version = "0.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0cbe64c4c35a76ef3229505d336b3eef29e95b28f457b75e0f84b456a8107af9"
+checksum = "893a36d31f4618434f78f890f3136b039bbe6a719919e03eb249835e849454b7"
 dependencies = [
  "indexmap 1.9.3",
  "itertools 0.10.5",
@@ -266,18 +247,18 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.5.30"
+version = "4.5.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92b7b18d71fad5313a1e320fa9897994228ce274b60faa4d694fe0ea89cd9e6d"
+checksum = "027bb0d98429ae334a8698531da7077bdf906419543a35a55c2cb1b66437d767"
 dependencies = [
  "clap_builder",
 ]
 
 [[package]]
 name = "clap_builder"
-version = "4.5.30"
+version = "4.5.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a35db2071778a7344791a4fb4f95308b5673d219dee3ae348b86642574ecc90c"
+checksum = "5589e0cba072e0f3d23791efac0fd8627b49c829c196a492e88168e6a669d863"
 dependencies = [
  "anstyle",
  "clap_lex",
@@ -605,9 +586,9 @@ checksum = "9a3a5bfb195931eeb336b2a7b4d761daec841b97f947d34394601737a7bba5e4"
 
 [[package]]
 name = "idalib"
-version = "0.4.0+9.0.241217"
+version = "0.4.1+9.0.241217"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86fbdfebea71426b6aaeee451e0fd48f43f07acdab502d60a233df39a291ed15"
+checksum = "0174993ceb50ac00e38bdfab11fc62f28320043b6169e52ba5d05f33d0374f13"
 dependencies = [
  "anyhow",
  "autocxx",
@@ -620,22 +601,22 @@ dependencies = [
 
 [[package]]
 name = "idalib-build"
-version = "0.4.0+9.0.241217"
+version = "0.4.1+9.0.241217"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "658927b036302c6c07f15d045f4f5ddf85c8a8d64e5a96ff4904147d915083db"
+checksum = "6c2bd7f8393358c2d2b048fd06e924a32bd7a3177f7cdcc506170685656480a4"
 dependencies = [
  "anyhow",
 ]
 
 [[package]]
 name = "idalib-sys"
-version = "0.4.0+9.0.241217"
+version = "0.4.1+9.0.241217"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "af2b9b390952669cc3c176dbb5f7514ccf29c2b43757106a810f35839cc45d81"
+checksum = "de50241b93c7a64c7a73864a96f07f27a506318c06857a24470a7566681782d3"
 dependencies = [
  "anyhow",
  "autocxx",
- "autocxx-bindgen 0.69.5",
+ "autocxx-bindgen",
  "autocxx-build",
  "bitflags",
  "cxx",
@@ -1008,12 +989,6 @@ dependencies = [
  "ordered-multimap",
  "trim-in-place",
 ]
-
-[[package]]
-name = "rustc-hash"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
 
 [[package]]
 name = "rustc-hash"
