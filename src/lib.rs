@@ -6,7 +6,7 @@
 //! >
 //! > -- Mark Dowd
 //!
-//! Rhabdomancer is a blazing fast IDA Pro headless plugin that locates all calls to potentially
+//! Rhabdomancer is a blazing fast IDA Pro headless plugin that locates calls to potentially
 //! insecure API functions in a binary file. Auditors can backtrace from these candidate points to
 //! find pathways allowing access from untrusted input.
 //!
@@ -162,7 +162,7 @@ struct BadFunctions<'a> {
 }
 
 impl<'a> BadFunctions<'a> {
-    /// Find all bad API functions in target binary
+    /// Find bad API functions in target binary
     fn find_all(idb: &'a IDB, bad: &KnownBadFunctions) -> Self {
         let mut found = Self {
             high: BTreeMap::new(),
@@ -197,7 +197,7 @@ impl<'a> BadFunctions<'a> {
         }
     }
 
-    /// Locate all calls to bad API functions and mark them
+    /// Locate calls to bad API functions and mark them
     fn locate_calls(&self, idb: &'a IDB) -> anyhow::Result<()> {
         for f in self.high.values() {
             Self::mark_calls(idb, f, &Priority::High)?;
@@ -212,7 +212,7 @@ impl<'a> BadFunctions<'a> {
         Ok(())
     }
 
-    /// Locate all calls to the specified function and mark them
+    /// Locate calls to the specified function and mark them
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
         // Return an error if function name is empty (shouldn't happen)
         let Some(func_name) = func.name() else {
@@ -283,7 +283,7 @@ impl<'a> BadFunctions<'a> {
     }
 }
 
-/// Locate all calls to potentially insecure API functions in the binary file at `filepath`.
+/// Locate calls to potentially insecure API functions in the binary file at `filepath`.
 ///
 /// Return how many call locations were marked or an error in case something goes wrong.
 pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {

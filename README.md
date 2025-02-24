@@ -12,7 +12,7 @@
 >
 > -- Mark Dowd
 
-Rhabdomancer is a blazing fast IDA Pro headless plugin that locates all calls to potentially insecure API functions in
+Rhabdomancer is a blazing fast IDA Pro headless plugin that locates calls to potentially insecure API functions in
 a binary file. Auditors can backtrace from these candidate points to find pathways allowing access from untrusted input.
 
 ![](https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/screen01.png)
