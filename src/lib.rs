@@ -94,6 +94,7 @@ use std::env;
 use std::path::Path;
 use std::sync::atomic::{AtomicU32, Ordering};
 
+use anyhow::Context;
 use config::{Config, ConfigError, File};
 use idalib::bookmarks::BookmarkIndex;
 use idalib::ffi::BADADDR;
@@ -289,14 +290,16 @@ impl<'a> BadFunctions<'a> {
 pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
     // Load known bad API function names from the configuration file
     println!("[*] Loading known bad API function names");
-    let known_bad = KnownBadFunctions::load()?;
+    let known_bad =
+        KnownBadFunctions::load().context("Failed to load known bad API function names")?;
 
     // Open target binary, run auto-analysis, and keep results
     println!("[*] Trying to analyze binary file {filepath:?}");
     if !filepath.is_file() {
-        return Err(anyhow::anyhow!("invalid file path"));
+        return Err(anyhow::anyhow!("Invalid file path"));
     }
-    let idb = IDB::open_with(filepath, true, true)?;
+    let idb = IDB::open_with(filepath, true, true)
+        .with_context(|| format!("Failed to analyze binary file {filepath:?}"))?;
     println!("[+] Successfully analyzed binary file");
     println!();
 
@@ -308,7 +311,9 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
 
     // Locate and mark bad API function calls in target binary
     println!("[*] Finding bad API function calls...");
-    BadFunctions::find_all(&idb, &known_bad).locate_calls(&idb)?;
+    BadFunctions::find_all(&idb, &known_bad)
+        .locate_calls(&idb)
+        .context("Failed to find bad API function calls")?;
 
     println!();
     println!("[+] Marked {COUNTER:?} new call locations");

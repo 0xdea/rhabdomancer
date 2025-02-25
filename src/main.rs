@@ -34,7 +34,7 @@ fn main() {
     match rhabdomancer::run(Path::new(filename)) {
         Ok(_) => (),
         Err(err) => {
-            eprintln!("[!] Error: {err}");
+            eprintln!("[!] Error: {err:#}");
             process::exit(1);
         }
     }
