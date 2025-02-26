@@ -9,8 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Bump Rust edition to 2024 and update dependencies and CI.
 * Improve error handling.
 * Switch to idalib v0.4.1 and update other dependencies.
+* Improve CI speed by removing redundant tasks.
 
 ## [0.3.4] - 2025-02-24
 
