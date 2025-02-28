@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/libc-0.2.169/src/unix/linux_like/linux/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="libc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.1 (e71f9a9a9 2025-01-27)" data-channel="1.84.1" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../../../../static.files/storage-59e33391.js"></script><script defer src="../../../../../static.files/src-script-56102188.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">libc/unix/linux_like/linux/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.170/src/unix/linux_like/linux/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="libc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../../../static.files/storage-59e33391.js"></script><script defer src="../../../../../static.files/src-script-56102188.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">libc/unix/linux_like/linux/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -6797,7 +6797,27 @@
 <a href="#6796" id="6796">6796</a>
 <a href="#6797" id="6797">6797</a>
 <a href="#6798" id="6798">6798</a>
-<a href="#6799" id="6799">6799</a></pre></div><pre class="rust"><code><span class="doccomment">//! Linux-specific definitions for linux-like values
+<a href="#6799" id="6799">6799</a>
+<a href="#6800" id="6800">6800</a>
+<a href="#6801" id="6801">6801</a>
+<a href="#6802" id="6802">6802</a>
+<a href="#6803" id="6803">6803</a>
+<a href="#6804" id="6804">6804</a>
+<a href="#6805" id="6805">6805</a>
+<a href="#6806" id="6806">6806</a>
+<a href="#6807" id="6807">6807</a>
+<a href="#6808" id="6808">6808</a>
+<a href="#6809" id="6809">6809</a>
+<a href="#6810" id="6810">6810</a>
+<a href="#6811" id="6811">6811</a>
+<a href="#6812" id="6812">6812</a>
+<a href="#6813" id="6813">6813</a>
+<a href="#6814" id="6814">6814</a>
+<a href="#6815" id="6815">6815</a>
+<a href="#6816" id="6816">6816</a>
+<a href="#6817" id="6817">6817</a>
+<a href="#6818" id="6818">6818</a>
+<a href="#6819" id="6819">6819</a></pre></div><pre class="rust"><code><span class="doccomment">//! Linux-specific definitions for linux-like values
 
 </span><span class="kw">use </span>core::mem::size_of;
 
@@ -6875,7 +6895,7 @@
 <span class="kw">pub type </span>eventfd_t = u64;
 <span class="macro">missing!</span> {
     <span class="attr">#[cfg_attr(feature = <span class="string">"extra_traits"</span>, derive(Debug))]
-    </span><span class="kw">pub enum </span>fpos64_t {} <span class="comment">// FIXME: fill this out with a struct
+    </span><span class="kw">pub enum </span>fpos64_t {} <span class="comment">// FIXME(linux): fill this out with a struct
 </span>}
 
 <span class="macro">e!</span> {
@@ -7126,7 +7146,21 @@
     }
 
     <span class="kw">pub struct </span>input_event {
-        <span class="kw">pub </span>time: <span class="kw">crate</span>::timeval,
+        <span class="comment">// FIXME(1.0): Change to the commented variant, see https://github.com/rust-lang/libc/pull/4148#discussion_r1857511742
+        </span><span class="attr">#[cfg(any(target_pointer_width = <span class="string">"64"</span>, not(linux_time_bits64)))]
+        </span><span class="kw">pub </span>time: <span class="kw">crate</span>::timeval,
+        <span class="comment">// #[cfg(any(target_pointer_width = "64", not(linux_time_bits64)))]
+        // pub input_event_sec: time_t,
+        // #[cfg(any(target_pointer_width = "64", not(linux_time_bits64)))]
+        // pub input_event_usec: suseconds_t,
+        // #[cfg(target_arch = "sparc64")]
+        // _pad1: c_int,
+        </span><span class="attr">#[cfg(all(target_pointer_width = <span class="string">"32"</span>, linux_time_bits64))]
+        </span><span class="kw">pub </span>input_event_sec: c_ulong,
+
+        <span class="attr">#[cfg(all(target_pointer_width = <span class="string">"32"</span>, linux_time_bits64))]
+        </span><span class="kw">pub </span>input_event_usec: c_ulong,
+
         <span class="kw">pub </span>type_: __u16,
         <span class="kw">pub </span>code: __u16,
         <span class="kw">pub </span>value: __s32,
@@ -8550,7 +8584,7 @@
                     .field(<span class="string">"d_off"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.d_off)
                     .field(<span class="string">"d_reclen"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.d_reclen)
                     .field(<span class="string">"d_type"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.d_type)
-                    <span class="comment">// FIXME: .field("d_name", &amp;self.d_name)
+                    <span class="comment">// FIXME(debug): .field("d_name", &amp;self.d_name)
                     </span>.finish()
             }
         }
@@ -8588,7 +8622,7 @@
                     .field(<span class="string">"d_off"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.d_off)
                     .field(<span class="string">"d_reclen"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.d_reclen)
                     .field(<span class="string">"d_type"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.d_type)
-                    <span class="comment">// FIXME: .field("d_name", &amp;self.d_name)
+                    <span class="comment">// FIXME(debug): .field("d_name", &amp;self.d_name)
                     </span>.finish()
             }
         }
@@ -8614,7 +8648,7 @@
         <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>pthread_cond_t {
             <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
                 f.debug_struct(<span class="string">"pthread_cond_t"</span>)
-                    <span class="comment">// FIXME: .field("size", &amp;self.size)
+                    <span class="comment">// FIXME(debug): .field("size", &amp;self.size)
                     </span>.finish()
             }
         }
@@ -8636,7 +8670,7 @@
         <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>pthread_mutex_t {
             <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
                 f.debug_struct(<span class="string">"pthread_mutex_t"</span>)
-                    <span class="comment">// FIXME: .field("size", &amp;self.size)
+                    <span class="comment">// FIXME(debug): .field("size", &amp;self.size)
                     </span>.finish()
             }
         }
@@ -8658,7 +8692,7 @@
         <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>pthread_rwlock_t {
             <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
                 f.debug_struct(<span class="string">"pthread_rwlock_t"</span>)
-                    <span class="comment">// FIXME: .field("size", &amp;self.size)
+                    <span class="comment">// FIXME(debug): .field("size", &amp;self.size)
                     </span>.finish()
             }
         }
@@ -8957,18 +8991,6 @@
                     .field(<span class="string">"u"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.u)
                     .finish()
             }
-        }
-    }
-}
-
-<span class="macro">cfg_if!</span> {
-    <span class="kw">if </span><span class="attr">#[cfg(all(
-        any(target_env = <span class="string">"gnu"</span>, target_env = <span class="string">"musl"</span>, target_env = <span class="string">"ohos"</span>),
-        any(target_arch = <span class="string">"x86_64"</span>, target_arch = <span class="string">"x86"</span>)
-    ))] </span>{
-        <span class="kw">extern </span><span class="string">"C" </span>{
-            <span class="kw">pub fn </span>iopl(level: c_int) -&gt; c_int;
-            <span class="kw">pub fn </span>ioperm(from: c_ulong, num: c_ulong, turn_on: c_int) -&gt; c_int;
         }
     }
 }
@@ -11341,6 +11363,9 @@
 <span class="kw">pub const </span>SOF_TIMESTAMPING_OPT_STATS: c_uint = <span class="number">1 </span>&lt;&lt; <span class="number">12</span>;
 <span class="kw">pub const </span>SOF_TIMESTAMPING_OPT_PKTINFO: c_uint = <span class="number">1 </span>&lt;&lt; <span class="number">13</span>;
 <span class="kw">pub const </span>SOF_TIMESTAMPING_OPT_TX_SWHW: c_uint = <span class="number">1 </span>&lt;&lt; <span class="number">14</span>;
+<span class="kw">pub const </span>SOF_TIMESTAMPING_BIND_PHC: c_uint = <span class="number">1 </span>&lt;&lt; <span class="number">15</span>;
+<span class="kw">pub const </span>SOF_TIMESTAMPING_OPT_ID_TCP: c_uint = <span class="number">1 </span>&lt;&lt; <span class="number">16</span>;
+<span class="kw">pub const </span>SOF_TIMESTAMPING_OPT_RX_FILTER: c_uint = <span class="number">1 </span>&lt;&lt; <span class="number">17</span>;
 <span class="kw">pub const </span>SOF_TXTIME_DEADLINE_MODE: u32 = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
 <span class="kw">pub const </span>SOF_TXTIME_REPORT_ERRORS: u32 = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
 
@@ -12055,6 +12080,7 @@
 
 <span class="kw">pub const </span>CANFD_BRS: c_int = <span class="number">0x01</span>;
 <span class="kw">pub const </span>CANFD_ESI: c_int = <span class="number">0x02</span>;
+<span class="kw">pub const </span>CANFD_FDF: c_int = <span class="number">0x04</span>;
 
 <span class="kw">pub const </span>CANXL_MIN_DLC: c_int = <span class="number">0</span>;
 <span class="kw">pub const </span>CANXL_MAX_DLC: c_int = <span class="number">2047</span>;
@@ -12523,6 +12549,10 @@
 <span class="kw">const </span>_IOC_NRBITS: u32 = <span class="number">8</span>;
 <span class="kw">const </span>_IOC_TYPEBITS: u32 = <span class="number">8</span>;
 
+<span class="comment">// siginfo.h
+</span><span class="kw">pub const </span>SI_DETHREAD: c_int = -<span class="number">7</span>;
+<span class="kw">pub const </span>TRAP_PERF: c_int = <span class="number">6</span>;
+
 <span class="comment">// https://github.com/search?q=repo%3Atorvalds%2Flinux+%22%23define+_IOC_NONE%22&amp;type=code
 </span><span class="macro">cfg_if!</span> {
     <span class="kw">if </span><span class="attr">#[cfg(any(
@@ -12798,6 +12828,18 @@
 
     <span class="kw">pub </span>{<span class="kw">const</span>} <span class="kw">fn </span>SCTP_PR_PRIO_ENABLED(policy: c_int) -&gt; bool {
         policy == SCTP_PR_SCTP_PRIO
+    }
+}
+
+<span class="macro">cfg_if!</span> {
+    <span class="kw">if </span><span class="attr">#[cfg(all(
+        any(target_env = <span class="string">"gnu"</span>, target_env = <span class="string">"musl"</span>, target_env = <span class="string">"ohos"</span>),
+        any(target_arch = <span class="string">"x86_64"</span>, target_arch = <span class="string">"x86"</span>)
+    ))] </span>{
+        <span class="kw">extern </span><span class="string">"C" </span>{
+            <span class="kw">pub fn </span>iopl(level: c_int) -&gt; c_int;
+            <span class="kw">pub fn </span>ioperm(from: c_ulong, num: c_ulong, turn_on: c_int) -&gt; c_int;
+        }
     }
 }
 
@@ -13140,8 +13182,6 @@
 
     <span class="kw">pub fn </span>nl_langinfo(item: <span class="kw">crate</span>::nl_item) -&gt; <span class="kw-2">*mut </span>c_char;
 
-    <span class="kw">pub fn </span>getdomainname(name: <span class="kw-2">*mut </span>c_char, len: size_t) -&gt; c_int;
-    <span class="kw">pub fn </span>setdomainname(name: <span class="kw-2">*const </span>c_char, len: size_t) -&gt; c_int;
     <span class="kw">pub fn </span>vhangup() -&gt; c_int;
     <span class="kw">pub fn </span>sync();
     <span class="kw">pub fn </span>syncfs(fd: c_int) -&gt; c_int;
