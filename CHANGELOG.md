@@ -5,13 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.5] - 2025-02-28
 
 ### Changed
 
 * Bump Rust edition to 2024 and update dependencies and CI.
-* Improve error handling.
 * Switch to idalib v0.4.1 and update other dependencies.
+* Improve error handling.
 * Improve CI speed by removing redundant tasks.
 
 ## [0.3.4] - 2025-02-24
@@ -143,7 +143,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * First release to be published to [crates.io](https://crates.io/).
 
-[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.3.4...HEAD
+[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.3.5...HEAD
+
+[0.3.5]: https://github.com/0xdea/rhabdomancer/compare/v0.3.4...v0.3.5
 
 [0.3.4]: https://github.com/0xdea/rhabdomancer/compare/v0.3.3...v0.3.4
 
