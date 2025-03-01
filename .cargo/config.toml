@@ -1,5 +1,5 @@
 [env]
-IDASDKDIR = "/Users/raptor/idasdk90"
+IDASDKDIR = "/Users/raptor/idasdk91"
 
 [build]
 rustdocflags = ["--document-private-items"]

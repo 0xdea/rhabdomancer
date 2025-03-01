@@ -35,7 +35,7 @@
 //! 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
 //! 3. Install rhabdomancer as follows:
 //!     ```sh
-//!     $ export IDASDKDIR=/path/to/idasdk90
+//!     $ export IDASDKDIR=/path/to/idasdk
 //!     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
 //!     $ cargo install rhabdomancer
 //!     ```
@@ -51,7 +51,7 @@
 //!     ```sh
 //!     $ git clone https://github.com/0xdea/rhabdomancer
 //!     $ cd rhabdomancer
-//!     $ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
+//!     $ export IDASDKDIR=/path/to/idasdk # or edit .cargo/config.toml
 //!     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
 //!     $ cargo build --release
 //!     ```
