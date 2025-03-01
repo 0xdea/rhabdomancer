@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Follow idalib major version from now on.
-* Update dependencies.
+* Switch to idalib v0.5.1 and update other dependencies.
+* Update documentation and add a compatibility matrix.
 
 ## [0.3.5] - 2025-02-28
 

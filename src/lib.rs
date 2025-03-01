@@ -67,12 +67,13 @@
 //!
 //! *Note: rhabdomancer also adds comments at marked call locations.*
 //!
-//! ## Tested with
-//! * IDA Pro 9.0.240925 on macOS arm64 and Linux x64.
-//! * IDA Pro 9.0.241217 on macOS arm64 and Linux x64.
+//! ## Compatibility
+//! * IDA Pro 9.0.240925 - Latest compatible: v0.2.4.
+//! * IDA Pro 9.0.241217 - Latest compatible: v0.3.5.
+//! * IDA Pro 9.1.250226 - Latest compatible: current version.
 //!
 //! *Note: only the `unix` target family is currently supported, check [idalib](https://github.com/binarly-io/idalib)
-//! documentation if you want to port it to `windows` yourself.*
+//! documentation if you're interested in a `windows` port.*
 //!
 //! ## Changelog
 //! * <https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md>
