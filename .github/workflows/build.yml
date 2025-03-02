@@ -22,20 +22,20 @@ jobs:
           components: rustfmt, clippy
       - name: prepare IDA SDK
         env:
-          IDASDK90_URL: ${{ secrets.IDASDK90_URL }}
-          IDASDK90_PASSWORD: ${{ secrets.IDASDK90_PASSWORD }}
+          IDASDK_URL: ${{ secrets.IDASDK_URL }}
+          IDASDK_PASSWORD: ${{ secrets.IDASDK_PASSWORD }}
         run: |
-          curl -o "${{ runner.temp }}/idasdk90.zip" -L "$IDASDK90_URL"
-          unzip -d "${{ runner.temp }}" -P "$IDASDK90_PASSWORD" "${{ runner.temp }}/idasdk90.zip"
+          curl -o "${{ runner.temp }}/idasdk91.zip" -L "$IDASDK_URL"
+          unzip -d "${{ runner.temp }}" -P "$IDASDK_PASSWORD" "${{ runner.temp }}/idasdk91.zip"
       - name: rustfmt
         run: cargo fmt --check
       - name: clippy
         env:
-          IDASDKDIR: "${{ runner.temp }}/idasdk90"
+          IDASDKDIR: "${{ runner.temp }}/idasdk91"
         run: cargo clippy -- -D warnings
       - name: build
         env:
-          IDASDKDIR: "${{ runner.temp }}/idasdk90"
+          IDASDKDIR: "${{ runner.temp }}/idasdk91"
         run: cargo build
 
   build-macos:
@@ -49,14 +49,14 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: prepare IDA SDK
         env:
-          IDASDK90_URL: ${{ secrets.IDASDK90_URL }}
-          IDASDK90_PASSWORD: ${{ secrets.IDASDK90_PASSWORD }}
+          IDASDK_URL: ${{ secrets.IDASDK_URL }}
+          IDASDK_PASSWORD: ${{ secrets.IDASDK_PASSWORD }}
         run: |
-          curl -o "${{ runner.temp }}/idasdk90.zip" -L "$IDASDK90_URL"
-          unzip -d "${{ runner.temp }}" -P "$IDASDK90_PASSWORD" "${{ runner.temp }}/idasdk90.zip"
+          curl -o "${{ runner.temp }}/idasdk91.zip" -L "$IDASDK_URL"
+          unzip -d "${{ runner.temp }}" -P "$IDASDK_PASSWORD" "${{ runner.temp }}/idasdk91.zip"
       - name: build
         env:
-          IDASDKDIR: "${{ runner.temp }}/idasdk90"
+          IDASDKDIR: "${{ runner.temp }}/idasdk91"
         run: cargo build
 
 #  build-windows:
@@ -77,12 +77,12 @@ jobs:
 #         uses: actions-rust-lang/setup-rust-toolchain@v1
 #      - name: prepare IDA SDK
 #        env:
-#          IDASDK90_URL: ${{ secrets.IDASDK90_URL }}
-#          IDASDK90_PASSWORD: ${{ secrets.IDASDK90_PASSWORD }}
+#          IDASDK_URL: ${{ secrets.IDASDK_URL }}
+#          IDASDK_PASSWORD: ${{ secrets.IDASDK_PASSWORD }}
 #        run: |
-#          curl -o "${{ runner.temp }}/idasdk90.zip" -L $env:IDASDK90_URL
-#          unzip -d "${{ runner.temp }}" -P $env:IDASDK90_PASSWORD "${{ runner.temp }}/idasdk90.zip"
+#          curl -o "${{ runner.temp }}/idasdk91.zip" -L $env:IDASDK_URL
+#          unzip -d "${{ runner.temp }}" -P $env:IDASDK_PASSWORD "${{ runner.temp }}/idasdk91.zip"
 #      - name: build
 #        env:
-#          IDASDKDIR: "${{ runner.temp }}/idasdk90"
+#          IDASDKDIR: "${{ runner.temp }}/idasdk91"
 #        run: cargo build
