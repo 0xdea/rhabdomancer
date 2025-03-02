@@ -302,9 +302,6 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
 
     // Open target binary, run auto-analysis, and keep results
     println!("[*] Trying to analyze binary file {filepath:?}");
-    if !filepath.is_file() {
-        return Err(anyhow::anyhow!("Invalid file path"));
-    }
     let idb = IDB::open_with(filepath, true, true)
         .with_context(|| format!("Failed to analyze binary file {filepath:?}"))?;
     println!("[+] Successfully analyzed binary file");

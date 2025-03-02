@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Switch to idalib v0.5.1 and update other dependencies.
 * Update documentation and add a compatibility matrix.
 
+### Removed
+
+* Remove target file check that is no longer necessary.
+
 ## [0.3.5] - 2025-02-28
 
 ### Changed
