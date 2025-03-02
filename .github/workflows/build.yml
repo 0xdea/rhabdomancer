@@ -25,17 +25,17 @@ jobs:
           IDASDK_URL: ${{ secrets.IDASDK_URL }}
           IDASDK_PASSWORD: ${{ secrets.IDASDK_PASSWORD }}
         run: |
-          curl -o "${{ runner.temp }}/idasdk91.zip" -L "$IDASDK_URL"
-          unzip -d "${{ runner.temp }}" -P "$IDASDK_PASSWORD" "${{ runner.temp }}/idasdk91.zip"
+          curl -o "${{ runner.temp }}/idasdk.zip" -L "$IDASDK_URL"
+          unzip -d "${{ runner.temp }}" -P "$IDASDK_PASSWORD" "${{ runner.temp }}/idasdk.zip"
       - name: rustfmt
         run: cargo fmt --check
       - name: clippy
         env:
-          IDASDKDIR: "${{ runner.temp }}/idasdk91"
+          IDASDKDIR: "${{ runner.temp }}/idasdk"
         run: cargo clippy -- -D warnings
       - name: build
         env:
-          IDASDKDIR: "${{ runner.temp }}/idasdk91"
+          IDASDKDIR: "${{ runner.temp }}/idasdk"
         run: cargo build
 
   build-macos:
@@ -52,11 +52,11 @@ jobs:
           IDASDK_URL: ${{ secrets.IDASDK_URL }}
           IDASDK_PASSWORD: ${{ secrets.IDASDK_PASSWORD }}
         run: |
-          curl -o "${{ runner.temp }}/idasdk91.zip" -L "$IDASDK_URL"
-          unzip -d "${{ runner.temp }}" -P "$IDASDK_PASSWORD" "${{ runner.temp }}/idasdk91.zip"
+          curl -o "${{ runner.temp }}/idasdk.zip" -L "$IDASDK_URL"
+          unzip -d "${{ runner.temp }}" -P "$IDASDK_PASSWORD" "${{ runner.temp }}/idasdk.zip"
       - name: build
         env:
-          IDASDKDIR: "${{ runner.temp }}/idasdk91"
+          IDASDKDIR: "${{ runner.temp }}/idasdk"
         run: cargo build
 
 #  build-windows:
@@ -80,9 +80,9 @@ jobs:
 #          IDASDK_URL: ${{ secrets.IDASDK_URL }}
 #          IDASDK_PASSWORD: ${{ secrets.IDASDK_PASSWORD }}
 #        run: |
-#          curl -o "${{ runner.temp }}/idasdk91.zip" -L $env:IDASDK_URL
-#          unzip -d "${{ runner.temp }}" -P $env:IDASDK_PASSWORD "${{ runner.temp }}/idasdk91.zip"
+#          curl -o "${{ runner.temp }}/idasdk.zip" -L $env:IDASDK_URL
+#          unzip -d "${{ runner.temp }}" -P $env:IDASDK_PASSWORD "${{ runner.temp }}/idasdk.zip"
 #      - name: build
 #        env:
-#          IDASDKDIR: "${{ runner.temp }}/idasdk91"
+#          IDASDKDIR: "${{ runner.temp }}/idasdk"
 #        run: cargo build

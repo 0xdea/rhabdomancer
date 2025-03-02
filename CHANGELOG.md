@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Follow idalib major version from now on.
 * Switch to idalib v0.5.1 and update other dependencies.
 * Update documentation and add a compatibility matrix.
+* Make CI more robust for future IDA SDK updates.
 
 ### Removed
 
