@@ -326,7 +326,11 @@
 <a href="#325" id="325">325</a>
 <a href="#326" id="326">326</a>
 <a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a></pre></div><pre class="rust"><code><span class="doccomment">//!
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a></pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024-2025 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
 //!
@@ -363,10 +367,13 @@
 //! 2. Download and extract the IDA SDK (see &lt;https://docs.hex-rays.com/developer-guide&gt;).
 //! 3. Install rhabdomancer as follows:
 //!     ```sh
-//!     $ export IDASDKDIR=/path/to/idasdk90
+//!     $ export IDASDKDIR=/path/to/idasdk
 //!     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
 //!     $ cargo install rhabdomancer
 //!     ```
+//!
+//! *Note: in addition to the latest IDA SDK and IDA Pro itself, a recent version of LLVM/Clang is required
+//! (see [idalib](https://github.com/binarly-io/idalib) documentation).*
 //!
 //! ## Compiling
 //! Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer):
@@ -376,10 +383,13 @@
 //!     ```sh
 //!     $ git clone https://github.com/0xdea/rhabdomancer
 //!     $ cd rhabdomancer
-//!     $ export IDASDKDIR=/path/to/idasdk90 # or edit .cargo/config.toml
+//!     $ export IDASDKDIR=/path/to/idasdk # or edit .cargo/config.toml
 //!     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
 //!     $ cargo build --release
 //!     ```
+//!
+//! *Note: in addition to the latest IDA SDK and IDA Pro itself, a recent version of LLVM/Clang is required
+//! (see [idalib](https://github.com/binarly-io/idalib) documentation).*
 //!
 //! ## Usage
 //! 1. Make sure IDA Pro is properly configured with a valid license.
@@ -395,12 +405,13 @@
 //!
 //! *Note: rhabdomancer also adds comments at marked call locations.*
 //!
-//! ## Tested with
-//! * IDA Pro 9.0.240925 on macOS arm64 and Linux x64.
-//! * IDA Pro 9.0.241217 on macOS arm64 and Linux x64.
+//! ## Compatibility
+//! * IDA Pro 9.0.240925 - Latest compatible: v0.2.4.
+//! * IDA Pro 9.0.241217 - Latest compatible: v0.3.5.
+//! * IDA Pro 9.1.250226 - Latest compatible: current version.
 //!
 //! *Note: only the `unix` target family is currently supported, check [idalib](https://github.com/binarly-io/idalib)
-//! documentation if you want to port it to `windows` yourself.*
+//! documentation if you're interested in a `windows` port.*
 //!
 //! ## Changelog
 //! * &lt;https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md&gt;
@@ -623,9 +634,6 @@
 
     <span class="comment">// Open target binary, run auto-analysis, and keep results
     </span><span class="macro">println!</span>(<span class="string">"[*] Trying to analyze binary file {filepath:?}"</span>);
-    <span class="kw">if </span>!filepath.is_file() {
-        <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(<span class="string">"Invalid file path"</span>));
-    }
     <span class="kw">let </span>idb = IDB::open_with(filepath, <span class="bool-val">true</span>, <span class="bool-val">true</span>)
         .with_context(|| <span class="macro">format!</span>(<span class="string">"Failed to analyze binary file {filepath:?}"</span>))<span class="question-mark">?</span>;
     <span class="macro">println!</span>(<span class="string">"[+] Successfully analyzed binary file"</span>);
