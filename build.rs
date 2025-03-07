@@ -1,3 +1,5 @@
+//! idalib build script, see <https://github.com/binarly-io/idalib/blob/master/README.md>
+
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {

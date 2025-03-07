@@ -1,3 +1,5 @@
+//! tests/main.rs
+
 use std::fs;
 use std::path::Path;
 
