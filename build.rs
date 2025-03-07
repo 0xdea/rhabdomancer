@@ -1,4 +1,4 @@
-//! idalib build script, see <https://github.com/binarly-io/idalib/blob/master/README.md>
+//! build.rs - See <https://github.com/binarly-io/idalib/blob/master/README.md>
 
 use std::error::Error;
 
