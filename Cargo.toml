@@ -1,6 +1,6 @@
 [package]
 name = "rhabdomancer"
-version = "0.5.1-alpha"
+version = "0.5.1"
 authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2024"
 description = "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file."
@@ -27,10 +27,6 @@ name = "tests"
 path = "tests/main.rs"
 harness = false
 
-[lints.rust]
-missing_docs = { level = "warn" }
-# missing_doc_code_examples = { level = "warn" }
-
 [lints.clippy]
 all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
@@ -38,6 +34,9 @@ nursery = { level = "warn", priority = -1 }
 cargo = { level = "warn", priority = -1 }
 multiple_crate_versions = "allow"
 significant_drop_tightening = "allow"
+
+[lints.rust]
+missing_docs = { level = "warn" }
 
 [profile.release]
 # see https://github.com/johnthagen/min-sized-rust

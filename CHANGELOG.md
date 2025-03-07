@@ -5,12 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.1] - 2025-03-10
 
 ### Changed
 
 * Update dependencies.
 * Add `missing_docs` lint and improve documentation.
+* Avoid generating documentation for private items.
 
 ## [0.5.0] - 2025-03-03
 
@@ -163,7 +164,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * First release to be published to [crates.io](https://crates.io/).
 
-[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.5.0...HEAD
+[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.5.1...HEAD
+
+[0.5.1]: https://github.com/0xdea/rhabdomancer/compare/v0.5.0...v0.5.1
 
 [0.5.0]: https://github.com/0xdea/rhabdomancer/compare/v0.3.5...v0.5.0
 
