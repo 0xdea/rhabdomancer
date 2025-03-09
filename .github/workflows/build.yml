@@ -28,11 +28,11 @@ jobs:
           curl -o "${{ runner.temp }}/idasdk.zip" -L "$IDASDK_URL"
           unzip -d "${{ runner.temp }}" -P "$IDASDK_PASSWORD" "${{ runner.temp }}/idasdk.zip"
       - name: rustfmt
-        run: cargo fmt --check
+        run: cargo fmt --all --check
       - name: clippy
         env:
           IDASDKDIR: "${{ runner.temp }}/idasdk"
-        run: cargo clippy -- -D warnings
+        run: cargo clippy --all-targets -- -D warnings
       - name: build
         env:
           IDASDKDIR: "${{ runner.temp }}/idasdk"

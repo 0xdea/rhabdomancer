@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update dependencies.
 * Add `missing_docs` lint and improve documentation.
 * Avoid generating documentation for private items.
+* Improve CI.
 
 ## [0.5.0] - 2025-03-03
 
