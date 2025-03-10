@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["StartError"],"mod":["dfa","error","id","regex","search"],"struct":["BuildError","CacheError","LazyStateID"]};
+window.SIDEBAR_ITEMS = {"enum":["StartError"],"mod":["dfa","regex"],"struct":["BuildError","CacheError","LazyStateID"]};

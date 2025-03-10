@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["ident"],"macro":["const_random"],"mod":["span"]};
+window.SIDEBAR_ITEMS = {"macro":["const_random"]};

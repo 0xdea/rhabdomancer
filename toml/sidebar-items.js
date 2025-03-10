@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Value"],"fn":["from_str"],"macro":["toml"],"mod":["de","edit","map","ser","table","value"],"struct":["Deserializer","Spanned"],"type":["Table"]};
+window.SIDEBAR_ITEMS = {"enum":["Value"],"fn":["from_str"],"macro":["toml"],"mod":["de","map","ser","value"],"struct":["Deserializer","Spanned"],"type":["Table"]};

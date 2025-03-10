@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":["Deserialize","Serialize"],"mod":["bound","de","dummy","fragment","internals","pretend","ser","this"]};
+window.SIDEBAR_ITEMS = {"derive":["Deserialize","Serialize"]};

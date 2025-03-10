@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["getrandom","getrandom_uninit"],"mod":["error","imp","lazy","use_file","util","util_libc"],"struct":["Error"]};
+window.SIDEBAR_ITEMS = {"fn":["getrandom","getrandom_uninit"],"struct":["Error"]};

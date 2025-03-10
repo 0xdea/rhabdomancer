@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["avx2","memchr","sse2"]};
+window.SIDEBAR_ITEMS = {"mod":["avx2","sse2"]};

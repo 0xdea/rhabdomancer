@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["MatchKind"],"mod":["api","ext","pattern","rabinkarp","teddy","vector"],"struct":["Builder","Config","FindIter","Searcher"]};
+window.SIDEBAR_ITEMS = {"enum":["MatchKind"],"struct":["Builder","Config","FindIter","Searcher"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["index_type_impls"],"struct":["NonMaxUsize","PatternID","PatternIDError","PatternIDIter","SmallIndex","SmallIndexError","SmallIndexIter","StateID","StateIDError","StateIDIter","WithPatternIDIter","WithStateIDIter"],"trait":["IteratorIndexExt"]};
+window.SIDEBAR_ITEMS = {"struct":["NonMaxUsize","PatternID","PatternIDError","SmallIndex","SmallIndexError","StateID","StateIDError"]};

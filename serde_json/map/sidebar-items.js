@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Entry"],"macro":["delegate_iterator"],"struct":["IntoIter","IntoValues","Iter","IterMut","Keys","Map","OccupiedEntry","VacantEntry","Values","ValuesMut"],"type":["IntoIterImpl","IntoValuesImpl","IterImpl","IterMutImpl","KeysImpl","MapImpl","OccupiedEntryImpl","VacantEntryImpl","ValuesImpl","ValuesMutImpl"]};
+window.SIDEBAR_ITEMS = {"enum":["Entry"],"struct":["IntoIter","IntoValues","Iter","IterMut","Keys","Map","OccupiedEntry","VacantEntry","Values","ValuesMut"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ParserNumber"],"fn":["from_reader","from_slice","from_str","from_trait"],"macro":["check_recursion","deserialize_number","deserialize_numeric_key","if_checking_recursion_limit","overflow"],"static":["POW10"],"struct":["Deserializer","IoRead","MapAccess","MapKey","SeqAccess","SliceRead","StrRead","StreamDeserializer","UnitVariantAccess","VariantAccess"],"trait":["Read"]};
+window.SIDEBAR_ITEMS = {"fn":["from_reader","from_slice","from_str"],"struct":["Deserializer","IoRead","SliceRead","StrRead","StreamDeserializer"],"trait":["Read"]};

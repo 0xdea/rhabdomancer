@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["BuildErrorKind"],"struct":["BuildError","Builder","Cache","Config","DFA","Epsilons","InternalBuilder","PatternEpsilons","Slots","SlotsIter","SparseTransitionIter","Transition"]};
+window.SIDEBAR_ITEMS = {"struct":["BuildError","Builder","Cache","Config","DFA"]};

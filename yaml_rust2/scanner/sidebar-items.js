@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["BUFFER_LEN"],"enum":["Chomping","SkipTabs","TEncoding","TScalarStyle","TokenType"],"struct":["Indent","Marker","ScanError","Scanner","SimpleKey","Token"],"type":["ScanResult"]};
+window.SIDEBAR_ITEMS = {"enum":["Chomping","TEncoding","TScalarStyle","TokenType"],"struct":["Marker","ScanError","Scanner","Token"],"type":["ScanResult"]};

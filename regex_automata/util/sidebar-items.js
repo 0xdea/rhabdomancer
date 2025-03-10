@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["alphabet","captures","determinize","empty","escape","int","interpolate","iter","lazy","look","memchr","pool","prefilter","primitives","search","sparse_set","start","syntax","unicode_data","utf8","wire"]};
+window.SIDEBAR_ITEMS = {"mod":["alphabet","captures","escape","interpolate","iter","lazy","look","pool","prefilter","primitives","start","syntax","wire"]};

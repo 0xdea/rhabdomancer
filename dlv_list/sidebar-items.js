@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Entry"],"fn":["create_initial_generation"],"struct":["Drain","Index","Indices","IntoIter","Iter","IterMut","NonMaxUsize","OccupiedEntry","VacantEntry","VecList"]};
+window.SIDEBAR_ITEMS = {"struct":["Drain","Index","Indices","IntoIter","Iter","IterMut","VecList"]};

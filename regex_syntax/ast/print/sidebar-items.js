@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Printer","PrinterBuilder","Writer"]};
+window.SIDEBAR_ITEMS = {"struct":["Printer"]};

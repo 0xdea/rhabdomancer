@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["FollowEpsilon"],"macro":["instrument"],"struct":["ActiveStates","Builder","Cache","CapturesMatches","Config","FindMatches","PikeVM","SlotTable"]};
+window.SIDEBAR_ITEMS = {"struct":["Builder","Cache","CapturesMatches","Config","FindMatches","PikeVM"]};

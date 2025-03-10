@@ -330,7 +330,9 @@
 <a href="#329" id="329">329</a>
 <a href="#330" id="330">330</a>
 <a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a></pre></div><pre class="rust"><code><span class="doccomment">//!
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a></pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024-2025 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
 //!
@@ -381,7 +383,7 @@
 //! 2. Download and extract the IDA SDK (see &lt;https://docs.hex-rays.com/developer-guide&gt;).
 //! 3. Compile rhabdomancer as follows:
 //!     ```sh
-//!     $ git clone https://github.com/0xdea/rhabdomancer
+//!     $ git clone --depth 1 https://github.com/0xdea/rhabdomancer
 //!     $ cd rhabdomancer
 //!     $ export IDASDKDIR=/path/to/idasdk # or edit .cargo/config.toml
 //!     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
@@ -625,7 +627,9 @@
 
 <span class="doccomment">/// Locate calls to potentially insecure API functions in the binary file at `filepath`.
 ///
-/// Return how many call locations were marked or an error in case something goes wrong.
+/// ## Errors
+///
+/// Returns how many call locations were marked or a generic error in case something goes wrong.
 </span><span class="kw">pub fn </span>run(filepath: <span class="kw-2">&amp;</span>Path) -&gt; anyhow::Result&lt;BookmarkIndex&gt; {
     <span class="comment">// Load known bad API function names from the configuration file
     </span><span class="macro">println!</span>(<span class="string">"[*] Loading known bad API function names"</span>);

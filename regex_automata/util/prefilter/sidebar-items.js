@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Choice"],"fn":["prefixes","suffixes"],"mod":["aho_corasick","byteset","memchr","memmem","teddy"],"struct":["Prefilter"],"trait":["PrefilterI"]};
+window.SIDEBAR_ITEMS = {"struct":["Prefilter"]};

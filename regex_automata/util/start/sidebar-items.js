@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Start"],"struct":["Config","StartByteMap"]};
+window.SIDEBAR_ITEMS = {"struct":["Config"]};

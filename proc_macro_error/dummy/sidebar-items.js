@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["DUMMY_IMPL"],"fn":["append_dummy","cleanup","set_dummy"]};
+window.SIDEBAR_ITEMS = {"fn":["append_dummy","set_dummy"]};

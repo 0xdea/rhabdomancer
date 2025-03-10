@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Base64Display","FormatterSink"]};
+window.SIDEBAR_ITEMS = {"struct":["Base64Display"]};

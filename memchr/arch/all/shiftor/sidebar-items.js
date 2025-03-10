@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Finder"],"type":["Mask"]};
+window.SIDEBAR_ITEMS = {"struct":["Finder"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["encoder","encoder_string_writer"],"struct":["EncoderStringWriter","EncoderWriter"],"trait":["StrConsumer"]};
+window.SIDEBAR_ITEMS = {"struct":["EncoderStringWriter","EncoderWriter"],"trait":["StrConsumer"]};

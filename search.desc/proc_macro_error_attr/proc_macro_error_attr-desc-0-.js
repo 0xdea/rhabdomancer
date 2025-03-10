@@ -1,1 +1,1 @@
-searchState.loadedDescShard("proc_macro_error_attr", 0, "This is <code>#[proc_macro_error]</code> attribute to be used with …\nContains the error value\nContains the success value\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nReturns the argument unchanged.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nCalls <code>U::from(self)</code>.")
+searchState.loadedDescShard("proc_macro_error_attr", 0, "This is <code>#[proc_macro_error]</code> attribute to be used with …")

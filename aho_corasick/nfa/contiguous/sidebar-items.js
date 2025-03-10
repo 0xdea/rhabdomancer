@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["StateTrans"],"fn":["u32_len"],"struct":["Builder","NFA","State"]};
+window.SIDEBAR_ITEMS = {"struct":["Builder","NFA"]};

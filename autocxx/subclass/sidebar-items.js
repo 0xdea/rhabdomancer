@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["is_subclass","subclass"],"fn":["make_owning_peer"],"mod":["prelude"],"trait":["CppPeerConstructor","CppSubclass","CppSubclassDefault","CppSubclassSelfOwned","CppSubclassSelfOwnedDefault"]};
+window.SIDEBAR_ITEMS = {"attr":["is_subclass","subclass"],"mod":["prelude"],"trait":["CppPeerConstructor","CppSubclass","CppSubclassDefault","CppSubclassSelfOwned","CppSubclassSelfOwnedDefault"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Offset","Value"],"macro":["impl_into_value"],"struct":["Date","Datetime","DatetimeOrTable","DatetimeParseError","MapDeserializer","MapEnumDeserializer","SeqDeserializer","SerializeMap","TableSerializer","Time","ValueSerializeMap","ValueSerializeVariant","ValueSerializeVec","ValueSerializer"],"trait":["Index"],"type":["Array","ValueSerializeStructVariant","ValueSerializeTupleVariant"]};
+window.SIDEBAR_ITEMS = {"enum":["Offset","Value"],"struct":["Date","Datetime","DatetimeParseError","Time"],"trait":["Index"],"type":["Array"]};

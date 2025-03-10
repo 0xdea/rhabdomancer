@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["DEAD"],"mod":["onepass","remapper"]};
+window.SIDEBAR_ITEMS = {"mod":["onepass"]};

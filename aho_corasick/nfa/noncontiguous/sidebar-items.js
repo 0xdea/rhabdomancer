@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Builder","Compiler","Match","NFA","QueuedSet","State","Transition"]};
+window.SIDEBAR_ITEMS = {"struct":["Builder","NFA"]};

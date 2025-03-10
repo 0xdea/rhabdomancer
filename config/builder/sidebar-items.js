@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["SourceType"],"struct":["AsyncState","ConfigBuilder","DefaultState"],"trait":["BuilderState"]};
+window.SIDEBAR_ITEMS = {"struct":["AsyncState","ConfigBuilder","DefaultState"],"trait":["BuilderState"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["bitflags","bitflags_match"],"mod":["external","internal","iter","parser","public","serde","traits"],"struct":["Flag"],"trait":["Bits","Flags"]};
+window.SIDEBAR_ITEMS = {"macro":["bitflags","bitflags_match"],"mod":["iter","parser","serde"],"struct":["Flag"],"trait":["Bits","Flags"]};

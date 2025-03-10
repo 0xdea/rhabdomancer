@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["inner"],"struct":["Pool","PoolGuard"]};
+window.SIDEBAR_ITEMS = {"struct":["Pool","PoolGuard"]};

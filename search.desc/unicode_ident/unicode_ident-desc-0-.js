@@ -1,1 +1,1 @@
-searchState.loadedDescShard("unicode_ident", 0, "github crates-io docs-rs\nWhether the character has the Unicode property XID…\nWhether the character has the Unicode property XID_Start.\nReturns the argument unchanged.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nCalls <code>U::from(self)</code>.")
+searchState.loadedDescShard("unicode_ident", 0, "github crates-io docs-rs\nWhether the character has the Unicode property XID…\nWhether the character has the Unicode property XID_Start.")

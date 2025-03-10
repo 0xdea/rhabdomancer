@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["sparse_iter"],"struct":["Builder","DFA"]};
+window.SIDEBAR_ITEMS = {"struct":["Builder","DFA"]};

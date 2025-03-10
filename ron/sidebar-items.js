@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["de","error","extensions","options","parse","ser","value"]};
+window.SIDEBAR_ITEMS = {"mod":["de","error","extensions","options","ser","value"]};

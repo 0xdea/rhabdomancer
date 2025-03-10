@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["INVALID_VALUE","NO_PAD","PAD","STANDARD","STANDARD_NO_PAD","URL_SAFE","URL_SAFE_NO_PAD"],"fn":["decode_table","encode_table","read_u64"],"mod":["decode","decode_suffix"],"struct":["GeneralPurpose","GeneralPurposeConfig"]};
+window.SIDEBAR_ITEMS = {"constant":["NO_PAD","PAD","STANDARD","STANDARD_NO_PAD","URL_SAFE","URL_SAFE_NO_PAD"],"struct":["GeneralPurpose","GeneralPurposeConfig"]};

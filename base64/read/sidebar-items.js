@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["decoder"],"struct":["DecoderReader"]};
+window.SIDEBAR_ITEMS = {"struct":["DecoderReader"]};

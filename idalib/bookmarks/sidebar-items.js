@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["BOOKMARKS_BAD_INDEX"],"struct":["Bookmarks"],"type":["BookmarkIndex"]};
+window.SIDEBAR_ITEMS = {"struct":["Bookmarks"],"type":["BookmarkIndex"]};

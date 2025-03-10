@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Number","Value"],"struct":["Float","Map","MapAccessor","Seq"],"type":["MapInner"]};
+window.SIDEBAR_ITEMS = {"enum":["Number","Value"],"struct":["Float","Map"]};

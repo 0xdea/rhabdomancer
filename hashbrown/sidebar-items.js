@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["DefaultHashBuilder","TryReserveError"],"mod":["control","external_trait_impls","hash_map","hash_set","hash_table","macros","map","raw","scopeguard","set","table","util"],"struct":["HashMap","HashSet","HashTable"],"trait":["Equivalent"]};
+window.SIDEBAR_ITEMS = {"enum":["TryReserveError"],"mod":["hash_map","hash_set","hash_table"],"struct":["HashMap","HashSet","HashTable"],"trait":["Equivalent"],"type":["DefaultHashBuilder"]};

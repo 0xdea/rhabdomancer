@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["TryReserveErrorKind"],"macro":["indexmap","indexset"],"mod":["arbitrary","macros","map","set","util"],"struct":["Bucket","HashValue","TryReserveError"],"trait":["Entries","Equivalent"]};
+window.SIDEBAR_ITEMS = {"macro":["indexmap","indexset"],"mod":["map","set"],"struct":["TryReserveError"],"trait":["Equivalent"]};

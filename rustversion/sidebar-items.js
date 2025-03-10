@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["all","any","attr","before","beta","nightly","not","since","stable"],"constant":["RUSTVERSION"],"macro":["cfg"],"mod":["attr","bound","constfn","date","error","expand","expr","iter","release","time","token","version"]};
+window.SIDEBAR_ITEMS = {"attr":["all","any","attr","before","beta","nightly","not","since","stable"],"macro":["cfg"]};
