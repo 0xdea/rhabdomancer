@@ -45,15 +45,13 @@ The easiest way to get the latest release is via [crates.io](https://crates.io/c
 
 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
-3. Install rhabdomancer as follows:
+3. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
+4. Install rhabdomancer as follows:
     ```sh
     $ export IDASDKDIR=/path/to/idasdk
     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
     $ cargo install rhabdomancer
     ```
-
-*Note: in addition to the latest IDA SDK and IDA Pro itself, a recent version of LLVM/Clang is required
-(see [idalib](https://github.com/binarly-io/idalib) documentation).*
 
 ## Compiling
 
@@ -61,7 +59,8 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 
 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
-3. Compile rhabdomancer as follows:
+3. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
+4. Compile rhabdomancer as follows:
     ```sh
     $ git clone --depth 1 https://github.com/0xdea/rhabdomancer
     $ cd rhabdomancer
@@ -69,9 +68,6 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
     $ cargo build --release
     ```
-
-*Note: in addition to the latest IDA SDK and IDA Pro itself, a recent version of LLVM/Clang is required
-(see [idalib](https://github.com/binarly-io/idalib) documentation).*
 
 ## Usage
 

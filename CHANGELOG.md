@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Update documentation to clarify LLVM/Clang requirement.
 * Update dependencies.
 
 ## [0.5.1] - 2025-03-10
