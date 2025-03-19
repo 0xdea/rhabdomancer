@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/foldhash-0.1.4/src/convenience.rs`."><title>convenience.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="foldhash" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">foldhash/</div>convenience.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/foldhash-0.1.5/src/convenience.rs`."><title>convenience.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="foldhash" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../../static.files/src-script-56102188.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">foldhash/</div>convenience.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -63,7 +63,15 @@
 <a href="#62" id="62">62</a>
 <a href="#63" id="63">63</a>
 <a href="#64" id="64">64</a>
-<a href="#65" id="65">65</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::fast::{FixedState, RandomState};
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::fast::{FixedState, RandomState};
 
 <span class="doccomment">/// Type alias for [`std::collections::HashMap&lt;K, V, foldhash::fast::RandomState&gt;`].
 </span><span class="kw">pub type </span>HashMap&lt;K, V&gt; = std::collections::HashMap&lt;K, V, RandomState&gt;;
@@ -81,21 +89,25 @@
 }
 
 <span class="kw">impl</span>&lt;K, V&gt; HashMapExt <span class="kw">for </span>std::collections::HashMap&lt;K, V, RandomState&gt; {
-    <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::with_hasher(RandomState::default())
     }
 
-    <span class="kw">fn </span>with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::with_capacity_and_hasher(capacity, RandomState::default())
     }
 }
 
 <span class="kw">impl</span>&lt;K, V&gt; HashMapExt <span class="kw">for </span>std::collections::HashMap&lt;K, V, FixedState&gt; {
-    <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::with_hasher(FixedState::default())
     }
 
-    <span class="kw">fn </span>with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::with_capacity_and_hasher(capacity, FixedState::default())
     }
 }
@@ -110,21 +122,25 @@
 }
 
 <span class="kw">impl</span>&lt;T&gt; HashSetExt <span class="kw">for </span>std::collections::HashSet&lt;T, RandomState&gt; {
-    <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::with_hasher(RandomState::default())
     }
 
-    <span class="kw">fn </span>with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::with_capacity_and_hasher(capacity, RandomState::default())
     }
 }
 
 <span class="kw">impl</span>&lt;T&gt; HashSetExt <span class="kw">for </span>std::collections::HashSet&lt;T, FixedState&gt; {
-    <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::with_hasher(FixedState::default())
     }
 
-    <span class="kw">fn </span>with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::with_capacity_and_hasher(capacity, FixedState::default())
     }
 }

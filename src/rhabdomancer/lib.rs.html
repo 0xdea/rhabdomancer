@@ -332,7 +332,16 @@
 <a href="#331" id="331">331</a>
 <a href="#332" id="332">332</a>
 <a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a></pre></div><pre class="rust"><code><span class="doccomment">//!
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a></pre></div><pre class="rust"><code><span class="doccomment">//!
 //! rhabdomancer - IDA Pro vulnerability research assistant
 //! Copyright (c) 2024-2025 Marco Ivaldi &lt;raptor@0xdeadbeef.info&gt;
 //!
@@ -367,38 +376,52 @@
 //! The easiest way to get the latest release is via [crates.io](https://crates.io/crates/rhabdomancer):
 //! 1. Download, install, and configure IDA Pro (see &lt;https://hex-rays.com/ida-pro&gt;).
 //! 2. Download and extract the IDA SDK (see &lt;https://docs.hex-rays.com/developer-guide&gt;).
-//! 3. Install rhabdomancer as follows:
+//! 3. Install LLVM/Clang (see &lt;https://rust-lang.github.io/rust-bindgen/requirements.html&gt;).
+//! 4. On Linux/macOS, install as follows:
 //!     ```sh
-//!     $ export IDASDKDIR=/path/to/idasdk
-//!     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
-//!     $ cargo install rhabdomancer
+//!     export IDASDKDIR=/path/to/idasdk
+//!     export IDADIR=/path/to/ida # if not set, the build script will check common locations
+//!     cargo install rhabdomancer
 //!     ```
-//!
-//! *Note: in addition to the latest IDA SDK and IDA Pro itself, a recent version of LLVM/Clang is required
-//! (see [idalib](https://github.com/binarly-io/idalib) documentation).*
+//!    On Windows, instead, use the following commands:
+//!     ```powershell
+//!     $env:LIBCLANG_PATH="\path\to\clang+llvm\bin"
+//!     $env:PATH="\path\to\ida;$env:PATH"
+//!     $env:IDASDKDIR="\path\to\idasdk"
+//!     $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
+//!     cargo install rhabdomancer
+//!     ```
 //!
 //! ## Compiling
 //! Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer):
 //! 1. Download, install, and configure IDA Pro (see &lt;https://hex-rays.com/ida-pro&gt;).
 //! 2. Download and extract the IDA SDK (see &lt;https://docs.hex-rays.com/developer-guide&gt;).
-//! 3. Compile rhabdomancer as follows:
+//! 3. Install LLVM/Clang (see &lt;https://rust-lang.github.io/rust-bindgen/requirements.html&gt;).
+//! 4. On Linux/macOS, compile as follows:
 //!     ```sh
-//!     $ git clone --depth 1 https://github.com/0xdea/rhabdomancer
-//!     $ cd rhabdomancer
-//!     $ export IDASDKDIR=/path/to/idasdk # or edit .cargo/config.toml
-//!     $ export IDADIR=/path/to/ida # if not set, the build script will check common locations
-//!     $ cargo build --release
+//!     git clone --depth 1 https://github.com/0xdea/rhabdomancer
+//!     cd rhabdomancer
+//!     export IDASDKDIR=/path/to/idasdk # or edit .cargo/config.toml
+//!     export IDADIR=/path/to/ida # if not set, the build script will check common locations
+//!     cargo build --release
 //!     ```
-//!
-//! *Note: in addition to the latest IDA SDK and IDA Pro itself, a recent version of LLVM/Clang is required
-//! (see [idalib](https://github.com/binarly-io/idalib) documentation).*
+//!    On Windows, instead, use the following commands:
+//!     ```powershell
+//!     git clone --depth 1 https://github.com/0xdea/rhabdomancer
+//!     cd rhabdomancer
+//!     $env:LIBCLANG_PATH="\path\to\clang+llvm\bin"
+//!     $env:PATH="\path\to\ida;$env:PATH"
+//!     $env:IDASDKDIR="\path\to\idasdk"
+//!     $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
+//!     cargo install rhabdomancer
+//!     ```
 //!
 //! ## Usage
 //! 1. Make sure IDA Pro is properly configured with a valid license.
 //! 2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed.
 //! 3. Run rhabdomancer as follows:
 //!     ```sh
-//!     $ rhabdomancer &lt;binary_file&gt;
+//!     rhabdomancer &lt;binary_file&gt;
 //!     ```
 //!    Any existing `.i64` IDB file will be updated; otherwise, a new IDB file will be created.
 //! 4. Open the resulting `.i64` IDB file with IDA Pro.
@@ -412,14 +435,12 @@
 //! * IDA Pro 9.0.241217 - Latest compatible: v0.3.5.
 //! * IDA Pro 9.1.250226 - Latest compatible: current version.
 //!
-//! *Note: only the `unix` target family is currently supported, check [idalib](https://github.com/binarly-io/idalib)
-//! documentation if you're interested in a `windows` port.*
+//! *Note: check [idalib](https://github.com/binarly-io/idalib) documentation for additional information.*
 //!
 //! ## Changelog
 //! * &lt;https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md&gt;
 //!
 //! ## TODO
-//! * Implement support for the `windows` target family.
 //! * Enrich the known bad API function list (see &lt;https://github.com/0xdea/semgrep-rules&gt;).
 //! * Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
 //!   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
@@ -427,10 +448,7 @@
 
 </span><span class="attr">#![doc(html_logo_url = <span class="string">"https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png"</span>)]
 
-#[cfg(not(unix))]
-</span><span class="macro">compile_error!</span>(<span class="string">"only the `unix` target family is currently supported"</span>);
-
-<span class="kw">use </span>std::collections::BTreeMap;
+</span><span class="kw">use </span>std::collections::BTreeMap;
 <span class="kw">use </span>std::env;
 <span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>std::sync::atomic::{AtomicU32, Ordering};

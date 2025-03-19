@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.170/src/unix/linux_like/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="libc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../../static.files/storage-59e33391.js"></script><script defer src="../../../../static.files/src-script-56102188.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">libc/unix/linux_like/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.171/src/unix/linux_like/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="libc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../../static.files/storage-59e33391.js"></script><script defer src="../../../../static.files/src-script-56102188.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">libc/unix/linux_like/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -2032,7 +2032,11 @@
 <a href="#2031" id="2031">2031</a>
 <a href="#2032" id="2032">2032</a>
 <a href="#2033" id="2033">2033</a>
-<a href="#2034" id="2034">2034</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
+<a href="#2034" id="2034">2034</a>
+<a href="#2035" id="2035">2035</a>
+<a href="#2036" id="2036">2036</a>
+<a href="#2037" id="2037">2037</a>
+<a href="#2038" id="2038">2038</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">pub type </span>sa_family_t = u16;
 <span class="kw">pub type </span>speed_t = c_uint;
@@ -3327,9 +3331,17 @@
 </span><span class="kw">pub const </span>SI_USER: c_int = <span class="number">0</span>;
 <span class="kw">pub const </span>SI_KERNEL: c_int = <span class="number">0x80</span>;
 <span class="kw">pub const </span>SI_QUEUE: c_int = -<span class="number">1</span>;
-<span class="kw">pub const </span>SI_TIMER: c_int = -<span class="number">2</span>;
-<span class="kw">pub const </span>SI_MESGQ: c_int = -<span class="number">3</span>;
-<span class="kw">pub const </span>SI_ASYNCIO: c_int = -<span class="number">4</span>;
+<span class="macro">cfg_if!</span> {
+    <span class="kw">if </span><span class="attr">#[cfg(not(any(target_arch = <span class="string">"mips"</span>, target_arch = <span class="string">"mips32r6"</span>)))] </span>{
+        <span class="kw">pub const </span>SI_TIMER: c_int = -<span class="number">2</span>;
+        <span class="kw">pub const </span>SI_MESGQ: c_int = -<span class="number">3</span>;
+        <span class="kw">pub const </span>SI_ASYNCIO: c_int = -<span class="number">4</span>;
+    } <span class="kw">else </span>{
+        <span class="kw">pub const </span>SI_TIMER: c_int = -<span class="number">3</span>;
+        <span class="kw">pub const </span>SI_MESGQ: c_int = -<span class="number">4</span>;
+        <span class="kw">pub const </span>SI_ASYNCIO: c_int = -<span class="number">2</span>;
+    }
+}
 <span class="kw">pub const </span>SI_SIGIO: c_int = -<span class="number">5</span>;
 <span class="kw">pub const </span>SI_TKILL: c_int = -<span class="number">6</span>;
 <span class="kw">pub const </span>SI_ASYNCNL: c_int = -<span class="number">60</span>;
@@ -3782,11 +3794,7 @@
 
     <span class="attr">#[allow(ellipsis_inclusive_range_patterns)]
     </span><span class="kw">pub </span>{<span class="kw">const</span>} <span class="kw">fn </span>KERNEL_VERSION(a: u32, b: u32, c: u32) -&gt; u32 {
-        ((a &lt;&lt; <span class="number">16</span>) + (b &lt;&lt; <span class="number">8</span>))
-            + <span class="kw">match </span>c {
-                <span class="number">0</span>..=<span class="number">255 </span>=&gt; c,
-                <span class="kw">_ </span>=&gt; <span class="number">255</span>,
-            }
+        ((a &lt;&lt; <span class="number">16</span>) + (b &lt;&lt; <span class="number">8</span>)) + <span class="kw">if </span>c &gt; <span class="number">255 </span>{ <span class="number">255 </span>} <span class="kw">else </span>{ c }
     }
 }
 

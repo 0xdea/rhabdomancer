@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.170/src/unix/linux_like/linux/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="libc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../../../static.files/storage-59e33391.js"></script><script defer src="../../../../../static.files/src-script-56102188.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">libc/unix/linux_like/linux/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.171/src/unix/linux_like/linux/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="libc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../../../static.files/storage-59e33391.js"></script><script defer src="../../../../../static.files/src-script-56102188.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">libc/unix/linux_like/linux/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -6817,7 +6817,148 @@
 <a href="#6816" id="6816">6816</a>
 <a href="#6817" id="6817">6817</a>
 <a href="#6818" id="6818">6818</a>
-<a href="#6819" id="6819">6819</a></pre></div><pre class="rust"><code><span class="doccomment">//! Linux-specific definitions for linux-like values
+<a href="#6819" id="6819">6819</a>
+<a href="#6820" id="6820">6820</a>
+<a href="#6821" id="6821">6821</a>
+<a href="#6822" id="6822">6822</a>
+<a href="#6823" id="6823">6823</a>
+<a href="#6824" id="6824">6824</a>
+<a href="#6825" id="6825">6825</a>
+<a href="#6826" id="6826">6826</a>
+<a href="#6827" id="6827">6827</a>
+<a href="#6828" id="6828">6828</a>
+<a href="#6829" id="6829">6829</a>
+<a href="#6830" id="6830">6830</a>
+<a href="#6831" id="6831">6831</a>
+<a href="#6832" id="6832">6832</a>
+<a href="#6833" id="6833">6833</a>
+<a href="#6834" id="6834">6834</a>
+<a href="#6835" id="6835">6835</a>
+<a href="#6836" id="6836">6836</a>
+<a href="#6837" id="6837">6837</a>
+<a href="#6838" id="6838">6838</a>
+<a href="#6839" id="6839">6839</a>
+<a href="#6840" id="6840">6840</a>
+<a href="#6841" id="6841">6841</a>
+<a href="#6842" id="6842">6842</a>
+<a href="#6843" id="6843">6843</a>
+<a href="#6844" id="6844">6844</a>
+<a href="#6845" id="6845">6845</a>
+<a href="#6846" id="6846">6846</a>
+<a href="#6847" id="6847">6847</a>
+<a href="#6848" id="6848">6848</a>
+<a href="#6849" id="6849">6849</a>
+<a href="#6850" id="6850">6850</a>
+<a href="#6851" id="6851">6851</a>
+<a href="#6852" id="6852">6852</a>
+<a href="#6853" id="6853">6853</a>
+<a href="#6854" id="6854">6854</a>
+<a href="#6855" id="6855">6855</a>
+<a href="#6856" id="6856">6856</a>
+<a href="#6857" id="6857">6857</a>
+<a href="#6858" id="6858">6858</a>
+<a href="#6859" id="6859">6859</a>
+<a href="#6860" id="6860">6860</a>
+<a href="#6861" id="6861">6861</a>
+<a href="#6862" id="6862">6862</a>
+<a href="#6863" id="6863">6863</a>
+<a href="#6864" id="6864">6864</a>
+<a href="#6865" id="6865">6865</a>
+<a href="#6866" id="6866">6866</a>
+<a href="#6867" id="6867">6867</a>
+<a href="#6868" id="6868">6868</a>
+<a href="#6869" id="6869">6869</a>
+<a href="#6870" id="6870">6870</a>
+<a href="#6871" id="6871">6871</a>
+<a href="#6872" id="6872">6872</a>
+<a href="#6873" id="6873">6873</a>
+<a href="#6874" id="6874">6874</a>
+<a href="#6875" id="6875">6875</a>
+<a href="#6876" id="6876">6876</a>
+<a href="#6877" id="6877">6877</a>
+<a href="#6878" id="6878">6878</a>
+<a href="#6879" id="6879">6879</a>
+<a href="#6880" id="6880">6880</a>
+<a href="#6881" id="6881">6881</a>
+<a href="#6882" id="6882">6882</a>
+<a href="#6883" id="6883">6883</a>
+<a href="#6884" id="6884">6884</a>
+<a href="#6885" id="6885">6885</a>
+<a href="#6886" id="6886">6886</a>
+<a href="#6887" id="6887">6887</a>
+<a href="#6888" id="6888">6888</a>
+<a href="#6889" id="6889">6889</a>
+<a href="#6890" id="6890">6890</a>
+<a href="#6891" id="6891">6891</a>
+<a href="#6892" id="6892">6892</a>
+<a href="#6893" id="6893">6893</a>
+<a href="#6894" id="6894">6894</a>
+<a href="#6895" id="6895">6895</a>
+<a href="#6896" id="6896">6896</a>
+<a href="#6897" id="6897">6897</a>
+<a href="#6898" id="6898">6898</a>
+<a href="#6899" id="6899">6899</a>
+<a href="#6900" id="6900">6900</a>
+<a href="#6901" id="6901">6901</a>
+<a href="#6902" id="6902">6902</a>
+<a href="#6903" id="6903">6903</a>
+<a href="#6904" id="6904">6904</a>
+<a href="#6905" id="6905">6905</a>
+<a href="#6906" id="6906">6906</a>
+<a href="#6907" id="6907">6907</a>
+<a href="#6908" id="6908">6908</a>
+<a href="#6909" id="6909">6909</a>
+<a href="#6910" id="6910">6910</a>
+<a href="#6911" id="6911">6911</a>
+<a href="#6912" id="6912">6912</a>
+<a href="#6913" id="6913">6913</a>
+<a href="#6914" id="6914">6914</a>
+<a href="#6915" id="6915">6915</a>
+<a href="#6916" id="6916">6916</a>
+<a href="#6917" id="6917">6917</a>
+<a href="#6918" id="6918">6918</a>
+<a href="#6919" id="6919">6919</a>
+<a href="#6920" id="6920">6920</a>
+<a href="#6921" id="6921">6921</a>
+<a href="#6922" id="6922">6922</a>
+<a href="#6923" id="6923">6923</a>
+<a href="#6924" id="6924">6924</a>
+<a href="#6925" id="6925">6925</a>
+<a href="#6926" id="6926">6926</a>
+<a href="#6927" id="6927">6927</a>
+<a href="#6928" id="6928">6928</a>
+<a href="#6929" id="6929">6929</a>
+<a href="#6930" id="6930">6930</a>
+<a href="#6931" id="6931">6931</a>
+<a href="#6932" id="6932">6932</a>
+<a href="#6933" id="6933">6933</a>
+<a href="#6934" id="6934">6934</a>
+<a href="#6935" id="6935">6935</a>
+<a href="#6936" id="6936">6936</a>
+<a href="#6937" id="6937">6937</a>
+<a href="#6938" id="6938">6938</a>
+<a href="#6939" id="6939">6939</a>
+<a href="#6940" id="6940">6940</a>
+<a href="#6941" id="6941">6941</a>
+<a href="#6942" id="6942">6942</a>
+<a href="#6943" id="6943">6943</a>
+<a href="#6944" id="6944">6944</a>
+<a href="#6945" id="6945">6945</a>
+<a href="#6946" id="6946">6946</a>
+<a href="#6947" id="6947">6947</a>
+<a href="#6948" id="6948">6948</a>
+<a href="#6949" id="6949">6949</a>
+<a href="#6950" id="6950">6950</a>
+<a href="#6951" id="6951">6951</a>
+<a href="#6952" id="6952">6952</a>
+<a href="#6953" id="6953">6953</a>
+<a href="#6954" id="6954">6954</a>
+<a href="#6955" id="6955">6955</a>
+<a href="#6956" id="6956">6956</a>
+<a href="#6957" id="6957">6957</a>
+<a href="#6958" id="6958">6958</a>
+<a href="#6959" id="6959">6959</a>
+<a href="#6960" id="6960">6960</a></pre></div><pre class="rust"><code><span class="doccomment">//! Linux-specific definitions for linux-like values
 
 </span><span class="kw">use </span>core::mem::size_of;
 
@@ -7005,7 +7146,8 @@
         <span class="kw">pub </span>mr_address: [c_uchar; <span class="number">8</span>],
     }
 
-    <span class="kw">pub struct </span>sockaddr_pkt {
+    <span class="attr">#[deprecated(since = <span class="string">"0.2.70"</span>, note = <span class="string">"sockaddr_ll type must be used instead"</span>)]
+    </span><span class="kw">pub struct </span>sockaddr_pkt {
         <span class="kw">pub </span>spkt_family: c_ushort,
         <span class="kw">pub </span>spkt_device: [c_uchar; <span class="number">14</span>],
         <span class="kw">pub </span>spkt_protocol: c_ushort,
@@ -8044,7 +8186,84 @@
     }
 
     <span class="comment">// linux/if_xdp.h
-    </span><span class="kw">pub struct </span>xsk_tx_metadata_completion {
+
+    </span><span class="kw">pub struct </span>sockaddr_xdp {
+        <span class="kw">pub </span>sxdp_family: <span class="kw">crate</span>::__u16,
+        <span class="kw">pub </span>sxdp_flags: <span class="kw">crate</span>::__u16,
+        <span class="kw">pub </span>sxdp_ifindex: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>sxdp_queue_id: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>sxdp_shared_umem_fd: <span class="kw">crate</span>::__u32,
+    }
+
+    <span class="kw">pub struct </span>xdp_ring_offset {
+        <span class="kw">pub </span>producer: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>consumer: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>desc: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>flags: <span class="kw">crate</span>::__u64,
+    }
+
+    <span class="kw">pub struct </span>xdp_mmap_offsets {
+        <span class="kw">pub </span>rx: xdp_ring_offset,
+        <span class="kw">pub </span>tx: xdp_ring_offset,
+        <span class="kw">pub </span>fr: xdp_ring_offset,
+        <span class="kw">pub </span>cr: xdp_ring_offset,
+    }
+
+    <span class="kw">pub struct </span>xdp_ring_offset_v1 {
+        <span class="kw">pub </span>producer: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>consumer: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>desc: <span class="kw">crate</span>::__u64,
+    }
+
+    <span class="kw">pub struct </span>xdp_mmap_offsets_v1 {
+        <span class="kw">pub </span>rx: xdp_ring_offset_v1,
+        <span class="kw">pub </span>tx: xdp_ring_offset_v1,
+        <span class="kw">pub </span>fr: xdp_ring_offset_v1,
+        <span class="kw">pub </span>cr: xdp_ring_offset_v1,
+    }
+
+    <span class="kw">pub struct </span>xdp_umem_reg {
+        <span class="kw">pub </span>addr: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>len: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>chunk_size: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>headroom: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>flags: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>tx_metadata_len: <span class="kw">crate</span>::__u32,
+    }
+
+    <span class="kw">pub struct </span>xdp_umem_reg_v1 {
+        <span class="kw">pub </span>addr: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>len: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>chunk_size: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>headroom: <span class="kw">crate</span>::__u32,
+    }
+
+    <span class="kw">pub struct </span>xdp_statistics {
+        <span class="kw">pub </span>rx_dropped: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>rx_invalid_descs: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>tx_invalid_descs: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>rx_ring_full: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>rx_fill_ring_empty_descs: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>tx_ring_empty_descs: <span class="kw">crate</span>::__u64,
+    }
+
+    <span class="kw">pub struct </span>xdp_statistics_v1 {
+        <span class="kw">pub </span>rx_dropped: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>rx_invalid_descs: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>tx_invalid_descs: <span class="kw">crate</span>::__u64,
+    }
+
+    <span class="kw">pub struct </span>xdp_options {
+        <span class="kw">pub </span>flags: <span class="kw">crate</span>::__u32,
+    }
+
+    <span class="kw">pub struct </span>xdp_desc {
+        <span class="kw">pub </span>addr: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>len: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>options: <span class="kw">crate</span>::__u32,
+    }
+
+    <span class="kw">pub struct </span>xsk_tx_metadata_completion {
         <span class="kw">pub </span>tx_timestamp: <span class="kw">crate</span>::__u64,
     }
 
@@ -8060,6 +8279,21 @@
         <span class="kw">pub </span>attr_clr: <span class="kw">crate</span>::__u64,
         <span class="kw">pub </span>propagation: <span class="kw">crate</span>::__u64,
         <span class="kw">pub </span>userns_fd: <span class="kw">crate</span>::__u64,
+    }
+
+    <span class="comment">// linux/uio.h
+
+    </span><span class="kw">pub struct </span>dmabuf_cmsg {
+        <span class="kw">pub </span>frag_offset: <span class="kw">crate</span>::__u64,
+        <span class="kw">pub </span>frag_size: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>frag_token: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>dmabuf_id: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>flags: <span class="kw">crate</span>::__u32,
+    }
+
+    <span class="kw">pub struct </span>dmabuf_token {
+        <span class="kw">pub </span>token_start: <span class="kw">crate</span>::__u32,
+        <span class="kw">pub </span>token_count: <span class="kw">crate</span>::__u32,
     }
 }
 
@@ -9511,6 +9745,7 @@
 <span class="kw">pub const </span>F_ULOCK: c_int = <span class="number">0</span>;
 
 <span class="kw">pub const </span>F_SEAL_FUTURE_WRITE: c_int = <span class="number">0x0010</span>;
+<span class="kw">pub const </span>F_SEAL_EXEC: c_int = <span class="number">0x0020</span>;
 
 <span class="kw">pub const </span>IFF_LOWER_UP: c_int = <span class="number">0x10000</span>;
 <span class="kw">pub const </span>IFF_DORMANT: c_int = <span class="number">0x20000</span>;
@@ -9758,6 +9993,19 @@
 <span class="kw">pub const </span>MSG_NOERROR: c_int = <span class="number">0o10000</span>;
 <span class="kw">pub const </span>MSG_EXCEPT: c_int = <span class="number">0o20000</span>;
 <span class="kw">pub const </span>MSG_ZEROCOPY: c_int = <span class="number">0x4000000</span>;
+
+<span class="kw">pub const </span>SEM_UNDO: c_int = <span class="number">0x1000</span>;
+
+<span class="kw">pub const </span>GETPID: c_int = <span class="number">11</span>;
+<span class="kw">pub const </span>GETVAL: c_int = <span class="number">12</span>;
+<span class="kw">pub const </span>GETALL: c_int = <span class="number">13</span>;
+<span class="kw">pub const </span>GETNCNT: c_int = <span class="number">14</span>;
+<span class="kw">pub const </span>GETZCNT: c_int = <span class="number">15</span>;
+<span class="kw">pub const </span>SETVAL: c_int = <span class="number">16</span>;
+<span class="kw">pub const </span>SETALL: c_int = <span class="number">17</span>;
+<span class="kw">pub const </span>SEM_STAT: c_int = <span class="number">18</span>;
+<span class="kw">pub const </span>SEM_INFO: c_int = <span class="number">19</span>;
+<span class="kw">pub const </span>SEM_STAT_ANY: c_int = <span class="number">20</span>;
 
 <span class="kw">pub const </span>SHM_R: c_int = <span class="number">0o400</span>;
 <span class="kw">pub const </span>SHM_W: c_int = <span class="number">0o200</span>;
@@ -12490,13 +12738,47 @@
 <span class="kw">pub const </span>SCHED_FLAG_UTIL_CLAMP_MAX: c_int = <span class="number">0x40</span>;
 
 <span class="comment">// linux/if_xdp.h
-</span><span class="kw">pub const </span>XDP_UMEM_TX_SW_CSUM: __u32 = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
-<span class="kw">pub const </span>XDP_UMEM_TX_METADATA_LEN: __u32 = <span class="number">1 </span>&lt;&lt; <span class="number">2</span>;
+</span><span class="kw">pub const </span>XDP_SHARED_UMEM: <span class="kw">crate</span>::__u16 = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
+<span class="kw">pub const </span>XDP_COPY: <span class="kw">crate</span>::__u16 = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
+<span class="kw">pub const </span>XDP_ZEROCOPY: <span class="kw">crate</span>::__u16 = <span class="number">1 </span>&lt;&lt; <span class="number">2</span>;
+<span class="kw">pub const </span>XDP_USE_NEED_WAKEUP: <span class="kw">crate</span>::__u16 = <span class="number">1 </span>&lt;&lt; <span class="number">3</span>;
+<span class="kw">pub const </span>XDP_USE_SG: <span class="kw">crate</span>::__u16 = <span class="number">1 </span>&lt;&lt; <span class="number">4</span>;
 
-<span class="kw">pub const </span>XDP_TXMD_FLAGS_TIMESTAMP: __u32 = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
-<span class="kw">pub const </span>XDP_TXMD_FLAGS_CHECKSUM: __u32 = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
+<span class="kw">pub const </span>XDP_UMEM_UNALIGNED_CHUNK_FLAG: <span class="kw">crate</span>::__u32 = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
 
-<span class="kw">pub const </span>XDP_TX_METADATA: __u32 = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
+<span class="kw">pub const </span>XDP_RING_NEED_WAKEUP: <span class="kw">crate</span>::__u32 = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
+
+<span class="kw">pub const </span>XDP_MMAP_OFFSETS: c_int = <span class="number">1</span>;
+<span class="kw">pub const </span>XDP_RX_RING: c_int = <span class="number">2</span>;
+<span class="kw">pub const </span>XDP_TX_RING: c_int = <span class="number">3</span>;
+<span class="kw">pub const </span>XDP_UMEM_REG: c_int = <span class="number">4</span>;
+<span class="kw">pub const </span>XDP_UMEM_FILL_RING: c_int = <span class="number">5</span>;
+<span class="kw">pub const </span>XDP_UMEM_COMPLETION_RING: c_int = <span class="number">6</span>;
+<span class="kw">pub const </span>XDP_STATISTICS: c_int = <span class="number">7</span>;
+<span class="kw">pub const </span>XDP_OPTIONS: c_int = <span class="number">8</span>;
+
+<span class="kw">pub const </span>XDP_OPTIONS_ZEROCOPY: <span class="kw">crate</span>::__u32 = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
+
+<span class="kw">pub const </span>XDP_PGOFF_RX_RING: <span class="kw">crate</span>::off_t = <span class="number">0</span>;
+<span class="kw">pub const </span>XDP_PGOFF_TX_RING: <span class="kw">crate</span>::off_t = <span class="number">0x80000000</span>;
+<span class="kw">pub const </span>XDP_UMEM_PGOFF_FILL_RING: <span class="kw">crate</span>::c_ulonglong = <span class="number">0x100000000</span>;
+<span class="kw">pub const </span>XDP_UMEM_PGOFF_COMPLETION_RING: <span class="kw">crate</span>::c_ulonglong = <span class="number">0x180000000</span>;
+
+<span class="kw">pub const </span>XSK_UNALIGNED_BUF_OFFSET_SHIFT: <span class="kw">crate</span>::c_int = <span class="number">48</span>;
+<span class="kw">pub const </span>XSK_UNALIGNED_BUF_ADDR_MASK: <span class="kw">crate</span>::c_ulonglong =
+    (<span class="number">1 </span>&lt;&lt; XSK_UNALIGNED_BUF_OFFSET_SHIFT) - <span class="number">1</span>;
+
+<span class="kw">pub const </span>XDP_PKT_CONTD: <span class="kw">crate</span>::__u32 = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
+
+<span class="kw">pub const </span>XDP_UMEM_TX_SW_CSUM: <span class="kw">crate</span>::__u32 = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
+<span class="kw">pub const </span>XDP_UMEM_TX_METADATA_LEN: <span class="kw">crate</span>::__u32 = <span class="number">1 </span>&lt;&lt; <span class="number">2</span>;
+
+<span class="kw">pub const </span>XDP_TXMD_FLAGS_TIMESTAMP: <span class="kw">crate</span>::__u32 = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
+<span class="kw">pub const </span>XDP_TXMD_FLAGS_CHECKSUM: <span class="kw">crate</span>::__u32 = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
+
+<span class="kw">pub const </span>XDP_TX_METADATA: <span class="kw">crate</span>::__u32 = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
+
+<span class="kw">pub const </span>SOL_XDP: c_int = <span class="number">283</span>;
 
 <span class="comment">// linux/mount.h
 </span><span class="kw">pub const </span>MOUNT_ATTR_RDONLY: <span class="kw">crate</span>::__u64 = <span class="number">0x00000001</span>;
@@ -12713,20 +12995,6 @@
         ()
     }
 
-    <span class="kw">pub fn </span>major(dev: <span class="kw">crate</span>::dev_t) -&gt; c_uint {
-        <span class="kw">let </span><span class="kw-2">mut </span>major = <span class="number">0</span>;
-        major |= (dev &amp; <span class="number">0x00000000000fff00</span>) &gt;&gt; <span class="number">8</span>;
-        major |= (dev &amp; <span class="number">0xfffff00000000000</span>) &gt;&gt; <span class="number">32</span>;
-        major <span class="kw">as </span>c_uint
-    }
-
-    <span class="kw">pub fn </span>minor(dev: <span class="kw">crate</span>::dev_t) -&gt; c_uint {
-        <span class="kw">let </span><span class="kw-2">mut </span>minor = <span class="number">0</span>;
-        minor |= (dev &amp; <span class="number">0x00000000000000ff</span>) &gt;&gt; <span class="number">0</span>;
-        minor |= (dev &amp; <span class="number">0x00000ffffff00000</span>) &gt;&gt; <span class="number">12</span>;
-        minor <span class="kw">as </span>c_uint
-    }
-
     <span class="kw">pub fn </span>IPTOS_TOS(tos: u8) -&gt; u8 {
         tos &amp; IPTOS_TOS_MASK
     }
@@ -12816,6 +13084,20 @@
         dev |= (minor &amp; <span class="number">0x000000ff</span>) &lt;&lt; <span class="number">0</span>;
         dev |= (minor &amp; <span class="number">0xffffff00</span>) &lt;&lt; <span class="number">12</span>;
         dev
+    }
+
+    <span class="kw">pub </span>{<span class="kw">const</span>} <span class="kw">fn </span>major(dev: <span class="kw">crate</span>::dev_t) -&gt; c_uint {
+        <span class="kw">let </span><span class="kw-2">mut </span>major = <span class="number">0</span>;
+        major |= (dev &amp; <span class="number">0x00000000000fff00</span>) &gt;&gt; <span class="number">8</span>;
+        major |= (dev &amp; <span class="number">0xfffff00000000000</span>) &gt;&gt; <span class="number">32</span>;
+        major <span class="kw">as </span>c_uint
+    }
+
+    <span class="kw">pub </span>{<span class="kw">const</span>} <span class="kw">fn </span>minor(dev: <span class="kw">crate</span>::dev_t) -&gt; c_uint {
+        <span class="kw">let </span><span class="kw-2">mut </span>minor = <span class="number">0</span>;
+        minor |= (dev &amp; <span class="number">0x00000000000000ff</span>) &gt;&gt; <span class="number">0</span>;
+        minor |= (dev &amp; <span class="number">0x00000ffffff00000</span>) &gt;&gt; <span class="number">12</span>;
+        minor <span class="kw">as </span>c_uint
     }
 
     <span class="kw">pub </span>{<span class="kw">const</span>} <span class="kw">fn </span>SCTP_PR_TTL_ENABLED(policy: c_int) -&gt; bool {

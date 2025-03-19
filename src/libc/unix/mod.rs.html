@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.170/src/unix/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="libc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">libc/unix/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.171/src/unix/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="libc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0 (4d91de4e4 2025-02-17)" data-channel="1.85.0" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">libc/unix/</div>mod.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -1750,7 +1750,29 @@
 <a href="#1749" id="1749">1749</a>
 <a href="#1750" id="1750">1750</a>
 <a href="#1751" id="1751">1751</a>
-<a href="#1752" id="1752">1752</a></pre></div><pre class="rust"><code><span class="doccomment">//! Definitions found commonly among almost all Unix derivatives
+<a href="#1752" id="1752">1752</a>
+<a href="#1753" id="1753">1753</a>
+<a href="#1754" id="1754">1754</a>
+<a href="#1755" id="1755">1755</a>
+<a href="#1756" id="1756">1756</a>
+<a href="#1757" id="1757">1757</a>
+<a href="#1758" id="1758">1758</a>
+<a href="#1759" id="1759">1759</a>
+<a href="#1760" id="1760">1760</a>
+<a href="#1761" id="1761">1761</a>
+<a href="#1762" id="1762">1762</a>
+<a href="#1763" id="1763">1763</a>
+<a href="#1764" id="1764">1764</a>
+<a href="#1765" id="1765">1765</a>
+<a href="#1766" id="1766">1766</a>
+<a href="#1767" id="1767">1767</a>
+<a href="#1768" id="1768">1768</a>
+<a href="#1769" id="1769">1769</a>
+<a href="#1770" id="1770">1770</a>
+<a href="#1771" id="1771">1771</a>
+<a href="#1772" id="1772">1772</a>
+<a href="#1773" id="1773">1773</a>
+<a href="#1774" id="1774">1774</a></pre></div><pre class="rust"><code><span class="doccomment">//! Definitions found commonly among almost all Unix derivatives
 //!
 //! More functions and definitions can be found in the more specific modules
 //! according to the platform in question.
@@ -1887,7 +1909,8 @@
         </span><span class="kw">pub </span>ipv6mr_interface: c_uint,
     }
 
-    <span class="kw">pub struct </span>hostent {
+    <span class="attr">#[cfg(not(target_os = <span class="string">"cygwin"</span>))]
+    </span><span class="kw">pub struct </span>hostent {
         <span class="kw">pub </span>h_name: <span class="kw-2">*mut </span>c_char,
         <span class="kw">pub </span>h_aliases: <span class="kw-2">*mut *mut </span>c_char,
         <span class="kw">pub </span>h_addrtype: c_int,
@@ -1913,7 +1936,8 @@
         <span class="kw">pub </span>ws_ypixel: c_ushort,
     }
 
-    <span class="kw">pub struct </span>linger {
+    <span class="attr">#[cfg(not(target_os = <span class="string">"cygwin"</span>))]
+    </span><span class="kw">pub struct </span>linger {
         <span class="kw">pub </span>l_onoff: c_int,
         <span class="kw">pub </span>l_linger: c_int,
     }
@@ -1940,14 +1964,20 @@
     <span class="kw">pub struct </span>servent {
         <span class="kw">pub </span>s_name: <span class="kw-2">*mut </span>c_char,
         <span class="kw">pub </span>s_aliases: <span class="kw-2">*mut *mut </span>c_char,
-        <span class="kw">pub </span>s_port: c_int,
+        <span class="attr">#[cfg(target_os = <span class="string">"cygwin"</span>)]
+        </span><span class="kw">pub </span>s_port: c_short,
+        <span class="attr">#[cfg(not(target_os = <span class="string">"cygwin"</span>))]
+        </span><span class="kw">pub </span>s_port: c_int,
         <span class="kw">pub </span>s_proto: <span class="kw-2">*mut </span>c_char,
     }
 
     <span class="kw">pub struct </span>protoent {
         <span class="kw">pub </span>p_name: <span class="kw-2">*mut </span>c_char,
         <span class="kw">pub </span>p_aliases: <span class="kw-2">*mut *mut </span>c_char,
-        <span class="kw">pub </span>p_proto: c_int,
+        <span class="attr">#[cfg(not(target_os = <span class="string">"cygwin"</span>))]
+        </span><span class="kw">pub </span>p_proto: c_int,
+        <span class="attr">#[cfg(target_os = <span class="string">"cygwin"</span>)]
+        </span><span class="kw">pub </span>p_proto: c_short,
     }
 
     <span class="attr">#[repr(align(<span class="number">4</span>))]
@@ -1997,7 +2027,8 @@
     <span class="kw">if </span><span class="attr">#[cfg(not(any(
         target_os = <span class="string">"haiku"</span>,
         target_os = <span class="string">"illumos"</span>,
-        target_os = <span class="string">"solaris"
+        target_os = <span class="string">"solaris"</span>,
+        target_os = <span class="string">"cygwin"
     </span>)))] </span>{
         <span class="kw">pub const </span>IF_NAMESIZE: size_t = <span class="number">16</span>;
         <span class="kw">pub const </span>IFNAMSIZ: size_t = IF_NAMESIZE;
@@ -2122,8 +2153,13 @@
         <span class="comment">// cargo build, don't pull in anything extra as the std dep
         // already pulls in all libs.
     </span>} <span class="kw">else if </span><span class="attr">#[cfg(all(
-        target_os = <span class="string">"linux"</span>,
-        any(target_env = <span class="string">"gnu"</span>, target_env = <span class="string">"uclibc"</span>),
+        any(
+            all(
+                target_os = <span class="string">"linux"</span>,
+                any(target_env = <span class="string">"gnu"</span>, target_env = <span class="string">"uclibc"</span>)
+            ),
+            target_os = <span class="string">"cygwin"
+        </span>),
         feature = <span class="string">"rustc-dep-of-std"
     </span>))] </span>{
         <span class="attr">#[link(
@@ -3053,6 +3089,7 @@
                 not(any(target_env = <span class="string">"musl"</span>, target_env = <span class="string">"ohos"</span>))
             ),
             target_os = <span class="string">"freebsd"</span>,
+            target_os = <span class="string">"cygwin"</span>,
             target_os = <span class="string">"dragonfly"</span>,
             target_os = <span class="string">"haiku"
         </span>),
@@ -3122,10 +3159,13 @@
     <span class="kw">pub fn </span>getprotobyname(name: <span class="kw-2">*const </span>c_char) -&gt; <span class="kw-2">*mut </span>protoent;
     <span class="kw">pub fn </span>getprotobynumber(proto: c_int) -&gt; <span class="kw-2">*mut </span>protoent;
     <span class="kw">pub fn </span>chroot(name: <span class="kw-2">*const </span>c_char) -&gt; c_int;
+    <span class="attr">#[cfg(target_os = <span class="string">"cygwin"</span>)]
+    </span><span class="kw">pub fn </span>usleep(secs: useconds_t) -&gt; c_int;
     <span class="attr">#[cfg_attr(
         all(target_os = <span class="string">"macos"</span>, target_arch = <span class="string">"x86"</span>),
         link_name = <span class="string">"usleep$UNIX2003"
     </span>)]
+    #[cfg(not(target_os = <span class="string">"cygwin"</span>))]
     </span><span class="kw">pub fn </span>usleep(secs: c_uint) -&gt; c_int;
     <span class="attr">#[cfg_attr(
         all(target_os = <span class="string">"macos"</span>, target_arch = <span class="string">"x86"</span>),
@@ -3269,7 +3309,8 @@
         target_os = <span class="string">"android"</span>,
         target_os = <span class="string">"haiku"</span>,
         target_os = <span class="string">"nto"</span>,
-        target_os = <span class="string">"solaris"
+        target_os = <span class="string">"solaris"</span>,
+        target_os = <span class="string">"cygwin"
     </span>)))] </span>{
         <span class="kw">extern </span><span class="string">"C" </span>{
             <span class="kw">pub fn </span>adjtime(delta: <span class="kw-2">*const </span>timeval, olddelta: <span class="kw-2">*mut </span>timeval) -&gt; c_int;
@@ -3486,6 +3527,9 @@
     } <span class="kw">else if </span><span class="attr">#[cfg(target_os = <span class="string">"redox"</span>)] </span>{
         <span class="kw">mod </span>redox;
         <span class="kw">pub use </span><span class="self">self</span>::redox::<span class="kw-2">*</span>;
+    } <span class="kw">else if </span><span class="attr">#[cfg(target_os = <span class="string">"cygwin"</span>)] </span>{
+        <span class="kw">mod </span>cygwin;
+        <span class="kw">pub use </span><span class="self">self</span>::cygwin::<span class="kw-2">*</span>;
     } <span class="kw">else if </span><span class="attr">#[cfg(target_os = <span class="string">"nto"</span>)] </span>{
         <span class="kw">mod </span>nto;
         <span class="kw">pub use </span><span class="self">self</span>::nto::<span class="kw-2">*</span>;
