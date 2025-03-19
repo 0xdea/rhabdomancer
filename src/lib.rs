@@ -70,7 +70,7 @@
 //!     $env:PATH="\path\to\ida;$env:PATH"
 //!     $env:IDASDKDIR="\path\to\idasdk"
 //!     $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
-//!     cargo install rhabdomancer
+//!     cargo build --release
 //!     ```
 //!
 //! ## Usage
