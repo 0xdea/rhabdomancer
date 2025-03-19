@@ -46,5 +46,5 @@ fn usage(prog: &str) {
     println!("Usage:");
     println!("$ {prog} <binary_file>");
 
-    process::exit(1);
+    process::exit(0);
 }

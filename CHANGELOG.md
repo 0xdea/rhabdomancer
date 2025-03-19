@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Port to the `windows` family and update documentation.
 * Update documentation to clarify LLVM/Clang requirement.
 * Update dependencies.
 
