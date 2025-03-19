@@ -76,7 +76,7 @@
 //! ## Usage
 //! 1. Make sure IDA Pro is properly configured with a valid license.
 //! 2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed.
-//! 3. Run rhabdomancer as follows:
+//! 3. Run as follows:
 //!     ```sh
 //!     rhabdomancer <binary_file>
 //!     ```
