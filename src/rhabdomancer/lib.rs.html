@@ -413,13 +413,13 @@
 //!     $env:PATH="\path\to\ida;$env:PATH"
 //!     $env:IDASDKDIR="\path\to\idasdk"
 //!     $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
-//!     cargo install rhabdomancer
+//!     cargo build --release
 //!     ```
 //!
 //! ## Usage
 //! 1. Make sure IDA Pro is properly configured with a valid license.
 //! 2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed.
-//! 3. Run rhabdomancer as follows:
+//! 3. Run as follows:
 //!     ```sh
 //!     rhabdomancer &lt;binary_file&gt;
 //!     ```
