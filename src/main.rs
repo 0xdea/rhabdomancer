@@ -15,7 +15,7 @@ fn main() {
     idalib::force_batch_mode();
 
     // Parse command line arguments
-    let args= env::args().collect::<Vec<_>>();
+    let args = env::args().collect::<Vec<_>>();
 
     let prog = Path::new(&args[0])
         .file_name()
