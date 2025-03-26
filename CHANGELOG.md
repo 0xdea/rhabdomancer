@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Refactor integration test directory structure.
 * Update dependencies.
 
 ## [0.5.3] - 2025-03-20
