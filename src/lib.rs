@@ -142,7 +142,7 @@ struct KnownBadFunctions {
 }
 
 impl KnownBadFunctions {
-    /// Populate the list of bad API function names from configuration file
+    /// Populate the list of bad API function names from the configuration file
     fn load() -> Result<Self, ConfigError> {
         let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml");
 
@@ -171,7 +171,7 @@ impl KnownBadFunctions {
     }
 }
 
-/// List of bad API functions found in target binary organized by priority
+/// List of bad API functions found in the target binary organized by priority
 struct BadFunctions<'a> {
     high: BTreeMap<FunctionId, Function<'a>>,
     medium: BTreeMap<FunctionId, Function<'a>>,
@@ -179,7 +179,7 @@ struct BadFunctions<'a> {
 }
 
 impl<'a> BadFunctions<'a> {
-    /// Find bad API functions in target binary
+    /// Find bad API functions in the target binary
     fn find_all(idb: &'a IDB, bad: &KnownBadFunctions) -> Self {
         let mut found = Self {
             high: BTreeMap::new(),
@@ -231,7 +231,7 @@ impl<'a> BadFunctions<'a> {
 
     /// Locate calls to the specified function and mark them
     fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
-        // Return an error if function name is empty (shouldn't happen)
+        // Return an error if the function name is empty (shouldn't happen)
         let Some(func_name) = func.name() else {
             return Err(IDAError::ffi_with("empty function name"));
         };
@@ -273,7 +273,7 @@ impl<'a> BadFunctions<'a> {
             );
             println!("{:#X} in {}", xref.from(), caller);
 
-            // Add bookmark if not already present to mark call location
+            // Add a bookmark if not already present to mark the call location
             if !idb
                 .bookmarks()
                 .get_description(xref.from())
@@ -284,7 +284,7 @@ impl<'a> BadFunctions<'a> {
                 COUNTER.fetch_add(1, Ordering::Relaxed);
             }
 
-            // Add comment if not already present to mark call location
+            // Add a comment if not already present to mark the call location
             if !idb
                 .get_cmt(xref.from())
                 .unwrap_or_default()
@@ -311,7 +311,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
     let known_bad =
         KnownBadFunctions::load().context("Failed to load known bad API function names")?;
 
-    // Open target binary, run auto-analysis, and keep results
+    // Open the target binary, run auto-analysis, and keep results
     println!("[*] Trying to analyze binary file {filepath:?}");
     let idb = IDB::open_with(filepath, true, true)
         .with_context(|| format!("Failed to analyze binary file {filepath:?}"))?;
@@ -324,7 +324,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
     println!("[-] File type: {:?}", idb.meta().filetype());
     println!();
 
-    // Locate and mark bad API function calls in target binary
+    // Locate and mark bad API function calls in the target binary
     println!("[*] Finding bad API function calls...");
     BadFunctions::find_all(&idb, &known_bad)
         .locate_calls(&idb)

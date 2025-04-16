@@ -13,7 +13,7 @@ fn main() -> anyhow::Result<()> {
     // Expected number of marked call locations with default configuration
     const N_MARKS: BookmarkIndex = 86;
 
-    // Remove IDB file if it exists
+    // Remove the IDB file if it exists
     let idb_path = &format!("{FILENAME}.i64");
     let idb_path = Path::new(idb_path);
     if idb_path.is_file() {
@@ -27,7 +27,7 @@ fn main() -> anyhow::Result<()> {
     assert_eq!(n_marks, N_MARKS, "wrong number of marked call locations");
     println!("Ok.");
 
-    // Open IDB and show everything to ensure search doesn't miss anything
+    // Open IDB and show everything to ensure the search doesn't miss anything
     let mut idb = IDB::open(FILENAME)?;
     show_everything(&mut idb);
 
@@ -68,7 +68,7 @@ fn main() -> anyhow::Result<()> {
     }
     println!("Ok.");
 
-    // Remove IDB file at the end
+    // Remove the IDB file at the end
     fs::remove_file(idb_path)?;
 
     println!();

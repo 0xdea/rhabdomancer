@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Refactor integration test directory structure.
+* Refactor the integration test directory structure.
 * Update dependencies.
 
 ## [0.5.3] - 2025-03-20
@@ -64,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-* Remove target file check that is no longer necessary.
+* Remove the target file check that is no longer necessary.
 
 ## [0.3.5] - 2025-02-28
 
@@ -152,7 +152,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Mention the `conf/rhabdomancer.toml` configuration file in the documentation.
-* Add project logo.
+* Add a project logo.
 
 ### Changed
 
@@ -162,7 +162,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Fix "configuration file not found" error in [crates.io](https://crates.io/) package.
+* Fix "configuration file not found" error in the [crates.io](https://crates.io/) package.
 
 ## [0.2.0] - 2024-11-16
 
@@ -179,15 +179,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Improve user experience when opening IDB files thanks to the new license manager API in idalib v0.2.
+* Improve the user experience when opening IDB files thanks to the new license manager API in idalib v0.2.
 * Improve custom integration tests using the `bookmarks_t` API and search API.
-* Exclude tests that include binary files from [crates.io](https://crates.io/) package.
+* Exclude tests that include binary files from the [crates.io](https://crates.io/) package.
 
 ## [0.1.1] - 2024-11-08
 
 ### Added
 
-* Add integration tests with a custom harness, because they must run in the main thread.
+* Add integration tests with a custom harness because they must run in the main thread.
 * Add instructions for installing via `cargo install` in README and crate comments.
 * Add Markdown links to version tags on release headings in CHANGELOG.
 
