@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Switch to idalib v0.6 and update other dependencies.
 * Improve documentation.
 
 ### Fixed
