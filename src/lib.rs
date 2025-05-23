@@ -8,7 +8,7 @@
 //!
 //! Rhabdomancer is a blazing fast IDA Pro headless plugin that locates calls to potentially
 //! insecure API functions in a binary file. Auditors can backtrace from these candidate points to
-//! find pathways allowing access from untrusted input.
+//! find pathways allowing access to untrusted input.
 //!
 //! ## Features
 //! * Blazing fast, headless user experience courtesy of IDA Pro 9 and Binarly's idalib Rust bindings.
