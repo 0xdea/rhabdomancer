@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/yaml-rust2-0.10.1/src/scanner.rs`."><title>scanner.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-6c3ea77c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="yaml_rust2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0 (05f9846f8 2025-03-31)" data-channel="1.86.0" data-search-js="search-581efc7a.js" data-settings-js="settings-6dad6058.js" ><script src="../../static.files/storage-3a5871a4.js"></script><script defer src="../../static.files/src-script-b8d3f215.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-4d63596a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">yaml_rust2/</div>scanner.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! Home to the YAML Scanner.
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/yaml-rust2-0.10.2/src/scanner.rs`."><title>scanner.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-6c3ea77c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="yaml_rust2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0 (05f9846f8 2025-03-31)" data-channel="1.86.0" data-search-js="search-581efc7a.js" data-settings-js="settings-6dad6058.js" ><script src="../../static.files/storage-3a5871a4.js"></script><script defer src="../../static.files/src-script-b8d3f215.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-4d63596a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">yaml_rust2/</div>scanner.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! Home to the YAML Scanner.
 <a href=#2 id=2 data-nosnippet>2</a>//!
 <a href=#3 id=3 data-nosnippet>3</a>//! The scanner is the lowest-level parsing utility. It is the lexer / tokenizer, reading input a
 <a href=#4 id=4 data-nosnippet>4</a>//! character at a time and emitting tokens that can later be interpreted by the [`crate::parser`]
@@ -2459,139 +2459,144 @@
 <a href=#2459 id=2459 data-nosnippet>2459</a>    /// An indentation is not added if we are inside a flow level or if the last indent is already
 <a href=#2460 id=2460 data-nosnippet>2460</a>    /// a non-block indent.
 <a href=#2461 id=2461 data-nosnippet>2461</a>    </span><span class="kw">fn </span>roll_one_col_indent(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-<a href=#2462 id=2462 data-nosnippet>2462</a>        <span class="kw">if </span><span class="self">self</span>.flow_level == <span class="number">0 </span>&amp;&amp; <span class="self">self</span>.indents.last().is_some_and(|x| x.needs_block_end) {
-<a href=#2463 id=2463 data-nosnippet>2463</a>            <span class="self">self</span>.indents.push(Indent {
-<a href=#2464 id=2464 data-nosnippet>2464</a>                indent: <span class="self">self</span>.indent,
-<a href=#2465 id=2465 data-nosnippet>2465</a>                needs_block_end: <span class="bool-val">false</span>,
-<a href=#2466 id=2466 data-nosnippet>2466</a>            });
-<a href=#2467 id=2467 data-nosnippet>2467</a>            <span class="self">self</span>.indent += <span class="number">1</span>;
-<a href=#2468 id=2468 data-nosnippet>2468</a>        }
-<a href=#2469 id=2469 data-nosnippet>2469</a>    }
-<a href=#2470 id=2470 data-nosnippet>2470</a>
-<a href=#2471 id=2471 data-nosnippet>2471</a>    <span class="doccomment">/// Unroll all last indents created with [`Self::roll_one_col_indent`].
-<a href=#2472 id=2472 data-nosnippet>2472</a>    </span><span class="kw">fn </span>unroll_non_block_indents(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-<a href=#2473 id=2473 data-nosnippet>2473</a>        <span class="kw">while let </span><span class="prelude-val">Some</span>(indent) = <span class="self">self</span>.indents.last() {
-<a href=#2474 id=2474 data-nosnippet>2474</a>            <span class="kw">if </span>indent.needs_block_end {
-<a href=#2475 id=2475 data-nosnippet>2475</a>                <span class="kw">break</span>;
-<a href=#2476 id=2476 data-nosnippet>2476</a>            }
-<a href=#2477 id=2477 data-nosnippet>2477</a>            <span class="self">self</span>.indent = indent.indent;
-<a href=#2478 id=2478 data-nosnippet>2478</a>            <span class="self">self</span>.indents.pop();
-<a href=#2479 id=2479 data-nosnippet>2479</a>        }
-<a href=#2480 id=2480 data-nosnippet>2480</a>    }
-<a href=#2481 id=2481 data-nosnippet>2481</a>
-<a href=#2482 id=2482 data-nosnippet>2482</a>    <span class="doccomment">/// Mark the next token to be inserted as a potential simple key.
-<a href=#2483 id=2483 data-nosnippet>2483</a>    </span><span class="kw">fn </span>save_simple_key(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-<a href=#2484 id=2484 data-nosnippet>2484</a>        <span class="kw">if </span><span class="self">self</span>.simple_key_allowed {
-<a href=#2485 id=2485 data-nosnippet>2485</a>            <span class="kw">let </span>required = <span class="self">self</span>.flow_level == <span class="number">0
-<a href=#2486 id=2486 data-nosnippet>2486</a>                </span>&amp;&amp; <span class="self">self</span>.indent == (<span class="self">self</span>.mark.col <span class="kw">as </span>isize)
-<a href=#2487 id=2487 data-nosnippet>2487</a>                &amp;&amp; <span class="self">self</span>.indents.last().unwrap().needs_block_end;
-<a href=#2488 id=2488 data-nosnippet>2488</a>            <span class="kw">let </span><span class="kw-2">mut </span>sk = SimpleKey::new(<span class="self">self</span>.mark);
-<a href=#2489 id=2489 data-nosnippet>2489</a>            sk.possible = <span class="bool-val">true</span>;
-<a href=#2490 id=2490 data-nosnippet>2490</a>            sk.required = required;
-<a href=#2491 id=2491 data-nosnippet>2491</a>            sk.token_number = <span class="self">self</span>.tokens_parsed + <span class="self">self</span>.tokens.len();
-<a href=#2492 id=2492 data-nosnippet>2492</a>
-<a href=#2493 id=2493 data-nosnippet>2493</a>            <span class="self">self</span>.simple_keys.pop();
-<a href=#2494 id=2494 data-nosnippet>2494</a>            <span class="self">self</span>.simple_keys.push(sk);
-<a href=#2495 id=2495 data-nosnippet>2495</a>        }
-<a href=#2496 id=2496 data-nosnippet>2496</a>    }
+<a href=#2462 id=2462 data-nosnippet>2462</a>        <span class="kw">if </span><span class="self">self</span>.flow_level == <span class="number">0
+<a href=#2463 id=2463 data-nosnippet>2463</a>            </span>&amp;&amp; <span class="self">self
+<a href=#2464 id=2464 data-nosnippet>2464</a>                </span>.indents
+<a href=#2465 id=2465 data-nosnippet>2465</a>                .last()
+<a href=#2466 id=2466 data-nosnippet>2466</a>                .map_or(<span class="bool-val">false</span>, |indent| indent.needs_block_end)
+<a href=#2467 id=2467 data-nosnippet>2467</a>        {
+<a href=#2468 id=2468 data-nosnippet>2468</a>            <span class="self">self</span>.indents.push(Indent {
+<a href=#2469 id=2469 data-nosnippet>2469</a>                indent: <span class="self">self</span>.indent,
+<a href=#2470 id=2470 data-nosnippet>2470</a>                needs_block_end: <span class="bool-val">false</span>,
+<a href=#2471 id=2471 data-nosnippet>2471</a>            });
+<a href=#2472 id=2472 data-nosnippet>2472</a>            <span class="self">self</span>.indent += <span class="number">1</span>;
+<a href=#2473 id=2473 data-nosnippet>2473</a>        }
+<a href=#2474 id=2474 data-nosnippet>2474</a>    }
+<a href=#2475 id=2475 data-nosnippet>2475</a>
+<a href=#2476 id=2476 data-nosnippet>2476</a>    <span class="doccomment">/// Unroll all last indents created with [`Self::roll_one_col_indent`].
+<a href=#2477 id=2477 data-nosnippet>2477</a>    </span><span class="kw">fn </span>unroll_non_block_indents(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+<a href=#2478 id=2478 data-nosnippet>2478</a>        <span class="kw">while let </span><span class="prelude-val">Some</span>(indent) = <span class="self">self</span>.indents.last() {
+<a href=#2479 id=2479 data-nosnippet>2479</a>            <span class="kw">if </span>indent.needs_block_end {
+<a href=#2480 id=2480 data-nosnippet>2480</a>                <span class="kw">break</span>;
+<a href=#2481 id=2481 data-nosnippet>2481</a>            }
+<a href=#2482 id=2482 data-nosnippet>2482</a>            <span class="self">self</span>.indent = indent.indent;
+<a href=#2483 id=2483 data-nosnippet>2483</a>            <span class="self">self</span>.indents.pop();
+<a href=#2484 id=2484 data-nosnippet>2484</a>        }
+<a href=#2485 id=2485 data-nosnippet>2485</a>    }
+<a href=#2486 id=2486 data-nosnippet>2486</a>
+<a href=#2487 id=2487 data-nosnippet>2487</a>    <span class="doccomment">/// Mark the next token to be inserted as a potential simple key.
+<a href=#2488 id=2488 data-nosnippet>2488</a>    </span><span class="kw">fn </span>save_simple_key(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+<a href=#2489 id=2489 data-nosnippet>2489</a>        <span class="kw">if </span><span class="self">self</span>.simple_key_allowed {
+<a href=#2490 id=2490 data-nosnippet>2490</a>            <span class="kw">let </span>required = <span class="self">self</span>.flow_level == <span class="number">0
+<a href=#2491 id=2491 data-nosnippet>2491</a>                </span>&amp;&amp; <span class="self">self</span>.indent == (<span class="self">self</span>.mark.col <span class="kw">as </span>isize)
+<a href=#2492 id=2492 data-nosnippet>2492</a>                &amp;&amp; <span class="self">self</span>.indents.last().unwrap().needs_block_end;
+<a href=#2493 id=2493 data-nosnippet>2493</a>            <span class="kw">let </span><span class="kw-2">mut </span>sk = SimpleKey::new(<span class="self">self</span>.mark);
+<a href=#2494 id=2494 data-nosnippet>2494</a>            sk.possible = <span class="bool-val">true</span>;
+<a href=#2495 id=2495 data-nosnippet>2495</a>            sk.required = required;
+<a href=#2496 id=2496 data-nosnippet>2496</a>            sk.token_number = <span class="self">self</span>.tokens_parsed + <span class="self">self</span>.tokens.len();
 <a href=#2497 id=2497 data-nosnippet>2497</a>
-<a href=#2498 id=2498 data-nosnippet>2498</a>    <span class="kw">fn </span>remove_simple_key(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ScanResult {
-<a href=#2499 id=2499 data-nosnippet>2499</a>        <span class="kw">let </span>last = <span class="self">self</span>.simple_keys.last_mut().unwrap();
-<a href=#2500 id=2500 data-nosnippet>2500</a>        <span class="kw">if </span>last.possible &amp;&amp; last.required {
-<a href=#2501 id=2501 data-nosnippet>2501</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(ScanError::new(<span class="self">self</span>.mark, <span class="string">"simple key expected"</span>));
-<a href=#2502 id=2502 data-nosnippet>2502</a>        }
-<a href=#2503 id=2503 data-nosnippet>2503</a>
-<a href=#2504 id=2504 data-nosnippet>2504</a>        last.possible = <span class="bool-val">false</span>;
-<a href=#2505 id=2505 data-nosnippet>2505</a>        <span class="prelude-val">Ok</span>(())
-<a href=#2506 id=2506 data-nosnippet>2506</a>    }
-<a href=#2507 id=2507 data-nosnippet>2507</a>
-<a href=#2508 id=2508 data-nosnippet>2508</a>    <span class="doccomment">/// Check whether the next characters may be part of a plain scalar.
-<a href=#2509 id=2509 data-nosnippet>2509</a>    ///
-<a href=#2510 id=2510 data-nosnippet>2510</a>    /// This function assumes we are not given a blankz character.
-<a href=#2511 id=2511 data-nosnippet>2511</a>    </span><span class="comment">// For some reason, `#[inline]` is not enough.
-<a href=#2512 id=2512 data-nosnippet>2512</a>    </span><span class="attr">#[allow(clippy::inline_always)]
-<a href=#2513 id=2513 data-nosnippet>2513</a>    #[inline(always)]
-<a href=#2514 id=2514 data-nosnippet>2514</a>    </span><span class="kw">fn </span>next_can_be_plain_scalar(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-<a href=#2515 id=2515 data-nosnippet>2515</a>        <span class="kw">match </span><span class="self">self</span>.ch() {
-<a href=#2516 id=2516 data-nosnippet>2516</a>            <span class="comment">// indicators can end a plain scalar, see 7.3.3. Plain Style
-<a href=#2517 id=2517 data-nosnippet>2517</a>            </span><span class="string">':' </span><span class="kw">if </span>is_blank_or_breakz(<span class="self">self</span>.buffer[<span class="number">1</span>])
-<a href=#2518 id=2518 data-nosnippet>2518</a>                || (<span class="self">self</span>.flow_level &gt; <span class="number">0 </span>&amp;&amp; is_flow(<span class="self">self</span>.buffer[<span class="number">1</span>])) =&gt;
-<a href=#2519 id=2519 data-nosnippet>2519</a>            {
-<a href=#2520 id=2520 data-nosnippet>2520</a>                <span class="bool-val">false
-<a href=#2521 id=2521 data-nosnippet>2521</a>            </span>}
-<a href=#2522 id=2522 data-nosnippet>2522</a>            c <span class="kw">if </span><span class="self">self</span>.flow_level &gt; <span class="number">0 </span>&amp;&amp; is_flow(c) =&gt; <span class="bool-val">false</span>,
-<a href=#2523 id=2523 data-nosnippet>2523</a>            <span class="kw">_ </span>=&gt; <span class="bool-val">true</span>,
-<a href=#2524 id=2524 data-nosnippet>2524</a>        }
-<a href=#2525 id=2525 data-nosnippet>2525</a>    }
-<a href=#2526 id=2526 data-nosnippet>2526</a>
-<a href=#2527 id=2527 data-nosnippet>2527</a>    <span class="doccomment">/// Return whether the scanner is inside a block but outside of a flow sequence.
-<a href=#2528 id=2528 data-nosnippet>2528</a>    </span><span class="kw">fn </span>is_within_block(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-<a href=#2529 id=2529 data-nosnippet>2529</a>        !<span class="self">self</span>.indents.is_empty()
+<a href=#2498 id=2498 data-nosnippet>2498</a>            <span class="self">self</span>.simple_keys.pop();
+<a href=#2499 id=2499 data-nosnippet>2499</a>            <span class="self">self</span>.simple_keys.push(sk);
+<a href=#2500 id=2500 data-nosnippet>2500</a>        }
+<a href=#2501 id=2501 data-nosnippet>2501</a>    }
+<a href=#2502 id=2502 data-nosnippet>2502</a>
+<a href=#2503 id=2503 data-nosnippet>2503</a>    <span class="kw">fn </span>remove_simple_key(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ScanResult {
+<a href=#2504 id=2504 data-nosnippet>2504</a>        <span class="kw">let </span>last = <span class="self">self</span>.simple_keys.last_mut().unwrap();
+<a href=#2505 id=2505 data-nosnippet>2505</a>        <span class="kw">if </span>last.possible &amp;&amp; last.required {
+<a href=#2506 id=2506 data-nosnippet>2506</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(ScanError::new(<span class="self">self</span>.mark, <span class="string">"simple key expected"</span>));
+<a href=#2507 id=2507 data-nosnippet>2507</a>        }
+<a href=#2508 id=2508 data-nosnippet>2508</a>
+<a href=#2509 id=2509 data-nosnippet>2509</a>        last.possible = <span class="bool-val">false</span>;
+<a href=#2510 id=2510 data-nosnippet>2510</a>        <span class="prelude-val">Ok</span>(())
+<a href=#2511 id=2511 data-nosnippet>2511</a>    }
+<a href=#2512 id=2512 data-nosnippet>2512</a>
+<a href=#2513 id=2513 data-nosnippet>2513</a>    <span class="doccomment">/// Check whether the next characters may be part of a plain scalar.
+<a href=#2514 id=2514 data-nosnippet>2514</a>    ///
+<a href=#2515 id=2515 data-nosnippet>2515</a>    /// This function assumes we are not given a blankz character.
+<a href=#2516 id=2516 data-nosnippet>2516</a>    </span><span class="comment">// For some reason, `#[inline]` is not enough.
+<a href=#2517 id=2517 data-nosnippet>2517</a>    </span><span class="attr">#[allow(clippy::inline_always)]
+<a href=#2518 id=2518 data-nosnippet>2518</a>    #[inline(always)]
+<a href=#2519 id=2519 data-nosnippet>2519</a>    </span><span class="kw">fn </span>next_can_be_plain_scalar(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+<a href=#2520 id=2520 data-nosnippet>2520</a>        <span class="kw">match </span><span class="self">self</span>.ch() {
+<a href=#2521 id=2521 data-nosnippet>2521</a>            <span class="comment">// indicators can end a plain scalar, see 7.3.3. Plain Style
+<a href=#2522 id=2522 data-nosnippet>2522</a>            </span><span class="string">':' </span><span class="kw">if </span>is_blank_or_breakz(<span class="self">self</span>.buffer[<span class="number">1</span>])
+<a href=#2523 id=2523 data-nosnippet>2523</a>                || (<span class="self">self</span>.flow_level &gt; <span class="number">0 </span>&amp;&amp; is_flow(<span class="self">self</span>.buffer[<span class="number">1</span>])) =&gt;
+<a href=#2524 id=2524 data-nosnippet>2524</a>            {
+<a href=#2525 id=2525 data-nosnippet>2525</a>                <span class="bool-val">false
+<a href=#2526 id=2526 data-nosnippet>2526</a>            </span>}
+<a href=#2527 id=2527 data-nosnippet>2527</a>            c <span class="kw">if </span><span class="self">self</span>.flow_level &gt; <span class="number">0 </span>&amp;&amp; is_flow(c) =&gt; <span class="bool-val">false</span>,
+<a href=#2528 id=2528 data-nosnippet>2528</a>            <span class="kw">_ </span>=&gt; <span class="bool-val">true</span>,
+<a href=#2529 id=2529 data-nosnippet>2529</a>        }
 <a href=#2530 id=2530 data-nosnippet>2530</a>    }
 <a href=#2531 id=2531 data-nosnippet>2531</a>
-<a href=#2532 id=2532 data-nosnippet>2532</a>    <span class="doccomment">/// If an implicit mapping had started, end it.
-<a href=#2533 id=2533 data-nosnippet>2533</a>    </span><span class="kw">fn </span>end_implicit_mapping(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mark: Marker) {
-<a href=#2534 id=2534 data-nosnippet>2534</a>        <span class="kw">if </span><span class="self">self</span>.implicit_flow_mapping {
-<a href=#2535 id=2535 data-nosnippet>2535</a>            <span class="self">self</span>.implicit_flow_mapping = <span class="bool-val">false</span>;
-<a href=#2536 id=2536 data-nosnippet>2536</a>            <span class="self">self</span>.flow_mapping_started = <span class="bool-val">false</span>;
-<a href=#2537 id=2537 data-nosnippet>2537</a>            <span class="self">self</span>.tokens
-<a href=#2538 id=2538 data-nosnippet>2538</a>                .push_back(Token(mark, TokenType::FlowMappingEnd));
-<a href=#2539 id=2539 data-nosnippet>2539</a>        }
-<a href=#2540 id=2540 data-nosnippet>2540</a>    }
-<a href=#2541 id=2541 data-nosnippet>2541</a>}
-<a href=#2542 id=2542 data-nosnippet>2542</a>
-<a href=#2543 id=2543 data-nosnippet>2543</a><span class="doccomment">/// Behavior to adopt regarding treating tabs as whitespace.
-<a href=#2544 id=2544 data-nosnippet>2544</a>///
-<a href=#2545 id=2545 data-nosnippet>2545</a>/// Although tab is a valid yaml whitespace, it doesn't always behave the same as a space.
-<a href=#2546 id=2546 data-nosnippet>2546</a></span><span class="attr">#[derive(Copy, Clone, Eq, PartialEq)]
-<a href=#2547 id=2547 data-nosnippet>2547</a></span><span class="kw">enum </span>SkipTabs {
-<a href=#2548 id=2548 data-nosnippet>2548</a>    <span class="doccomment">/// Skip all tabs as whitespace.
-<a href=#2549 id=2549 data-nosnippet>2549</a>    </span>Yes,
-<a href=#2550 id=2550 data-nosnippet>2550</a>    <span class="doccomment">/// Don't skip any tab. Return from the function when encountering one.
-<a href=#2551 id=2551 data-nosnippet>2551</a>    </span>No,
-<a href=#2552 id=2552 data-nosnippet>2552</a>    <span class="doccomment">/// Return value from the function.
-<a href=#2553 id=2553 data-nosnippet>2553</a>    </span><span class="prelude-ty">Result</span>(
-<a href=#2554 id=2554 data-nosnippet>2554</a>        <span class="doccomment">/// Whether tabs were encountered.
-<a href=#2555 id=2555 data-nosnippet>2555</a>        </span>bool,
-<a href=#2556 id=2556 data-nosnippet>2556</a>        <span class="doccomment">/// Whether at least 1 valid yaml whitespace has been encountered.
-<a href=#2557 id=2557 data-nosnippet>2557</a>        </span>bool,
-<a href=#2558 id=2558 data-nosnippet>2558</a>    ),
-<a href=#2559 id=2559 data-nosnippet>2559</a>}
-<a href=#2560 id=2560 data-nosnippet>2560</a>
-<a href=#2561 id=2561 data-nosnippet>2561</a><span class="kw">impl </span>SkipTabs {
-<a href=#2562 id=2562 data-nosnippet>2562</a>    <span class="doccomment">/// Whether tabs were found while skipping whitespace.
-<a href=#2563 id=2563 data-nosnippet>2563</a>    ///
-<a href=#2564 id=2564 data-nosnippet>2564</a>    /// This function must be called after a call to `skip_ws_to_eol`.
-<a href=#2565 id=2565 data-nosnippet>2565</a>    </span><span class="kw">fn </span>found_tabs(<span class="self">self</span>) -&gt; bool {
-<a href=#2566 id=2566 data-nosnippet>2566</a>        <span class="macro">matches!</span>(<span class="self">self</span>, SkipTabs::Result(<span class="bool-val">true</span>, <span class="kw">_</span>))
-<a href=#2567 id=2567 data-nosnippet>2567</a>    }
-<a href=#2568 id=2568 data-nosnippet>2568</a>
-<a href=#2569 id=2569 data-nosnippet>2569</a>    <span class="doccomment">/// Whether a valid YAML whitespace has been found in skipped-over content.
-<a href=#2570 id=2570 data-nosnippet>2570</a>    ///
-<a href=#2571 id=2571 data-nosnippet>2571</a>    /// This function must be called after a call to `skip_ws_to_eol`.
-<a href=#2572 id=2572 data-nosnippet>2572</a>    </span><span class="kw">fn </span>has_valid_yaml_ws(<span class="self">self</span>) -&gt; bool {
-<a href=#2573 id=2573 data-nosnippet>2573</a>        <span class="macro">matches!</span>(<span class="self">self</span>, SkipTabs::Result(<span class="kw">_</span>, <span class="bool-val">true</span>))
-<a href=#2574 id=2574 data-nosnippet>2574</a>    }
-<a href=#2575 id=2575 data-nosnippet>2575</a>}
-<a href=#2576 id=2576 data-nosnippet>2576</a>
-<a href=#2577 id=2577 data-nosnippet>2577</a><span class="doccomment">/// Chomping, how final line breaks and trailing empty lines are interpreted.
-<a href=#2578 id=2578 data-nosnippet>2578</a>///
-<a href=#2579 id=2579 data-nosnippet>2579</a>/// See YAML spec 8.1.1.2.
-<a href=#2580 id=2580 data-nosnippet>2580</a></span><span class="attr">#[derive(PartialEq, Eq)]
-<a href=#2581 id=2581 data-nosnippet>2581</a></span><span class="kw">pub enum </span>Chomping {
-<a href=#2582 id=2582 data-nosnippet>2582</a>    <span class="doccomment">/// The final line break and any trailing empty lines are excluded.
-<a href=#2583 id=2583 data-nosnippet>2583</a>    </span>Strip,
-<a href=#2584 id=2584 data-nosnippet>2584</a>    <span class="doccomment">/// The final line break is preserved, but trailing empty lines are excluded.
-<a href=#2585 id=2585 data-nosnippet>2585</a>    </span>Clip,
-<a href=#2586 id=2586 data-nosnippet>2586</a>    <span class="doccomment">/// The final line break and trailing empty lines are included.
-<a href=#2587 id=2587 data-nosnippet>2587</a>    </span>Keep,
-<a href=#2588 id=2588 data-nosnippet>2588</a>}
-<a href=#2589 id=2589 data-nosnippet>2589</a>
-<a href=#2590 id=2590 data-nosnippet>2590</a><span class="attr">#[cfg(test)]
-<a href=#2591 id=2591 data-nosnippet>2591</a></span><span class="kw">mod </span>test {
-<a href=#2592 id=2592 data-nosnippet>2592</a>    <span class="attr">#[test]
-<a href=#2593 id=2593 data-nosnippet>2593</a>    </span><span class="kw">fn </span>test_is_anchor_char() {
-<a href=#2594 id=2594 data-nosnippet>2594</a>        <span class="kw">use </span><span class="kw">super</span>::is_anchor_char;
-<a href=#2595 id=2595 data-nosnippet>2595</a>        <span class="macro">assert!</span>(is_anchor_char(<span class="string">'x'</span>));
-<a href=#2596 id=2596 data-nosnippet>2596</a>    }
-<a href=#2597 id=2597 data-nosnippet>2597</a>}</code></pre></div></section></main></body></html>
+<a href=#2532 id=2532 data-nosnippet>2532</a>    <span class="doccomment">/// Return whether the scanner is inside a block but outside of a flow sequence.
+<a href=#2533 id=2533 data-nosnippet>2533</a>    </span><span class="kw">fn </span>is_within_block(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+<a href=#2534 id=2534 data-nosnippet>2534</a>        !<span class="self">self</span>.indents.is_empty()
+<a href=#2535 id=2535 data-nosnippet>2535</a>    }
+<a href=#2536 id=2536 data-nosnippet>2536</a>
+<a href=#2537 id=2537 data-nosnippet>2537</a>    <span class="doccomment">/// If an implicit mapping had started, end it.
+<a href=#2538 id=2538 data-nosnippet>2538</a>    </span><span class="kw">fn </span>end_implicit_mapping(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mark: Marker) {
+<a href=#2539 id=2539 data-nosnippet>2539</a>        <span class="kw">if </span><span class="self">self</span>.implicit_flow_mapping {
+<a href=#2540 id=2540 data-nosnippet>2540</a>            <span class="self">self</span>.implicit_flow_mapping = <span class="bool-val">false</span>;
+<a href=#2541 id=2541 data-nosnippet>2541</a>            <span class="self">self</span>.flow_mapping_started = <span class="bool-val">false</span>;
+<a href=#2542 id=2542 data-nosnippet>2542</a>            <span class="self">self</span>.tokens
+<a href=#2543 id=2543 data-nosnippet>2543</a>                .push_back(Token(mark, TokenType::FlowMappingEnd));
+<a href=#2544 id=2544 data-nosnippet>2544</a>        }
+<a href=#2545 id=2545 data-nosnippet>2545</a>    }
+<a href=#2546 id=2546 data-nosnippet>2546</a>}
+<a href=#2547 id=2547 data-nosnippet>2547</a>
+<a href=#2548 id=2548 data-nosnippet>2548</a><span class="doccomment">/// Behavior to adopt regarding treating tabs as whitespace.
+<a href=#2549 id=2549 data-nosnippet>2549</a>///
+<a href=#2550 id=2550 data-nosnippet>2550</a>/// Although tab is a valid yaml whitespace, it doesn't always behave the same as a space.
+<a href=#2551 id=2551 data-nosnippet>2551</a></span><span class="attr">#[derive(Copy, Clone, Eq, PartialEq)]
+<a href=#2552 id=2552 data-nosnippet>2552</a></span><span class="kw">enum </span>SkipTabs {
+<a href=#2553 id=2553 data-nosnippet>2553</a>    <span class="doccomment">/// Skip all tabs as whitespace.
+<a href=#2554 id=2554 data-nosnippet>2554</a>    </span>Yes,
+<a href=#2555 id=2555 data-nosnippet>2555</a>    <span class="doccomment">/// Don't skip any tab. Return from the function when encountering one.
+<a href=#2556 id=2556 data-nosnippet>2556</a>    </span>No,
+<a href=#2557 id=2557 data-nosnippet>2557</a>    <span class="doccomment">/// Return value from the function.
+<a href=#2558 id=2558 data-nosnippet>2558</a>    </span><span class="prelude-ty">Result</span>(
+<a href=#2559 id=2559 data-nosnippet>2559</a>        <span class="doccomment">/// Whether tabs were encountered.
+<a href=#2560 id=2560 data-nosnippet>2560</a>        </span>bool,
+<a href=#2561 id=2561 data-nosnippet>2561</a>        <span class="doccomment">/// Whether at least 1 valid yaml whitespace has been encountered.
+<a href=#2562 id=2562 data-nosnippet>2562</a>        </span>bool,
+<a href=#2563 id=2563 data-nosnippet>2563</a>    ),
+<a href=#2564 id=2564 data-nosnippet>2564</a>}
+<a href=#2565 id=2565 data-nosnippet>2565</a>
+<a href=#2566 id=2566 data-nosnippet>2566</a><span class="kw">impl </span>SkipTabs {
+<a href=#2567 id=2567 data-nosnippet>2567</a>    <span class="doccomment">/// Whether tabs were found while skipping whitespace.
+<a href=#2568 id=2568 data-nosnippet>2568</a>    ///
+<a href=#2569 id=2569 data-nosnippet>2569</a>    /// This function must be called after a call to `skip_ws_to_eol`.
+<a href=#2570 id=2570 data-nosnippet>2570</a>    </span><span class="kw">fn </span>found_tabs(<span class="self">self</span>) -&gt; bool {
+<a href=#2571 id=2571 data-nosnippet>2571</a>        <span class="macro">matches!</span>(<span class="self">self</span>, SkipTabs::Result(<span class="bool-val">true</span>, <span class="kw">_</span>))
+<a href=#2572 id=2572 data-nosnippet>2572</a>    }
+<a href=#2573 id=2573 data-nosnippet>2573</a>
+<a href=#2574 id=2574 data-nosnippet>2574</a>    <span class="doccomment">/// Whether a valid YAML whitespace has been found in skipped-over content.
+<a href=#2575 id=2575 data-nosnippet>2575</a>    ///
+<a href=#2576 id=2576 data-nosnippet>2576</a>    /// This function must be called after a call to `skip_ws_to_eol`.
+<a href=#2577 id=2577 data-nosnippet>2577</a>    </span><span class="kw">fn </span>has_valid_yaml_ws(<span class="self">self</span>) -&gt; bool {
+<a href=#2578 id=2578 data-nosnippet>2578</a>        <span class="macro">matches!</span>(<span class="self">self</span>, SkipTabs::Result(<span class="kw">_</span>, <span class="bool-val">true</span>))
+<a href=#2579 id=2579 data-nosnippet>2579</a>    }
+<a href=#2580 id=2580 data-nosnippet>2580</a>}
+<a href=#2581 id=2581 data-nosnippet>2581</a>
+<a href=#2582 id=2582 data-nosnippet>2582</a><span class="doccomment">/// Chomping, how final line breaks and trailing empty lines are interpreted.
+<a href=#2583 id=2583 data-nosnippet>2583</a>///
+<a href=#2584 id=2584 data-nosnippet>2584</a>/// See YAML spec 8.1.1.2.
+<a href=#2585 id=2585 data-nosnippet>2585</a></span><span class="attr">#[derive(PartialEq, Eq)]
+<a href=#2586 id=2586 data-nosnippet>2586</a></span><span class="kw">pub enum </span>Chomping {
+<a href=#2587 id=2587 data-nosnippet>2587</a>    <span class="doccomment">/// The final line break and any trailing empty lines are excluded.
+<a href=#2588 id=2588 data-nosnippet>2588</a>    </span>Strip,
+<a href=#2589 id=2589 data-nosnippet>2589</a>    <span class="doccomment">/// The final line break is preserved, but trailing empty lines are excluded.
+<a href=#2590 id=2590 data-nosnippet>2590</a>    </span>Clip,
+<a href=#2591 id=2591 data-nosnippet>2591</a>    <span class="doccomment">/// The final line break and trailing empty lines are included.
+<a href=#2592 id=2592 data-nosnippet>2592</a>    </span>Keep,
+<a href=#2593 id=2593 data-nosnippet>2593</a>}
+<a href=#2594 id=2594 data-nosnippet>2594</a>
+<a href=#2595 id=2595 data-nosnippet>2595</a><span class="attr">#[cfg(test)]
+<a href=#2596 id=2596 data-nosnippet>2596</a></span><span class="kw">mod </span>test {
+<a href=#2597 id=2597 data-nosnippet>2597</a>    <span class="attr">#[test]
+<a href=#2598 id=2598 data-nosnippet>2598</a>    </span><span class="kw">fn </span>test_is_anchor_char() {
+<a href=#2599 id=2599 data-nosnippet>2599</a>        <span class="kw">use </span><span class="kw">super</span>::is_anchor_char;
+<a href=#2600 id=2600 data-nosnippet>2600</a>        <span class="macro">assert!</span>(is_anchor_char(<span class="string">'x'</span>));
+<a href=#2601 id=2601 data-nosnippet>2601</a>    }
+<a href=#2602 id=2602 data-nosnippet>2602</a>}</code></pre></div></section></main></body></html>
