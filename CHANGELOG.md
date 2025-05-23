@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Add contents read permission to build CI.
 
+### Changed
+
+* Improve documentation.
+
 ### Fixed
 
 * Address new clippy lints.
