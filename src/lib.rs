@@ -146,7 +146,7 @@ impl KnownBadFunctions {
     fn load() -> Result<Self, ConfigError> {
         let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml");
 
-        println!("[*] Using configuration file {path:?}");
+        println!("[*] Using configuration file `{}`", path.display());
         Config::builder()
             .add_source(File::from(path))
             .build()?
@@ -312,9 +312,9 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
         KnownBadFunctions::load().context("Failed to load known bad API function names")?;
 
     // Open the target binary, run auto-analysis, and keep results
-    println!("[*] Trying to analyze binary file {filepath:?}");
+    println!("[*] Trying to analyze binary file `{}`", filepath.display());
     let idb = IDB::open_with(filepath, true, true)
-        .with_context(|| format!("Failed to analyze binary file {filepath:?}"))?;
+        .with_context(|| format!("Failed to analyze binary file `{}`", filepath.display()))?;
     println!("[+] Successfully analyzed binary file");
     println!();
 
@@ -332,7 +332,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
 
     println!();
     println!("[+] Marked {COUNTER:?} new call locations");
-    println!("[+] Done processing binary file {filepath:?}");
+    println!("[+] Done processing binary file `{}`", filepath.display());
     Ok(COUNTER.load(Ordering::Relaxed))
 }
 
