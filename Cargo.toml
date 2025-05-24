@@ -1,6 +1,6 @@
 [package]
 name = "rhabdomancer"
-version = "0.6.0"
+version = "0.6.1-alpha"
 authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2024"
 description = "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file."
@@ -45,3 +45,6 @@ strip = true
 lto = true
 codegen-units = 1
 panic = "abort"
+
+[profile.dev]
+debug = false
