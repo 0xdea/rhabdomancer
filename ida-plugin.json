@@ -2,11 +2,13 @@
   "IDAMetadataDescriptorVersion": 1,
   "plugin": {
     "name": "rhabdomancer",
+    "entryPoint": "rhabdomancer",
     "categories": [
       "vulnerability-research-and-exploit-development"
     ],
     "logoPath": ".img/logo.png",
     "idaVersions": "9.1",
-    "description": "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file."
+    "description": "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file.",
+    "version": "0.6.1-alpha"
   }
 }
