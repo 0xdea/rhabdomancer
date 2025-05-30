@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Add `ida-plugin.json` for <https://plugins.hex-rays.com/>.
+
 ### Changed
 
 * Disable debug info to improve compile time.

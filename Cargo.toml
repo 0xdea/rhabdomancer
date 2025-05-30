@@ -10,7 +10,7 @@ documentation = "https://0xdeadbeef.info/rhabdomancer/rhabdomancer/"
 license = "MIT"
 keywords = ["reverse-engineering", "binary-file", "vuln-dev", "ida", "idalib"]
 categories = ["security", "command-line-utilities"]
-exclude = [".cargo/*", ".github/*", ".img/*", "tests/*"]
+exclude = [".cargo/*", ".github/*", ".img/*", "tests/*", "ida-plugin.json"]
 
 [dependencies]
 idalib = "0.6"
