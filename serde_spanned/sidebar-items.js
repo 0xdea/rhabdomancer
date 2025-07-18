@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Spanned"]};
+window.SIDEBAR_ITEMS = {"mod":["de"],"struct":["Spanned"]};
