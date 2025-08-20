@@ -312,7 +312,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
         KnownBadFunctions::load().context("Failed to load known bad API function names")?;
 
     // Open the target binary, run auto-analysis, and keep results
-    println!("[*] Trying to analyze binary file `{}`", filepath.display());
+    println!("[*] Analyzing binary file `{}`", filepath.display());
     let idb = IDB::open_with(filepath, true, true)
         .with_context(|| format!("Failed to analyze binary file `{}`", filepath.display()))?;
     println!("[+] Successfully analyzed binary file");
