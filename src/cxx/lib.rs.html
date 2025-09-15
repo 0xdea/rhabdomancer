@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cxx-1.0.160/src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-1a91846b.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.88.0 (6b00bc388 2025-06-23)" data-channel="1.88.0" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-4e99c027.js"></script><script defer src="../../static.files/src-script-63605ae7.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxx/</div>lib.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! [![github]](https://github.com/dtolnay/cxx)&amp;ensp;[![crates-io]](https://crates.io/crates/cxx)&amp;ensp;[![docs-rs]](https://docs.rs/cxx)
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cxx-1.0.184/src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-84e720fa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.89.0 (29483883e 2025-08-04)" data-channel="1.89.0" data-search-js="search-92309212.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-4e99c027.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-fd3af306.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxx/</div>lib.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! [![github]](https://github.com/dtolnay/cxx)&amp;ensp;[![crates-io]](https://crates.io/crates/cxx)&amp;ensp;[![docs-rs]](https://docs.rs/cxx)
 <a href=#2 id=2 data-nosnippet>2</a>//!
 <a href=#3 id=3 data-nosnippet>3</a>//! [github]: https://img.shields.io/badge/github-8da0cb?style=for-the-badge&amp;labelColor=555555&amp;logo=github
 <a href=#4 id=4 data-nosnippet>4</a>//! [crates-io]: https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&amp;labelColor=555555&amp;logo=rust
@@ -18,7 +18,7 @@
 <a href=#18 id=18 data-nosnippet>18</a>//!
 <a href=#19 id=19 data-nosnippet>19</a>//! &lt;br&gt;
 <a href=#20 id=20 data-nosnippet>20</a>//!
-<a href=#21 id=21 data-nosnippet>21</a>//! *Compiler support: requires rustc 1.73+ and c++11 or newer*&lt;br&gt;
+<a href=#21 id=21 data-nosnippet>21</a>//! *Compiler support: requires rustc 1.81+ and c++11 or newer*&lt;br&gt;
 <a href=#22 id=22 data-nosnippet>22</a>//! *[Release notes](https://github.com/dtolnay/cxx/releases)*
 <a href=#23 id=23 data-nosnippet>23</a>//!
 <a href=#24 id=24 data-nosnippet>24</a>//! &lt;br&gt;
@@ -254,141 +254,141 @@
 <a href=#254 id=254 data-nosnippet>254</a>//!         .std("c++11")
 <a href=#255 id=255 data-nosnippet>255</a>//!         .compile("cxxbridge-demo");
 <a href=#256 id=256 data-nosnippet>256</a>//!
-<a href=#257 id=257 data-nosnippet>257</a>//!     println!("cargo:rerun-if-changed=src/main.rs");
-<a href=#258 id=258 data-nosnippet>258</a>//!     println!("cargo:rerun-if-changed=src/demo.cc");
-<a href=#259 id=259 data-nosnippet>259</a>//!     println!("cargo:rerun-if-changed=include/demo.h");
-<a href=#260 id=260 data-nosnippet>260</a>//! }
-<a href=#261 id=261 data-nosnippet>261</a>//! ```
-<a href=#262 id=262 data-nosnippet>262</a>//!
-<a href=#263 id=263 data-nosnippet>263</a>//! &lt;br&gt;&lt;br&gt;
-<a href=#264 id=264 data-nosnippet>264</a>//!
-<a href=#265 id=265 data-nosnippet>265</a>//! # Non-Cargo setup
-<a href=#266 id=266 data-nosnippet>266</a>//!
-<a href=#267 id=267 data-nosnippet>267</a>//! For use in non-Cargo builds like Bazel or Buck, CXX provides an alternate
-<a href=#268 id=268 data-nosnippet>268</a>//! way of invoking the C++ code generator as a standalone command line tool.
-<a href=#269 id=269 data-nosnippet>269</a>//! The tool is packaged as the `cxxbridge-cmd` crate on crates.io or can be
-<a href=#270 id=270 data-nosnippet>270</a>//! built from the *gen/cmd* directory of &lt;https://github.com/dtolnay/cxx&gt;.
-<a href=#271 id=271 data-nosnippet>271</a>//!
-<a href=#272 id=272 data-nosnippet>272</a>//! ```bash
-<a href=#273 id=273 data-nosnippet>273</a>//! $ cargo install cxxbridge-cmd
-<a href=#274 id=274 data-nosnippet>274</a>//!
-<a href=#275 id=275 data-nosnippet>275</a>//! $ cxxbridge src/main.rs --header &gt; path/to/mybridge.h
-<a href=#276 id=276 data-nosnippet>276</a>//! $ cxxbridge src/main.rs &gt; path/to/mybridge.cc
-<a href=#277 id=277 data-nosnippet>277</a>//! ```
-<a href=#278 id=278 data-nosnippet>278</a>//!
-<a href=#279 id=279 data-nosnippet>279</a>//! &lt;br&gt;
-<a href=#280 id=280 data-nosnippet>280</a>//!
-<a href=#281 id=281 data-nosnippet>281</a>//! # Safety
-<a href=#282 id=282 data-nosnippet>282</a>//!
-<a href=#283 id=283 data-nosnippet>283</a>//! Be aware that the design of this library is intentionally restrictive and
-<a href=#284 id=284 data-nosnippet>284</a>//! opinionated! It isn't a goal to be powerful enough to handle arbitrary
-<a href=#285 id=285 data-nosnippet>285</a>//! signatures in either language. Instead this project is about carving out a
-<a href=#286 id=286 data-nosnippet>286</a>//! reasonably expressive set of functionality about which we can make useful
-<a href=#287 id=287 data-nosnippet>287</a>//! safety guarantees today and maybe extend over time. You may find that it
-<a href=#288 id=288 data-nosnippet>288</a>//! takes some practice to use CXX bridge effectively as it won't work in all
-<a href=#289 id=289 data-nosnippet>289</a>//! the ways that you are used to.
-<a href=#290 id=290 data-nosnippet>290</a>//!
-<a href=#291 id=291 data-nosnippet>291</a>//! Some of the considerations that go into ensuring safety are:
-<a href=#292 id=292 data-nosnippet>292</a>//!
-<a href=#293 id=293 data-nosnippet>293</a>//! - By design, our paired code generators work together to control both sides
-<a href=#294 id=294 data-nosnippet>294</a>//!   of the FFI boundary. Ordinarily in Rust writing your own `extern "C"`
-<a href=#295 id=295 data-nosnippet>295</a>//!   blocks is unsafe because the Rust compiler has no way to know whether the
-<a href=#296 id=296 data-nosnippet>296</a>//!   signatures you've written actually match the signatures implemented in the
-<a href=#297 id=297 data-nosnippet>297</a>//!   other language. With CXX we achieve that visibility and know what's on the
-<a href=#298 id=298 data-nosnippet>298</a>//!   other side.
-<a href=#299 id=299 data-nosnippet>299</a>//!
-<a href=#300 id=300 data-nosnippet>300</a>//! - Our static analysis detects and prevents passing types by value that
-<a href=#301 id=301 data-nosnippet>301</a>//!   shouldn't be passed by value from C++ to Rust, for example because they
-<a href=#302 id=302 data-nosnippet>302</a>//!   may contain internal pointers that would be screwed up by Rust's move
-<a href=#303 id=303 data-nosnippet>303</a>//!   behavior.
-<a href=#304 id=304 data-nosnippet>304</a>//!
-<a href=#305 id=305 data-nosnippet>305</a>//! - To many people's surprise, it is possible to have a struct in Rust and a
-<a href=#306 id=306 data-nosnippet>306</a>//!   struct in C++ with exactly the same layout / fields / alignment /
-<a href=#307 id=307 data-nosnippet>307</a>//!   everything, and still not the same ABI when passed by value. This is a
-<a href=#308 id=308 data-nosnippet>308</a>//!   longstanding bindgen bug that leads to segfaults in absolutely
-<a href=#309 id=309 data-nosnippet>309</a>//!   correct-looking code ([rust-lang/rust-bindgen#778]). CXX knows about this
-<a href=#310 id=310 data-nosnippet>310</a>//!   and can insert the necessary zero-cost workaround transparently where
-<a href=#311 id=311 data-nosnippet>311</a>//!   needed, so go ahead and pass your structs by value without worries. This
-<a href=#312 id=312 data-nosnippet>312</a>//!   is made possible by owning both sides of the boundary rather than just
-<a href=#313 id=313 data-nosnippet>313</a>//!   one.
-<a href=#314 id=314 data-nosnippet>314</a>//!
-<a href=#315 id=315 data-nosnippet>315</a>//! - Template instantiations: for example in order to expose a UniquePtr\&lt;T\&gt;
-<a href=#316 id=316 data-nosnippet>316</a>//!   type in Rust backed by a real C++ unique\_ptr, we have a way of using a
-<a href=#317 id=317 data-nosnippet>317</a>//!   Rust trait to connect the behavior back to the template instantiations
-<a href=#318 id=318 data-nosnippet>318</a>//!   performed by the other language.
-<a href=#319 id=319 data-nosnippet>319</a>//!
-<a href=#320 id=320 data-nosnippet>320</a>//! [rust-lang/rust-bindgen#778]: https://github.com/rust-lang/rust-bindgen/issues/778
-<a href=#321 id=321 data-nosnippet>321</a>//!
-<a href=#322 id=322 data-nosnippet>322</a>//! &lt;br&gt;
-<a href=#323 id=323 data-nosnippet>323</a>//!
-<a href=#324 id=324 data-nosnippet>324</a>//! # Builtin types
-<a href=#325 id=325 data-nosnippet>325</a>//!
-<a href=#326 id=326 data-nosnippet>326</a>//! In addition to all the primitive types (i32 &amp;lt;=&amp;gt; int32_t), the
-<a href=#327 id=327 data-nosnippet>327</a>//! following common types may be used in the fields of shared structs and the
-<a href=#328 id=328 data-nosnippet>328</a>//! arguments and returns of functions.
-<a href=#329 id=329 data-nosnippet>329</a>//!
-<a href=#330 id=330 data-nosnippet>330</a>//! &lt;table&gt;
-<a href=#331 id=331 data-nosnippet>331</a>//! &lt;tr&gt;&lt;th&gt;name in Rust&lt;/th&gt;&lt;th&gt;name in C++&lt;/th&gt;&lt;th&gt;restrictions&lt;/th&gt;&lt;/tr&gt;
-<a href=#332 id=332 data-nosnippet>332</a>//! &lt;tr&gt;&lt;td&gt;String&lt;/td&gt;&lt;td&gt;rust::String&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#333 id=333 data-nosnippet>333</a>//! &lt;tr&gt;&lt;td&gt;&amp;amp;str&lt;/td&gt;&lt;td&gt;rust::Str&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#334 id=334 data-nosnippet>334</a>//! &lt;tr&gt;&lt;td&gt;&amp;amp;[T]&lt;/td&gt;&lt;td&gt;rust::Slice&amp;lt;const T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#335 id=335 data-nosnippet>335</a>//! &lt;tr&gt;&lt;td&gt;&amp;amp;mut [T]&lt;/td&gt;&lt;td&gt;rust::Slice&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#336 id=336 data-nosnippet>336</a>//! &lt;tr&gt;&lt;td&gt;&lt;a href="struct.CxxString.html"&gt;CxxString&lt;/a&gt;&lt;/td&gt;&lt;td&gt;std::string&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot be passed by value&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#337 id=337 data-nosnippet>337</a>//! &lt;tr&gt;&lt;td&gt;Box&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;rust::Box&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#338 id=338 data-nosnippet>338</a>//! &lt;tr&gt;&lt;td&gt;&lt;a href="struct.UniquePtr.html"&gt;UniquePtr&amp;lt;T&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;td&gt;std::unique_ptr&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque Rust type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#339 id=339 data-nosnippet>339</a>//! &lt;tr&gt;&lt;td&gt;&lt;a href="struct.SharedPtr.html"&gt;SharedPtr&amp;lt;T&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;td&gt;std::shared_ptr&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque Rust type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#340 id=340 data-nosnippet>340</a>//! &lt;tr&gt;&lt;td&gt;[T; N]&lt;/td&gt;&lt;td&gt;std::array&amp;lt;T, N&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#341 id=341 data-nosnippet>341</a>//! &lt;tr&gt;&lt;td&gt;Vec&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;rust::Vec&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#342 id=342 data-nosnippet>342</a>//! &lt;tr&gt;&lt;td&gt;&lt;a href="struct.CxxVector.html"&gt;CxxVector&amp;lt;T&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;td&gt;std::vector&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot be passed by value, cannot hold opaque Rust type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#343 id=343 data-nosnippet>343</a>//! &lt;tr&gt;&lt;td&gt;*mut T, *const T&lt;/td&gt;&lt;td&gt;T*, const T*&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;fn with a raw pointer argument must be declared unsafe to call&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#344 id=344 data-nosnippet>344</a>//! &lt;tr&gt;&lt;td&gt;fn(T, U) -&amp;gt; V&lt;/td&gt;&lt;td&gt;rust::Fn&amp;lt;V(T, U)&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;only passing from Rust to C++ is implemented so far&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#345 id=345 data-nosnippet>345</a>//! &lt;tr&gt;&lt;td&gt;Result&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;throw/catch&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;allowed as return type only&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#346 id=346 data-nosnippet>346</a>//! &lt;/table&gt;
-<a href=#347 id=347 data-nosnippet>347</a>//!
-<a href=#348 id=348 data-nosnippet>348</a>//! The C++ API of the `rust` namespace is defined by the *include/cxx.h* file
-<a href=#349 id=349 data-nosnippet>349</a>//! in &lt;https://github.com/dtolnay/cxx&gt;. You will need to include this header in
-<a href=#350 id=350 data-nosnippet>350</a>//! your C++ code when working with those types.
-<a href=#351 id=351 data-nosnippet>351</a>//!
-<a href=#352 id=352 data-nosnippet>352</a>//! The following types are intended to be supported "soon" but are just not
-<a href=#353 id=353 data-nosnippet>353</a>//! implemented yet. I don't expect any of these to be hard to make work but
-<a href=#354 id=354 data-nosnippet>354</a>//! it's a matter of designing a nice API for each in its non-native language.
-<a href=#355 id=355 data-nosnippet>355</a>//!
-<a href=#356 id=356 data-nosnippet>356</a>//! &lt;table&gt;
-<a href=#357 id=357 data-nosnippet>357</a>//! &lt;tr&gt;&lt;th&gt;name in Rust&lt;/th&gt;&lt;th&gt;name in C++&lt;/th&gt;&lt;/tr&gt;
-<a href=#358 id=358 data-nosnippet>358</a>//! &lt;tr&gt;&lt;td&gt;BTreeMap&amp;lt;K, V&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#359 id=359 data-nosnippet>359</a>//! &lt;tr&gt;&lt;td&gt;HashMap&amp;lt;K, V&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#360 id=360 data-nosnippet>360</a>//! &lt;tr&gt;&lt;td&gt;Arc&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#361 id=361 data-nosnippet>361</a>//! &lt;tr&gt;&lt;td&gt;Option&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#362 id=362 data-nosnippet>362</a>//! &lt;tr&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;std::map&amp;lt;K, V&amp;gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#363 id=363 data-nosnippet>363</a>//! &lt;tr&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;std::unordered_map&amp;lt;K, V&amp;gt;&lt;/td&gt;&lt;/tr&gt;
-<a href=#364 id=364 data-nosnippet>364</a>//! &lt;/table&gt;
-<a href=#365 id=365 data-nosnippet>365</a>
-<a href=#366 id=366 data-nosnippet>366</a></span><span class="attr">#![no_std]
-<a href=#367 id=367 data-nosnippet>367</a>#![doc(html_root_url = <span class="string">"https://docs.rs/cxx/1.0.160"</span>)]
-<a href=#368 id=368 data-nosnippet>368</a>#![cfg_attr(docsrs, feature(doc_cfg))]
-<a href=#369 id=369 data-nosnippet>369</a>#![deny(
-<a href=#370 id=370 data-nosnippet>370</a>    improper_ctypes,
-<a href=#371 id=371 data-nosnippet>371</a>    improper_ctypes_definitions,
-<a href=#372 id=372 data-nosnippet>372</a>    missing_docs,
-<a href=#373 id=373 data-nosnippet>373</a>    unsafe_op_in_unsafe_fn
-<a href=#374 id=374 data-nosnippet>374</a>)]
-<a href=#375 id=375 data-nosnippet>375</a>#![warn(
-<a href=#376 id=376 data-nosnippet>376</a>    clippy::alloc_instead_of_core,
-<a href=#377 id=377 data-nosnippet>377</a>    clippy::std_instead_of_alloc,
-<a href=#378 id=378 data-nosnippet>378</a>    clippy::std_instead_of_core
-<a href=#379 id=379 data-nosnippet>379</a>)]
-<a href=#380 id=380 data-nosnippet>380</a>#![allow(non_camel_case_types)]
-<a href=#381 id=381 data-nosnippet>381</a>#![allow(
-<a href=#382 id=382 data-nosnippet>382</a>    clippy::cast_possible_truncation,
-<a href=#383 id=383 data-nosnippet>383</a>    clippy::doc_markdown,
-<a href=#384 id=384 data-nosnippet>384</a>    clippy::elidable_lifetime_names,
-<a href=#385 id=385 data-nosnippet>385</a>    clippy::items_after_statements,
-<a href=#386 id=386 data-nosnippet>386</a>    clippy::len_without_is_empty,
-<a href=#387 id=387 data-nosnippet>387</a>    clippy::missing_errors_doc,
-<a href=#388 id=388 data-nosnippet>388</a>    clippy::missing_safety_doc,
-<a href=#389 id=389 data-nosnippet>389</a>    clippy::must_use_candidate,
-<a href=#390 id=390 data-nosnippet>390</a>    clippy::needless_doctest_main,
-<a href=#391 id=391 data-nosnippet>391</a>    clippy::needless_lifetimes,
+<a href=#257 id=257 data-nosnippet>257</a>//!     println!("cargo:rerun-if-changed=src/demo.cc");
+<a href=#258 id=258 data-nosnippet>258</a>//!     println!("cargo:rerun-if-changed=include/demo.h");
+<a href=#259 id=259 data-nosnippet>259</a>//! }
+<a href=#260 id=260 data-nosnippet>260</a>//! ```
+<a href=#261 id=261 data-nosnippet>261</a>//!
+<a href=#262 id=262 data-nosnippet>262</a>//! &lt;br&gt;&lt;br&gt;
+<a href=#263 id=263 data-nosnippet>263</a>//!
+<a href=#264 id=264 data-nosnippet>264</a>//! # Non-Cargo setup
+<a href=#265 id=265 data-nosnippet>265</a>//!
+<a href=#266 id=266 data-nosnippet>266</a>//! For use in non-Cargo builds like Bazel or Buck, CXX provides an alternate
+<a href=#267 id=267 data-nosnippet>267</a>//! way of invoking the C++ code generator as a standalone command line tool.
+<a href=#268 id=268 data-nosnippet>268</a>//! The tool is packaged as the `cxxbridge-cmd` crate on crates.io or can be
+<a href=#269 id=269 data-nosnippet>269</a>//! built from the *gen/cmd* directory of &lt;https://github.com/dtolnay/cxx&gt;.
+<a href=#270 id=270 data-nosnippet>270</a>//!
+<a href=#271 id=271 data-nosnippet>271</a>//! ```bash
+<a href=#272 id=272 data-nosnippet>272</a>//! $ cargo install cxxbridge-cmd
+<a href=#273 id=273 data-nosnippet>273</a>//!
+<a href=#274 id=274 data-nosnippet>274</a>//! $ cxxbridge src/main.rs --header &gt; path/to/mybridge.h
+<a href=#275 id=275 data-nosnippet>275</a>//! $ cxxbridge src/main.rs &gt; path/to/mybridge.cc
+<a href=#276 id=276 data-nosnippet>276</a>//! ```
+<a href=#277 id=277 data-nosnippet>277</a>//!
+<a href=#278 id=278 data-nosnippet>278</a>//! &lt;br&gt;
+<a href=#279 id=279 data-nosnippet>279</a>//!
+<a href=#280 id=280 data-nosnippet>280</a>//! # Safety
+<a href=#281 id=281 data-nosnippet>281</a>//!
+<a href=#282 id=282 data-nosnippet>282</a>//! Be aware that the design of this library is intentionally restrictive and
+<a href=#283 id=283 data-nosnippet>283</a>//! opinionated! It isn't a goal to be powerful enough to handle arbitrary
+<a href=#284 id=284 data-nosnippet>284</a>//! signatures in either language. Instead this project is about carving out a
+<a href=#285 id=285 data-nosnippet>285</a>//! reasonably expressive set of functionality about which we can make useful
+<a href=#286 id=286 data-nosnippet>286</a>//! safety guarantees today and maybe extend over time. You may find that it
+<a href=#287 id=287 data-nosnippet>287</a>//! takes some practice to use CXX bridge effectively as it won't work in all
+<a href=#288 id=288 data-nosnippet>288</a>//! the ways that you are used to.
+<a href=#289 id=289 data-nosnippet>289</a>//!
+<a href=#290 id=290 data-nosnippet>290</a>//! Some of the considerations that go into ensuring safety are:
+<a href=#291 id=291 data-nosnippet>291</a>//!
+<a href=#292 id=292 data-nosnippet>292</a>//! - By design, our paired code generators work together to control both sides
+<a href=#293 id=293 data-nosnippet>293</a>//!   of the FFI boundary. Ordinarily in Rust writing your own `extern "C"`
+<a href=#294 id=294 data-nosnippet>294</a>//!   blocks is unsafe because the Rust compiler has no way to know whether the
+<a href=#295 id=295 data-nosnippet>295</a>//!   signatures you've written actually match the signatures implemented in the
+<a href=#296 id=296 data-nosnippet>296</a>//!   other language. With CXX we achieve that visibility and know what's on the
+<a href=#297 id=297 data-nosnippet>297</a>//!   other side.
+<a href=#298 id=298 data-nosnippet>298</a>//!
+<a href=#299 id=299 data-nosnippet>299</a>//! - Our static analysis detects and prevents passing types by value that
+<a href=#300 id=300 data-nosnippet>300</a>//!   shouldn't be passed by value from C++ to Rust, for example because they
+<a href=#301 id=301 data-nosnippet>301</a>//!   may contain internal pointers that would be screwed up by Rust's move
+<a href=#302 id=302 data-nosnippet>302</a>//!   behavior.
+<a href=#303 id=303 data-nosnippet>303</a>//!
+<a href=#304 id=304 data-nosnippet>304</a>//! - To many people's surprise, it is possible to have a struct in Rust and a
+<a href=#305 id=305 data-nosnippet>305</a>//!   struct in C++ with exactly the same layout / fields / alignment /
+<a href=#306 id=306 data-nosnippet>306</a>//!   everything, and still not the same ABI when passed by value. This is a
+<a href=#307 id=307 data-nosnippet>307</a>//!   longstanding bindgen bug that leads to segfaults in absolutely
+<a href=#308 id=308 data-nosnippet>308</a>//!   correct-looking code ([rust-lang/rust-bindgen#778]). CXX knows about this
+<a href=#309 id=309 data-nosnippet>309</a>//!   and can insert the necessary zero-cost workaround transparently where
+<a href=#310 id=310 data-nosnippet>310</a>//!   needed, so go ahead and pass your structs by value without worries. This
+<a href=#311 id=311 data-nosnippet>311</a>//!   is made possible by owning both sides of the boundary rather than just
+<a href=#312 id=312 data-nosnippet>312</a>//!   one.
+<a href=#313 id=313 data-nosnippet>313</a>//!
+<a href=#314 id=314 data-nosnippet>314</a>//! - Template instantiations: for example in order to expose a UniquePtr\&lt;T\&gt;
+<a href=#315 id=315 data-nosnippet>315</a>//!   type in Rust backed by a real C++ unique\_ptr, we have a way of using a
+<a href=#316 id=316 data-nosnippet>316</a>//!   Rust trait to connect the behavior back to the template instantiations
+<a href=#317 id=317 data-nosnippet>317</a>//!   performed by the other language.
+<a href=#318 id=318 data-nosnippet>318</a>//!
+<a href=#319 id=319 data-nosnippet>319</a>//! [rust-lang/rust-bindgen#778]: https://github.com/rust-lang/rust-bindgen/issues/778
+<a href=#320 id=320 data-nosnippet>320</a>//!
+<a href=#321 id=321 data-nosnippet>321</a>//! &lt;br&gt;
+<a href=#322 id=322 data-nosnippet>322</a>//!
+<a href=#323 id=323 data-nosnippet>323</a>//! # Builtin types
+<a href=#324 id=324 data-nosnippet>324</a>//!
+<a href=#325 id=325 data-nosnippet>325</a>//! In addition to all the primitive types (i32 &amp;lt;=&amp;gt; int32_t), the
+<a href=#326 id=326 data-nosnippet>326</a>//! following common types may be used in the fields of shared structs and the
+<a href=#327 id=327 data-nosnippet>327</a>//! arguments and returns of functions.
+<a href=#328 id=328 data-nosnippet>328</a>//!
+<a href=#329 id=329 data-nosnippet>329</a>//! &lt;table&gt;
+<a href=#330 id=330 data-nosnippet>330</a>//! &lt;tr&gt;&lt;th&gt;name in Rust&lt;/th&gt;&lt;th&gt;name in C++&lt;/th&gt;&lt;th&gt;restrictions&lt;/th&gt;&lt;/tr&gt;
+<a href=#331 id=331 data-nosnippet>331</a>//! &lt;tr&gt;&lt;td&gt;String&lt;/td&gt;&lt;td&gt;rust::String&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#332 id=332 data-nosnippet>332</a>//! &lt;tr&gt;&lt;td&gt;&amp;amp;str&lt;/td&gt;&lt;td&gt;rust::Str&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#333 id=333 data-nosnippet>333</a>//! &lt;tr&gt;&lt;td&gt;&amp;amp;[T]&lt;/td&gt;&lt;td&gt;rust::Slice&amp;lt;const T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#334 id=334 data-nosnippet>334</a>//! &lt;tr&gt;&lt;td&gt;&amp;amp;mut [T]&lt;/td&gt;&lt;td&gt;rust::Slice&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#335 id=335 data-nosnippet>335</a>//! &lt;tr&gt;&lt;td&gt;&lt;a href="struct.CxxString.html"&gt;CxxString&lt;/a&gt;&lt;/td&gt;&lt;td&gt;std::string&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot be passed by value&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#336 id=336 data-nosnippet>336</a>//! &lt;tr&gt;&lt;td&gt;Box&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;rust::Box&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#337 id=337 data-nosnippet>337</a>//! &lt;tr&gt;&lt;td&gt;&lt;a href="struct.UniquePtr.html"&gt;UniquePtr&amp;lt;T&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;td&gt;std::unique_ptr&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque Rust type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#338 id=338 data-nosnippet>338</a>//! &lt;tr&gt;&lt;td&gt;&lt;a href="struct.SharedPtr.html"&gt;SharedPtr&amp;lt;T&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;td&gt;std::shared_ptr&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque Rust type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#339 id=339 data-nosnippet>339</a>//! &lt;tr&gt;&lt;td&gt;[T; N]&lt;/td&gt;&lt;td&gt;std::array&amp;lt;T, N&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#340 id=340 data-nosnippet>340</a>//! &lt;tr&gt;&lt;td&gt;Vec&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;rust::Vec&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot hold opaque C++ type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#341 id=341 data-nosnippet>341</a>//! &lt;tr&gt;&lt;td&gt;&lt;a href="struct.CxxVector.html"&gt;CxxVector&amp;lt;T&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;td&gt;std::vector&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;cannot be passed by value, cannot hold opaque Rust type&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#342 id=342 data-nosnippet>342</a>//! &lt;tr&gt;&lt;td&gt;*mut T, *const T&lt;/td&gt;&lt;td&gt;T*, const T*&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;fn with a raw pointer argument must be declared unsafe to call&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#343 id=343 data-nosnippet>343</a>//! &lt;tr&gt;&lt;td&gt;fn(T, U) -&amp;gt; V&lt;/td&gt;&lt;td&gt;rust::Fn&amp;lt;V(T, U)&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;only passing from Rust to C++ is implemented so far&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#344 id=344 data-nosnippet>344</a>//! &lt;tr&gt;&lt;td&gt;Result&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;throw/catch&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;allowed as return type only&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#345 id=345 data-nosnippet>345</a>//! &lt;/table&gt;
+<a href=#346 id=346 data-nosnippet>346</a>//!
+<a href=#347 id=347 data-nosnippet>347</a>//! The C++ API of the `rust` namespace is defined by the *include/cxx.h* file
+<a href=#348 id=348 data-nosnippet>348</a>//! in &lt;https://github.com/dtolnay/cxx&gt;. You will need to include this header in
+<a href=#349 id=349 data-nosnippet>349</a>//! your C++ code when working with those types.
+<a href=#350 id=350 data-nosnippet>350</a>//!
+<a href=#351 id=351 data-nosnippet>351</a>//! The following types are intended to be supported "soon" but are just not
+<a href=#352 id=352 data-nosnippet>352</a>//! implemented yet. I don't expect any of these to be hard to make work but
+<a href=#353 id=353 data-nosnippet>353</a>//! it's a matter of designing a nice API for each in its non-native language.
+<a href=#354 id=354 data-nosnippet>354</a>//!
+<a href=#355 id=355 data-nosnippet>355</a>//! &lt;table&gt;
+<a href=#356 id=356 data-nosnippet>356</a>//! &lt;tr&gt;&lt;th&gt;name in Rust&lt;/th&gt;&lt;th&gt;name in C++&lt;/th&gt;&lt;/tr&gt;
+<a href=#357 id=357 data-nosnippet>357</a>//! &lt;tr&gt;&lt;td&gt;BTreeMap&amp;lt;K, V&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#358 id=358 data-nosnippet>358</a>//! &lt;tr&gt;&lt;td&gt;HashMap&amp;lt;K, V&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#359 id=359 data-nosnippet>359</a>//! &lt;tr&gt;&lt;td&gt;Arc&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#360 id=360 data-nosnippet>360</a>//! &lt;tr&gt;&lt;td&gt;Option&amp;lt;T&amp;gt;&lt;/td&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#361 id=361 data-nosnippet>361</a>//! &lt;tr&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;std::map&amp;lt;K, V&amp;gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#362 id=362 data-nosnippet>362</a>//! &lt;tr&gt;&lt;td&gt;&lt;sup&gt;&lt;i&gt;tbd&lt;/i&gt;&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;std::unordered_map&amp;lt;K, V&amp;gt;&lt;/td&gt;&lt;/tr&gt;
+<a href=#363 id=363 data-nosnippet>363</a>//! &lt;/table&gt;
+<a href=#364 id=364 data-nosnippet>364</a>
+<a href=#365 id=365 data-nosnippet>365</a></span><span class="attr">#![no_std]
+<a href=#366 id=366 data-nosnippet>366</a>#![doc(html_root_url = <span class="string">"https://docs.rs/cxx/1.0.184"</span>)]
+<a href=#367 id=367 data-nosnippet>367</a>#![cfg_attr(docsrs, feature(doc_cfg))]
+<a href=#368 id=368 data-nosnippet>368</a>#![deny(
+<a href=#369 id=369 data-nosnippet>369</a>    improper_ctypes,
+<a href=#370 id=370 data-nosnippet>370</a>    improper_ctypes_definitions,
+<a href=#371 id=371 data-nosnippet>371</a>    missing_docs,
+<a href=#372 id=372 data-nosnippet>372</a>    unsafe_op_in_unsafe_fn
+<a href=#373 id=373 data-nosnippet>373</a>)]
+<a href=#374 id=374 data-nosnippet>374</a>#![warn(
+<a href=#375 id=375 data-nosnippet>375</a>    clippy::alloc_instead_of_core,
+<a href=#376 id=376 data-nosnippet>376</a>    clippy::std_instead_of_alloc,
+<a href=#377 id=377 data-nosnippet>377</a>    clippy::std_instead_of_core
+<a href=#378 id=378 data-nosnippet>378</a>)]
+<a href=#379 id=379 data-nosnippet>379</a>#![expect(non_camel_case_types)]
+<a href=#380 id=380 data-nosnippet>380</a>#![allow(
+<a href=#381 id=381 data-nosnippet>381</a>    clippy::cast_possible_truncation,
+<a href=#382 id=382 data-nosnippet>382</a>    clippy::doc_markdown,
+<a href=#383 id=383 data-nosnippet>383</a>    clippy::elidable_lifetime_names,
+<a href=#384 id=384 data-nosnippet>384</a>    clippy::items_after_statements,
+<a href=#385 id=385 data-nosnippet>385</a>    clippy::len_without_is_empty,
+<a href=#386 id=386 data-nosnippet>386</a>    clippy::missing_errors_doc,
+<a href=#387 id=387 data-nosnippet>387</a>    clippy::missing_safety_doc,
+<a href=#388 id=388 data-nosnippet>388</a>    clippy::must_use_candidate,
+<a href=#389 id=389 data-nosnippet>389</a>    clippy::needless_doctest_main,
+<a href=#390 id=390 data-nosnippet>390</a>    clippy::needless_lifetimes,
+<a href=#391 id=391 data-nosnippet>391</a>    clippy::needless_pass_by_value,
 <a href=#392 id=392 data-nosnippet>392</a>    clippy::new_without_default,
 <a href=#393 id=393 data-nosnippet>393</a>    clippy::ptr_as_ptr,
 <a href=#394 id=394 data-nosnippet>394</a>    clippy::ptr_cast_constness,
@@ -492,48 +492,46 @@
 <a href=#492 id=492 data-nosnippet>492</a><span class="comment">// Not public API.
 <a href=#493 id=493 data-nosnippet>493</a></span><span class="attr">#[doc(hidden)]
 <a href=#494 id=494 data-nosnippet>494</a></span><span class="kw">pub mod </span>private {
-<a href=#495 id=495 data-nosnippet>495</a>    <span class="kw">pub use </span><span class="kw">crate</span>::cxx_vector::VectorElement;
-<a href=#496 id=496 data-nosnippet>496</a>    <span class="kw">pub use </span><span class="kw">crate</span>::extern_type::{verify_extern_kind, verify_extern_type};
-<a href=#497 id=497 data-nosnippet>497</a>    <span class="kw">pub use </span><span class="kw">crate</span>::function::FatFunction;
-<a href=#498 id=498 data-nosnippet>498</a>    <span class="kw">pub use </span><span class="kw">crate</span>::hash::hash;
-<a href=#499 id=499 data-nosnippet>499</a>    <span class="kw">pub use </span><span class="kw">crate</span>::opaque::Opaque;
-<a href=#500 id=500 data-nosnippet>500</a>    <span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
-<a href=#501 id=501 data-nosnippet>501</a>    </span><span class="kw">pub use </span><span class="kw">crate</span>::result::{r#try, <span class="prelude-ty">Result</span>};
-<a href=#502 id=502 data-nosnippet>502</a>    <span class="kw">pub use </span><span class="kw">crate</span>::rust_slice::RustSlice;
-<a href=#503 id=503 data-nosnippet>503</a>    <span class="kw">pub use </span><span class="kw">crate</span>::rust_str::RustStr;
-<a href=#504 id=504 data-nosnippet>504</a>    <span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
-<a href=#505 id=505 data-nosnippet>505</a>    </span><span class="kw">pub use </span><span class="kw">crate</span>::rust_string::RustString;
-<a href=#506 id=506 data-nosnippet>506</a>    <span class="kw">pub use </span><span class="kw">crate</span>::rust_type::{ImplBox, ImplVec, RustType};
-<a href=#507 id=507 data-nosnippet>507</a>    <span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
-<a href=#508 id=508 data-nosnippet>508</a>    </span><span class="kw">pub use </span><span class="kw">crate</span>::rust_vec::RustVec;
-<a href=#509 id=509 data-nosnippet>509</a>    <span class="kw">pub use </span><span class="kw">crate</span>::shared_ptr::SharedPtrTarget;
+<a href=#495 id=495 data-nosnippet>495</a>    <span class="kw">pub use </span><span class="kw">crate</span>::extern_type::{verify_extern_kind, verify_extern_type};
+<a href=#496 id=496 data-nosnippet>496</a>    <span class="kw">pub use </span><span class="kw">crate</span>::function::FatFunction;
+<a href=#497 id=497 data-nosnippet>497</a>    <span class="kw">pub use </span><span class="kw">crate</span>::hash::hash;
+<a href=#498 id=498 data-nosnippet>498</a>    <span class="kw">pub use </span><span class="kw">crate</span>::opaque::Opaque;
+<a href=#499 id=499 data-nosnippet>499</a>    <span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
+<a href=#500 id=500 data-nosnippet>500</a>    </span><span class="kw">pub use </span><span class="kw">crate</span>::result::{r#try, <span class="prelude-ty">Result</span>};
+<a href=#501 id=501 data-nosnippet>501</a>    <span class="kw">pub use </span><span class="kw">crate</span>::rust_slice::RustSlice;
+<a href=#502 id=502 data-nosnippet>502</a>    <span class="kw">pub use </span><span class="kw">crate</span>::rust_str::RustStr;
+<a href=#503 id=503 data-nosnippet>503</a>    <span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
+<a href=#504 id=504 data-nosnippet>504</a>    </span><span class="kw">pub use </span><span class="kw">crate</span>::rust_string::RustString;
+<a href=#505 id=505 data-nosnippet>505</a>    <span class="kw">pub use </span><span class="kw">crate</span>::rust_type::{
+<a href=#506 id=506 data-nosnippet>506</a>        require_box, require_unpin, require_vec, with, ImplBox, ImplVec, RustType, Without,
+<a href=#507 id=507 data-nosnippet>507</a>    };
+<a href=#508 id=508 data-nosnippet>508</a>    <span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
+<a href=#509 id=509 data-nosnippet>509</a>    </span><span class="kw">pub use </span><span class="kw">crate</span>::rust_vec::RustVec;
 <a href=#510 id=510 data-nosnippet>510</a>    <span class="kw">pub use </span><span class="kw">crate</span>::string::StackString;
-<a href=#511 id=511 data-nosnippet>511</a>    <span class="kw">pub use </span><span class="kw">crate</span>::unique_ptr::UniquePtrTarget;
-<a href=#512 id=512 data-nosnippet>512</a>    <span class="kw">pub use </span><span class="kw">crate</span>::unwind::prevent_unwind;
-<a href=#513 id=513 data-nosnippet>513</a>    <span class="kw">pub use </span><span class="kw">crate</span>::weak_ptr::WeakPtrTarget;
-<a href=#514 id=514 data-nosnippet>514</a>    <span class="kw">pub use </span>core::{concat, module_path};
-<a href=#515 id=515 data-nosnippet>515</a>    <span class="kw">pub use </span>cxxbridge_macro::type_id;
-<a href=#516 id=516 data-nosnippet>516</a>}
-<a href=#517 id=517 data-nosnippet>517</a>
-<a href=#518 id=518 data-nosnippet>518</a><span class="kw">mod </span>actually_private {
-<a href=#519 id=519 data-nosnippet>519</a>    <span class="kw">pub trait </span>Private {}
-<a href=#520 id=520 data-nosnippet>520</a>}
-<a href=#521 id=521 data-nosnippet>521</a>
-<a href=#522 id=522 data-nosnippet>522</a><span class="macro">macro_rules!</span> chars {
-<a href=#523 id=523 data-nosnippet>523</a>    ($(<span class="macro-nonterminal">$ch</span>:ident)<span class="kw-2">*</span>) =&gt; {
-<a href=#524 id=524 data-nosnippet>524</a>        $(
-<a href=#525 id=525 data-nosnippet>525</a>            <span class="attr">#[doc(hidden)]
-<a href=#526 id=526 data-nosnippet>526</a>            </span><span class="kw">pub enum </span><span class="macro-nonterminal">$ch </span>{}
-<a href=#527 id=527 data-nosnippet>527</a>        )*
-<a href=#528 id=528 data-nosnippet>528</a>    };
-<a href=#529 id=529 data-nosnippet>529</a>}
-<a href=#530 id=530 data-nosnippet>530</a>
-<a href=#531 id=531 data-nosnippet>531</a><span class="macro">chars!</span> {
-<a href=#532 id=532 data-nosnippet>532</a>    _0 _1 _2 _3 _4 _5 _6 _7 _8 _9
-<a href=#533 id=533 data-nosnippet>533</a>    A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-<a href=#534 id=534 data-nosnippet>534</a>    a b c d e f g h i j k l m n o p q r s t u v w x y z
-<a href=#535 id=535 data-nosnippet>535</a>    __ <span class="comment">// underscore
-<a href=#536 id=536 data-nosnippet>536</a></span>}
-<a href=#537 id=537 data-nosnippet>537</a>
-<a href=#538 id=538 data-nosnippet>538</a><span class="attr">#[repr(transparent)]
-<a href=#539 id=539 data-nosnippet>539</a></span><span class="kw">struct </span>void(<span class="attr">#[allow(dead_code)] </span>core::ffi::c_void);</code></pre></div></section></main></body></html>
+<a href=#511 id=511 data-nosnippet>511</a>    <span class="kw">pub use </span><span class="kw">crate</span>::unwind::prevent_unwind;
+<a href=#512 id=512 data-nosnippet>512</a>    <span class="kw">pub use </span>core::{concat, module_path};
+<a href=#513 id=513 data-nosnippet>513</a>    <span class="kw">pub use </span>cxxbridge_macro::type_id;
+<a href=#514 id=514 data-nosnippet>514</a>}
+<a href=#515 id=515 data-nosnippet>515</a>
+<a href=#516 id=516 data-nosnippet>516</a><span class="kw">mod </span>actually_private {
+<a href=#517 id=517 data-nosnippet>517</a>    <span class="kw">pub trait </span>Private {}
+<a href=#518 id=518 data-nosnippet>518</a>}
+<a href=#519 id=519 data-nosnippet>519</a>
+<a href=#520 id=520 data-nosnippet>520</a><span class="macro">macro_rules!</span> chars {
+<a href=#521 id=521 data-nosnippet>521</a>    ($(<span class="macro-nonterminal">$ch</span>:ident)<span class="kw-2">*</span>) =&gt; {
+<a href=#522 id=522 data-nosnippet>522</a>        $(
+<a href=#523 id=523 data-nosnippet>523</a>            <span class="attr">#[doc(hidden)]
+<a href=#524 id=524 data-nosnippet>524</a>            </span><span class="kw">pub enum </span><span class="macro-nonterminal">$ch </span>{}
+<a href=#525 id=525 data-nosnippet>525</a>        )*
+<a href=#526 id=526 data-nosnippet>526</a>    };
+<a href=#527 id=527 data-nosnippet>527</a>}
+<a href=#528 id=528 data-nosnippet>528</a>
+<a href=#529 id=529 data-nosnippet>529</a><span class="macro">chars!</span> {
+<a href=#530 id=530 data-nosnippet>530</a>    _0 _1 _2 _3 _4 _5 _6 _7 _8 _9
+<a href=#531 id=531 data-nosnippet>531</a>    A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+<a href=#532 id=532 data-nosnippet>532</a>    a b c d e f g h i j k l m n o p q r s t u v w x y z
+<a href=#533 id=533 data-nosnippet>533</a>    __ <span class="comment">// underscore
+<a href=#534 id=534 data-nosnippet>534</a></span>}
+<a href=#535 id=535 data-nosnippet>535</a>
+<a href=#536 id=536 data-nosnippet>536</a><span class="attr">#[repr(transparent)]
+<a href=#537 id=537 data-nosnippet>537</a></span><span class="kw">struct </span>void(core::ffi::c_void);</code></pre></div></section></main></body></html>

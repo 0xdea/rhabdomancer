@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cxxbridge-macro-1.0.160/src/syntax/impls.rs`."><title>impls.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-1a91846b.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cxxbridge_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.88.0 (6b00bc388 2025-06-23)" data-channel="1.88.0" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-4e99c027.js"></script><script defer src="../../../static.files/src-script-63605ae7.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxxbridge_macro/syntax/</div>impls.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">crate</span>::syntax::{
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cxxbridge-macro-1.0.184/src/syntax/impls.rs`."><title>impls.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-84e720fa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cxxbridge_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.89.0 (29483883e 2025-08-04)" data-channel="1.89.0" data-search-js="search-92309212.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-4e99c027.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-fd3af306.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxxbridge_macro/syntax/</div>impls.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">crate</span>::syntax::{
 <a href=#2 id=2 data-nosnippet>2</a>    Array, ExternFn, Include, Lifetimes, Ptr, Receiver, Ref, Signature, SliceRef, Ty1, Type, Var,
 <a href=#3 id=3 data-nosnippet>3</a>};
 <a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span>std::hash::{Hash, Hasher};
@@ -313,7 +313,7 @@
 <a href=#313 id=313 data-nosnippet>313</a>            unsafety,
 <a href=#314 id=314 data-nosnippet>314</a>            fn_token: <span class="kw">_</span>,
 <a href=#315 id=315 data-nosnippet>315</a>            generics: <span class="kw">_</span>,
-<a href=#316 id=316 data-nosnippet>316</a>            receiver,
+<a href=#316 id=316 data-nosnippet>316</a>            kind,
 <a href=#317 id=317 data-nosnippet>317</a>            args,
 <a href=#318 id=318 data-nosnippet>318</a>            ret,
 <a href=#319 id=319 data-nosnippet>319</a>            throws,
@@ -325,7 +325,7 @@
 <a href=#325 id=325 data-nosnippet>325</a>            unsafety: unsafety2,
 <a href=#326 id=326 data-nosnippet>326</a>            fn_token: <span class="kw">_</span>,
 <a href=#327 id=327 data-nosnippet>327</a>            generics: <span class="kw">_</span>,
-<a href=#328 id=328 data-nosnippet>328</a>            receiver: receiver2,
+<a href=#328 id=328 data-nosnippet>328</a>            kind: kind2,
 <a href=#329 id=329 data-nosnippet>329</a>            args: args2,
 <a href=#330 id=330 data-nosnippet>330</a>            ret: ret2,
 <a href=#331 id=331 data-nosnippet>331</a>            throws: throws2,
@@ -334,7 +334,7 @@
 <a href=#334 id=334 data-nosnippet>334</a>        } = other;
 <a href=#335 id=335 data-nosnippet>335</a>        asyncness.is_some() == asyncness2.is_some()
 <a href=#336 id=336 data-nosnippet>336</a>            &amp;&amp; unsafety.is_some() == unsafety2.is_some()
-<a href=#337 id=337 data-nosnippet>337</a>            &amp;&amp; receiver == receiver2
+<a href=#337 id=337 data-nosnippet>337</a>            &amp;&amp; kind == kind2
 <a href=#338 id=338 data-nosnippet>338</a>            &amp;&amp; ret == ret2
 <a href=#339 id=339 data-nosnippet>339</a>            &amp;&amp; throws == throws2
 <a href=#340 id=340 data-nosnippet>340</a>            &amp;&amp; args.len() == args2.len()
@@ -369,7 +369,7 @@
 <a href=#369 id=369 data-nosnippet>369</a>            unsafety,
 <a href=#370 id=370 data-nosnippet>370</a>            fn_token: <span class="kw">_</span>,
 <a href=#371 id=371 data-nosnippet>371</a>            generics: <span class="kw">_</span>,
-<a href=#372 id=372 data-nosnippet>372</a>            receiver,
+<a href=#372 id=372 data-nosnippet>372</a>            kind,
 <a href=#373 id=373 data-nosnippet>373</a>            args,
 <a href=#374 id=374 data-nosnippet>374</a>            ret,
 <a href=#375 id=375 data-nosnippet>375</a>            throws,
@@ -378,7 +378,7 @@
 <a href=#378 id=378 data-nosnippet>378</a>        } = <span class="self">self</span>;
 <a href=#379 id=379 data-nosnippet>379</a>        asyncness.is_some().hash(state);
 <a href=#380 id=380 data-nosnippet>380</a>        unsafety.is_some().hash(state);
-<a href=#381 id=381 data-nosnippet>381</a>        receiver.hash(state);
+<a href=#381 id=381 data-nosnippet>381</a>        kind.hash(state);
 <a href=#382 id=382 data-nosnippet>382</a>        <span class="kw">for </span>arg <span class="kw">in </span>args {
 <a href=#383 id=383 data-nosnippet>383</a>            <span class="kw">let </span>Var {
 <a href=#384 id=384 data-nosnippet>384</a>                cfg: <span class="kw">_</span>,

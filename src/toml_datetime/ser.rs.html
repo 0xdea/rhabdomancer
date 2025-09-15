@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml_datetime-0.7.0/src/ser.rs`."><title>ser.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-1a91846b.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="toml_datetime" data-themes="" data-resource-suffix="" data-rustdoc-version="1.88.0 (6b00bc388 2025-06-23)" data-channel="1.88.0" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-4e99c027.js"></script><script defer src="../../static.files/src-script-63605ae7.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">toml_datetime/</div>ser.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! Serialization support for [`Datetime`][crate::Datetime]
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml_datetime-0.7.1/src/ser.rs`."><title>ser.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-84e720fa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="toml_datetime" data-themes="" data-resource-suffix="" data-rustdoc-version="1.89.0 (29483883e 2025-08-04)" data-channel="1.89.0" data-search-js="search-92309212.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-4e99c027.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-fd3af306.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">toml_datetime/</div>ser.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! Serialization support for [`Datetime`][crate::Datetime]
 <a href=#2 id=2 data-nosnippet>2</a>
 <a href=#3 id=3 data-nosnippet>3</a>/// Check if serializing a [`Datetime`][crate::Datetime]
 <a href=#4 id=4 data-nosnippet>4</a></span><span class="kw">pub fn </span>is_datetime(name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; bool {
@@ -15,7 +15,7 @@
 <a href=#15 id=15 data-nosnippet>15</a>    </span>InvalidProtocol,
 <a href=#16 id=16 data-nosnippet>16</a>}
 <a href=#17 id=17 data-nosnippet>17</a>
-<a href=#18 id=18 data-nosnippet>18</a><span class="kw">impl </span>serde::ser::Error <span class="kw">for </span>SerializerError {
+<a href=#18 id=18 data-nosnippet>18</a><span class="kw">impl </span>serde_core::ser::Error <span class="kw">for </span>SerializerError {
 <a href=#19 id=19 data-nosnippet>19</a>    <span class="kw">fn </span>custom&lt;T&gt;(_msg: T) -&gt; <span class="self">Self
 <a href=#20 id=20 data-nosnippet>20</a>    </span><span class="kw">where
 <a href=#21 id=21 data-nosnippet>21</a>        </span>T: core::fmt::Display,
@@ -36,7 +36,7 @@
 <a href=#36 id=36 data-nosnippet>36</a><span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 <a href=#37 id=37 data-nosnippet>37</a></span><span class="kw">impl </span>std::error::Error <span class="kw">for </span>SerializerError {}
 <a href=#38 id=38 data-nosnippet>38</a><span class="attr">#[cfg(all(not(feature = <span class="string">"std"</span>), feature = <span class="string">"serde"</span>))]
-<a href=#39 id=39 data-nosnippet>39</a></span><span class="kw">impl </span>serde::de::StdError <span class="kw">for </span>SerializerError {}
+<a href=#39 id=39 data-nosnippet>39</a></span><span class="kw">impl </span>serde_core::de::StdError <span class="kw">for </span>SerializerError {}
 <a href=#40 id=40 data-nosnippet>40</a>
 <a href=#41 id=41 data-nosnippet>41</a><span class="doccomment">/// Serializer / format support for emitting [`Datetime`][crate::Datetime]
 <a href=#42 id=42 data-nosnippet>42</a></span><span class="attr">#[derive(Default)]
@@ -50,14 +50,14 @@
 <a href=#50 id=50 data-nosnippet>50</a>        <span class="self">Self </span>{ value: <span class="prelude-val">None </span>}
 <a href=#51 id=51 data-nosnippet>51</a>    }
 <a href=#52 id=52 data-nosnippet>52</a>
-<a href=#53 id=53 data-nosnippet>53</a>    <span class="doccomment">/// See [`serde::ser::SerializeStruct::serialize_field`]
+<a href=#53 id=53 data-nosnippet>53</a>    <span class="doccomment">/// See [`serde_core::ser::SerializeStruct::serialize_field`]
 <a href=#54 id=54 data-nosnippet>54</a>    </span><span class="kw">pub fn </span>serialize_field&lt;T&gt;(
 <a href=#55 id=55 data-nosnippet>55</a>        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
 <a href=#56 id=56 data-nosnippet>56</a>        key: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
 <a href=#57 id=57 data-nosnippet>57</a>        value: <span class="kw-2">&amp;</span>T,
 <a href=#58 id=58 data-nosnippet>58</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), SerializerError&gt;
 <a href=#59 id=59 data-nosnippet>59</a>    <span class="kw">where
-<a href=#60 id=60 data-nosnippet>60</a>        </span>T: serde::ser::Serialize + <span class="question-mark">?</span>Sized,
+<a href=#60 id=60 data-nosnippet>60</a>        </span>T: serde_core::ser::Serialize + <span class="question-mark">?</span>Sized,
 <a href=#61 id=61 data-nosnippet>61</a>    {
 <a href=#62 id=62 data-nosnippet>62</a>        <span class="kw">if </span>key == <span class="kw">crate</span>::datetime::FIELD {
 <a href=#63 id=63 data-nosnippet>63</a>            <span class="self">self</span>.value = <span class="prelude-val">Some</span>(value.serialize(DatetimeFieldSerializer::default())<span class="question-mark">?</span>);
@@ -66,7 +66,7 @@
 <a href=#66 id=66 data-nosnippet>66</a>        <span class="prelude-val">Ok</span>(())
 <a href=#67 id=67 data-nosnippet>67</a>    }
 <a href=#68 id=68 data-nosnippet>68</a>
-<a href=#69 id=69 data-nosnippet>69</a>    <span class="doccomment">/// See [`serde::ser::SerializeStruct::end`]
+<a href=#69 id=69 data-nosnippet>69</a>    <span class="doccomment">/// See [`serde_core::ser::SerializeStruct::end`]
 <a href=#70 id=70 data-nosnippet>70</a>    </span><span class="kw">pub fn </span>end(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">crate</span>::Datetime, SerializerError&gt; {
 <a href=#71 id=71 data-nosnippet>71</a>        <span class="self">self</span>.value.ok_or(SerializerError::InvalidProtocol)
 <a href=#72 id=72 data-nosnippet>72</a>    }
@@ -75,16 +75,16 @@
 <a href=#75 id=75 data-nosnippet>75</a><span class="attr">#[derive(Default)]
 <a href=#76 id=76 data-nosnippet>76</a></span><span class="kw">struct </span>DatetimeFieldSerializer {}
 <a href=#77 id=77 data-nosnippet>77</a>
-<a href=#78 id=78 data-nosnippet>78</a><span class="kw">impl </span>serde::ser::Serializer <span class="kw">for </span>DatetimeFieldSerializer {
+<a href=#78 id=78 data-nosnippet>78</a><span class="kw">impl </span>serde_core::ser::Serializer <span class="kw">for </span>DatetimeFieldSerializer {
 <a href=#79 id=79 data-nosnippet>79</a>    <span class="kw">type </span><span class="prelude-val">Ok </span>= <span class="kw">crate</span>::Datetime;
 <a href=#80 id=80 data-nosnippet>80</a>    <span class="kw">type </span>Error = SerializerError;
-<a href=#81 id=81 data-nosnippet>81</a>    <span class="kw">type </span>SerializeSeq = serde::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
-<a href=#82 id=82 data-nosnippet>82</a>    <span class="kw">type </span>SerializeTuple = serde::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
-<a href=#83 id=83 data-nosnippet>83</a>    <span class="kw">type </span>SerializeTupleStruct = serde::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
-<a href=#84 id=84 data-nosnippet>84</a>    <span class="kw">type </span>SerializeTupleVariant = serde::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
-<a href=#85 id=85 data-nosnippet>85</a>    <span class="kw">type </span>SerializeMap = serde::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
-<a href=#86 id=86 data-nosnippet>86</a>    <span class="kw">type </span>SerializeStruct = serde::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
-<a href=#87 id=87 data-nosnippet>87</a>    <span class="kw">type </span>SerializeStructVariant = serde::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
+<a href=#81 id=81 data-nosnippet>81</a>    <span class="kw">type </span>SerializeSeq = serde_core::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
+<a href=#82 id=82 data-nosnippet>82</a>    <span class="kw">type </span>SerializeTuple = serde_core::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
+<a href=#83 id=83 data-nosnippet>83</a>    <span class="kw">type </span>SerializeTupleStruct = serde_core::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
+<a href=#84 id=84 data-nosnippet>84</a>    <span class="kw">type </span>SerializeTupleVariant = serde_core::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
+<a href=#85 id=85 data-nosnippet>85</a>    <span class="kw">type </span>SerializeMap = serde_core::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
+<a href=#86 id=86 data-nosnippet>86</a>    <span class="kw">type </span>SerializeStruct = serde_core::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
+<a href=#87 id=87 data-nosnippet>87</a>    <span class="kw">type </span>SerializeStructVariant = serde_core::ser::Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
 <a href=#88 id=88 data-nosnippet>88</a>
 <a href=#89 id=89 data-nosnippet>89</a>    <span class="kw">fn </span>serialize_bool(<span class="self">self</span>, _value: bool) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
 <a href=#90 id=90 data-nosnippet>90</a>        <span class="prelude-val">Err</span>(SerializerError::InvalidProtocol)
@@ -149,7 +149,7 @@
 <a href=#149 id=149 data-nosnippet>149</a>
 <a href=#150 id=150 data-nosnippet>150</a>    <span class="kw">fn </span>serialize_some&lt;T&gt;(<span class="self">self</span>, _value: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;
 <a href=#151 id=151 data-nosnippet>151</a>    <span class="kw">where
-<a href=#152 id=152 data-nosnippet>152</a>        </span>T: serde::ser::Serialize + <span class="question-mark">?</span>Sized,
+<a href=#152 id=152 data-nosnippet>152</a>        </span>T: serde_core::ser::Serialize + <span class="question-mark">?</span>Sized,
 <a href=#153 id=153 data-nosnippet>153</a>    {
 <a href=#154 id=154 data-nosnippet>154</a>        <span class="prelude-val">Err</span>(SerializerError::InvalidProtocol)
 <a href=#155 id=155 data-nosnippet>155</a>    }
@@ -177,7 +177,7 @@
 <a href=#177 id=177 data-nosnippet>177</a>        _value: <span class="kw-2">&amp;</span>T,
 <a href=#178 id=178 data-nosnippet>178</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;
 <a href=#179 id=179 data-nosnippet>179</a>    <span class="kw">where
-<a href=#180 id=180 data-nosnippet>180</a>        </span>T: serde::ser::Serialize + <span class="question-mark">?</span>Sized,
+<a href=#180 id=180 data-nosnippet>180</a>        </span>T: serde_core::ser::Serialize + <span class="question-mark">?</span>Sized,
 <a href=#181 id=181 data-nosnippet>181</a>    {
 <a href=#182 id=182 data-nosnippet>182</a>        <span class="prelude-val">Err</span>(SerializerError::InvalidProtocol)
 <a href=#183 id=183 data-nosnippet>183</a>    }
@@ -190,7 +190,7 @@
 <a href=#190 id=190 data-nosnippet>190</a>        _value: <span class="kw-2">&amp;</span>T,
 <a href=#191 id=191 data-nosnippet>191</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;
 <a href=#192 id=192 data-nosnippet>192</a>    <span class="kw">where
-<a href=#193 id=193 data-nosnippet>193</a>        </span>T: serde::ser::Serialize + <span class="question-mark">?</span>Sized,
+<a href=#193 id=193 data-nosnippet>193</a>        </span>T: serde_core::ser::Serialize + <span class="question-mark">?</span>Sized,
 <a href=#194 id=194 data-nosnippet>194</a>    {
 <a href=#195 id=195 data-nosnippet>195</a>        <span class="prelude-val">Err</span>(SerializerError::InvalidProtocol)
 <a href=#196 id=196 data-nosnippet>196</a>    }

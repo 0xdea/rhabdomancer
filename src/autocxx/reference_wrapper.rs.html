@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocxx-0.28.0/src/reference_wrapper.rs`."><title>reference_wrapper.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-1a91846b.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="autocxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.88.0 (6b00bc388 2025-06-23)" data-channel="1.88.0" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-4e99c027.js"></script><script defer src="../../static.files/src-script-63605ae7.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">autocxx/</div>reference_wrapper.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="comment">// Copyright 2022 Google LLC
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocxx-0.27.0/src/reference_wrapper.rs`."><title>reference_wrapper.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-84e720fa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="autocxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.89.0 (29483883e 2025-08-04)" data-channel="1.89.0" data-search-js="search-92309212.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-4e99c027.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-fd3af306.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">autocxx/</div>reference_wrapper.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="comment">// Copyright 2022 Google LLC
 <a href=#2 id=2 data-nosnippet>2</a>//
 <a href=#3 id=3 data-nosnippet>3</a>// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or
 <a href=#4 id=4 data-nosnippet>4</a>// https://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license
@@ -38,7 +38,7 @@
 <a href=#38 id=38 data-nosnippet>38</a>/// As noted, one of the main reasons for this type is to call methods.
 <a href=#39 id=39 data-nosnippet>39</a>/// Unfortunately, that depends on unstable Rust features. If you can't
 <a href=#40 id=40 data-nosnippet>40</a>/// call methods on one of these references, check you're using nightly
-<a href=#41 id=41 data-nosnippet>41</a>/// and add `#![feature(arbitrary_self_types_pointers)]` to your crate.
+<a href=#41 id=41 data-nosnippet>41</a>/// and add `#![feature(arbitrary_self_types)]` to your crate.
 <a href=#42 id=42 data-nosnippet>42</a>///
 <a href=#43 id=43 data-nosnippet>43</a>/// # Lifetimes and cloneability
 <a href=#44 id=44 data-nosnippet>44</a>///
@@ -162,7 +162,7 @@
 <a href=#162 id=162 data-nosnippet>162</a>    </span><span class="kw">pub fn </span>const_cast(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CppMutRef&lt;<span class="lifetime">'a</span>, T&gt; {
 <a href=#163 id=163 data-nosnippet>163</a>        CppMutRef {
 <a href=#164 id=164 data-nosnippet>164</a>            ptr: <span class="self">self</span>.ptr <span class="kw">as </span><span class="kw-2">*mut </span>T,
-<a href=#165 id=165 data-nosnippet>165</a>            phantom: PhantomData,
+<a href=#165 id=165 data-nosnippet>165</a>            phantom: <span class="self">self</span>.phantom,
 <a href=#166 id=166 data-nosnippet>166</a>        }
 <a href=#167 id=167 data-nosnippet>167</a>    }
 <a href=#168 id=168 data-nosnippet>168</a>
@@ -192,7 +192,7 @@
 <a href=#192 id=192 data-nosnippet>192</a>    }
 <a href=#193 id=193 data-nosnippet>193</a>}
 <a href=#194 id=194 data-nosnippet>194</a>
-<a href=#195 id=195 data-nosnippet>195</a><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>CppRef&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#195 id=195 data-nosnippet>195</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>CppRef&lt;<span class="lifetime">'a</span>, T&gt; {
 <a href=#196 id=196 data-nosnippet>196</a>    <span class="kw">type </span>Target = <span class="kw-2">*const </span>T;
 <a href=#197 id=197 data-nosnippet>197</a>    <span class="attr">#[inline]
 <a href=#198 id=198 data-nosnippet>198</a>    </span><span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
@@ -208,7 +208,7 @@
 <a href=#208 id=208 data-nosnippet>208</a>    }
 <a href=#209 id=209 data-nosnippet>209</a>}
 <a href=#210 id=210 data-nosnippet>210</a>
-<a href=#211 id=211 data-nosnippet>211</a><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Clone <span class="kw">for </span>CppRef&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#211 id=211 data-nosnippet>211</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; Clone <span class="kw">for </span>CppRef&lt;<span class="lifetime">'a</span>, T&gt; {
 <a href=#212 id=212 data-nosnippet>212</a>    <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
 <a href=#213 id=213 data-nosnippet>213</a>        <span class="self">Self </span>{
 <a href=#214 id=214 data-nosnippet>214</a>            ptr: <span class="self">self</span>.ptr,
@@ -230,10 +230,10 @@
 <a href=#230 id=230 data-nosnippet>230</a></span><span class="attr">#[repr(transparent)]
 <a href=#231 id=231 data-nosnippet>231</a></span><span class="kw">pub struct </span>CppMutRef&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; {
 <a href=#232 id=232 data-nosnippet>232</a>    ptr: <span class="kw-2">*mut </span>T,
-<a href=#233 id=233 data-nosnippet>233</a>    phantom: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>T&gt;,
+<a href=#233 id=233 data-nosnippet>233</a>    phantom: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>T&gt;,
 <a href=#234 id=234 data-nosnippet>234</a>}
 <a href=#235 id=235 data-nosnippet>235</a>
-<a href=#236 id=236 data-nosnippet>236</a><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; CppMutRef&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#236 id=236 data-nosnippet>236</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; CppMutRef&lt;<span class="lifetime">'a</span>, T&gt; {
 <a href=#237 id=237 data-nosnippet>237</a>    <span class="doccomment">/// Retrieve the underlying C++ pointer.
 <a href=#238 id=238 data-nosnippet>238</a>    </span><span class="kw">pub fn </span>as_mut_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>T {
 <a href=#239 id=239 data-nosnippet>239</a>        <span class="self">self</span>.ptr
@@ -269,7 +269,7 @@
 <a href=#269 id=269 data-nosnippet>269</a>    }
 <a href=#270 id=270 data-nosnippet>270</a>}
 <a href=#271 id=271 data-nosnippet>271</a>
-<a href=#272 id=272 data-nosnippet>272</a><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>CppMutRef&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#272 id=272 data-nosnippet>272</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>CppMutRef&lt;<span class="lifetime">'a</span>, T&gt; {
 <a href=#273 id=273 data-nosnippet>273</a>    <span class="kw">type </span>Target = <span class="kw-2">*const </span>T;
 <a href=#274 id=274 data-nosnippet>274</a>    <span class="attr">#[inline]
 <a href=#275 id=275 data-nosnippet>275</a>    </span><span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
@@ -283,7 +283,7 @@
 <a href=#283 id=283 data-nosnippet>283</a>    }
 <a href=#284 id=284 data-nosnippet>284</a>}
 <a href=#285 id=285 data-nosnippet>285</a>
-<a href=#286 id=286 data-nosnippet>286</a><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Clone <span class="kw">for </span>CppMutRef&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#286 id=286 data-nosnippet>286</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; Clone <span class="kw">for </span>CppMutRef&lt;<span class="lifetime">'a</span>, T&gt; {
 <a href=#287 id=287 data-nosnippet>287</a>    <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
 <a href=#288 id=288 data-nosnippet>288</a>        <span class="self">Self </span>{
 <a href=#289 id=289 data-nosnippet>289</a>            ptr: <span class="self">self</span>.ptr,
@@ -296,7 +296,7 @@
 <a href=#296 id=296 data-nosnippet>296</a>    <span class="kw">fn </span>from(mutable: CppMutRef&lt;<span class="lifetime">'a</span>, T&gt;) -&gt; <span class="self">Self </span>{
 <a href=#297 id=297 data-nosnippet>297</a>        <span class="self">Self </span>{
 <a href=#298 id=298 data-nosnippet>298</a>            ptr: mutable.ptr,
-<a href=#299 id=299 data-nosnippet>299</a>            phantom: PhantomData,
+<a href=#299 id=299 data-nosnippet>299</a>            phantom: mutable.phantom,
 <a href=#300 id=300 data-nosnippet>300</a>        }
 <a href=#301 id=301 data-nosnippet>301</a>    }
 <a href=#302 id=302 data-nosnippet>302</a>}
@@ -316,7 +316,7 @@
 <a href=#316 id=316 data-nosnippet>316</a>    </span><span class="kw">fn </span>as_cpp_mut_ref(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; CppMutRef&lt;T&gt;;
 <a href=#317 id=317 data-nosnippet>317</a>}
 <a href=#318 id=318 data-nosnippet>318</a>
-<a href=#319 id=319 data-nosnippet>319</a><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; AsCppRef&lt;T&gt; <span class="kw">for </span>CppMutRef&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#319 id=319 data-nosnippet>319</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; AsCppRef&lt;T&gt; <span class="kw">for </span>CppMutRef&lt;<span class="lifetime">'a</span>, T&gt; {
 <a href=#320 id=320 data-nosnippet>320</a>    <span class="kw">fn </span>as_cpp_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CppRef&lt;T&gt; {
 <a href=#321 id=321 data-nosnippet>321</a>        CppRef::from_ptr(<span class="self">self</span>.ptr)
 <a href=#322 id=322 data-nosnippet>322</a>    }
@@ -566,7 +566,7 @@
 <a href=#566 id=566 data-nosnippet>566</a>    }
 <a href=#567 id=567 data-nosnippet>567</a>}
 <a href=#568 id=568 data-nosnippet>568</a>
-<a href=#569 id=569 data-nosnippet>569</a><span class="attr">#[cfg(all(feature = <span class="string">"arbitrary_self_types_pointers"</span>, test))]
+<a href=#569 id=569 data-nosnippet>569</a><span class="attr">#[cfg(all(feature = <span class="string">"arbitrary_self_types"</span>, test))]
 <a href=#570 id=570 data-nosnippet>570</a></span><span class="kw">mod </span>tests {
 <a href=#571 id=571 data-nosnippet>571</a>    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 <a href=#572 id=572 data-nosnippet>572</a>
