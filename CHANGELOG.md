@@ -9,8 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Switch to idalib v0.7 and update other dependencies.
+* Update documentation.
 * Improve output messages.
-* Update dependencies.
+* Update build and doc GitHub workflows.
 
 ## [0.6.2] - 2025-07-18
 

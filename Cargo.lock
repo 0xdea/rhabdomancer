@@ -72,9 +72,9 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "autocxx"
-version = "0.28.0"
+version = "0.27.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68c55316bd7d6560588498fe43b1aee3fd36c17c7cd440d69a5b4ba7df33978f"
+checksum = "54119c5e38d82c13a66cf6c6e6d089ff61c2a8f956b61f50485fd636e8f64656"
 dependencies = [
  "aquamarine",
  "autocxx-macro",
@@ -84,9 +84,9 @@ dependencies = [
 
 [[package]]
 name = "autocxx-bindgen"
-version = "0.72.0"
+version = "0.71.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "537ef6dffea4311d04a313f645bdd04d2c88b356a6eb7afd4258e5aee70dea8c"
+checksum = "a7d41cf081e31a74378456586b47a5bae2b75a98e5f7c248c9d9bf433e3637f4"
 dependencies = [
  "bitflags",
  "cexpr",
@@ -104,9 +104,9 @@ dependencies = [
 
 [[package]]
 name = "autocxx-build"
-version = "0.28.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fab383d79e3f1fe444c2161c3a0331d0e1478f7fb74bde75e3f5032577a3f706"
+checksum = "d123397e75f904758fef490775a00b0ada545ab409cb0163d919799e5a30119b"
 dependencies = [
  "autocxx-engine",
  "env_logger",
@@ -116,9 +116,9 @@ dependencies = [
 
 [[package]]
 name = "autocxx-engine"
-version = "0.28.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c00c4e7d232a15552eba90ec47c9a22c65e62816aef2ae4301801c3e1017737b"
+checksum = "8d8f30534af0f55d56743806ea9d49fbd85559f2bd3ec074fb3268ad1827fa92"
 dependencies = [
  "aquamarine",
  "autocxx-bindgen",
@@ -145,9 +145,9 @@ dependencies = [
 
 [[package]]
 name = "autocxx-macro"
-version = "0.28.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14586f9015555a8d257259713ac4914184a5c8c3f0c22efb8e538f79d2b3d968"
+checksum = "0a3c6868514727e4da46049b79941d989606e9eb054fb1915f02cad10a356b37"
 dependencies = [
  "autocxx-parser",
  "proc-macro-error",
@@ -158,9 +158,9 @@ dependencies = [
 
 [[package]]
 name = "autocxx-parser"
-version = "0.28.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "893a36d31f4618434f78f890f3136b039bbe6a719919e03eb249835e849454b7"
+checksum = "0cbe64c4c35a76ef3229505d336b3eef29e95b28f457b75e0f84b456a8107af9"
 dependencies = [
  "indexmap 1.9.3",
  "itertools 0.10.5",
@@ -476,10 +476,11 @@ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
 name = "erased-serde"
-version = "0.4.7"
+version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "110ca254af04e46794fcc4be0991e72e13fdd8c78119e02c76a5473f6f74e049"
+checksum = "259d404d09818dec19332e31d94558aeb442fea04c817006456c24b5460bbd4b"
 dependencies = [
+ "serde",
  "serde_core",
  "typeid",
 ]
@@ -604,9 +605,9 @@ checksum = "135b12329e5e3ce057a9f972339ea52bc954fe1e9358ef27f95e89716fbc5424"
 
 [[package]]
 name = "idalib"
-version = "0.6.1+9.1.250226"
+version = "0.7.1+9.2.250908"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43a847c8f6bbb10b82b932a3b80ba26c52fab6559343fee930263ed29793560e"
+checksum = "b0c64fb5f7132839cb1333ee3c1e870f8187749d7f7bf708bd7e84ea18c0ddbf"
 dependencies = [
  "anyhow",
  "autocxx",
@@ -619,18 +620,19 @@ dependencies = [
 
 [[package]]
 name = "idalib-build"
-version = "0.6.1+9.1.250226"
+version = "0.7.1+9.2.250908"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "70a86a312732dc72626c1868bab7e7e1a71394a4a40ca1bf8d4d0eca201633c0"
+checksum = "c29922f0c2ce4e1df8da142eb0f6472982323dda9db779ca1b7c37d6ade27cc9"
 dependencies = [
  "anyhow",
+ "idalib-sys",
 ]
 
 [[package]]
 name = "idalib-sys"
-version = "0.6.1+9.1.250226"
+version = "0.7.1+9.2.250908"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ddd0ece081d8cc870a276c22786d9014481ac05f8675f6eb142f62c00eda72a4"
+checksum = "77e3681a885a99a1f18adb14fca9767ba9aa22777f0fe170536238a9dfbc5209"
 dependencies = [
  "anyhow",
  "autocxx",
@@ -1051,9 +1053,9 @@ checksum = "d68f2ec51b097e4c1a75b681a8bec621909b5e91f15bb7b840c4f2f7b01148b2"
 
 [[package]]
 name = "serde"
-version = "1.0.221"
+version = "1.0.223"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "341877e04a22458705eb4e131a1508483c877dca2792b3781d4e5d8a6019ec43"
+checksum = "a505d71960adde88e293da5cb5eda57093379f64e61cf77bf0e6a63af07a7bac"
 dependencies = [
  "serde_core",
  "serde_derive",
@@ -1061,29 +1063,30 @@ dependencies = [
 
 [[package]]
 name = "serde-untagged"
-version = "0.1.8"
+version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34836a629bcbc6f1afdf0907a744870039b1e14c0561cb26094fa683b158eff3"
+checksum = "f9faf48a4a2d2693be24c6289dbe26552776eb7737074e6722891fadbe6c5058"
 dependencies = [
  "erased-serde",
  "serde",
+ "serde_core",
  "typeid",
 ]
 
 [[package]]
 name = "serde_core"
-version = "1.0.221"
+version = "1.0.223"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c459bc0a14c840cb403fc14b148620de1e0778c96ecd6e0c8c3cacb6d8d00fe"
+checksum = "20f57cbd357666aa7b3ac84a90b4ea328f1d4ddb6772b430caa5d9e1309bb9e9"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.221"
+version = "1.0.223"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d6185cf75117e20e62b1ff867b9518577271e58abe0037c40bb4794969355ab0"
+checksum = "3d428d07faf17e306e699ec1e91996e5a165ba5d6bce5b5155173e91a8a01a56"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1092,13 +1095,14 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.144"
+version = "1.0.145"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "56177480b00303e689183f110b4e727bb4211d692c62d4fcd16d02be93077d40"
+checksum = "402a6f66d8c709116cf22f558eab210f5a50187f702eb4d7e5ef38d9a7f1c79c"
 dependencies = [
  "itoa",
  "memchr",
  "ryu",
+ "serde",
  "serde_core",
 ]
 
@@ -1537,9 +1541,9 @@ checksum = "5c573471f125075647d03df72e026074b7203790d41351cd6edc96f46bcccd36"
 
 [[package]]
 name = "yaml-rust2"
-version = "0.10.3"
+version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ce2a4ff45552406d02501cea6c18d8a7e50228e7736a872951fe2fe75c91be7"
+checksum = "2462ea039c445496d8793d052e13787f2b90e750b833afee748e601c17621ed9"
 dependencies = [
  "arraydeque",
  "encoding_rs",

@@ -32,11 +32,9 @@
 //! ## Installing
 //! The easiest way to get the latest release is via [crates.io](https://crates.io/crates/rhabdomancer):
 //! 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
-//! 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
-//! 3. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
-//! 4. On Linux/macOS, install as follows:
+//! 2. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
+//! 3. On Linux/macOS, install as follows:
 //!     ```sh
-//!     export IDASDKDIR=/path/to/idasdk
 //!     export IDADIR=/path/to/ida # if not set, the build script will check common locations
 //!     cargo install rhabdomancer
 //!     ```
@@ -44,7 +42,6 @@
 //!     ```powershell
 //!     $env:LIBCLANG_PATH="\path\to\clang+llvm\bin"
 //!     $env:PATH="\path\to\ida;$env:PATH"
-//!     $env:IDASDKDIR="\path\to\idasdk"
 //!     $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
 //!     cargo install rhabdomancer
 //!     ```
@@ -52,13 +49,11 @@
 //! ## Compiling
 //! Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer):
 //! 1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
-//! 2. Download and extract the IDA SDK (see <https://docs.hex-rays.com/developer-guide>).
-//! 3. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
-//! 4. On Linux/macOS, compile as follows:
+//! 2. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
+//! 3. On Linux/macOS, compile as follows:
 //!     ```sh
 //!     git clone --depth 1 https://github.com/0xdea/rhabdomancer
 //!     cd rhabdomancer
-//!     export IDASDKDIR=/path/to/idasdk # or edit .cargo/config.toml
 //!     export IDADIR=/path/to/ida # if not set, the build script will check common locations
 //!     cargo build --release
 //!     ```
@@ -68,7 +63,6 @@
 //!     cd rhabdomancer
 //!     $env:LIBCLANG_PATH="\path\to\clang+llvm\bin"
 //!     $env:PATH="\path\to\ida;$env:PATH"
-//!     $env:IDASDKDIR="\path\to\idasdk"
 //!     $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
 //!     cargo build --release
 //!     ```
@@ -90,7 +84,8 @@
 //! ## Compatibility
 //! * IDA Pro 9.0.240925 - Latest compatible: v0.2.4.
 //! * IDA Pro 9.0.241217 - Latest compatible: v0.3.5.
-//! * IDA Pro 9.1.250226 - Latest compatible: current version.
+//! * IDA Pro 9.1.250226 - Latest compatible: v0.6.2.
+//! * IDA Pro 9.2.250908 - Latest compatible: current version.
 //!
 //! *Note: check [idalib](https://github.com/binarly-io/idalib) documentation for additional information.*
 //!

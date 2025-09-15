@@ -7,8 +7,8 @@
       "vulnerability-research-and-exploit-development"
     ],
     "logoPath": ".img/logo.png",
-    "idaVersions": "9.1",
+    "idaVersions": ">=9.0",
     "description": "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file.",
-    "version": "0.6.2"
+    "version": "0.7.0"
   }
 }
