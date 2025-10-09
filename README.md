@@ -28,8 +28,9 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
     * [BAD 2] Low priority - Code paths involving these functions should be carefully checked.
 * The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
 
-## Blog post
+## Blog posts
 
+* <https://hex-rays.com/blog/streamlining-vulnerability-research-idalib-rust-bindings>
 * <https://hnsecurity.it/blog/streamlining-vulnerability-research-with-ida-pro-and-rust>
 
 ## See also
