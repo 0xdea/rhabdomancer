@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cxx-1.0.184/src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-84e720fa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.89.0 (29483883e 2025-08-04)" data-channel="1.89.0" data-search-js="search-92309212.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-4e99c027.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-fd3af306.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxx/</div>lib.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! [![github]](https://github.com/dtolnay/cxx)&amp;ensp;[![crates-io]](https://crates.io/crates/cxx)&amp;ensp;[![docs-rs]](https://docs.rs/cxx)
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cxx-1.0.186/src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-aa0817cf.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.90.0 (1159e78c4 2025-09-14)" data-channel="1.90.0" data-search-js="search-fa3e91e5.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxx/</div>lib.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! [![github]](https://github.com/dtolnay/cxx)&amp;ensp;[![crates-io]](https://crates.io/crates/cxx)&amp;ensp;[![docs-rs]](https://docs.rs/cxx)
 <a href=#2 id=2 data-nosnippet>2</a>//!
 <a href=#3 id=3 data-nosnippet>3</a>//! [github]: https://img.shields.io/badge/github-8da0cb?style=for-the-badge&amp;labelColor=555555&amp;logo=github
 <a href=#4 id=4 data-nosnippet>4</a>//! [crates-io]: https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&amp;labelColor=555555&amp;logo=rust
@@ -363,7 +363,7 @@
 <a href=#363 id=363 data-nosnippet>363</a>//! &lt;/table&gt;
 <a href=#364 id=364 data-nosnippet>364</a>
 <a href=#365 id=365 data-nosnippet>365</a></span><span class="attr">#![no_std]
-<a href=#366 id=366 data-nosnippet>366</a>#![doc(html_root_url = <span class="string">"https://docs.rs/cxx/1.0.184"</span>)]
+<a href=#366 id=366 data-nosnippet>366</a>#![doc(html_root_url = <span class="string">"https://docs.rs/cxx/1.0.186"</span>)]
 <a href=#367 id=367 data-nosnippet>367</a>#![cfg_attr(docsrs, feature(doc_cfg))]
 <a href=#368 id=368 data-nosnippet>368</a>#![deny(
 <a href=#369 id=369 data-nosnippet>369</a>    improper_ctypes,
@@ -509,29 +509,28 @@
 <a href=#509 id=509 data-nosnippet>509</a>    </span><span class="kw">pub use </span><span class="kw">crate</span>::rust_vec::RustVec;
 <a href=#510 id=510 data-nosnippet>510</a>    <span class="kw">pub use </span><span class="kw">crate</span>::string::StackString;
 <a href=#511 id=511 data-nosnippet>511</a>    <span class="kw">pub use </span><span class="kw">crate</span>::unwind::prevent_unwind;
-<a href=#512 id=512 data-nosnippet>512</a>    <span class="kw">pub use </span>core::{concat, module_path};
-<a href=#513 id=513 data-nosnippet>513</a>    <span class="kw">pub use </span>cxxbridge_macro::type_id;
-<a href=#514 id=514 data-nosnippet>514</a>}
-<a href=#515 id=515 data-nosnippet>515</a>
-<a href=#516 id=516 data-nosnippet>516</a><span class="kw">mod </span>actually_private {
-<a href=#517 id=517 data-nosnippet>517</a>    <span class="kw">pub trait </span>Private {}
-<a href=#518 id=518 data-nosnippet>518</a>}
-<a href=#519 id=519 data-nosnippet>519</a>
-<a href=#520 id=520 data-nosnippet>520</a><span class="macro">macro_rules!</span> chars {
-<a href=#521 id=521 data-nosnippet>521</a>    ($(<span class="macro-nonterminal">$ch</span>:ident)<span class="kw-2">*</span>) =&gt; {
-<a href=#522 id=522 data-nosnippet>522</a>        $(
-<a href=#523 id=523 data-nosnippet>523</a>            <span class="attr">#[doc(hidden)]
-<a href=#524 id=524 data-nosnippet>524</a>            </span><span class="kw">pub enum </span><span class="macro-nonterminal">$ch </span>{}
-<a href=#525 id=525 data-nosnippet>525</a>        )*
-<a href=#526 id=526 data-nosnippet>526</a>    };
-<a href=#527 id=527 data-nosnippet>527</a>}
-<a href=#528 id=528 data-nosnippet>528</a>
-<a href=#529 id=529 data-nosnippet>529</a><span class="macro">chars!</span> {
-<a href=#530 id=530 data-nosnippet>530</a>    _0 _1 _2 _3 _4 _5 _6 _7 _8 _9
-<a href=#531 id=531 data-nosnippet>531</a>    A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-<a href=#532 id=532 data-nosnippet>532</a>    a b c d e f g h i j k l m n o p q r s t u v w x y z
-<a href=#533 id=533 data-nosnippet>533</a>    __ <span class="comment">// underscore
-<a href=#534 id=534 data-nosnippet>534</a></span>}
-<a href=#535 id=535 data-nosnippet>535</a>
-<a href=#536 id=536 data-nosnippet>536</a><span class="attr">#[repr(transparent)]
-<a href=#537 id=537 data-nosnippet>537</a></span><span class="kw">struct </span>void(core::ffi::c_void);</code></pre></div></section></main></body></html>
+<a href=#512 id=512 data-nosnippet>512</a>    <span class="kw">pub use </span>cxxbridge_macro::type_id;
+<a href=#513 id=513 data-nosnippet>513</a>}
+<a href=#514 id=514 data-nosnippet>514</a>
+<a href=#515 id=515 data-nosnippet>515</a><span class="kw">mod </span>actually_private {
+<a href=#516 id=516 data-nosnippet>516</a>    <span class="kw">pub trait </span>Private {}
+<a href=#517 id=517 data-nosnippet>517</a>}
+<a href=#518 id=518 data-nosnippet>518</a>
+<a href=#519 id=519 data-nosnippet>519</a><span class="macro">macro_rules!</span> chars {
+<a href=#520 id=520 data-nosnippet>520</a>    ($(<span class="macro-nonterminal">$ch</span>:ident)<span class="kw-2">*</span>) =&gt; {
+<a href=#521 id=521 data-nosnippet>521</a>        $(
+<a href=#522 id=522 data-nosnippet>522</a>            <span class="attr">#[doc(hidden)]
+<a href=#523 id=523 data-nosnippet>523</a>            </span><span class="kw">pub enum </span><span class="macro-nonterminal">$ch </span>{}
+<a href=#524 id=524 data-nosnippet>524</a>        )*
+<a href=#525 id=525 data-nosnippet>525</a>    };
+<a href=#526 id=526 data-nosnippet>526</a>}
+<a href=#527 id=527 data-nosnippet>527</a>
+<a href=#528 id=528 data-nosnippet>528</a><span class="macro">chars!</span> {
+<a href=#529 id=529 data-nosnippet>529</a>    _0 _1 _2 _3 _4 _5 _6 _7 _8 _9
+<a href=#530 id=530 data-nosnippet>530</a>    A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+<a href=#531 id=531 data-nosnippet>531</a>    a b c d e f g h i j k l m n o p q r s t u v w x y z
+<a href=#532 id=532 data-nosnippet>532</a>    __ <span class="comment">// underscore
+<a href=#533 id=533 data-nosnippet>533</a></span>}
+<a href=#534 id=534 data-nosnippet>534</a>
+<a href=#535 id=535 data-nosnippet>535</a><span class="attr">#[repr(transparent)]
+<a href=#536 id=536 data-nosnippet>536</a></span><span class="kw">struct </span>void(core::ffi::c_void);</code></pre></div></section></main></body></html>

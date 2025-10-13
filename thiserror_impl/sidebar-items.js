@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":["Error"],"mod":["ast","attr","expand","fmt","generics","prop","scan_expr","span","valid"]};
+window.SIDEBAR_ITEMS = {"derive":["Error"]};
