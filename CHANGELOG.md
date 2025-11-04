@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Add `__isoc99_*scanf` family functions to the list of insecure functions.
+* Add `__isoc99_*scanf` and `_mbs*` family functions to the list of insecure functions.
 
 ### Changed
 
