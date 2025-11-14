@@ -3,12 +3,33 @@
   "plugin": {
     "name": "rhabdomancer",
     "entryPoint": "rhabdomancer",
+    "version": "0.7.2",
+    "idaVersions": [
+      "9.0",
+      "9.1",
+      "9.2"
+    ],
+    "description": "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file.",
+    "license": "MIT",
     "categories": [
       "vulnerability-research-and-exploit-development"
     ],
-    "logoPath": ".img/logo.png",
-    "idaVersions": ">=9.0",
-    "description": "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file.",
-    "version": "0.7.2"
+    "urls": {
+      "repository": "https://github.com/0xdea/rhabdomancer"
+    },
+    "authors": [
+      {
+        "name": "Marco Ivaldi",
+        "email": "raptor@0xdeadbeef.info"
+      }
+    ],
+    "keywords": [
+      "vulnerability-research",
+      "reverse-engineering",
+      "security",
+      "idalib",
+      "rust"
+    ],
+    "logoPath": ".img/logo.png"
   }
 }
