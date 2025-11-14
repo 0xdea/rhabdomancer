@@ -2,7 +2,7 @@
   "IDAMetadataDescriptorVersion": 1,
   "plugin": {
     "name": "rhabdomancer",
-    "entryPoint": "rhabdomancer",
+    "entryPoint": "src/main.rs",
     "version": "0.7.2",
     "idaVersions": [
       "9.0",

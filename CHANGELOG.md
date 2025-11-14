@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Update `ida-plugin.json` to comply with the
+  new [IDA Plugin Repository](https://hcli.docs.hex-rays.com/reference/packaging-your-existing-plugin/).
 * Update dependencies.
 
 ## [0.7.2] - 2025-10-13
