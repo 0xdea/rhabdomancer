@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["race","sync","unsync"]};
+window.SIDEBAR_ITEMS = {"mod":["race","unsync"]};
