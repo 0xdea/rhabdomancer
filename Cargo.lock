@@ -980,7 +980,7 @@ checksum = "7a2d987857b319362043e95f5353c0535c1f58eec5336fdfcf626430af7def58"
 
 [[package]]
 name = "rhabdomancer"
-version = "0.7.4"
+version = "0.7.5-alpha"
 dependencies = [
  "anyhow",
  "config",
