@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Update `urls` in `ida-plugin.json`.
 
+### Changed
+
+* Update dependencies.
+
 ## [0.7.4] - 2025-11-15
 
 ### Fixed
