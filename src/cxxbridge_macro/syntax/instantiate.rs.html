@@ -1,83 +1,102 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cxxbridge-macro-1.0.188/src/syntax/instantiate.rs`."><title>instantiate.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cxxbridge_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.1 (ed61e7d7e 2025-11-07)" data-channel="1.91.1" data-search-js="search-e256b49e.js" data-stringdex-js="stringdex-c3e638e9.js" data-settings-js="settings-c38705f0.js" ><script src="../../../static.files/storage-e2aeef58.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxxbridge_macro/syntax/</div>instantiate.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-2"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">crate</span>::syntax::{NamedType, Ty1, Type};
-<a href=#2 id=2 data-nosnippet>2</a><span class="kw">use </span>proc_macro2::{Ident, Span};
-<a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span>std::hash::{Hash, Hasher};
-<a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span>syn::Token;
-<a href=#5 id=5 data-nosnippet>5</a>
-<a href=#6 id=6 data-nosnippet>6</a><span class="attr">#[derive(PartialEq, Eq, Hash)]
-<a href=#7 id=7 data-nosnippet>7</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>ImplKey&lt;<span class="lifetime">'a</span>&gt; {
-<a href=#8 id=8 data-nosnippet>8</a>    RustBox(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
-<a href=#9 id=9 data-nosnippet>9</a>    RustVec(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
-<a href=#10 id=10 data-nosnippet>10</a>    UniquePtr(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
-<a href=#11 id=11 data-nosnippet>11</a>    SharedPtr(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
-<a href=#12 id=12 data-nosnippet>12</a>    WeakPtr(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
-<a href=#13 id=13 data-nosnippet>13</a>    CxxVector(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
-<a href=#14 id=14 data-nosnippet>14</a>}
-<a href=#15 id=15 data-nosnippet>15</a>
-<a href=#16 id=16 data-nosnippet>16</a><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {
-<a href=#17 id=17 data-nosnippet>17</a>    <span class="attr">#[cfg_attr(not(proc_macro), expect(dead_code))]
-<a href=#18 id=18 data-nosnippet>18</a>    </span><span class="kw">pub </span>begin_span: Span,
-<a href=#19 id=19 data-nosnippet>19</a>    <span class="kw">pub </span>rust: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Ident,
-<a href=#20 id=20 data-nosnippet>20</a>    <span class="attr">#[cfg_attr(not(proc_macro), expect(dead_code))]
-<a href=#21 id=21 data-nosnippet>21</a>    </span><span class="kw">pub </span>lt_token: <span class="prelude-ty">Option</span>&lt;<span class="macro">Token!</span>[&lt;]&gt;,
-<a href=#22 id=22 data-nosnippet>22</a>    <span class="attr">#[cfg_attr(not(proc_macro), expect(dead_code))]
-<a href=#23 id=23 data-nosnippet>23</a>    </span><span class="kw">pub </span>gt_token: <span class="prelude-ty">Option</span>&lt;<span class="macro">Token!</span>[&gt;]&gt;,
-<a href=#24 id=24 data-nosnippet>24</a>    <span class="attr">#[cfg_attr(not(proc_macro), expect(dead_code))]
-<a href=#25 id=25 data-nosnippet>25</a>    </span><span class="kw">pub </span>end_span: Span,
-<a href=#26 id=26 data-nosnippet>26</a>}
-<a href=#27 id=27 data-nosnippet>27</a>
-<a href=#28 id=28 data-nosnippet>28</a><span class="kw">impl </span>Type {
-<a href=#29 id=29 data-nosnippet>29</a>    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_key(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ImplKey&gt; {
-<a href=#30 id=30 data-nosnippet>30</a>        <span class="kw">if let </span>Type::RustBox(ty) = <span class="self">self </span>{
-<a href=#31 id=31 data-nosnippet>31</a>            <span class="kw">if let </span>Type::Ident(ident) = <span class="kw-2">&amp;</span>ty.inner {
-<a href=#32 id=32 data-nosnippet>32</a>                <span class="kw">return </span><span class="prelude-val">Some</span>(ImplKey::RustBox(NamedImplKey::new(ty, ident)));
-<a href=#33 id=33 data-nosnippet>33</a>            }
-<a href=#34 id=34 data-nosnippet>34</a>        } <span class="kw">else if let </span>Type::RustVec(ty) = <span class="self">self </span>{
-<a href=#35 id=35 data-nosnippet>35</a>            <span class="kw">if let </span>Type::Ident(ident) = <span class="kw-2">&amp;</span>ty.inner {
-<a href=#36 id=36 data-nosnippet>36</a>                <span class="kw">return </span><span class="prelude-val">Some</span>(ImplKey::RustVec(NamedImplKey::new(ty, ident)));
-<a href=#37 id=37 data-nosnippet>37</a>            }
-<a href=#38 id=38 data-nosnippet>38</a>        } <span class="kw">else if let </span>Type::UniquePtr(ty) = <span class="self">self </span>{
-<a href=#39 id=39 data-nosnippet>39</a>            <span class="kw">if let </span>Type::Ident(ident) = <span class="kw-2">&amp;</span>ty.inner {
-<a href=#40 id=40 data-nosnippet>40</a>                <span class="kw">return </span><span class="prelude-val">Some</span>(ImplKey::UniquePtr(NamedImplKey::new(ty, ident)));
-<a href=#41 id=41 data-nosnippet>41</a>            }
-<a href=#42 id=42 data-nosnippet>42</a>        } <span class="kw">else if let </span>Type::SharedPtr(ty) = <span class="self">self </span>{
-<a href=#43 id=43 data-nosnippet>43</a>            <span class="kw">if let </span>Type::Ident(ident) = <span class="kw-2">&amp;</span>ty.inner {
-<a href=#44 id=44 data-nosnippet>44</a>                <span class="kw">return </span><span class="prelude-val">Some</span>(ImplKey::SharedPtr(NamedImplKey::new(ty, ident)));
-<a href=#45 id=45 data-nosnippet>45</a>            }
-<a href=#46 id=46 data-nosnippet>46</a>        } <span class="kw">else if let </span>Type::WeakPtr(ty) = <span class="self">self </span>{
-<a href=#47 id=47 data-nosnippet>47</a>            <span class="kw">if let </span>Type::Ident(ident) = <span class="kw-2">&amp;</span>ty.inner {
-<a href=#48 id=48 data-nosnippet>48</a>                <span class="kw">return </span><span class="prelude-val">Some</span>(ImplKey::WeakPtr(NamedImplKey::new(ty, ident)));
-<a href=#49 id=49 data-nosnippet>49</a>            }
-<a href=#50 id=50 data-nosnippet>50</a>        } <span class="kw">else if let </span>Type::CxxVector(ty) = <span class="self">self </span>{
-<a href=#51 id=51 data-nosnippet>51</a>            <span class="kw">if let </span>Type::Ident(ident) = <span class="kw-2">&amp;</span>ty.inner {
-<a href=#52 id=52 data-nosnippet>52</a>                <span class="kw">return </span><span class="prelude-val">Some</span>(ImplKey::CxxVector(NamedImplKey::new(ty, ident)));
-<a href=#53 id=53 data-nosnippet>53</a>            }
-<a href=#54 id=54 data-nosnippet>54</a>        }
-<a href=#55 id=55 data-nosnippet>55</a>        <span class="prelude-val">None
-<a href=#56 id=56 data-nosnippet>56</a>    </span>}
-<a href=#57 id=57 data-nosnippet>57</a>}
-<a href=#58 id=58 data-nosnippet>58</a>
-<a href=#59 id=59 data-nosnippet>59</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; PartialEq <span class="kw">for </span>NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {
-<a href=#60 id=60 data-nosnippet>60</a>    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
-<a href=#61 id=61 data-nosnippet>61</a>        PartialEq::eq(<span class="self">self</span>.rust, other.rust)
-<a href=#62 id=62 data-nosnippet>62</a>    }
-<a href=#63 id=63 data-nosnippet>63</a>}
-<a href=#64 id=64 data-nosnippet>64</a>
-<a href=#65 id=65 data-nosnippet>65</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Eq <span class="kw">for </span>NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {}
-<a href=#66 id=66 data-nosnippet>66</a>
-<a href=#67 id=67 data-nosnippet>67</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Hash <span class="kw">for </span>NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {
-<a href=#68 id=68 data-nosnippet>68</a>    <span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, hasher: <span class="kw-2">&amp;mut </span>H) {
-<a href=#69 id=69 data-nosnippet>69</a>        <span class="self">self</span>.rust.hash(hasher);
-<a href=#70 id=70 data-nosnippet>70</a>    }
-<a href=#71 id=71 data-nosnippet>71</a>}
-<a href=#72 id=72 data-nosnippet>72</a>
-<a href=#73 id=73 data-nosnippet>73</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {
-<a href=#74 id=74 data-nosnippet>74</a>    <span class="kw">fn </span>new(outer: <span class="kw-2">&amp;</span>Ty1, inner: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>NamedType) -&gt; <span class="self">Self </span>{
-<a href=#75 id=75 data-nosnippet>75</a>        NamedImplKey {
-<a href=#76 id=76 data-nosnippet>76</a>            begin_span: outer.name.span(),
-<a href=#77 id=77 data-nosnippet>77</a>            rust: <span class="kw-2">&amp;</span>inner.rust,
-<a href=#78 id=78 data-nosnippet>78</a>            lt_token: inner.generics.lt_token,
-<a href=#79 id=79 data-nosnippet>79</a>            gt_token: inner.generics.gt_token,
-<a href=#80 id=80 data-nosnippet>80</a>            end_span: outer.rangle.span,
-<a href=#81 id=81 data-nosnippet>81</a>        }
-<a href=#82 id=82 data-nosnippet>82</a>    }
-<a href=#83 id=83 data-nosnippet>83</a>}</code></pre></div></section></main></body></html>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cxxbridge-macro-1.0.190/src/syntax/instantiate.rs`."><title>instantiate.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cxxbridge_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.1 (ed61e7d7e 2025-11-07)" data-channel="1.91.1" data-search-js="search-e256b49e.js" data-stringdex-js="stringdex-c3e638e9.js" data-settings-js="settings-c38705f0.js" ><script src="../../../static.files/storage-e2aeef58.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">cxxbridge_macro/syntax/</div>instantiate.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">crate</span>::syntax::map::UnorderedMap;
+<a href=#2 id=2 data-nosnippet>2</a><span class="kw">use </span><span class="kw">crate</span>::syntax::resolve::Resolution;
+<a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span><span class="kw">crate</span>::syntax::types::Types;
+<a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span><span class="kw">crate</span>::syntax::{mangle, Symbol, Ty1, Type};
+<a href=#5 id=5 data-nosnippet>5</a><span class="kw">use </span>proc_macro2::{Ident, Span};
+<a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span>std::hash::{Hash, Hasher};
+<a href=#7 id=7 data-nosnippet>7</a>
+<a href=#8 id=8 data-nosnippet>8</a><span class="attr">#[derive(PartialEq, Eq, Hash)]
+<a href=#9 id=9 data-nosnippet>9</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>ImplKey&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#10 id=10 data-nosnippet>10</a>    RustBox(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
+<a href=#11 id=11 data-nosnippet>11</a>    RustVec(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
+<a href=#12 id=12 data-nosnippet>12</a>    UniquePtr(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
+<a href=#13 id=13 data-nosnippet>13</a>    SharedPtr(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
+<a href=#14 id=14 data-nosnippet>14</a>    WeakPtr(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
+<a href=#15 id=15 data-nosnippet>15</a>    CxxVector(NamedImplKey&lt;<span class="lifetime">'a</span>&gt;),
+<a href=#16 id=16 data-nosnippet>16</a>}
+<a href=#17 id=17 data-nosnippet>17</a>
+<a href=#18 id=18 data-nosnippet>18</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ImplKey&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#19 id=19 data-nosnippet>19</a>    <span class="doccomment">/// Whether to produce FFI symbols instantiating the given generic type even
+<a href=#20 id=20 data-nosnippet>20</a>    /// when an explicit `impl Foo&lt;T&gt; {}` is not present in the current bridge.
+<a href=#21 id=21 data-nosnippet>21</a>    ///
+<a href=#22 id=22 data-nosnippet>22</a>    /// The main consideration is that the same instantiation must not be
+<a href=#23 id=23 data-nosnippet>23</a>    /// present in two places, which is accomplished using trait impls and the
+<a href=#24 id=24 data-nosnippet>24</a>    /// orphan rule. Every instantiation of a C++ template like `CxxVector&lt;T&gt;`
+<a href=#25 id=25 data-nosnippet>25</a>    /// and Rust generic type like `Vec&lt;T&gt;` requires the implementation of
+<a href=#26 id=26 data-nosnippet>26</a>    /// traits defined by the `cxx` crate for some local type. (TODO: or for a
+<a href=#27 id=27 data-nosnippet>27</a>    /// fundamental type like `Box&lt;LocalType&gt;`)
+<a href=#28 id=28 data-nosnippet>28</a>    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>is_implicit_impl_ok(<span class="kw-2">&amp;</span><span class="self">self</span>, types: <span class="kw-2">&amp;</span>Types) -&gt; bool {
+<a href=#29 id=29 data-nosnippet>29</a>        <span class="comment">// TODO: relax this for Rust generics to allow Vec&lt;Vec&lt;T&gt;&gt; etc.
+<a href=#30 id=30 data-nosnippet>30</a>        </span>types.is_local(<span class="self">self</span>.inner())
+<a href=#31 id=31 data-nosnippet>31</a>    }
+<a href=#32 id=32 data-nosnippet>32</a>
+<a href=#33 id=33 data-nosnippet>33</a>    <span class="doccomment">/// Returns the type argument in the generic instantiation described by
+<a href=#34 id=34 data-nosnippet>34</a>    /// `self`. For example, if `self` represents `UniquePtr&lt;u32&gt;` then this
+<a href=#35 id=35 data-nosnippet>35</a>    /// will return `u32`.
+<a href=#36 id=36 data-nosnippet>36</a>    </span><span class="kw">fn </span>inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Type {
+<a href=#37 id=37 data-nosnippet>37</a>        <span class="kw">let </span>named_impl_key = <span class="kw">match </span><span class="self">self </span>{
+<a href=#38 id=38 data-nosnippet>38</a>            ImplKey::RustBox(key)
+<a href=#39 id=39 data-nosnippet>39</a>            | ImplKey::RustVec(key)
+<a href=#40 id=40 data-nosnippet>40</a>            | ImplKey::UniquePtr(key)
+<a href=#41 id=41 data-nosnippet>41</a>            | ImplKey::SharedPtr(key)
+<a href=#42 id=42 data-nosnippet>42</a>            | ImplKey::WeakPtr(key)
+<a href=#43 id=43 data-nosnippet>43</a>            | ImplKey::CxxVector(key) =&gt; key,
+<a href=#44 id=44 data-nosnippet>44</a>        };
+<a href=#45 id=45 data-nosnippet>45</a>        named_impl_key.inner
+<a href=#46 id=46 data-nosnippet>46</a>    }
+<a href=#47 id=47 data-nosnippet>47</a>}
+<a href=#48 id=48 data-nosnippet>48</a>
+<a href=#49 id=49 data-nosnippet>49</a><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#50 id=50 data-nosnippet>50</a>    <span class="attr">#[cfg_attr(not(proc_macro), expect(dead_code))]
+<a href=#51 id=51 data-nosnippet>51</a>    </span><span class="kw">pub </span>begin_span: Span,
+<a href=#52 id=52 data-nosnippet>52</a>    <span class="doccomment">/// Mangled form of the `inner` type.
+<a href=#53 id=53 data-nosnippet>53</a>    </span><span class="kw">pub </span>symbol: Symbol,
+<a href=#54 id=54 data-nosnippet>54</a>    <span class="doccomment">/// Generic type - e.g. `UniquePtr&lt;u8&gt;`.
+<a href=#55 id=55 data-nosnippet>55</a>    </span><span class="attr">#[cfg_attr(proc_macro, expect(dead_code))]
+<a href=#56 id=56 data-nosnippet>56</a>    </span><span class="kw">pub </span>outer: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Type,
+<a href=#57 id=57 data-nosnippet>57</a>    <span class="doccomment">/// Generic type argument - e.g. `u8` from `UniquePtr&lt;u8&gt;`.
+<a href=#58 id=58 data-nosnippet>58</a>    </span><span class="kw">pub </span>inner: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Type,
+<a href=#59 id=59 data-nosnippet>59</a>    <span class="attr">#[cfg_attr(not(proc_macro), expect(dead_code))]
+<a href=#60 id=60 data-nosnippet>60</a>    </span><span class="kw">pub </span>end_span: Span,
+<a href=#61 id=61 data-nosnippet>61</a>}
+<a href=#62 id=62 data-nosnippet>62</a>
+<a href=#63 id=63 data-nosnippet>63</a><span class="kw">impl </span>Type {
+<a href=#64 id=64 data-nosnippet>64</a>    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>impl_key(<span class="kw-2">&amp;</span><span class="self">self</span>, res: <span class="kw-2">&amp;</span>UnorderedMap&lt;<span class="kw-2">&amp;</span>Ident, Resolution&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;ImplKey&gt; {
+<a href=#65 id=65 data-nosnippet>65</a>        <span class="kw">match </span><span class="self">self </span>{
+<a href=#66 id=66 data-nosnippet>66</a>            Type::RustBox(ty) =&gt; <span class="prelude-val">Some</span>(ImplKey::RustBox(NamedImplKey::new(<span class="self">self</span>, ty, res)<span class="question-mark">?</span>)),
+<a href=#67 id=67 data-nosnippet>67</a>            Type::RustVec(ty) =&gt; <span class="prelude-val">Some</span>(ImplKey::RustVec(NamedImplKey::new(<span class="self">self</span>, ty, res)<span class="question-mark">?</span>)),
+<a href=#68 id=68 data-nosnippet>68</a>            Type::UniquePtr(ty) =&gt; <span class="prelude-val">Some</span>(ImplKey::UniquePtr(NamedImplKey::new(<span class="self">self</span>, ty, res)<span class="question-mark">?</span>)),
+<a href=#69 id=69 data-nosnippet>69</a>            Type::SharedPtr(ty) =&gt; <span class="prelude-val">Some</span>(ImplKey::SharedPtr(NamedImplKey::new(<span class="self">self</span>, ty, res)<span class="question-mark">?</span>)),
+<a href=#70 id=70 data-nosnippet>70</a>            Type::WeakPtr(ty) =&gt; <span class="prelude-val">Some</span>(ImplKey::WeakPtr(NamedImplKey::new(<span class="self">self</span>, ty, res)<span class="question-mark">?</span>)),
+<a href=#71 id=71 data-nosnippet>71</a>            Type::CxxVector(ty) =&gt; <span class="prelude-val">Some</span>(ImplKey::CxxVector(NamedImplKey::new(<span class="self">self</span>, ty, res)<span class="question-mark">?</span>)),
+<a href=#72 id=72 data-nosnippet>72</a>            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+<a href=#73 id=73 data-nosnippet>73</a>        }
+<a href=#74 id=74 data-nosnippet>74</a>    }
+<a href=#75 id=75 data-nosnippet>75</a>}
+<a href=#76 id=76 data-nosnippet>76</a>
+<a href=#77 id=77 data-nosnippet>77</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; PartialEq <span class="kw">for </span>NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#78 id=78 data-nosnippet>78</a>    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
+<a href=#79 id=79 data-nosnippet>79</a>        PartialEq::eq(<span class="kw-2">&amp;</span><span class="self">self</span>.symbol, <span class="kw-2">&amp;</span>other.symbol)
+<a href=#80 id=80 data-nosnippet>80</a>    }
+<a href=#81 id=81 data-nosnippet>81</a>}
+<a href=#82 id=82 data-nosnippet>82</a>
+<a href=#83 id=83 data-nosnippet>83</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Eq <span class="kw">for </span>NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {}
+<a href=#84 id=84 data-nosnippet>84</a>
+<a href=#85 id=85 data-nosnippet>85</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Hash <span class="kw">for </span>NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#86 id=86 data-nosnippet>86</a>    <span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, hasher: <span class="kw-2">&amp;mut </span>H) {
+<a href=#87 id=87 data-nosnippet>87</a>        <span class="self">self</span>.symbol.hash(hasher);
+<a href=#88 id=88 data-nosnippet>88</a>    }
+<a href=#89 id=89 data-nosnippet>89</a>}
+<a href=#90 id=90 data-nosnippet>90</a>
+<a href=#91 id=91 data-nosnippet>91</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; NamedImplKey&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#92 id=92 data-nosnippet>92</a>    <span class="kw">fn </span>new(outer: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Type, ty1: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Ty1, res: <span class="kw-2">&amp;</span>UnorderedMap&lt;<span class="kw-2">&amp;</span>Ident, Resolution&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+<a href=#93 id=93 data-nosnippet>93</a>        <span class="kw">let </span>inner = <span class="kw-2">&amp;</span>ty1.inner;
+<a href=#94 id=94 data-nosnippet>94</a>        <span class="prelude-val">Some</span>(NamedImplKey {
+<a href=#95 id=95 data-nosnippet>95</a>            symbol: mangle::typename(inner, res)<span class="question-mark">?</span>,
+<a href=#96 id=96 data-nosnippet>96</a>            begin_span: ty1.name.span(),
+<a href=#97 id=97 data-nosnippet>97</a>            outer,
+<a href=#98 id=98 data-nosnippet>98</a>            inner,
+<a href=#99 id=99 data-nosnippet>99</a>            end_span: ty1.rangle.span,
+<a href=#100 id=100 data-nosnippet>100</a>        })
+<a href=#101 id=101 data-nosnippet>101</a>    }
+<a href=#102 id=102 data-nosnippet>102</a>}</code></pre></div></section></main></body></html>
