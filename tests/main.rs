@@ -61,8 +61,12 @@ fn main() -> anyhow::Result<()> {
     print!("[*] Checking comments... ");
     for i in 0..idb.bookmarks().len() {
         assert!(
-            idb.get_cmt(idb.bookmarks().get_address(i).unwrap())
-                .is_some_and(|desc| desc.starts_with("[BAD ")),
+            idb.get_cmt(
+                idb.bookmarks()
+                    .get_address(i)
+                    .expect("invalid bookmark address")
+            )
+            .is_some_and(|desc| desc.starts_with("[BAD ")),
             "wrong description in comment"
         );
     }
