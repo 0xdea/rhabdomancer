@@ -22,6 +22,7 @@ static COUNTER: AtomicU32 = AtomicU32::new(0);
 /// * High priority - These functions are generally considered insecure
 /// * Medium priority - These functions are interesting and should be checked for insecure use cases
 /// * Low priority - Code paths involving these functions should be carefully checked
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum Priority {
     High,
     Medium,
@@ -115,9 +116,9 @@ impl<'a> BadFunctions<'a> {
 
         for (id, f) in idb.functions() {
             match bad.check_function(&f) {
-                Some(Priority::High) => found.insert_function(id, f, &Priority::High),
-                Some(Priority::Medium) => found.insert_function(id, f, &Priority::Medium),
-                Some(Priority::Low) => found.insert_function(id, f, &Priority::Low),
+                Some(Priority::High) => found.insert_function(id, f, Priority::High),
+                Some(Priority::Medium) => found.insert_function(id, f, Priority::Medium),
+                Some(Priority::Low) => found.insert_function(id, f, Priority::Low),
                 None => (),
             }
         }
@@ -126,7 +127,7 @@ impl<'a> BadFunctions<'a> {
     }
 
     /// Insert a new bad API function in the list
-    fn insert_function(&mut self, id: FunctionId, func: Function<'a>, priority: &Priority) {
+    fn insert_function(&mut self, id: FunctionId, func: Function<'a>, priority: Priority) {
         match priority {
             Priority::High => {
                 self.high.insert(id, func);
@@ -143,20 +144,20 @@ impl<'a> BadFunctions<'a> {
     /// Locate calls to bad API functions and mark them
     fn locate_calls(&self, idb: &'a IDB) -> anyhow::Result<()> {
         for f in self.high.values() {
-            Self::mark_calls(idb, f, &Priority::High)?;
+            Self::mark_calls(idb, f, Priority::High)?;
         }
         for f in self.medium.values() {
-            Self::mark_calls(idb, f, &Priority::Medium)?;
+            Self::mark_calls(idb, f, Priority::Medium)?;
         }
         for f in self.low.values() {
-            Self::mark_calls(idb, f, &Priority::Low)?;
+            Self::mark_calls(idb, f, Priority::Low)?;
         }
 
         Ok(())
     }
 
     /// Locate calls to the specified function and mark them
-    fn mark_calls(idb: &IDB, func: &Function, priority: &Priority) -> Result<(), IDAError> {
+    fn mark_calls(idb: &IDB, func: &Function, priority: Priority) -> Result<(), IDAError> {
         // Return an error if the function name is empty (shouldn't happen)
         let Some(func_name) = func.name() else {
             return Err(IDAError::ffi_with("empty function name"));
