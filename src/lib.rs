@@ -228,7 +228,8 @@ impl<'a> BadFunctions<'a> {
 ///
 /// ## Errors
 ///
-/// Returns how many call locations were marked or a generic error in case something goes wrong.
+/// Returns a [`BookmarkIndex`] that indicates how many call locations were marked, or a generic
+/// error in case something goes wrong.
 pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
     // Load known bad API function names from the configuration file
     println!("[*] Loading known bad API function names");
