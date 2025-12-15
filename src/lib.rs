@@ -115,11 +115,8 @@ impl<'a> BadFunctions<'a> {
         };
 
         for (id, f) in idb.functions() {
-            match bad.check_function(&f) {
-                Some(Priority::High) => found.insert_function(id, f, Priority::High),
-                Some(Priority::Medium) => found.insert_function(id, f, Priority::Medium),
-                Some(Priority::Low) => found.insert_function(id, f, Priority::Low),
-                None => (),
+            if let Some(p) = bad.check_function(&f) {
+                found.insert_function(id, f, p);
             }
         }
 
