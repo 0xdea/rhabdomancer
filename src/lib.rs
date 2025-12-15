@@ -1,7 +1,7 @@
 #![doc = include_str!("../README.md")]
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use std::env;
 use std::path::Path;
 use std::sync::atomic::{AtomicU32, Ordering};
@@ -14,7 +14,6 @@ use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
 use idalib::{Address, IDAError};
-use regex::Regex;
 
 /// Number of marked call locations
 static COUNTER: AtomicU32 = AtomicU32::new(0);
@@ -32,9 +31,9 @@ enum Priority {
 /// List of known bad API function names organized by priority
 #[derive(serde::Deserialize)]
 struct KnownBadFunctions {
-    high: Vec<String>,
-    medium: Vec<String>,
-    low: Vec<String>,
+    high: HashSet<String>,
+    medium: HashSet<String>,
+    low: HashSet<String>,
 }
 
 impl KnownBadFunctions {
@@ -43,27 +42,58 @@ impl KnownBadFunctions {
         let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml");
 
         println!("[*] Using configuration file `{}`", path.display());
-        Config::builder()
+        let mut this: Self = Config::builder()
             .add_source(File::from(path))
             .build()?
-            .try_deserialize()
+            .try_deserialize()?;
+
+        // Return the list of normalized configuration entries
+        this.normalize_sets();
+        Ok(this)
     }
 
     /// Check if a function is in the list of known bad API function names and return its priority
     fn check_function(&self, func: &Function) -> Option<Priority> {
-        let re = Regex::new(&format!(r"^[._]?{}$", &func.name()?)).ok()?;
+        let func_name = func.name()?;
+        let pattern = Self::normalize_name(&func_name);
 
-        if self.high.iter().any(|bad| re.is_match(bad)) {
+        if self.high.contains(pattern) {
             return Some(Priority::High);
         }
-        if self.medium.iter().any(|bad| re.is_match(bad)) {
+        if self.medium.contains(pattern) {
             return Some(Priority::Medium);
         }
-        if self.low.iter().any(|bad| re.is_match(bad)) {
+        if self.low.contains(pattern) {
             return Some(Priority::Low);
         }
 
         None
+    }
+
+    /// Normalize configuration entries so runtime lookups are trivial and consistent
+    fn normalize_sets(&mut self) {
+        self.high = self
+            .high
+            .drain()
+            .map(|s| Self::normalize_name(&s).to_owned())
+            .collect();
+
+        self.medium = self
+            .medium
+            .drain()
+            .map(|s| Self::normalize_name(&s).to_owned())
+            .collect();
+
+        self.low = self
+            .low
+            .drain()
+            .map(|s| Self::normalize_name(&s).to_owned())
+            .collect();
+    }
+
+    /// Normalize a function name for matching against configuration entries
+    fn normalize_name(name: &str) -> &str {
+        name.trim_start_matches(['.', '_'])
     }
 }
 

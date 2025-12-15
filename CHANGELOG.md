@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Refactor `KnownBadFunctions` to improve performance and prevent regex injection.
 * Improve the `usage` function.
 * Improve tests.
 * Improve documentation.

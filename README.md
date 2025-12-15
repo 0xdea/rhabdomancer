@@ -113,7 +113,5 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 ## TODO
 
 * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
-* Instead of using a regex, consider normalizing `func.name` once and doing exact string comparisons against pre-built
-  `HashSet` or `BTreeSet`, to improve performance and prevent regex injection.
 * Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
