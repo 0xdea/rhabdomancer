@@ -26,7 +26,7 @@ fn main() -> ExitCode {
         .unwrap_or(PROGRAM);
 
     let filename = match (args.next(), args.next()) {
-        (Some(arg), None) if !arg.to_string_lossy().starts_with('-') => arg,
+        (Some(arg), None) if arg != "-h" && arg != "--help" => arg,
         _ => return usage(prog),
     };
 
