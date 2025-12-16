@@ -196,7 +196,9 @@ impl<'a> BadFunctions<'a> {
                     .map_or_else(|| BADADDR.into(), |func| func.start_address()),
                 XRefQuery::ALL,
             )
-            .map(|thunk| Self::traverse_xrefs(idb, &thunk, desc, marked));
+            .map_or(Ok(()), |thunk| {
+                Self::traverse_xrefs(idb, &thunk, desc, marked)
+            })?;
         } else if xref.is_code() {
             // Print address with caller function name if available
             let caller = idb.function_at(xref.from()).map_or_else(
