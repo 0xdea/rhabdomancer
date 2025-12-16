@@ -52,15 +52,15 @@ impl KnownBadFunctions {
     /// Check if a function is in the list of known bad API function names and return its priority
     fn check_function(&self, func: &Function) -> Option<Priority> {
         let func_name = func.name()?;
-        let pattern = normalize_name(&func_name);
+        let func_name = normalize_name(&func_name);
 
-        if self.high.contains(pattern) {
+        if self.high.contains(func_name) {
             return Some(Priority::High);
         }
-        if self.medium.contains(pattern) {
+        if self.medium.contains(func_name) {
             return Some(Priority::Medium);
         }
-        if self.low.contains(pattern) {
+        if self.low.contains(func_name) {
             return Some(Priority::Low);
         }
 
@@ -163,17 +163,14 @@ impl<'a> BadFunctions<'a> {
         };
 
         // Prepare description
+        let func_name = normalize_name(&func_name);
         let desc = match priority {
-            Priority::High => {
-                format!("[BAD 0] {}", normalize_name(&func_name))
-            }
-            Priority::Medium => {
-                format!("[BAD 1] {}", normalize_name(&func_name))
-            }
-            Priority::Low => {
-                format!("[BAD 2] {}", normalize_name(&func_name))
-            }
+            Priority::High => format!("[BAD 0] {func_name}"),
+            Priority::Medium => format!("[BAD 1] {func_name}"),
+            Priority::Low => format!("[BAD 2] {func_name}"),
         };
+
+        // Print description
         if is_in_plt(idb, func.start_address()) {
             println!("\n{desc} (thunk)");
         } else {
