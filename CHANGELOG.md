@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Narrow down positive matches in `is_in_plt`.
 * Avoid repeated calls to `normalize_name`.
 * Implement a local counter in `BadFunctions`.
-* Improve the `usage` function.
+* Improve command line parsing and usage messages.
 * Improve tests.
 * Improve documentation.
 * Update dependencies.

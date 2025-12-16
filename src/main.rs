@@ -15,24 +15,21 @@ fn main() {
     idalib::force_batch_mode();
 
     // Parse command line arguments
-    let args = env::args().collect::<Vec<_>>();
+    let mut args = env::args();
+    let argv0 = args.next().unwrap_or_else(|| PROGRAM.to_owned());
 
-    let prog = Path::new(&args[0])
+    let prog = Path::new(&argv0)
         .file_name()
-        .unwrap()
-        .to_str()
+        .and_then(|s| s.to_str())
         .unwrap_or(PROGRAM);
 
-    let filename = match args.len() {
-        2 => &args[1],
+    let filename = match (args.next(), args.next()) {
+        (Some(arg), None) if !arg.starts_with('-') => arg,
         _ => usage(prog),
     };
-    if filename.starts_with('-') {
-        usage(prog);
-    }
 
     // Let's do it
-    match rhabdomancer::run(Path::new(filename)) {
+    match rhabdomancer::run(Path::new(&filename)) {
         Ok(_) => (),
         Err(err) => {
             eprintln!("[!] Error: {err:#}");
@@ -43,8 +40,8 @@ fn main() {
 
 /// Print usage information and exit
 fn usage(prog: &str) -> ! {
-    println!("Usage:");
-    println!("{prog} <binary_file>");
+    eprintln!("Usage:");
+    eprintln!("{prog} <binary_file>");
 
-    process::exit(0);
+    process::exit(1);
 }
