@@ -1,7 +1,7 @@
 //! main.rs
 
 use std::env;
-use std::ffi::OsString;
+use std::ffi::{OsStr, OsString};
 use std::path::Path;
 use std::process::ExitCode;
 
@@ -19,6 +19,7 @@ fn main() -> ExitCode {
     // Parse command line arguments
     let mut args = env::args_os();
     let argv0 = args.next().unwrap_or_else(|| OsString::from(PROGRAM));
+    let is_help = |a: &OsStr| a == OsStr::new("-h") || a == OsStr::new("--help");
 
     let prog = Path::new(&argv0)
         .file_name()
@@ -26,7 +27,7 @@ fn main() -> ExitCode {
         .unwrap_or(PROGRAM);
 
     let filename = match (args.next(), args.next()) {
-        (Some(arg), None) if arg != "-h" && arg != "--help" => arg,
+        (Some(arg), None) if !is_help(&arg) => arg,
         _ => return usage(prog),
     };
 
