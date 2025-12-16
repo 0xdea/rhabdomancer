@@ -1,12 +1,13 @@
 //! main.rs
 
+use std::env;
 use std::path::Path;
-use std::{env, process};
+use std::process::ExitCode;
 
 const PROGRAM: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-fn main() {
+fn main() -> ExitCode {
     println!("{PROGRAM} {VERSION} - IDA Pro vulnerability research assistant");
     println!("Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>");
     println!();
@@ -25,23 +26,23 @@ fn main() {
 
     let filename = match (args.next(), args.next()) {
         (Some(arg), None) if !arg.starts_with('-') => arg,
-        _ => usage(prog),
+        _ => return usage(prog),
     };
 
     // Let's do it
     match rhabdomancer::run(Path::new(&filename)) {
-        Ok(_) => (),
+        Ok(_) => ExitCode::SUCCESS,
         Err(err) => {
             eprintln!("[!] Error: {err:#}");
-            process::exit(1);
+            ExitCode::FAILURE
         }
     }
 }
 
 /// Print usage information and exit
-fn usage(prog: &str) -> ! {
+fn usage(prog: &str) -> ExitCode {
     eprintln!("Usage:");
     eprintln!("{prog} <binary_file>");
 
-    process::exit(1);
+    ExitCode::FAILURE
 }
