@@ -4,7 +4,6 @@
 use std::collections::{BTreeMap, HashSet};
 use std::env;
 use std::path::Path;
-use std::sync::atomic::{AtomicU32, Ordering};
 
 use anyhow::Context;
 use config::{Config, ConfigError, File};
@@ -14,9 +13,6 @@ use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
 use idalib::{Address, IDAError};
-
-/// Number of marked call locations
-static COUNTER: AtomicU32 = AtomicU32::new(0);
 
 /// Priority of bad API functions
 /// * High priority - These functions are generally considered insecure
@@ -29,7 +25,7 @@ enum Priority {
     Low,
 }
 
-/// List of known bad API function names organized by priority
+/// Set of known bad API function names organized by priority
 #[derive(serde::Deserialize)]
 struct KnownBadFunctions {
     high: HashSet<String>,
@@ -56,7 +52,7 @@ impl KnownBadFunctions {
     /// Check if a function is in the list of known bad API function names and return its priority
     fn check_function(&self, func: &Function) -> Option<Priority> {
         let func_name = func.name()?;
-        let pattern = Self::normalize_name(&func_name);
+        let pattern = normalize_name(&func_name);
 
         if self.high.contains(pattern) {
             return Some(Priority::High);
@@ -76,33 +72,30 @@ impl KnownBadFunctions {
         self.high = self
             .high
             .drain()
-            .map(|s| Self::normalize_name(&s).to_owned())
+            .map(|s| normalize_name(&s).to_owned())
             .collect();
 
         self.medium = self
             .medium
             .drain()
-            .map(|s| Self::normalize_name(&s).to_owned())
+            .map(|s| normalize_name(&s).to_owned())
             .collect();
 
         self.low = self
             .low
             .drain()
-            .map(|s| Self::normalize_name(&s).to_owned())
+            .map(|s| normalize_name(&s).to_owned())
             .collect();
-    }
-
-    /// Normalize a function name for matching against configuration entries
-    fn normalize_name(name: &str) -> &str {
-        name.trim_start_matches(['.', '_'])
     }
 }
 
-/// List of bad API functions found in the target binary organized by priority
+/// Ordered list of bad API functions found in the target binary organized by
+/// priority and number of marked call locations expressed as a [`BookmarkIndex`]
 struct BadFunctions<'a> {
     high: BTreeMap<FunctionId, Function<'a>>,
     medium: BTreeMap<FunctionId, Function<'a>>,
     low: BTreeMap<FunctionId, Function<'a>>,
+    marked: BookmarkIndex,
 }
 
 impl<'a> BadFunctions<'a> {
@@ -112,6 +105,7 @@ impl<'a> BadFunctions<'a> {
             high: BTreeMap::new(),
             medium: BTreeMap::new(),
             low: BTreeMap::new(),
+            marked: 0,
         };
 
         for (id, f) in idb.functions() {
@@ -139,22 +133,30 @@ impl<'a> BadFunctions<'a> {
     }
 
     /// Locate calls to bad API functions and mark them
-    fn locate_calls(&self, idb: &'a IDB) -> anyhow::Result<()> {
+    fn locate_calls(&mut self, idb: &'a IDB) -> anyhow::Result<BookmarkIndex> {
+        let mut marked: BookmarkIndex = 0;
+
         for f in self.high.values() {
-            Self::mark_calls(idb, f, Priority::High)?;
+            Self::mark_calls(idb, f, Priority::High, &mut marked)?;
         }
         for f in self.medium.values() {
-            Self::mark_calls(idb, f, Priority::Medium)?;
+            Self::mark_calls(idb, f, Priority::Medium, &mut marked)?;
         }
         for f in self.low.values() {
-            Self::mark_calls(idb, f, Priority::Low)?;
+            Self::mark_calls(idb, f, Priority::Low, &mut marked)?;
         }
 
-        Ok(())
+        self.marked = marked;
+        Ok(self.marked)
     }
 
     /// Locate calls to the specified function and mark them
-    fn mark_calls(idb: &IDB, func: &Function, priority: Priority) -> Result<(), IDAError> {
+    fn mark_calls(
+        idb: &IDB,
+        func: &Function,
+        priority: Priority,
+        marked: &mut BookmarkIndex,
+    ) -> Result<(), IDAError> {
         // Return an error if the function name is empty (shouldn't happen)
         let Some(func_name) = func.name() else {
             return Err(IDAError::ffi_with("empty function name"));
@@ -163,24 +165,33 @@ impl<'a> BadFunctions<'a> {
         // Prepare description
         let desc = match priority {
             Priority::High => {
-                format!("[BAD 0] {}", func_name.trim_start_matches('.'))
+                format!("[BAD 0] {}", normalize_name(&func_name))
             }
             Priority::Medium => {
-                format!("[BAD 1] {}", func_name.trim_start_matches('.'))
+                format!("[BAD 1] {}", normalize_name(&func_name))
             }
             Priority::Low => {
-                format!("[BAD 2] {}", func_name.trim_start_matches('.'))
+                format!("[BAD 2] {}", normalize_name(&func_name))
             }
         };
-        println!("\n{desc}");
+        if is_in_plt(idb, func.start_address()) {
+            println!("\n{desc} (thunk)");
+        } else {
+            println!("\n{desc}");
+        }
 
         // Traverse XREFs and mark call locations
         idb.first_xref_to(func.start_address(), XRefQuery::ALL)
-            .map_or(Ok(()), |cur| Self::traverse_xrefs(idb, &cur, &desc))
+            .map_or(Ok(()), |cur| Self::traverse_xrefs(idb, &cur, &desc, marked))
     }
 
     /// Recursively traverse XREFs and mark call locations
-    fn traverse_xrefs(idb: &IDB, xref: &XRef, desc: &str) -> Result<(), IDAError> {
+    fn traverse_xrefs(
+        idb: &IDB,
+        xref: &XRef,
+        desc: &str,
+        marked: &mut BookmarkIndex,
+    ) -> Result<(), IDAError> {
         // Handle .plt indirection in ELF binaries
         if is_in_plt(idb, xref.from()) {
             idb.first_xref_to(
@@ -188,7 +199,7 @@ impl<'a> BadFunctions<'a> {
                     .map_or_else(|| BADADDR.into(), |func| func.start_address()),
                 XRefQuery::ALL,
             )
-            .map(|thunk| Self::traverse_xrefs(idb, &thunk, desc));
+            .map(|thunk| Self::traverse_xrefs(idb, &thunk, desc, marked));
         } else if xref.is_code() {
             // Print address with caller function name if available
             let caller = idb.function_at(xref.from()).map_or_else(
@@ -205,7 +216,7 @@ impl<'a> BadFunctions<'a> {
                 .contains("[BAD ")
             {
                 idb.bookmarks().mark(xref.from(), desc)?;
-                COUNTER.fetch_add(1, Ordering::Relaxed);
+                *marked += 1;
             }
 
             // Add a comment if not already present to mark the call location
@@ -219,8 +230,9 @@ impl<'a> BadFunctions<'a> {
         }
 
         // Process next XREF
-        xref.next_to()
-            .map_or(Ok(()), |next| Self::traverse_xrefs(idb, &next, desc))
+        xref.next_to().map_or(Ok(()), |next| {
+            Self::traverse_xrefs(idb, &next, desc, marked)
+        })
     }
 }
 
@@ -251,18 +263,23 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
 
     // Locate and mark bad API function calls in the target binary
     println!("[*] Finding bad API function calls...");
-    BadFunctions::find_all(&idb, &known_bad)
+    let marked = BadFunctions::find_all(&idb, &known_bad)
         .locate_calls(&idb)
         .context("Failed to find bad API function calls")?;
 
     println!();
-    println!("[+] Marked {COUNTER:?} new call locations");
+    println!("[+] Marked {marked} new call locations");
     println!("[+] Done processing binary file `{}`", filepath.display());
-    Ok(COUNTER.load(Ordering::Relaxed))
+    Ok(marked)
 }
 
 /// Check if an address is in the .plt segment
 fn is_in_plt(idb: &IDB, addr: Address) -> bool {
     idb.segment_at(addr)
         .is_some_and(|segm| segm.name().unwrap_or_default().contains("plt"))
+}
+
+/// Normalize a function name for matching against configuration entries
+fn normalize_name(name: &str) -> &str {
+    name.trim_start_matches(['.', '_'])
 }

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Make `Priority` `Copy + Clone` and pass it by value to simplify functions that use it.
 * Simplify match logic in `find_all`.
+* Implement a local counter in `BadFunctions`.
 * Improve the `usage` function.
 * Improve tests.
 * Improve documentation.
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Refactor `KnownBadFunctions` to find more matches, improve performance, and prevent regex injection.
+* Explicitly mark thunk functions in output messages.
 
 ## [0.7.5] - 2025-12-05
 
