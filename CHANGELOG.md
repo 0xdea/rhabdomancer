@@ -9,13 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Refactor `KnownBadFunctions` to improve performance and prevent regex injection.
 * Make `Priority` `Copy + Clone` and pass it by value to simplify functions that use it.
 * Simplify match logic in `find_all`.
 * Improve the `usage` function.
 * Improve tests.
 * Improve documentation.
 * Update dependencies.
+
+### Fixed
+
+* Refactor `KnownBadFunctions` to find more matches, improve performance and prevent regex injection.
 
 ## [0.7.5] - 2025-12-05
 
