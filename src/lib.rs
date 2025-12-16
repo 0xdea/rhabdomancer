@@ -256,7 +256,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
     println!();
 
     // Print binary file information
-    println!("[-] Processor: {}", idb.processor().long_name(),);
+    println!("[-] Processor: {}", idb.processor().long_name());
     println!("[-] Compiler: {:?}", idb.meta().cc_id());
     println!("[-] File type: {:?}", idb.meta().filetype());
     println!();
@@ -276,7 +276,7 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
 /// Check if an address is in the .plt segment
 fn is_in_plt(idb: &IDB, addr: Address) -> bool {
     idb.segment_at(addr)
-        .is_some_and(|segm| segm.name().unwrap_or_default().contains("plt"))
+        .is_some_and(|segm| segm.name().unwrap_or_default().starts_with(".plt"))
 }
 
 /// Normalize a function name for matching against configuration entries

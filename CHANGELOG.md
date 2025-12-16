@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Make `Priority` `Copy + Clone` and pass it by value to simplify functions that use it.
 * Simplify match logic in `find_all`.
+* Narrow down positive matches in `is_in_plt`.
 * Implement a local counter in `BadFunctions`.
 * Improve the `usage` function.
 * Improve tests.
