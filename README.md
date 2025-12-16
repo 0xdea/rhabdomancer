@@ -113,6 +113,7 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 ## TODO
 
 * Enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
-* Consider converting `traverse_xrefs` to an iterative loop to avoid potential stack overflows and infinite loops.
+* Consider converting `traverse_xrefs` to an iterative walk to propagate errors correctly and avoid potential stack
+  overflows and infinite loops.
 * Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
