@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Refactor `KnownBadFunctions` to find more matches, improve performance and prevent regex injection.
+* Refactor `KnownBadFunctions` to find more matches, improve performance, and prevent regex injection.
 
 ## [0.7.5] - 2025-12-05
 
