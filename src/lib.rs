@@ -2,8 +2,8 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
 
 use std::collections::{BTreeMap, HashSet};
-use std::env;
 use std::path::Path;
+use std::{env, mem};
 
 use anyhow::Context;
 use config::{Config, ConfigError, File};
@@ -69,21 +69,18 @@ impl KnownBadFunctions {
 
     /// Normalize configuration entries so runtime lookups are trivial and consistent
     fn normalize_sets(&mut self) {
-        self.high = self
-            .high
-            .drain()
+        self.high = mem::take(&mut self.high)
+            .into_iter()
             .map(|s| normalize_name(&s).to_owned())
             .collect();
 
-        self.medium = self
-            .medium
-            .drain()
+        self.medium = mem::take(&mut self.medium)
+            .into_iter()
             .map(|s| normalize_name(&s).to_owned())
             .collect();
 
-        self.low = self
-            .low
-            .drain()
+        self.low = mem::take(&mut self.low)
+            .into_iter()
             .map(|s| normalize_name(&s).to_owned())
             .collect();
     }
