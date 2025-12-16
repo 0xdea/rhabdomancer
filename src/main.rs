@@ -8,12 +8,9 @@ const PROGRAM: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> ExitCode {
-    println!("{PROGRAM} {VERSION} - IDA Pro vulnerability research assistant");
-    println!("Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>");
-    println!();
-
-    // Force IDA Pro to stay quiet
-    idalib::force_batch_mode();
+    eprintln!("{PROGRAM} {VERSION} - IDA Pro vulnerability research assistant");
+    eprintln!("Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>");
+    eprintln!();
 
     // Parse command line arguments
     let mut args = env::args();
@@ -28,6 +25,9 @@ fn main() -> ExitCode {
         (Some(arg), None) if !arg.starts_with('-') => arg,
         _ => return usage(prog),
     };
+
+    // Force IDA Pro to stay quiet
+    idalib::force_batch_mode();
 
     // Let's do it
     match rhabdomancer::run(Path::new(&filename)) {
