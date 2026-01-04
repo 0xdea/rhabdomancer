@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Implement a local counter in `BadFunctions`.
 * Improve command line parsing, error handling, and usage messages.
 * Improve tests and documentation.
+* Update copyright notice.
 * Update dependencies.
 
 ### Fixed

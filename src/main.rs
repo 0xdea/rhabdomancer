@@ -10,7 +10,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> ExitCode {
     eprintln!("{PROGRAM} {VERSION} - IDA Pro vulnerability research assistant");
-    eprintln!("Copyright (c) 2024-2025 Marco Ivaldi <raptor@0xdeadbeef.info>");
+    eprintln!("Copyright (c) 2024-2026 Marco Ivaldi <raptor@0xdeadbeef.info>");
     eprintln!();
 
     // Force IDA Pro to stay quiet
