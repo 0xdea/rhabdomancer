@@ -79,14 +79,16 @@ medium = [
     "read", "fread", # check read from unreadable paths/files and from writable paths/files
     "write", "fwrite", # check writing to unwritable paths/files
     "recv", "recvfrom", # check for null-termination
-    "fgets",
+    "fgets", "fgetws",
     # kernel copy functions can be used insecurely and cause infoleaks or buffer overflows
     "copy_from_user", "copy_to_user", "get_user", "put_user", "copyin", "copyout"
 ]
 
 # Low priority - Code paths involving these functions should be carefully checked
 low = [
+    # check for insecure use of environment vars
     "getenv", "setenv", "putenv", "unsetenv",
+    # check for insecure use of conf strings
     "confstr",
     # check for insecure use of arguments
     "getopt", "getopt_long",

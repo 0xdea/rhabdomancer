@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Add `confstr` and missing `err/warn` family functions to the list of insecure functions.
+* Add `confstr`, `fgetws`, and missing `err/warn` family functions to the list of insecure functions.
 
 ### Changed
 
