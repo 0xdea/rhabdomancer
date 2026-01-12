@@ -87,6 +87,7 @@ medium = [
 # Low priority - Code paths involving these functions should be carefully checked
 low = [
     "getenv", "setenv", "putenv", "unsetenv",
+    "confstr",
     # check for insecure use of arguments
     "getopt", "getopt_long",
     # check for insecure use of memory allocation functions
@@ -120,7 +121,7 @@ low = [
     "_vprintf", "_vfprintf", "_vasprintf", "_vdprintf", "_vfwprintf",
     "_vcprintf", "_vcwprintf", "_vscprintf", "_vscwprintf", "_vwprintf",
     "_printf_c89", "_fprintf_c89",
-    "err", "errx", "warn", "warnx", "verr", "verrx", "vwarn", "vwarnx",
+    "err", "errx", "errc", "warn", "warnx", "warnc", "verr", "verrx", "verrc", "vwarn", "vwarnx", "vwarnc",
     # check for locale bugs
     "setlocale", "catopen"
 ]

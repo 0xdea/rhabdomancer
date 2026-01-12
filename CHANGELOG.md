@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Add `confstr` and missing `err/warn` family functions to the list of insecure functions.
+
 ### Changed
 
 * Make `Priority` `Copy + Clone` and pass it by value to simplify functions that use it.
