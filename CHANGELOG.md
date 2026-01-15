@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Add `confstr`, `ttyname_r/ptsname_r`, `fgetws`, `mempcpy/wmempcpy`, `inet_*`, `mbs/wcs`, and missing `get*` and
-  `err/warn` family functions to the list of insecure functions.
+* Add `confstr`, `ttyname_r/ptsname_r`, `fgetws`, `mempcpy/wmempcpy`, `*cftime`, `inet_*`, `mbs/wcs`, and missing `get*`
+  and `err/warn` family functions to the list of insecure functions.
 
 ### Changed
 
