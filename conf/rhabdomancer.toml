@@ -5,6 +5,7 @@ high = [
     "StrCpy", "StrCpyA", "StrCpyW",
     "lstrcpy", "lstrcpyA", "lstrcpyW", "_tccpy", "_mbccpy", "_ftcscpy",
     "stpcpy", "wcpcpy",
+    "strccpy", "strecpy", "strcadd", "streadd", "strtrns",
     # strcat family
     "strcat", "_strcat", "strcatA", "strcatW", "wcscat", "_wcscat", "_tcscat", "_mbscat",
     "StrCat", "StrCatA", "StrCatW",
@@ -49,7 +50,6 @@ medium = [
     "StrCpyN", "StrCpyNA", "StrCpyNW", "StrNCpy", "strcpynA", "StrNCpyA", "StrNCpyW",
     "lstrcpyn", "lstrcpynA", "lstrcpynW", "_csncpy", "wcscpyn",
     "stpncpy", "wcpncpy",
-    "strccpy", "strecpy", "strcadd", "streadd", "strtrns",
     # strncat must be called with: sizeof(buf) - strlen(buf) - 1 to prevent off-by-one bugs (beware of underflow)
     "strncat", "_strncat", "wcsncat", "_tcsncat", "_mbsncat", "_mbsnbcat",
     "StrCatN", "StrCatNA", "StrCatNW", "StrNCat", "StrNCatA", "StrNCatW",
@@ -141,4 +141,8 @@ low = [
     "mbstowcs", "mbsrtowcs", "mbsnrtowcs", "wcstombs", "wcsrtombs", "wcsnrtombs",
     # check for locale bugs
     "setlocale", "catopen"
+    # kill, signal/sigaction, *setjmp/*longjmp functions should be checked for signal-handling vulnerabilities
+    # *sem*, *mutex* functions should be checked for other concurrency-related vulnerabilities
+    # new, new []: potential implicit overflow with scalar constructor
+    # delete, delete []: check for misalignment with constructor
 ]
