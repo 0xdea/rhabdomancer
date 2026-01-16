@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Add `confstr`, `ttyname_r/ptsname_r`, `fgetws`, `mempcpy/wmempcpy`, `*cftime`, `chdir`, `chroot`, `copylist`,
-  `dbm_open`, `dbminit`, `execvP`, `inet_*`, `mbs/wcs`, and missing `get*`, `err/warn`, and `rand48` family functions to
-  the list of insecure functions.
+  `dbm_open`, `dbminit`, `execvP`, `fattach`, `inet_*`, and `mbs/wcs` functions to the list of insecure functions.
+* Add missing `get*`, `err/warn`, and `rand48` family functions to the list of insecure functions.
 
 ### Changed
 
