@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Add `confstr`, `ttyname_r/ptsname_r`, feat: add `strfind/strrspn/strtrns`, `fgetws`, `mempcpy/wmempcpy`, `*cftime`,
   `chdir`, `chroot`, `copylist`, `dbm_open`, `dbminit`, `execvP`, `p2open`, `wordexp`, `fmemopen/fattach`, `ftw/nftw`,
-  `truncate`, `tmpnam_r`, `umask`, `inet_*`, `utmp*`, and `mbs/wcs` functions to the list of insecure functions.
+  `truncate`, `tmpnam_r`, `umask`, `cdev_init`, `inet_*`, `utmp*`, and `mbs/wcs` functions to the list of insecure
+  functions.
 * Add missing `str*`, `get*`, `mk*`, `err/warn`, and `rand48` family functions to the list of insecure functions.
 
 ### Changed
