@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `chroot`, `copylist`, `dbm_open`, `dbminit`, `execvP`, `p2open`, `wordexp`, `fmemopen/fattach`, `ftw/nftw`,
   `truncate`, `tmpnam_r`, `umask`, `faccessat2`, `cdev_init`, `inet_*`, `utmp*`, `OemToCharW`, and `mbs/wcs` functions
   to the list of insecure functions.
-* Add missing `str*`, `get*`, `mk*`, `err/warn`, and `rand48` family functions to the list of insecure functions.
+* Add missing `str*`, `get*`, `mk*`, `err/warn`, `*spawn*`, and `rand48` family functions to the list of insecure
+  functions.
 
 ### Changed
 
