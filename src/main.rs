@@ -7,10 +7,11 @@ use std::process::ExitCode;
 
 const PROGRAM: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
 fn main() -> ExitCode {
     eprintln!("{PROGRAM} {VERSION} - IDA Pro vulnerability research assistant");
-    eprintln!("Copyright (c) 2024-2026 Marco Ivaldi <raptor@0xdeadbeef.info>");
+    eprintln!("Copyright (c) 2024-2026 {AUTHORS}");
     eprintln!();
 
     // Force IDA Pro to stay quiet

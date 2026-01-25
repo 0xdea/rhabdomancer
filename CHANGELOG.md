@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `MultiByteToWideChar`, `AddAccessAllowedAce`, and `mbs/wcs` functions to the list of insecure functions.
 * Add missing `str*`, `*get*`, `mk*`, `err/warn`, `*spawn*`, `signal`, `rand48`, `WinExec`, `ShellExecute`,
   `CreateProcess`, `LoadLibrary`, and `GetTempFileName` family functions to the list of insecure functions.
+* Introduce the `AUTHORS` constant.
 
 ### Changed
 
