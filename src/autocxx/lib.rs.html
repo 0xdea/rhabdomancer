@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocxx-0.27.0/src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="autocxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.1 (ed61e7d7e 2025-11-07)" data-channel="1.91.1" data-search-js="search-e256b49e.js" data-stringdex-js="stringdex-c3e638e9.js" data-settings-js="settings-c38705f0.js" ><script src="../../static.files/storage-e2aeef58.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">autocxx/</div>lib.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="attr">#![doc = <span class="macro">include_str!</span>(<span class="string">"../README.md"</span>)]
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocxx-0.27.0/src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-ca0dd0c4.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="autocxx" data-themes="" data-resource-suffix="" data-rustdoc-version="1.93.0 (254b59607 2026-01-19)" data-channel="1.93.0" data-search-js="search-9e2438ea.js" data-stringdex-js="stringdex-a3946164.js" data-settings-js="settings-c38705f0.js" ><script src="../../static.files/storage-e2aeef58.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-a410ff4d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">autocxx/</div>lib.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="attr">#![doc = <span class="macro">include_str!</span>(<span class="string">"../README.md"</span>)]
 <a href=#2 id=2 data-nosnippet>2</a>#![cfg_attr(nightly, feature(unsize))]
 <a href=#3 id=3 data-nosnippet>3</a>#![cfg_attr(nightly, feature(dispatch_from_dyn))]
 <a href=#4 id=4 data-nosnippet>4</a>
@@ -105,11 +105,11 @@
 <a href=#105 id=105 data-nosnippet>105</a>        $(#<span class="macro-nonterminal">$include</span>:ident <span class="macro-nonterminal">$lit</span>:literal)*
 <a href=#106 id=106 data-nosnippet>106</a>        $(<span class="macro-nonterminal">$mac</span>:<span class="macro">ident!</span>($(<span class="macro-nonterminal">$arg</span>:tt)<span class="kw-2">*</span>))*
 <a href=#107 id=107 data-nosnippet>107</a>    ) =&gt; {
-<a href=#108 id=108 data-nosnippet>108</a>        $(<span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">$</span><span class="macro">include!</span>{<span class="macro-nonterminal">__docs</span>})*
-<a href=#109 id=109 data-nosnippet>109</a>        $(<span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">$</span><span class="macro">mac!</span>{<span class="macro-nonterminal">__docs</span>})*
-<a href=#110 id=110 data-nosnippet>110</a>        <span class="macro-nonterminal">$</span><span class="macro">crate::include_cpp_impl!</span> {
-<a href=#111 id=111 data-nosnippet>111</a>            $(#<span class="macro-nonterminal">include $lit</span>)*
-<a href=#112 id=112 data-nosnippet>112</a>            $(<span class="macro-nonterminal">$</span><span class="macro">mac!</span>($(<span class="macro-nonterminal">$arg</span>)<span class="kw-2">*</span>))*
+<a href=#108 id=108 data-nosnippet>108</a>        $(<span class="macro-nonterminal">$crate</span>::<span class="macro-nonterminal">$include</span>!{__docs})*
+<a href=#109 id=109 data-nosnippet>109</a>        $(<span class="macro-nonterminal">$crate</span>::<span class="macro-nonterminal">$mac</span>!{__docs})*
+<a href=#110 id=110 data-nosnippet>110</a>        <span class="macro-nonterminal">$crate::include_cpp_impl</span>! {
+<a href=#111 id=111 data-nosnippet>111</a>            $(#include <span class="macro-nonterminal">$lit</span>)*
+<a href=#112 id=112 data-nosnippet>112</a>            $(<span class="macro-nonterminal">$mac</span>!($(<span class="macro-nonterminal">$arg</span>)<span class="kw-2">*</span>))*
 <a href=#113 id=113 data-nosnippet>113</a>        }
 <a href=#114 id=114 data-nosnippet>114</a>    };
 <a href=#115 id=115 data-nosnippet>115</a>}
@@ -118,7 +118,7 @@
 <a href=#118 id=118 data-nosnippet>118</a>/// [include_cpp] - see [include_cpp] for details
 <a href=#119 id=119 data-nosnippet>119</a></span><span class="attr">#[macro_export]
 <a href=#120 id=120 data-nosnippet>120</a></span><span class="macro">macro_rules!</span> include {
-<a href=#121 id=121 data-nosnippet>121</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#121 id=121 data-nosnippet>121</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#122 id=122 data-nosnippet>122</a>}
 <a href=#123 id=123 data-nosnippet>123</a>
 <a href=#124 id=124 data-nosnippet>124</a><span class="doccomment">/// Generate Rust bindings for the given C++ type or function.
@@ -127,7 +127,7 @@
 <a href=#127 id=127 data-nosnippet>127</a>/// See also [generate_pod].
 <a href=#128 id=128 data-nosnippet>128</a></span><span class="attr">#[macro_export]
 <a href=#129 id=129 data-nosnippet>129</a></span><span class="macro">macro_rules!</span> generate {
-<a href=#130 id=130 data-nosnippet>130</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#130 id=130 data-nosnippet>130</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#131 id=131 data-nosnippet>131</a>}
 <a href=#132 id=132 data-nosnippet>132</a>
 <a href=#133 id=133 data-nosnippet>133</a><span class="doccomment">/// Generate as "plain old data" and add to allowlist.
@@ -141,7 +141,7 @@
 <a href=#141 id=141 data-nosnippet>141</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#142 id=142 data-nosnippet>142</a></span><span class="attr">#[macro_export]
 <a href=#143 id=143 data-nosnippet>143</a></span><span class="macro">macro_rules!</span> generate_pod {
-<a href=#144 id=144 data-nosnippet>144</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#144 id=144 data-nosnippet>144</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#145 id=145 data-nosnippet>145</a>}
 <a href=#146 id=146 data-nosnippet>146</a>
 <a href=#147 id=147 data-nosnippet>147</a><span class="doccomment">/// Generate Rust bindings for all C++ types and functions
@@ -151,7 +151,7 @@
 <a href=#151 id=151 data-nosnippet>151</a>/// See also [generate].
 <a href=#152 id=152 data-nosnippet>152</a></span><span class="attr">#[macro_export]
 <a href=#153 id=153 data-nosnippet>153</a></span><span class="macro">macro_rules!</span> generate_ns {
-<a href=#154 id=154 data-nosnippet>154</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#154 id=154 data-nosnippet>154</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#155 id=155 data-nosnippet>155</a>}
 <a href=#156 id=156 data-nosnippet>156</a>
 <a href=#157 id=157 data-nosnippet>157</a><span class="doccomment">/// Generate Rust bindings for all C++ types and functions
@@ -161,14 +161,14 @@
 <a href=#161 id=161 data-nosnippet>161</a>/// See also [generate].
 <a href=#162 id=162 data-nosnippet>162</a></span><span class="attr">#[macro_export]
 <a href=#163 id=163 data-nosnippet>163</a></span><span class="macro">macro_rules!</span> generate_all {
-<a href=#164 id=164 data-nosnippet>164</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#164 id=164 data-nosnippet>164</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#165 id=165 data-nosnippet>165</a>}
 <a href=#166 id=166 data-nosnippet>166</a>
 <a href=#167 id=167 data-nosnippet>167</a><span class="doccomment">/// Generate as "plain old data". For use with [generate_all]
 <a href=#168 id=168 data-nosnippet>168</a>/// and similarly experimental.
 <a href=#169 id=169 data-nosnippet>169</a></span><span class="attr">#[macro_export]
 <a href=#170 id=170 data-nosnippet>170</a></span><span class="macro">macro_rules!</span> pod {
-<a href=#171 id=171 data-nosnippet>171</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#171 id=171 data-nosnippet>171</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#172 id=172 data-nosnippet>172</a>}
 <a href=#173 id=173 data-nosnippet>173</a>
 <a href=#174 id=174 data-nosnippet>174</a><span class="doccomment">/// Skip the normal generation of a `make_string` function
@@ -177,7 +177,7 @@
 <a href=#177 id=177 data-nosnippet>177</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#178 id=178 data-nosnippet>178</a></span><span class="attr">#[macro_export]
 <a href=#179 id=179 data-nosnippet>179</a></span><span class="macro">macro_rules!</span> exclude_utilities {
-<a href=#180 id=180 data-nosnippet>180</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#180 id=180 data-nosnippet>180</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#181 id=181 data-nosnippet>181</a>}
 <a href=#182 id=182 data-nosnippet>182</a>
 <a href=#183 id=183 data-nosnippet>183</a><span class="doccomment">/// Entirely block some type from appearing in the generated
@@ -191,7 +191,7 @@
 <a href=#191 id=191 data-nosnippet>191</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#192 id=192 data-nosnippet>192</a></span><span class="attr">#[macro_export]
 <a href=#193 id=193 data-nosnippet>193</a></span><span class="macro">macro_rules!</span> block {
-<a href=#194 id=194 data-nosnippet>194</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#194 id=194 data-nosnippet>194</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#195 id=195 data-nosnippet>195</a>}
 <a href=#196 id=196 data-nosnippet>196</a>
 <a href=#197 id=197 data-nosnippet>197</a><span class="doccomment">/// Avoid generating implicit constructors for this type.
@@ -203,7 +203,7 @@
 <a href=#203 id=203 data-nosnippet>203</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#204 id=204 data-nosnippet>204</a></span><span class="attr">#[macro_export]
 <a href=#205 id=205 data-nosnippet>205</a></span><span class="macro">macro_rules!</span> block_constructors {
-<a href=#206 id=206 data-nosnippet>206</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#206 id=206 data-nosnippet>206</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#207 id=207 data-nosnippet>207</a>}
 <a href=#208 id=208 data-nosnippet>208</a>
 <a href=#209 id=209 data-nosnippet>209</a><span class="doccomment">/// The name of the mod to be generated with the FFI code.
@@ -213,7 +213,7 @@
 <a href=#213 id=213 data-nosnippet>213</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#214 id=214 data-nosnippet>214</a></span><span class="attr">#[macro_export]
 <a href=#215 id=215 data-nosnippet>215</a></span><span class="macro">macro_rules!</span> name {
-<a href=#216 id=216 data-nosnippet>216</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#216 id=216 data-nosnippet>216</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#217 id=217 data-nosnippet>217</a>}
 <a href=#218 id=218 data-nosnippet>218</a>
 <a href=#219 id=219 data-nosnippet>219</a><span class="doccomment">/// A concrete type to make, for example
@@ -225,7 +225,7 @@
 <a href=#225 id=225 data-nosnippet>225</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#226 id=226 data-nosnippet>226</a></span><span class="attr">#[macro_export]
 <a href=#227 id=227 data-nosnippet>227</a></span><span class="macro">macro_rules!</span> concrete {
-<a href=#228 id=228 data-nosnippet>228</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#228 id=228 data-nosnippet>228</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#229 id=229 data-nosnippet>229</a>}
 <a href=#230 id=230 data-nosnippet>230</a>
 <a href=#231 id=231 data-nosnippet>231</a><span class="doccomment">/// Specifies a global safety policy for functions generated
@@ -275,7 +275,7 @@
 <a href=#275 id=275 data-nosnippet>275</a>/// stricter aliasing rules than C++.
 <a href=#276 id=276 data-nosnippet>276</a></span><span class="attr">#[macro_export]
 <a href=#277 id=277 data-nosnippet>277</a></span><span class="macro">macro_rules!</span> safety {
-<a href=#278 id=278 data-nosnippet>278</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#278 id=278 data-nosnippet>278</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#279 id=279 data-nosnippet>279</a>}
 <a href=#280 id=280 data-nosnippet>280</a>
 <a href=#281 id=281 data-nosnippet>281</a><span class="doccomment">/// Whether to avoid generating [`cxx::UniquePtr`] and [`cxx::Vector`]
@@ -286,7 +286,7 @@
 <a href=#286 id=286 data-nosnippet>286</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#287 id=287 data-nosnippet>287</a></span><span class="attr">#[macro_export]
 <a href=#288 id=288 data-nosnippet>288</a></span><span class="macro">macro_rules!</span> exclude_impls {
-<a href=#289 id=289 data-nosnippet>289</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#289 id=289 data-nosnippet>289</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#290 id=290 data-nosnippet>290</a>}
 <a href=#291 id=291 data-nosnippet>291</a>
 <a href=#292 id=292 data-nosnippet>292</a><span class="doccomment">/// Indicates that a C++ type is not to be generated by autocxx in this case,
@@ -332,7 +332,7 @@
 <a href=#332 id=332 data-nosnippet>332</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#333 id=333 data-nosnippet>333</a></span><span class="attr">#[macro_export]
 <a href=#334 id=334 data-nosnippet>334</a></span><span class="macro">macro_rules!</span> extern_cpp_type {
-<a href=#335 id=335 data-nosnippet>335</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#335 id=335 data-nosnippet>335</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#336 id=336 data-nosnippet>336</a>}
 <a href=#337 id=337 data-nosnippet>337</a>
 <a href=#338 id=338 data-nosnippet>338</a><span class="doccomment">/// Indicates that a C++ type is not to be generated by autocxx in this case,
@@ -347,26 +347,26 @@
 <a href=#347 id=347 data-nosnippet>347</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#348 id=348 data-nosnippet>348</a></span><span class="attr">#[macro_export]
 <a href=#349 id=349 data-nosnippet>349</a></span><span class="macro">macro_rules!</span> extern_cpp_opaque_type {
-<a href=#350 id=350 data-nosnippet>350</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#350 id=350 data-nosnippet>350</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#351 id=351 data-nosnippet>351</a>}
 <a href=#352 id=352 data-nosnippet>352</a>
 <a href=#353 id=353 data-nosnippet>353</a><span class="doccomment">/// Deprecated - use [`extern_rust_type`] instead.
 <a href=#354 id=354 data-nosnippet>354</a></span><span class="attr">#[macro_export]
 <a href=#355 id=355 data-nosnippet>355</a>#[deprecated]
 <a href=#356 id=356 data-nosnippet>356</a></span><span class="macro">macro_rules!</span> rust_type {
-<a href=#357 id=357 data-nosnippet>357</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#357 id=357 data-nosnippet>357</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#358 id=358 data-nosnippet>358</a>}
 <a href=#359 id=359 data-nosnippet>359</a>
 <a href=#360 id=360 data-nosnippet>360</a><span class="doccomment">/// See [`extern_rust::extern_rust_type`].
 <a href=#361 id=361 data-nosnippet>361</a></span><span class="attr">#[macro_export]
 <a href=#362 id=362 data-nosnippet>362</a></span><span class="macro">macro_rules!</span> extern_rust_type {
-<a href=#363 id=363 data-nosnippet>363</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#363 id=363 data-nosnippet>363</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#364 id=364 data-nosnippet>364</a>}
 <a href=#365 id=365 data-nosnippet>365</a>
 <a href=#366 id=366 data-nosnippet>366</a><span class="doccomment">/// See [`subclass::subclass`].
 <a href=#367 id=367 data-nosnippet>367</a></span><span class="attr">#[macro_export]
 <a href=#368 id=368 data-nosnippet>368</a></span><span class="macro">macro_rules!</span> subclass {
-<a href=#369 id=369 data-nosnippet>369</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#369 id=369 data-nosnippet>369</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#370 id=370 data-nosnippet>370</a>}
 <a href=#371 id=371 data-nosnippet>371</a>
 <a href=#372 id=372 data-nosnippet>372</a><span class="doccomment">/// Indicates that a C++ type can definitely be instantiated. This has effect
@@ -390,7 +390,7 @@
 <a href=#390 id=390 data-nosnippet>390</a>/// [include_cpp] - see [include_cpp] for general information.
 <a href=#391 id=391 data-nosnippet>391</a></span><span class="attr">#[macro_export]
 <a href=#392 id=392 data-nosnippet>392</a></span><span class="macro">macro_rules!</span> instantiable {
-<a href=#393 id=393 data-nosnippet>393</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$</span><span class="macro">crate::usage!</span>{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
+<a href=#393 id=393 data-nosnippet>393</a>    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro-nonterminal">$crate::usage</span>!{$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>} };
 <a href=#394 id=394 data-nosnippet>394</a>}
 <a href=#395 id=395 data-nosnippet>395</a>
 <a href=#396 id=396 data-nosnippet>396</a><span class="attr">#[doc(hidden)]
@@ -725,4 +725,5 @@
 <a href=#725 id=725 data-nosnippet>725</a>/// crate too, unfortunately, since generated cxx::bridge code
 <a href=#726 id=726 data-nosnippet>726</a>/// refers explicitly to ::cxx. See
 <a href=#727 id=727 data-nosnippet>727</a>/// &lt;https://github.com/google/autocxx/issues/36&gt;
-<a href=#728 id=728 data-nosnippet>728</a></span><span class="kw">pub use </span>cxx;</code></pre></div></section></main></body></html>
+<a href=#728 id=728 data-nosnippet>728</a></span><span class="kw">pub use </span>cxx;
+</code></pre></div></section></main></body></html>
