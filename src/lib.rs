@@ -36,6 +36,8 @@ struct KnownBadFunctions {
 impl KnownBadFunctions {
     /// Populate the list of bad API function names from the configuration file
     fn load() -> Result<Self, ConfigError> {
+        // Use configuration file path specified in the `RHABDOMANCER_CONFIG` environment variable
+        // if set, otherwise fall back to the default file location
         let path = match env::var_os("RHABDOMANCER_CONFIG") {
             Some(path) if !path.is_empty() => PathBuf::from(path),
             _ => Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml"),
