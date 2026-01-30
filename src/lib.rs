@@ -14,15 +14,36 @@ use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
 use idalib::{Address, IDAError};
 
+/// Prefix for bookmarks and comments
+pub const PREFIX: &str = "[BAD ";
+
 /// Priority of bad API functions
 /// * High priority - These functions are generally considered insecure
 /// * Medium priority - These functions are interesting and should be checked for insecure use cases
 /// * Low priority - Code paths involving these functions should be carefully checked
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[repr(u8)]
 enum Priority {
-    High,
-    Medium,
-    Low,
+    High = 0,
+    Medium = 1,
+    Low = 2,
+}
+
+impl Priority {
+    /// Return the priority code as a byte
+    const fn code(self) -> u8 {
+        self as u8
+    }
+
+    /// Return the tag prefix to use for bookmarks and comments
+    fn tag_prefix(self) -> String {
+        format!("{PREFIX}{}]", self.code())
+    }
+
+    /// Return a description for a bad API function with the specified name
+    fn description(self, func_name: &str) -> String {
+        format!("{} {}", self.tag_prefix(), func_name)
+    }
 }
 
 /// Set of known bad API function names organized by priority
@@ -165,12 +186,7 @@ impl<'a> BadFunctions<'a> {
         };
 
         // Prepare description
-        let func_name = normalize_name(&func_name);
-        let desc = match priority {
-            Priority::High => format!("[BAD 0] {func_name}"),
-            Priority::Medium => format!("[BAD 1] {func_name}"),
-            Priority::Low => format!("[BAD 2] {func_name}"),
-        };
+        let desc = priority.description(normalize_name(&func_name));
 
         // Print description
         if is_in_plt(idb, func.start_address()) {
@@ -214,7 +230,7 @@ impl<'a> BadFunctions<'a> {
                 .bookmarks()
                 .get_description(xref.from())
                 .unwrap_or_default()
-                .contains("[BAD ")
+                .contains(PREFIX)
             {
                 idb.bookmarks().mark(xref.from(), desc)?;
                 *marked += 1;
@@ -224,7 +240,7 @@ impl<'a> BadFunctions<'a> {
             if !idb
                 .get_cmt(xref.from())
                 .unwrap_or_default()
-                .contains("[BAD ")
+                .contains(PREFIX)
             {
                 idb.append_cmt(xref.from(), desc)?;
             }
