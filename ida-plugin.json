@@ -3,7 +3,7 @@
   "plugin": {
     "name": "rhabdomancer",
     "entryPoint": "ida-plugin-stub.py",
-    "version": "0.7.5",
+    "version": "0.7.6",
     "idaVersions": [
       "9.0",
       "9.1",
