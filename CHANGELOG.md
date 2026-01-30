@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+* Update links to the idalib-rs repository.
+
 ## [0.7.6] - 2026-01-30
 
 ### Added
@@ -294,7 +300,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Add support for IDA Pro's `bookmarks_t` API that I've contributed to idalib.
 * Add support for IDA Pro's search API that I've contributed to idalib (only used in tests).
-* Add build and doc GitHub workflows as [documented](https://github.com/binarly-io/idalib/blob/master/GITHUB-ACTIONS.md)
+* Add build and doc GitHub workflows as [documented](https://github.com/idalib-rs/idalib/blob/master/GITHUB-ACTIONS.md)
   in idalib.
 
 ### Changed
@@ -328,7 +334,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * First release to be published to [crates.io](https://crates.io/).
 
-[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.7.5...HEAD
+[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.7.6...HEAD
+
+[0.7.5]: https://github.com/0xdea/rhabdomancer/compare/v0.7.5...v0.7.6
 
 [0.7.5]: https://github.com/0xdea/rhabdomancer/compare/v0.7.4...v0.7.5
 

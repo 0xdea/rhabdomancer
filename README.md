@@ -38,7 +38,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 * <https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java>
 * <https://docs.hex-rays.com/release-notes/9_0#headless-processing-with-idalib>
-* <https://github.com/binarly-io/idalib>
+* <https://github.com/idalib-rs/idalib>
 * <https://books.google.it/books/about/The_Art_of_Software_Security_Assessment.html>
 
 ## Installing
@@ -106,7 +106,7 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 * IDA Pro 9.1.250226 - Latest compatible: v0.6.2.
 * IDA Pro 9.2.250908 - Latest compatible: current version.
 
-*Note: check [idalib](https://github.com/binarly-io/idalib) documentation for additional information.*
+*Note: check [idalib](https://github.com/idalib-rs/idalib) documentation for additional information.*
 
 ## Changelog
 
