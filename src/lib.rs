@@ -2,7 +2,7 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
 
 use std::collections::{BTreeMap, HashSet};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::{env, mem};
 
 use anyhow::Context;
@@ -36,7 +36,10 @@ struct KnownBadFunctions {
 impl KnownBadFunctions {
     /// Populate the list of bad API function names from the configuration file
     fn load() -> Result<Self, ConfigError> {
-        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml");
+        let path = match env::var_os("RHABDOMANCER_CONFIG") {
+            Some(path) if !path.is_empty() => PathBuf::from(path),
+            _ => Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml"),
+        };
 
         println!("[*] Using configuration file `{}`", path.display());
         let mut this: Self = Config::builder()

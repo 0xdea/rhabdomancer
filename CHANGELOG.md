@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Add the `RHABDOMANCER_CONFIG` environment variable to override the default configuration file location.
 * Add `confstr`, `ttyname_r/ptsname_r`, `strfind/strrspn/strtrns`, `fgetws`, `mempcpy/wmempcpy`, `*cftime`, `chdir`,
   `chroot`, `copylist`, `dbm_open`, `dbminit`, `execvP`, `p2open`, `wordexp`, `fmemopen/fattach`, `ftw/nftw`,
   `truncate`, `tmpnam_r`, `umask/ulimit`, `faccessat2`, `cdev_init`, `cuserid`, `inet_*`, `utmp*`, `OemToCharW`,

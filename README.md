@@ -86,7 +86,8 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 ## Usage
 
 1. Make sure IDA Pro is properly configured with a valid license.
-2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed.
+2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed. You can also override the
+   default configuration file location by setting the `RHABDOMANCER_CONFIG` environment variable.
 3. Run as follows:
     ```sh
     rhabdomancer <binary_file>
