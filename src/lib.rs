@@ -59,10 +59,10 @@ impl KnownBadFunctions {
     fn load() -> Result<Self, ConfigError> {
         // Use configuration file path specified in the `RHABDOMANCER_CONFIG` environment variable
         // if set, otherwise fall back to the default file location
-        let path = match env::var_os("RHABDOMANCER_CONFIG") {
-            Some(path) if !path.is_empty() => PathBuf::from(path),
-            _ => Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml"),
-        };
+        let path = env::var_os("RHABDOMANCER_CONFIG").map_or_else(
+            || Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml"),
+            PathBuf::from,
+        );
 
         println!("[*] Using configuration file `{}`", path.display());
         let mut this: Self = Config::builder()
