@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Refactor configuration file location parsing.
 * Improve argument parsing.
+* Replace `<no name>`/`<unknown>` with `[no name]`/`[unknown]` to avoid using reserved chars.
 * Update links to the idalib-rs repository.
 * Update dependencies.
 

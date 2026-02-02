@@ -220,8 +220,8 @@ impl<'a> BadFunctions<'a> {
         } else if xref.is_code() {
             // Print address with caller function name if available
             let caller = idb.function_at(xref.from()).map_or_else(
-                || "<unknown>".into(),
-                |func| func.name().unwrap_or_else(|| "<no name>".into()),
+                || "[unknown]".into(),
+                |func| func.name().unwrap_or_else(|| "[no name]".into()),
             );
             println!("{:#X} in {}", xref.from(), caller);
 
