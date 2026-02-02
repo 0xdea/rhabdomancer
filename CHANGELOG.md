@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Refactor configuration file location parsing.
+* Improve argument parsing.
 * Update links to the idalib-rs repository.
+* Update dependencies.
 
 ## [0.7.6] - 2026-01-30
 

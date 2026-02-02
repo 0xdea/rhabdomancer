@@ -1,7 +1,7 @@
 //! main.rs
 
 use std::env;
-use std::ffi::{OsStr, OsString};
+use std::ffi::OsStr;
 use std::path::Path;
 use std::process::ExitCode;
 
@@ -19,7 +19,7 @@ fn main() -> ExitCode {
 
     // Parse command line arguments
     let mut args = env::args_os();
-    let argv0 = args.next().unwrap_or_else(|| OsString::from(PROGRAM));
+    let argv0 = args.next().unwrap_or_else(|| PROGRAM.into());
     let is_help = |a: &OsStr| a == OsStr::new("-h") || a == OsStr::new("--help");
 
     let prog = Path::new(&argv0)
