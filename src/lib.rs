@@ -65,10 +65,10 @@ impl KnownBadFunctions {
         );
 
         println!("[*] Using configuration file `{}`", path.display());
-        let mut this: Self = Config::builder()
+        let mut this = Config::builder()
             .add_source(File::from(path))
             .build()?
-            .try_deserialize()?;
+            .try_deserialize::<Self>()?;
 
         // Return the list of normalized configuration entries
         this.normalize_sets();
@@ -157,7 +157,7 @@ impl<'a> BadFunctions<'a> {
 
     /// Locate calls to bad API functions and mark them
     fn locate_calls(&mut self, idb: &'a IDB) -> anyhow::Result<BookmarkIndex> {
-        let mut marked: BookmarkIndex = 0;
+        let mut marked = 0;
 
         for f in self.high.values() {
             Self::mark_calls(idb, f, Priority::High, &mut marked)?;
