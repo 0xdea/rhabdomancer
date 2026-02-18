@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Enable some lints in the `clippy::restrictions` category.
+
 ### Changed
 
 * Refactor configuration file location parsing.

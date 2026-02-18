@@ -18,14 +18,14 @@ use idalib::{Address, IDAError};
 pub const PREFIX: &str = "[BAD ";
 
 /// Priority of bad API functions
-/// * High priority - These functions are generally considered insecure
-/// * Medium priority - These functions are interesting and should be checked for insecure use cases
-/// * Low priority - Code paths involving these functions should be carefully checked
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[repr(u8)]
 enum Priority {
+    /// High priority - These functions are generally considered insecure
     High = 0,
+    /// Medium priority - These functions are interesting and should be checked for insecure use cases
     Medium,
+    /// Low priority - Code paths involving these functions should be carefully checked
     Low,
 }
 
@@ -49,8 +49,11 @@ impl Priority {
 /// Set of known bad API function names organized by priority
 #[derive(serde::Deserialize)]
 struct KnownBadFunctions {
+    /// High-priority known bad functions
     high: HashSet<String>,
+    /// Medium-priority known bad functions
     medium: HashSet<String>,
+    /// Low-priority known bad functions
     low: HashSet<String>,
 }
 
@@ -115,9 +118,13 @@ impl KnownBadFunctions {
 /// Ordered list of bad API functions found in the target binary organized by
 /// priority and number of marked call locations expressed as a [`BookmarkIndex`]
 struct BadFunctions<'a> {
+    /// High-priority found bad functions
     high: BTreeMap<FunctionId, Function<'a>>,
+    /// Medium-priority found bad functions
     medium: BTreeMap<FunctionId, Function<'a>>,
+    /// Low-priority found bad functions
     low: BTreeMap<FunctionId, Function<'a>>,
+    /// Number of marked call locations
     marked: BookmarkIndex,
 }
 
