@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::{env, mem};
 
-use anyhow::Context;
+use anyhow::Context as _;
 use config::{Config, ConfigError, File};
 use idalib::bookmarks::BookmarkIndex;
 use idalib::ffi::BADADDR;

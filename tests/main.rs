@@ -7,7 +7,7 @@ use idalib::bookmarks::BookmarkIndex;
 use idalib::idb::IDB;
 
 /// Custom harness for integration tests
-#[allow(clippy::expect_used, reason = "tests can use `expect`")]
+#[expect(clippy::expect_used, reason = "tests can use `expect`")]
 fn main() -> anyhow::Result<()> {
     // Target binary path
     const FILENAME: &str = "./tests/data/ls";
