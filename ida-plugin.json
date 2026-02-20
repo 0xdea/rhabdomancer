@@ -3,11 +3,12 @@
   "plugin": {
     "name": "rhabdomancer",
     "entryPoint": "ida-plugin-stub.py",
-    "version": "0.7.6",
+    "version": "0.8.0",
     "idaVersions": [
       "9.0",
       "9.1",
-      "9.2"
+      "9.2",
+      "9.3"
     ],
     "description": "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file.",
     "license": "MIT",

@@ -3,7 +3,7 @@
 [![](https://img.shields.io/github/stars/0xdea/rhabdomancer.svg?style=flat&color=yellow)](https://github.com/0xdea/rhabdomancer)
 [![](https://img.shields.io/crates/v/rhabdomancer?style=flat&color=green)](https://crates.io/crates/rhabdomancer)
 [![](https://img.shields.io/crates/d/rhabdomancer?style=flat&color=red)](https://crates.io/crates/rhabdomancer)
-[![](https://img.shields.io/badge/ida-9.2-violet)](https://hex-rays.com/ida-pro)
+[![](https://img.shields.io/badge/ida-9.3-violet)](https://hex-rays.com/ida-pro)
 [![](https://img.shields.io/badge/twitter-%400xdea-blue.svg)](https://twitter.com/0xdea)
 [![](https://img.shields.io/badge/mastodon-%40raptor-purple.svg)](https://infosec.exchange/@raptor)
 [![build](https://github.com/0xdea/rhabdomancer/actions/workflows/build.yml/badge.svg)](https://github.com/0xdea/rhabdomancer/actions/workflows/build.yml)
@@ -104,7 +104,8 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 * IDA Pro 9.0.240925 - Latest compatible: v0.2.4.
 * IDA Pro 9.0.241217 - Latest compatible: v0.3.5.
 * IDA Pro 9.1.250226 - Latest compatible: v0.6.2.
-* IDA Pro 9.2.250908 - Latest compatible: current version.
+* IDA Pro 9.2.250908 - Latest compatible: v0.7.6.
+* IDA Pro 9.3.260213 - Latest compatible: current version.
 
 *Note: check [idalib](https://github.com/idalib-rs/idalib) documentation for additional information.*
 
