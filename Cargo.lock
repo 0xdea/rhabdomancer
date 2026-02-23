@@ -451,9 +451,9 @@ checksum = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
 
 [[package]]
 name = "idalib"
-version = "0.8.0+9.3.260213"
+version = "0.8.1+9.3.260213"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13912b8fbbe3647abdb494c1ab418f72226bc4204e38c08d5eef171e3633676a"
+checksum = "1470ac1a03ad5aaa4107da4dcb625b4db863342c609d60396a138dace214f37b"
 dependencies = [
  "anyhow",
  "autocxx",
@@ -466,9 +466,9 @@ dependencies = [
 
 [[package]]
 name = "idalib-build"
-version = "0.8.0+9.3.260213"
+version = "0.8.1+9.3.260213"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae9e15593faf3053f4582f5bf27ffd70d6e74c7257de48a7c35008eb1cba85ed"
+checksum = "f61b3dcfa0a8d114c0b89c7acb00992be9997b07e23ee814f3c7d9fc7e55d3dd"
 dependencies = [
  "anyhow",
  "idalib-sys",
@@ -476,9 +476,9 @@ dependencies = [
 
 [[package]]
 name = "idalib-sys"
-version = "0.8.0+9.3.260213"
+version = "0.8.1+9.3.260213"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2b28c5ce68ba58a1d05a3dca34729580e2b8fc9bc4cb1aa453b5c1404716266"
+checksum = "52f36bbae2b077746cf335309c009fa6ddca0a8aa8ac9989c56f8121715af873"
 dependencies = [
  "anyhow",
  "autocxx",
@@ -588,9 +588,9 @@ dependencies = [
 
 [[package]]
 name = "linux-raw-sys"
-version = "0.11.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "df1d3c3b53da64cf5760482273a98e575c651a67eec7f77df96b5b642de8f039"
+checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
 
 [[package]]
 name = "log"
@@ -788,9 +788,9 @@ checksum = "357703d41365b4b27c590e3ed91eabb1b663f07c4c084095e60cbed4362dff0d"
 
 [[package]]
 name = "rustix"
-version = "1.1.3"
+version = "1.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "146c9e247ccc180c1f61615433868c99f3de3ae256a30a43b49f67c2d9171f34"
+checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
 dependencies = [
  "bitflags",
  "errno",
