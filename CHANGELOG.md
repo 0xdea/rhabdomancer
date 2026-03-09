@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Update idalib to v0.8.1 to fix Windows cross-compiling [bug](https://github.com/idalib-rs/idalib/issues/60).
 * Update other dependencies.
+* Update documentation.
 
 ## [0.8.0] - 2026-02-20
 
