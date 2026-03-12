@@ -18,13 +18,7 @@
         "email": "raptor@0xdeadbeef.info"
       }
     ],
-    "keywords": [
-      "vulnerability-research",
-      "static-analysis",
-      "security",
-      "idalib",
-      "rust"
-    ],
+    "keywords": ["vulnerability-research", "static-analysis", "security", "idalib", "rust"],
     "logoPath": ".img/logo.png"
   }
 }
