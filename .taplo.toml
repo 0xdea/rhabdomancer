@@ -1,0 +1,6 @@
+[formatting]
+array_auto_expand = false   # don't expand arrays onto multiple lines
+array_auto_collapse = true  # collapse arrays that fit on one line
+column_width = 120          # increase column width before expanding
+inline_table_expand = false # keep inline tables on one line
+allowed_blank_lines = 1     # allow at most one blank line in a row
