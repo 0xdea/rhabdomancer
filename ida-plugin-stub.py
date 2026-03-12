@@ -1,5 +1,6 @@
 import idaapi
 
+
 class RhabdomancerStub(idaapi.plugin_t):
     flags = 0
     comment = "Stub for rhabdomancer (based on idalib's Rust bindings)"

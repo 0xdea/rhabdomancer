@@ -9,412 +9,380 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Update idalib to v0.8.1 to fix Windows cross-compiling [bug](https://github.com/idalib-rs/idalib/issues/60).
-* Update other dependencies.
-* Update documentation.
+- Update idalib to v0.8.1 to fix Windows cross-compiling [bug](https://github.com/idalib-rs/idalib/issues/60).
+- Update other dependencies.
+- Update documentation.
 
 ## [0.8.0] - 2026-02-20
 
 ### Added
 
-* Enable some lints in the `clippy::restriction` category.
+- Enable some lints in the `clippy::restriction` category.
 
 ### Changed
 
-* Refactor configuration file location parsing.
-* Improve argument parsing.
-* Replace `<no name>`/`<unknown>` with `[no name]`/`[unknown]` to avoid using reserved chars.
-* Apply idalib-rust-style guidelines.
-* Optimize release profile options.
-* Improve doc comments.
-* Update links to the idalib-rs repository.
-* Update idalib to v0.8.0 and update other dependencies.
+- Refactor configuration file location parsing.
+- Improve argument parsing.
+- Replace `<no name>`/`<unknown>` with `[no name]`/`[unknown]` to avoid using reserved chars.
+- Apply idalib-rust-style guidelines.
+- Optimize release profile options.
+- Improve doc comments.
+- Update links to the idalib-rs repository.
+- Update idalib to v0.8.0 and update other dependencies.
 
 ## [0.7.6] - 2026-01-30
 
 ### Added
 
-* Add the `RHABDOMANCER_CONFIG` environment variable to override the default configuration file location.
-* Add `confstr`, `ttyname_r/ptsname_r`, `strfind/strrspn/strtrns`, `fgetws`, `mempcpy/wmempcpy`, `*cftime`, `chdir`,
+- Add the `RHABDOMANCER_CONFIG` environment variable to override the default configuration file location.
+- Add `confstr`, `ttyname_r/ptsname_r`, `strfind/strrspn/strtrns`, `fgetws`, `mempcpy/wmempcpy`, `*cftime`, `chdir`,
   `chroot`, `copylist`, `dbm_open`, `dbminit`, `execvP`, `p2open`, `wordexp`, `fmemopen/fattach`, `ftw/nftw`,
   `truncate`, `tmpnam_r`, `umask/ulimit`, `faccessat2`, `cdev_init`, `cuserid`, `inet_*`, `utmp*`, `OemToCharW`,
   `MultiByteToWideChar`, `AddAccessAllowedAce`, and `mbs/wcs` functions to the list of insecure functions.
-* Add missing `str*`, `*get*`, `mk*`, `err/warn`, `*spawn*`, `signal`, `rand48`, `WinExec`, `ShellExecute`,
+- Add missing `str*`, `*get*`, `mk*`, `err/warn`, `*spawn*`, `signal`, `rand48`, `WinExec`, `ShellExecute`,
   `CreateProcess`, `LoadLibrary`, and `GetTempFileName` family functions to the list of insecure functions.
-* Introduce the `AUTHORS` constant.
+- Introduce the `AUTHORS` constant.
 
 ### Changed
 
-* Make `Priority` `Copy + Clone` and pass it by value to simplify functions that use it.
-* Give `Priority` a stable numeric code and helper methods to format the tag/description.
-* Simplify match logic in `find_all`.
-* Narrow down positive matches in `is_in_plt`.
-* Avoid repeated calls to `normalize_name`.
-* Implement a local counter in `BadFunctions`.
-* Improve command line parsing, error handling, and usage messages.
-* Improve tests and documentation.
-* Update copyright notice.
-* Update dependencies.
+- Make `Priority` `Copy + Clone` and pass it by value to simplify functions that use it.
+- Give `Priority` a stable numeric code and helper methods to format the tag/description.
+- Simplify match logic in `find_all`.
+- Narrow down positive matches in `is_in_plt`.
+- Avoid repeated calls to `normalize_name`.
+- Implement a local counter in `BadFunctions`.
+- Improve command line parsing, error handling, and usage messages.
+- Improve tests and documentation.
+- Update copyright notice.
+- Update dependencies.
 
 ### Fixed
 
-* Refactor `KnownBadFunctions` to find more matches, improve performance, and prevent regex injection.
-* Propagate errors in recursive calls to `traverse_xrefs`.
-* Explicitly mark thunk functions in output messages.
+- Refactor `KnownBadFunctions` to find more matches, improve performance, and prevent regex injection.
+- Propagate errors in recursive calls to `traverse_xrefs`.
+- Explicitly mark thunk functions in output messages.
 
 ## [0.7.5] - 2025-12-05
 
 ### Changed
 
-* Include `README.md` as the crate documentation to avoid writing it twice.
-* Update dependencies.
+- Include `README.md` as the crate documentation to avoid writing it twice.
+- Update dependencies.
 
 ### Fixed
 
-* Update `urls` in `ida-plugin.json`.
+- Update `urls` in `ida-plugin.json`.
 
 ### Removed
 
-* Remove unnecessary `config` crate's default feature flags from `Cargo.toml`.
+- Remove unnecessary `config` crate's default feature flags from `Cargo.toml`.
 
 ## [0.7.4] - 2025-11-15
 
 ### Fixed
 
-* Update `ida-plugin.json` and add an `ida-plugin-stub.py` as a workaround for
+- Update `ida-plugin.json` and add an `ida-plugin-stub.py` as a workaround for
   this [issue](https://github.com/HexRaysSA/ida-hcli/issues/114).
 
 ## [0.7.3] - 2025-11-14
 
 ### Added
 
-* Add `__isoc99_*scanf` and `_mbs*` family functions to the list of insecure functions.
+- Add `__isoc99_*scanf` and `_mbs*` family functions to the list of insecure functions.
 
 ### Changed
 
-* Update `ida-plugin.json` to comply with the
+- Update `ida-plugin.json` to comply with the
   new [IDA Plugin Repository](https://hcli.docs.hex-rays.com/reference/packaging-your-existing-plugin/).
-* Update dependencies.
+- Update dependencies.
 
 ## [0.7.2] - 2025-10-13
 
 ### Changed
 
-* Improve documentation.
-* Update dependencies.
+- Improve documentation.
+- Update dependencies.
 
 ## [0.7.1] - 2025-09-17
 
 ### Changed
 
-* Update idalib to v0.7.2 and update other dependencies.
+- Update idalib to v0.7.2 and update other dependencies.
 
 ## [0.7.0] - 2025-09-15
 
 ### Changed
 
-* Switch to idalib v0.7 and update other dependencies.
-* Update documentation.
-* Improve output messages.
-* Update build and doc GitHub workflows.
+- Switch to idalib v0.7 and update other dependencies.
+- Update documentation.
+- Improve output messages.
+- Update build and doc GitHub workflows.
 
 ## [0.6.2] - 2025-07-18
 
 ### Changed
 
-* Update dependencies.
+- Update dependencies.
 
 ### Fixed
 
-* Update LLVM version in Windows build action.
+- Update LLVM version in Windows build action.
 
 ## [0.6.1] - 2025-06-13
 
 ### Added
 
-* Add `ida-plugin.json` for <https://plugins.hex-rays.com/>.
+- Add `ida-plugin.json` for <https://plugins.hex-rays.com/>.
 
 ### Changed
 
-* Disable debug info to improve compile time.
-* Update dependencies.
+- Disable debug info to improve compile time.
+- Update dependencies.
 
 ## [0.6.0] - 2025-05-23
 
 ### Added
 
-* Add contents read permission to build CI.
+- Add contents read permission to build CI.
 
 ### Changed
 
-* Switch to idalib v0.6 and update other dependencies.
-* Improve documentation.
+- Switch to idalib v0.6 and update other dependencies.
+- Improve documentation.
 
 ### Fixed
 
-* Address new clippy lints.
+- Address new clippy lints.
 
 ## [0.5.5] - 2025-05-09
 
 ### Changed
 
-* Update dependencies.
+- Update dependencies.
 
 ### Fixed
 
-* Update `sccache-action` version.
+- Update `sccache-action` version.
 
 ## [0.5.4] - 2025-03-29
 
 ### Added
 
-* Add `security` category to Cargo.toml.
+- Add `security` category to Cargo.toml.
 
 ### Changed
 
-* Refactor the integration test directory structure.
-* Update dependencies.
+- Refactor the integration test directory structure.
+- Update dependencies.
 
 ## [0.5.3] - 2025-03-20
 
 ### Changed
 
-* Improve documentation.
+- Improve documentation.
 
 ### Fixed
 
-* Fix typo in documentation.
+- Fix typo in documentation.
 
 ## [0.5.2] - 2025-03-19
 
 ### Changed
 
-* Port to the `windows` family and update documentation.
-* Update documentation to clarify LLVM/Clang requirement.
-* Update dependencies.
+- Port to the `windows` family and update documentation.
+- Update documentation to clarify LLVM/Clang requirement.
+- Update dependencies.
 
 ## [0.5.1] - 2025-03-10
 
 ### Changed
 
-* Update dependencies.
-* Add `missing_docs` lint and improve documentation.
-* Avoid generating documentation for private items.
-* Improve CI effectiveness and performance.
+- Update dependencies.
+- Add `missing_docs` lint and improve documentation.
+- Avoid generating documentation for private items.
+- Improve CI effectiveness and performance.
 
 ## [0.5.0] - 2025-03-03
 
 ### Changed
 
-* Follow idalib major version from now on.
-* Switch to idalib v0.5.1 and update other dependencies.
-* Update documentation and add a compatibility matrix.
-* Make CI more robust for future IDA SDK updates.
+- Follow idalib major version from now on.
+- Switch to idalib v0.5.1 and update other dependencies.
+- Update documentation and add a compatibility matrix.
+- Make CI more robust for future IDA SDK updates.
 
 ### Removed
 
-* Remove the target file check that is no longer necessary.
+- Remove the target file check that is no longer necessary.
 
 ## [0.3.5] - 2025-02-28
 
 ### Changed
 
-* Bump Rust edition to 2024 and update dependencies and CI.
-* Switch to idalib v0.4.1 and update other dependencies.
-* Improve error handling.
-* Improve CI speed by removing redundant tasks.
+- Bump Rust edition to 2024 and update dependencies and CI.
+- Switch to idalib v0.4.1 and update other dependencies.
+- Improve error handling.
+- Improve CI speed by removing redundant tasks.
 
 ## [0.3.4] - 2025-02-24
 
 ### Changed
 
-* Update dependencies.
-* Improve documentation.
+- Update dependencies.
+- Improve documentation.
 
 ## [0.3.3] - 2025-02-18
 
 ### Changed
 
-* Make regex parsing logic more robust.
-* Update dependencies.
+- Make regex parsing logic more robust.
+- Update dependencies.
 
 ## [0.3.2] - 2025-02-13
 
 ### Changed
 
-* Refactor code to avoid unwrapping Options.
-* Update dependencies.
-* Improve documentation.
+- Refactor code to avoid unwrapping Options.
+- Update dependencies.
+- Improve documentation.
 
 ## [0.3.1] - 2025-02-03
 
 ### Changed
 
-* Use `UpperHex` in output messages.
-* Update dependencies.
+- Use `UpperHex` in output messages.
+- Update dependencies.
 
 ## [0.3.0] - 2025-01-17
 
 ### Changed
 
-* Disable compilation on non-unix target families.
-* Update dependencies.
+- Disable compilation on non-unix target families.
+- Update dependencies.
 
 ## [0.2.6] - 2025-01-10
 
 ### Changed
 
-* Update dependencies.
-* Improve documentation.
+- Update dependencies.
+- Improve documentation.
 
 ## [0.2.5] - 2024-12-20
 
 ### Added
 
-* Document Linux as a supported platform and specify that Windows was not tested.
+- Document Linux as a supported platform and specify that Windows was not tested.
 
 ### Changed
 
-* Bump to IDA Pro 9.0.241217 (9.0sp1).
-* Switch to idalib v0.4 and update other dependencies.
+- Bump to IDA Pro 9.0.241217 (9.0sp1).
+- Switch to idalib v0.4 and update other dependencies.
 
 ## [0.2.4] - 2024-12-16
 
 ### Changed
 
-* Update dependencies.
+- Update dependencies.
 
 ### Fixed
 
-* Emit a warning in case the build script cannot find an IDA Pro installation.
-* Document the `IDADIR` optional environment variable.
+- Emit a warning in case the build script cannot find an IDA Pro installation.
+- Document the `IDADIR` optional environment variable.
 
 ## [0.2.3] - 2024-12-04
 
 ### Changed
 
-* Switch to idalib v0.3 and update other dependencies.
-* Update doc workflow to include dependencies.
+- Switch to idalib v0.3 and update other dependencies.
+- Update doc workflow to include dependencies.
 
 ## [0.2.2] - 2024-11-25
 
 ### Added
 
-* Mention the `conf/rhabdomancer.toml` configuration file in the documentation.
-* Add a project logo.
+- Mention the `conf/rhabdomancer.toml` configuration file in the documentation.
+- Add a project logo.
 
 ### Changed
 
-* Improve output and force IDA Pro to stay quiet via `idalib::force_batch_mode`.
+- Improve output and force IDA Pro to stay quiet via `idalib::force_batch_mode`.
 
 ## [0.2.1] - 2024-11-16
 
 ### Fixed
 
-* Fix "configuration file not found" error in the [crates.io](https://crates.io/) package.
+- Fix "configuration file not found" error in the [crates.io](https://crates.io/) package.
 
 ## [0.2.0] - 2024-11-16
 
 ### Added
 
-* Add support for IDA Pro's `bookmarks_t` API that I've contributed to idalib.
-* Add support for IDA Pro's search API that I've contributed to idalib (only used in tests).
-* Add build and doc GitHub workflows as [documented](https://github.com/idalib-rs/idalib/blob/master/GITHUB-ACTIONS.md)
+- Add support for IDA Pro's `bookmarks_t` API that I've contributed to idalib.
+- Add support for IDA Pro's search API that I've contributed to idalib (only used in tests).
+- Add build and doc GitHub workflows as [documented](https://github.com/idalib-rs/idalib/blob/master/GITHUB-ACTIONS.md)
   in idalib.
 
 ### Changed
 
-* Switch to idalib v0.2 and update other dependencies.
+- Switch to idalib v0.2 and update other dependencies.
 
 ### Fixed
 
-* Improve the user experience when opening IDB files thanks to the new license manager API in idalib v0.2.
-* Improve custom integration tests using the `bookmarks_t` API and search API.
-* Exclude tests that include binary files from the [crates.io](https://crates.io/) package.
+- Improve the user experience when opening IDB files thanks to the new license manager API in idalib v0.2.
+- Improve custom integration tests using the `bookmarks_t` API and search API.
+- Exclude tests that include binary files from the [crates.io](https://crates.io/) package.
 
 ## [0.1.1] - 2024-11-08
 
 ### Added
 
-* Add integration tests with a custom harness because they must run in the main thread.
-* Add instructions for installing via `cargo install` in README and crate comments.
-* Add Markdown links to version tags on release headings in CHANGELOG.
+- Add integration tests with a custom harness because they must run in the main thread.
+- Add instructions for installing via `cargo install` in README and crate comments.
+- Add Markdown links to version tags on release headings in CHANGELOG.
 
 ### Changed
 
-* Instruct `cargo doc` to generate documentation also for private items.
-* Update dependencies.
+- Instruct `cargo doc` to generate documentation also for private items.
+- Update dependencies.
 
 ### Fixed
 
-* Locally generate documentation that fails to build on docs.rs and host it on GitHub pages.
+- Locally generate documentation that fails to build on docs.rs and host it on GitHub pages.
 
 ## [0.1.0] - 2024-11-05
 
-* First release to be published to [crates.io](https://crates.io/).
+- First release to be published to [crates.io](https://crates.io/).
 
 [unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.8.0...HEAD
-
 [0.8.0]: https://github.com/0xdea/rhabdomancer/compare/v0.7.6...v0.8.0
-
 [0.7.6]: https://github.com/0xdea/rhabdomancer/compare/v0.7.5...v0.7.6
-
 [0.7.5]: https://github.com/0xdea/rhabdomancer/compare/v0.7.4...v0.7.5
-
 [0.7.4]: https://github.com/0xdea/rhabdomancer/compare/v0.7.3...v0.7.4
-
 [0.7.3]: https://github.com/0xdea/rhabdomancer/compare/v0.7.2...v0.7.3
-
 [0.7.2]: https://github.com/0xdea/rhabdomancer/compare/v0.7.1...v0.7.2
-
 [0.7.1]: https://github.com/0xdea/rhabdomancer/compare/v0.7.0...v0.7.1
-
 [0.7.0]: https://github.com/0xdea/rhabdomancer/compare/v0.6.2...v0.7.0
-
 [0.6.2]: https://github.com/0xdea/rhabdomancer/compare/v0.6.1...v0.6.2
-
 [0.6.1]: https://github.com/0xdea/rhabdomancer/compare/v0.6.0...v0.6.1
-
 [0.6.0]: https://github.com/0xdea/rhabdomancer/compare/v0.5.5...v0.6.0
-
 [0.5.5]: https://github.com/0xdea/rhabdomancer/compare/v0.5.4...v0.5.5
-
 [0.5.4]: https://github.com/0xdea/rhabdomancer/compare/v0.5.3...v0.5.4
-
 [0.5.3]: https://github.com/0xdea/rhabdomancer/compare/v0.5.2...v0.5.3
-
 [0.5.2]: https://github.com/0xdea/rhabdomancer/compare/v0.5.1...v0.5.2
-
 [0.5.1]: https://github.com/0xdea/rhabdomancer/compare/v0.5.0...v0.5.1
-
 [0.5.0]: https://github.com/0xdea/rhabdomancer/compare/v0.3.5...v0.5.0
-
 [0.3.5]: https://github.com/0xdea/rhabdomancer/compare/v0.3.4...v0.3.5
-
 [0.3.4]: https://github.com/0xdea/rhabdomancer/compare/v0.3.3...v0.3.4
-
 [0.3.3]: https://github.com/0xdea/rhabdomancer/compare/v0.3.2...v0.3.3
-
 [0.3.2]: https://github.com/0xdea/rhabdomancer/compare/v0.3.1...v0.3.2
-
 [0.3.1]: https://github.com/0xdea/rhabdomancer/compare/v0.3.0...v0.3.1
-
 [0.3.0]: https://github.com/0xdea/rhabdomancer/compare/v0.2.6...v0.3.0
-
 [0.2.6]: https://github.com/0xdea/rhabdomancer/compare/v0.2.5...v0.2.6
-
 [0.2.5]: https://github.com/0xdea/rhabdomancer/compare/v0.2.4...v0.2.5
-
 [0.2.4]: https://github.com/0xdea/rhabdomancer/compare/v0.2.3...v0.2.4
-
 [0.2.3]: https://github.com/0xdea/rhabdomancer/compare/v0.2.2...v0.2.3
-
 [0.2.2]: https://github.com/0xdea/rhabdomancer/compare/v0.2.1...v0.2.2
-
 [0.2.1]: https://github.com/0xdea/rhabdomancer/compare/v0.2.0...v0.2.1
-
 [0.2.0]: https://github.com/0xdea/rhabdomancer/compare/v0.1.1...v0.2.0
-
 [0.1.1]: https://github.com/0xdea/rhabdomancer/compare/v0.1.0...v0.1.1
-
 [0.1.0]: https://github.com/0xdea/rhabdomancer/releases/tag/v0.1.0
