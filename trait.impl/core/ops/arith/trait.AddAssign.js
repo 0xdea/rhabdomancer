@@ -1,9 +1,9 @@
 (function() {
-    var implementors = Object.fromEntries([["toml_parser",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.93.0/core/ops/arith/trait.AddAssign.html\" title=\"trait core::ops::arith::AddAssign\">AddAssign</a>&lt;<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.93.0/std/primitive.usize.html\">usize</a>&gt; for <a class=\"struct\" href=\"toml_parser/struct.Span.html\" title=\"struct toml_parser::Span\">Span</a>"]]]]);
+    const implementors = Object.fromEntries([["toml_parser",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.94.0/core/ops/arith/trait.AddAssign.html\" title=\"trait core::ops::arith::AddAssign\">AddAssign</a>&lt;<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.94.0/std/primitive.usize.html\">usize</a>&gt; for <a class=\"struct\" href=\"toml_parser/struct.Span.html\" title=\"struct toml_parser::Span\">Span</a>",0]]]]);
     if (window.register_implementors) {
         window.register_implementors(implementors);
     } else {
         window.pending_implementors = implementors;
     }
 })()
-//{"start":57,"fragment_lengths":[394]}
+//{"start":59,"fragment_lengths":[396]}
