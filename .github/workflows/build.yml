@@ -35,6 +35,8 @@ jobs:
         run: cargo clippy --all-targets -- -D warnings
       - name: build
         run: cargo build
+      - name: semver-checks
+        uses: obi1kenobi/cargo-semver-checks-action@5b298c9520f7096a4683c0bd981a7ac5a7e249ae # v2.8
 
   build-macos:
     name: build-macos
