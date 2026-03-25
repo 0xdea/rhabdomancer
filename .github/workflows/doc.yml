@@ -14,11 +14,13 @@ env:
 
 jobs:
   build:
+    name: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
+          persist-credentials: false
       - name: generate documentation
         run: cargo doc
       - name: git configuration
