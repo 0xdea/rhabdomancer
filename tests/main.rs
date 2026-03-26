@@ -15,10 +15,9 @@ fn main() -> anyhow::Result<()> {
     const N_MARKS: BookmarkIndex = 86;
 
     // Remove the IDB file if it exists
-    let idb_path = &format!("{FILENAME}.i64");
-    let idb_path = Path::new(idb_path);
+    let idb_path = Path::new(FILENAME).with_extension("i64");
     if idb_path.is_file() {
-        fs::remove_file(idb_path)?;
+        fs::remove_file(&idb_path)?;
     }
 
     // Run rhabdomancer and check the number of marked call locations
@@ -28,7 +27,7 @@ fn main() -> anyhow::Result<()> {
     assert_eq!(n_marks, N_MARKS, "wrong number of marked call locations");
     println!("Ok.");
 
-    // Open IDB and show everything to ensure the search doesn't miss anything
+    // Open the IDB and show everything to ensure the search doesn't miss anything
     let mut idb = IDB::open(FILENAME)?;
     show_everything(&mut idb);
 
