@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update IDA plugin stub and metadata.
 - Improve integration tests and documentation.
 - Update dependencies.
 

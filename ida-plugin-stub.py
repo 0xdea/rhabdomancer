@@ -10,8 +10,8 @@ class RhabdomancerStub(idaapi.plugin_t):
 
     def init(self):
         print(
-            "[WARN] rhabdomancer is a headless plugin based on idalib's Rust bindings and should be used via the "
-            "`rhabdomancer` crate via crates.io or from source, not as a regular IDA plugin."
+            "[WARN] rhabdomancer is a headless plugin based on idalib's Rust bindings and should be installed via the "
+            "`rhabdomancer` crate in crates.io or from source, not as a regular IDA plugin."
         )
         return idaapi.PLUGIN_SKIP
 
