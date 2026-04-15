@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve integration tests and documentation.
 - Update other dependencies.
 
+### Fixed
+
+- Fix doc workflow.
+
 ### Security
 
 - Pin action references to hashes and disable credential persistence in GitHub workflows.
