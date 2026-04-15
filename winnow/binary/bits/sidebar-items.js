@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["bits","bool","bytes","pattern","take"]};
+window.SIDEBAR_ITEMS = {"fn":["bits","bool","bytes","pattern","take"],"struct":["BitOffsets","Bits"]};
