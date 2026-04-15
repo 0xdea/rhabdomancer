@@ -1,6 +1,6 @@
 [package]
 name = "rhabdomancer"
-version = "0.8.2-alpha"
+version = "0.9.0"
 authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2024"
 description = "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file."
@@ -22,13 +22,13 @@ exclude = [
 ]
 
 [dependencies]
-idalib = "0.8"
+idalib = "0.9"
 anyhow = "1.0"
 config = { version = "0.15", default-features = false, features = ["toml"] }
 serde = { version = "1.0", features = ["derive"] }
 
 [build-dependencies]
-idalib-build = "0.8"
+idalib-build = "0.9"
 
 [[test]]
 name = "tests"

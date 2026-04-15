@@ -159,9 +159,9 @@ dependencies = [
 
 [[package]]
 name = "bitflags"
-version = "2.11.0"
+version = "2.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
+checksum = "c4512299f36f043ab09a583e57bceb5a5aab7a73db1805848e8fef3c9e8c78b3"
 
 [[package]]
 name = "cc"
@@ -451,9 +451,9 @@ checksum = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
 
 [[package]]
 name = "idalib"
-version = "0.8.1+9.3.260213"
+version = "0.9.0+9.3.260327"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1470ac1a03ad5aaa4107da4dcb625b4db863342c609d60396a138dace214f37b"
+checksum = "b6616b57783911593b9d63a7d5d29dbb71a65f5a07ec981e167f38e698b19038"
 dependencies = [
  "anyhow",
  "autocxx",
@@ -466,9 +466,9 @@ dependencies = [
 
 [[package]]
 name = "idalib-build"
-version = "0.8.1+9.3.260213"
+version = "0.9.0+9.3.260327"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f61b3dcfa0a8d114c0b89c7acb00992be9997b07e23ee814f3c7d9fc7e55d3dd"
+checksum = "b2668f9dc236e4d647de949ed12ce34733b9269106de159d4e5af385e79412b4"
 dependencies = [
  "anyhow",
  "idalib-sys",
@@ -476,9 +476,9 @@ dependencies = [
 
 [[package]]
 name = "idalib-sys"
-version = "0.8.1+9.3.260213"
+version = "0.9.0+9.3.260327"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52f36bbae2b077746cf335309c009fa6ddca0a8aa8ac9989c56f8121715af873"
+checksum = "67608558de271938a1d12b74356ab4ab92e6391df675d77409d1b0a4e216b07c"
 dependencies = [
  "anyhow",
  "autocxx",
@@ -488,7 +488,7 @@ dependencies = [
  "cxx",
  "cxx-build",
  "libc",
- "objc",
+ "objc2",
  "thiserror",
  "windows-sys 0.59.0",
 ]
@@ -563,9 +563,9 @@ checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
 
 [[package]]
 name = "libc"
-version = "0.2.184"
+version = "0.2.185"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48f5d2a454e16a5ea0f4ced81bd44e4cfc7bd3a507b61887c99fd3538b28e4af"
+checksum = "52ff2c0fe9bc6cb6b14a0592c2ff4fa9ceb83eea9db979b0487cd054946a2b8f"
 
 [[package]]
 name = "libloading"
@@ -597,15 +597,6 @@ name = "log"
 version = "0.4.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
-
-[[package]]
-name = "malloc_buf"
-version = "0.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62bb907fe88d54d8d9ce32a3cceab4218ed2f6b7d35617cafe9adf84e43919cb"
-dependencies = [
- "libc",
-]
 
 [[package]]
 name = "memchr"
@@ -662,13 +653,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "objc"
-version = "0.2.7"
+name = "objc2"
+version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "915b1b472bc21c53464d6c8461c9d3af805ba1ef837e1cac254428f4a77177b1"
+checksum = "3a12a8ed07aefc768292f076dc3ac8c48f3781c8f2d5851dd3d98950e8c5a89f"
 dependencies = [
- "malloc_buf",
+ "objc2-encode",
 ]
+
+[[package]]
+name = "objc2-encode"
+version = "4.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef25abbcd74fb2609453eb695bd2f860d389e457f67dc17cafc8b8cbc89d0c33"
 
 [[package]]
 name = "once_cell"
@@ -771,7 +768,7 @@ checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
 
 [[package]]
 name = "rhabdomancer"
-version = "0.8.2-alpha"
+version = "0.9.0"
 dependencies = [
  "anyhow",
  "config",

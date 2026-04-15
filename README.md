@@ -102,13 +102,17 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 
 ## Compatibility
 
+Only the latest IDA Pro release is officially supported, but older versions may work as well. The following table
+summarizes the latest compatible release for each IDA Pro version:
+
 | IDA Pro version | Latest compatible release |
 | --------------- | ------------------------- |
 | v9.0.240925     | v0.2.4                    |
 | v9.0.241217     | v0.3.5                    |
 | v9.1.250226     | v0.6.2                    |
 | v9.2.250908     | v0.7.6                    |
-| v9.3.260213     | current release           |
+| v9.3.260213     | v0.8.1                    |
+| v9.3.260327     | current release           |
 
 > [!NOTE]
 > Check the [idalib](https://github.com/idalib-rs/idalib) documentation for additional information.
