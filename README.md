@@ -112,7 +112,8 @@ summarizes the latest compatible release for each IDA Pro version:
 | v9.1.250226     | v0.6.2                    |
 | v9.2.250908     | v0.7.6                    |
 | v9.3.260213     | v0.8.1                    |
-| v9.3.260327     | current release           |
+| v9.3.260327     | v0.9.0                    |
+| v9.3.260421     | current release           |
 
 > [!NOTE]
 > Check the [idalib](https://github.com/idalib-rs/idalib) documentation for additional information.
