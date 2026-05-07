@@ -51,9 +51,6 @@ workspace = true
 [workspace.lints.rust]
 missing_docs = { level = "warn" }
 
-[workspace.lints.rustdoc]
-missing_doc_code_examples = { level = "warn" }
-
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
