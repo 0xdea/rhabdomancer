@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use workspace lints and add some lints in the `clippy::restriction` category.
 - Update dependencies.
+- Update `mozilla-actions/sccache-action` in CI.
 
 ## [0.9.1] - 2026-04-24
 
