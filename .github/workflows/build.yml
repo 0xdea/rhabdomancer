@@ -18,8 +18,8 @@ env:
   RUSTC_WRAPPER: "sccache"
 
 jobs:
-  build-linux:
-    name: build-linux
+  build-linux-plus-checks:
+    name: build-linux-plus-checks
     runs-on: ubuntu-latest
     steps:
       - name: checkout
