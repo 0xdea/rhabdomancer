@@ -20,6 +20,7 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write # needed to push generated rustdoc to the gh-pages branch
     steps:
