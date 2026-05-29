@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix some zizmor lints and update CI accordingly.
 - Update `mozilla-actions/sccache-action` in CI.
 
+### Fixed
+
+- Refactor `traverse_xrefs` and make it iterative to avoid potential stack overflows with large XREF chains.
+
 ## [0.9.1] - 2026-04-24
 
 ### Changed

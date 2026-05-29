@@ -204,59 +204,66 @@ impl<'a> BadFunctions<'a> {
 
         // Traverse XREFs and mark call locations
         idb.first_xref_to(func.start_address(), XRefQuery::ALL)
-            .map_or(Ok(()), |cur| Self::traverse_xrefs(idb, &cur, &desc, marked))
+            .map_or(Ok(()), |cur| Self::traverse_xrefs(idb, cur, &desc, marked))
     }
 
-    /// Recursively traverse XREFs and mark call locations
+    /// Iteratively traverse XREFs and mark call locations
+    ///
+    /// An explicit work stack is used instead of recursion so that binaries with very long XREF chains or deep .plt
+    /// indirection don't overflow the stack.
     fn traverse_xrefs(
         idb: &IDB,
-        xref: &XRef,
+        first_xref: XRef,
         desc: &str,
         marked: &mut BookmarkIndex,
     ) -> Result<(), IDAError> {
-        // Handle .plt indirection in ELF binaries
-        if is_in_plt(idb, xref.from()) {
-            idb.first_xref_to(
-                idb.function_at(xref.from())
-                    .map_or_else(|| BADADDR.into(), |func| func.start_address()),
-                XRefQuery::ALL,
-            )
-            .map_or(Ok(()), |thunk| {
-                Self::traverse_xrefs(idb, &thunk, desc, marked)
-            })?;
-        } else if xref.is_code() {
-            // Print address with caller function name if available
-            let caller = idb.function_at(xref.from()).map_or_else(
-                || "[unknown]".into(),
-                |func| func.name().unwrap_or_else(|| "[no name]".into()),
-            );
-            println!("{:#X} in {}", xref.from(), caller);
+        // Each entry is the head of an XREF chain still to be processed
+        let mut stack = vec![first_xref];
 
-            // Add a bookmark if not already present to mark the call location
-            if !idb
-                .bookmarks()
-                .get_description(xref.from())
-                .unwrap_or_default()
-                .contains(PREFIX)
-            {
-                idb.bookmarks().mark(xref.from(), desc)?;
-                *marked += 1;
+        while let Some(xref) = stack.pop() {
+            let from = xref.from();
+            let is_code = xref.is_code();
+
+            // Queue the next xref in the chain before processing the current one
+            if let Some(next) = xref.next_to() {
+                stack.push(next);
             }
 
-            // Add a comment if not already present to mark the call location
-            if !idb
-                .get_cmt(xref.from())
-                .unwrap_or_default()
-                .contains(PREFIX)
-            {
-                idb.append_cmt(xref.from(), desc)?;
+            if is_in_plt(idb, from) {
+                // Handle .plt indirection in ELF binaries by queueing the thunk's own XREF chain for later processing
+                let target = idb
+                    .function_at(from)
+                    .map_or_else(|| BADADDR.into(), |func| func.start_address());
+                if let Some(thunk) = idb.first_xref_to(target, XRefQuery::ALL) {
+                    stack.push(thunk);
+                }
+            } else if is_code {
+                // Print address with caller function name if available
+                let caller = idb.function_at(from).map_or_else(
+                    || "[unknown]".into(),
+                    |func| func.name().unwrap_or_else(|| "[no name]".into()),
+                );
+                println!("{from:#X} in {caller}");
+
+                // Add a bookmark if not already present to mark the call location
+                if !idb
+                    .bookmarks()
+                    .get_description(from)
+                    .unwrap_or_default()
+                    .contains(PREFIX)
+                {
+                    idb.bookmarks().mark(from, desc)?;
+                    *marked += 1;
+                }
+
+                // Add a comment if not already present to mark the call location
+                if !idb.get_cmt(from).unwrap_or_default().contains(PREFIX) {
+                    idb.append_cmt(from, desc)?;
+                }
             }
         }
 
-        // Process next XREF
-        xref.next_to().map_or(Ok(()), |next| {
-            Self::traverse_xrefs(idb, &next, desc, marked)
-        })
+        Ok(())
     }
 }
 
