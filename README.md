@@ -88,14 +88,15 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 1. Make sure IDA Pro is properly configured with a valid license.
 2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed. You can override the default
    configuration file location by setting the `RHABDOMANCER_CONFIG` environment variable.
-3. Run as follows:
+3. Make sure the `IDADIR` environment variable is set if your IDA Pro installation is in a non-standard location.
+4. Run as follows:
    ```sh
    rhabdomancer <binary_file>
    ```
    Any existing `.i64` IDB file will be updated; otherwise, a new IDB file will be created.
-4. Open the resulting `.i64` IDB file with IDA Pro.
-5. Select `View` > `Open subviews` > `Bookmarks`
-6. Enjoy your results conveniently collected into an IDA Pro window.
+5. Open the resulting `.i64` IDB file with IDA Pro.
+6. Select `View` > `Open subviews` > `Bookmarks`
+7. Enjoy your results conveniently collected into an IDA Pro window.
 
 > [!NOTE]
 > Rhabdomancer also adds comments at marked call locations.

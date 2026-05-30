@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Use workspace lints and add some lints in the `clippy::restriction` category.
+- Improve documentation to address <https://github.com/0xdea/rhabdomancer/issues/1>.
 - Update dependencies.
 - Fix some zizmor lints and update CI accordingly.
 - Update `mozilla-actions/sccache-action` in CI.
