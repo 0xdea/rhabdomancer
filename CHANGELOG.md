@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add integration tests for idempotency and custom configuration.
+
 ### Changed
 
 - Use workspace lints and add some lints in the `clippy::restriction` category.
