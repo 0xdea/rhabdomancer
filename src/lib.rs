@@ -98,20 +98,12 @@ impl KnownBadFunctions {
 
     /// Normalize configuration entries so runtime lookups are trivial and consistent
     fn normalize_sets(&mut self) {
-        self.high = mem::take(&mut self.high)
-            .into_iter()
-            .map(|s| normalize_name(&s).to_owned())
-            .collect();
-
-        self.medium = mem::take(&mut self.medium)
-            .into_iter()
-            .map(|s| normalize_name(&s).to_owned())
-            .collect();
-
-        self.low = mem::take(&mut self.low)
-            .into_iter()
-            .map(|s| normalize_name(&s).to_owned())
-            .collect();
+        for set in [&mut self.high, &mut self.medium, &mut self.low] {
+            *set = mem::take(set)
+                .into_iter()
+                .map(|s| normalize_name(&s).to_owned())
+                .collect();
+        }
     }
 }
 
@@ -166,14 +158,14 @@ impl<'a> BadFunctions<'a> {
     fn locate_calls(&mut self, idb: &'a IDB) -> anyhow::Result<BookmarkIndex> {
         let mut marked = 0;
 
-        for f in self.high.values() {
-            Self::mark_calls(idb, f, Priority::High, &mut marked)?;
-        }
-        for f in self.medium.values() {
-            Self::mark_calls(idb, f, Priority::Medium, &mut marked)?;
-        }
-        for f in self.low.values() {
-            Self::mark_calls(idb, f, Priority::Low, &mut marked)?;
+        for (priority, functions) in [
+            (Priority::High, &self.high),
+            (Priority::Medium, &self.medium),
+            (Priority::Low, &self.low),
+        ] {
+            for f in functions.values() {
+                Self::mark_calls(idb, f, priority, &mut marked)?;
+            }
         }
 
         self.marked = marked;
