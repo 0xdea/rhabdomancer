@@ -150,7 +150,7 @@ low = [
     # check for locale bugs
     "setlocale", "catopen",
     # check kernel driver functions and ioctl
-    "cdev_init"
+    "cdev_init", "ioctl", "syscall"
     # kill, signal/sigaction, *setjmp/*longjmp functions should be checked for signal-handling vulnerabilities
     # *sem*, *mutex* functions should be checked for other concurrency-related vulnerabilities
     # new, new []: potential implicit overflow with scalar constructor

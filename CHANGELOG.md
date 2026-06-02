@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `syscall` and `ioctl` functions to the list of insecure functions.
+
 ### Changed
 
 - Refactor verbose loops.
+- Update documentation.
 
 ## [0.9.2] - 2026-05-31
 
