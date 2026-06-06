@@ -40,13 +40,15 @@ Three source files:
 - **`src/lib.rs`** — Core analysis logic. Key types:
   - `KnownBadFunctions`: Loads `conf/rhabdomancer.toml`, normalizes function names for matching.
   - `BadFunctions<'a>`: Scans the opened IDB for calls to bad functions and annotates them with IDA bookmarks and inline comments (`[BAD 0]`/`[BAD 1]`/`[BAD 2]`).
-  - `Priority` enum: `High`/`Medium`/`Low` — maps to BAD 0/1/2.
+  - `Priority` enum: `High`/`Medium`/`Low` — maps to BAD 0/1/2 via `#[repr(u8)]`; has `code()`, `tag_prefix()`, and `description()` helpers.
   - `traverse_xrefs()`: Iteratively walks cross-references using an explicit `Vec` stack. Handles `.plt` thunk indirection for ELF binaries.
+  - `is_in_plt()`: Checks whether an address falls within a `.plt` segment.
   - `normalize_name()`: Strips leading dots/underscores from function names for cross-platform matching.
 - **`tests/main.rs`** — Integration test with three scenarios against `tests/data/ls`:
-  1. Default config: asserts exactly 86 marked locations, then verifies bookmark and comment content.
+  1. Default config: asserts exactly 86 marked locations, then verifies bookmark count, that every bookmark description starts with `[BAD `, comment count, and that every comment starts with `[BAD `.
   2. Idempotency: second run on the same IDB must return 0 new marks.
-  3. Custom config via `RHABDOMANCER_CONFIG`: writes a minimal TOML to `tests/data/custom.toml`, asserts exactly 13 marks, and checks all bookmarks carry the expected priority tag. Also exercises `normalize_name` since the custom config includes decorated names (`_fwrite`, `.memset`).
+  3. Custom config via `RHABDOMANCER_CONFIG`: writes a minimal TOML to `tests/data/custom.toml`, asserts exactly 13 marks, and checks all bookmarks start with `[BAD 1]` (medium priority). Also exercises `normalize_name` since the custom config includes decorated names (`_fwrite`, `.memset`).
+  - Uses a `show_everything()` helper that enables hidden comments/functions/instructions/segments before checking bookmark and comment content.
 
 ## Configuration
 
@@ -62,7 +64,7 @@ Tests use `#[expect(clippy::expect_used, reason = "...")]` to locally permit pan
 
 ## IDA Pro Integration Notes
 
-- `idalib::open_database()` opens or creates an `.i64` IDB file with auto-analysis enabled.
+- `IDB::open_with(path, true, true)` opens or creates an `.i64` IDB file with auto-analysis enabled and the database kept after closing.
 - `idalib::force_batch_mode()` must be called before opening any database (suppresses IDA UI).
 - Annotation is idempotent — existing bookmarks/comments are not duplicated.
 - `.plt` sections in ELF binaries require following one level of thunk indirection to reach the real import; `traverse_xrefs` handles this.
