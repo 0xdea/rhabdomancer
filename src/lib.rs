@@ -172,7 +172,7 @@ impl<'a> BadFunctions<'a> {
         Ok(self.marked)
     }
 
-    /// Locates calls to the specified function and marks them
+    /// Locates calls to the specified function and marks them.
     fn mark_calls(
         idb: &IDB,
         func: &Function,
