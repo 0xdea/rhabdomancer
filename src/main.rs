@@ -5,11 +5,11 @@ use std::ffi::OsStr;
 use std::path::Path;
 use std::process::ExitCode;
 
-/// Package name
+/// Package name.
 const PROGRAM: &str = env!("CARGO_PKG_NAME");
-/// Package version
+/// Package version.
 const VERSION: &str = env!("CARGO_PKG_VERSION");
-/// Package authors
+/// Package authors.
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
 fn main() -> ExitCode {
@@ -17,10 +17,10 @@ fn main() -> ExitCode {
     eprintln!("Copyright (c) 2024-2026 {AUTHORS}");
     eprintln!();
 
-    // Force IDA Pro to stay quiet
+    // Force IDA Pro to stay quiet.
     idalib::force_batch_mode();
 
-    // Parse command line arguments
+    // Parse command line arguments.
     let mut args = env::args_os();
     let argv0 = args.next().unwrap_or_else(|| PROGRAM.into());
     let is_help = |a: &OsStr| a == OsStr::new("-h") || a == OsStr::new("--help");
@@ -35,7 +35,7 @@ fn main() -> ExitCode {
         _ => return usage(prog),
     };
 
-    // Let's do it
+    // Let's do it.
     match rhabdomancer::run(Path::new(&filename)) {
         Ok(_) => ExitCode::SUCCESS,
         Err(err) => {
@@ -45,7 +45,7 @@ fn main() -> ExitCode {
     }
 }
 
-/// Print usage information and exit
+/// Prints usage information and exits.
 fn usage(prog: &str) -> ExitCode {
     eprintln!("Usage:");
     eprintln!("{prog} <binary_file>");
