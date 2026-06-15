@@ -265,16 +265,23 @@ impl<'a> BadFunctions<'a> {
 ///
 /// Returns a [`BookmarkIndex`] that indicates how many call locations were marked, or an error in
 /// case something goes wrong.
-pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
+pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     // Load known bad API function names from the configuration file.
     println!("[*] Loading known bad API function names");
     let known_bad =
         KnownBadFunctions::load().context("Failed to load known bad API function names")?;
 
     // Open the target binary, run auto-analysis, and keep results.
-    println!("[*] Analyzing binary file `{}`", filepath.display());
-    let idb = IDB::open_with(filepath, true, true)
-        .with_context(|| format!("Failed to analyze binary file `{}`", filepath.display()))?;
+    println!(
+        "[*] Analyzing binary file `{}`",
+        filepath.as_ref().display()
+    );
+    let idb = IDB::open_with(&filepath, true, true).with_context(|| {
+        format!(
+            "Failed to analyze binary file `{}`",
+            filepath.as_ref().display()
+        )
+    })?;
     println!("[+] Successfully analyzed binary file");
     println!();
 
@@ -292,7 +299,10 @@ pub fn run(filepath: &Path) -> anyhow::Result<BookmarkIndex> {
 
     println!();
     println!("[+] Marked {marked} new call locations");
-    println!("[+] Done processing binary file `{}`", filepath.display());
+    println!(
+        "[+] Done processing binary file `{}`",
+        filepath.as_ref().display()
+    );
     Ok(marked)
 }
 
