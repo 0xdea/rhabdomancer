@@ -261,10 +261,11 @@ impl<'a> BadFunctions<'a> {
 
 /// Locates calls to potentially insecure API functions in the binary file at `filepath`.
 ///
-/// ## Errors
+/// Returns a [`BookmarkIndex`] that indicates how many call locations were marked.
 ///
-/// Returns a [`BookmarkIndex`] that indicates how many call locations were marked, or an error in
-/// case something goes wrong.
+/// # Errors
+///
+/// Returns [`anyhow::Error`] in case something goes wrong with analyzing the binary file or finding bad API calls.
 pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     // Load known bad API function names from the configuration file.
     println!("[*] Loading known bad API function names");

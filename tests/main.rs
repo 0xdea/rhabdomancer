@@ -8,7 +8,7 @@ use idalib::idb::IDB;
 
 /// Custom harness for integration tests.
 ///
-/// ## Safety
+/// # Safety
 ///
 /// [`env::set_var`] and [`env::remove_var`] are safe to call as this is a single-threaded test binary.
 #[expect(clippy::expect_used, reason = "tests can use `expect`")]
