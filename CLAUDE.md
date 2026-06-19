@@ -37,7 +37,7 @@ cargo doc
 Three source files:
 
 - **`src/main.rs`** — CLI entry point. Parses a single binary path argument, calls `force_batch_mode()` to suppress IDA UI, then delegates to `lib::run()`.
-- **`src/lib.rs`** — Core analysis logic. Key types:
+- **`src/lib.rs`** — Core analysis logic. Public entry point: `run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex>`. Key types:
   - `KnownBadFunctions`: Loads `conf/rhabdomancer.toml`, normalizes function names for matching.
   - `BadFunctions<'a>`: Scans the opened IDB for calls to bad functions and annotates them with IDA bookmarks and inline comments (`[BAD 0]`/`[BAD 1]`/`[BAD 2]`).
   - `Priority` enum: `High`/`Medium`/`Low` — maps to BAD 0/1/2 via `#[repr(u8)]`; has `code()`, `tag_prefix()`, and `description()` helpers.
@@ -60,7 +60,7 @@ The workspace `Cargo.toml` enables aggressive lints. Notably forbidden everywher
 - `unwrap`, `expect`, `panic`, `todo`, `unimplemented`, `unreachable`, `dbg_macro`
 - Unsafe blocks require a `reason` attribute
 
-Tests use `#[expect(clippy::expect_used, reason = "...")]` to locally permit panics. Follow this pattern when adding test code. `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as the existing test does.
+Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `as_conversions` (casting `u8` repr), `shadow_reuse` (rebinding a variable for normalization), `arithmetic_side_effects` (usize counter), `else_if_without_else` (empty else branch), `panic_in_result_fn` (test assertions). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as the existing test does.
 
 ## IDA Pro Integration Notes
 

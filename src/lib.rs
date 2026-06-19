@@ -1,4 +1,6 @@
-#![doc = include_str!("../README.md")]
+#![doc = env!("CARGO_PKG_DESCRIPTION")]
+#![doc = ""]
+#![cfg_attr(doc, doc = include_str!("../README.md"))]
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
 
 use std::collections::{BTreeMap, HashSet};
@@ -31,6 +33,7 @@ enum Priority {
 
 impl Priority {
     /// Returns the priority code as a byte.
+    #[expect(clippy::as_conversions, reason = "priority is stored as a `u8`")]
     const fn code(self) -> u8 {
         self as u8
     }
@@ -79,6 +82,7 @@ impl KnownBadFunctions {
     }
 
     /// Checks if a function is in the list of known bad API function names and return its priority.
+    #[expect(clippy::shadow_reuse, reason = "shadowing is convenient here")]
     fn check_function(&self, func: &Function) -> Option<Priority> {
         let func_name = func.name()?;
         let func_name = normalize_name(&func_name);
@@ -203,6 +207,11 @@ impl<'a> BadFunctions<'a> {
     ///
     /// An explicit work stack is used instead of recursion so that binaries with very long XREF chains or deep .plt
     /// indirection don't overflow the stack.
+    #[expect(clippy::else_if_without_else, reason = "else branch would be empty")]
+    #[expect(
+        clippy::arithmetic_side_effects,
+        reason = "`usize` can hardly overflow here"
+    )]
     fn traverse_xrefs(
         idb: &IDB,
         first_xref: XRef,

@@ -1,4 +1,4 @@
-//! tests/main.rs
+//! tests/main.rs.
 
 use std::path::Path;
 use std::{env, fs};
@@ -12,6 +12,11 @@ use idalib::idb::IDB;
 ///
 /// [`env::set_var`] and [`env::remove_var`] are safe to call as this is a single-threaded test binary.
 #[expect(clippy::expect_used, reason = "tests can use `expect`")]
+#[expect(clippy::panic_in_result_fn, reason = "panics are allowed in test code")]
+#[expect(
+    clippy::as_conversions,
+    reason = "`n_marks` is a `BookmarkIndex`, which is a `u32`"
+)]
 fn main() -> anyhow::Result<()> {
     // Target binary path.
     const FILENAME: &str = "./tests/data/ls";
@@ -58,6 +63,7 @@ fn main() -> anyhow::Result<()> {
 
         // Check the number of comments.
         print!("[*] Checking number of comments... ");
+
         assert_eq!(
             idb.find_text_iter("[BAD ").count(),
             n_marks as usize,
@@ -81,7 +87,7 @@ fn main() -> anyhow::Result<()> {
         println!("Ok.");
 
         // The IDB is dropped here before the idempotency test opens it again.
-    }
+    };
 
     // Idempotency: a second run on the same IDB must not add any new marks.
     println!();
@@ -107,13 +113,13 @@ fn main() -> anyhow::Result<()> {
     // Safety: safe to call as this is a single-threaded test binary.
     unsafe {
         env::set_var("RHABDOMANCER_CONFIG", custom_config_path);
-    }
+    };
     println!();
     let n_marks_custom = rhabdomancer::run(Path::new(FILENAME))?;
     // Safety: safe to call as this is a single-threaded test binary.
     unsafe {
         env::remove_var("RHABDOMANCER_CONFIG");
-    }
+    };
     fs::remove_file(custom_config_path)?;
 
     println!();
@@ -138,7 +144,7 @@ fn main() -> anyhow::Result<()> {
             );
         }
         println!("Ok.");
-    }
+    };
 
     // Remove the IDB file at the end.
     fs::remove_file(idb_path)?;
