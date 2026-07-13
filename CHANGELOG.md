@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use `AsRef<Path>` bounds for all public functions that take a `Path` argument.
 - Enable all clippy restriction lints and fix any resulting issues.
 - Improve comments.
+- Improve CI.
 - Update dependencies.
 
 ## [0.9.3] - 2026-06-06
