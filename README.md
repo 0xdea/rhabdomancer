@@ -20,7 +20,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 ## Features
 
-- Blazing fast, headless user experience courtesy of IDA Pro 9.x and Binarly's idalib Rust bindings.
+- Blazing fast, headless user experience courtesy of IDA Pro 9.x and idalib-rs Rust bindings.
 - Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
 - Bad API function call locations are printed to stdout and marked in the IDB.
 - Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
@@ -117,11 +117,11 @@ summarizes the latest compatible release for each IDA Pro version:
 | v9.3.260421     | current release           |
 
 > [!NOTE]
-> Check the [idalib](https://github.com/idalib-rs/idalib) documentation for additional information.
+> Check the [idalib-rs](https://github.com/idalib-rs/idalib) documentation for additional information.
 
 ## Credits
 
-This project's development has been supported by the following organisations:
+This project's development has been supported by the following organizations:
 
 - [HN Security](https://hnsecurity.it)
 - [Hex-Rays](https://hex-rays.com) via their [Contributor Program](https://hex-rays.com/contributor-program)
