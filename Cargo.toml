@@ -50,6 +50,8 @@ workspace = true
 
 [workspace.lints.rust]
 missing_docs = { level = "warn" }
+# idalib-build emits a duplicate -rpath for libida/libidalib on macOS and Linux
+linker_messages = "allow"
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }

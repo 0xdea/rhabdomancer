@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve CI.
 - Update dependencies.
 
+### Fixed
+
+- Silence linker warnings from idalib-build.
+
 ## [0.9.3] - 2026-06-06
 
 ### Added
