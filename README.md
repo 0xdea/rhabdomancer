@@ -119,6 +119,13 @@ summarizes the latest compatible release for each IDA Pro version:
 > [!NOTE]
 > Check the [idalib](https://github.com/idalib-rs/idalib) documentation for additional information.
 
+## Credits
+
+This project's development has been supported by the following organisations:
+
+- [HN Security](https://hnsecurity.it)
+- [Hex-Rays](https://hex-rays.com) via their [Contributor Program](https://hex-rays.com/contributor-program)
+
 ## Changelog
 
 - [CHANGELOG.md](https://github.com/0xdea/rhabdomancer/blob/master/CHANGELOG.md)
