@@ -28,9 +28,14 @@ cargo test --test tests
 cargo fmt --all --check
 cargo clippy --all-targets -- -D warnings
 
-# Documentation
+# Documentation (CI enforces this as an error via RUSTDOCFLAGS=-D warnings)
 cargo doc
+
+# Dependency vulnerability audit (CI enforces this; requires cargo-audit)
+cargo audit
 ```
+
+CI's own `test` step only runs `cargo test --lib` — a compile-only smoke check, since `src/lib.rs` has no `#[test]` functions. The real integration suite in `tests/main.rs` needs a working IDA Pro installation, which CI runners don't have, so it only runs locally.
 
 ## Architecture
 
@@ -62,9 +67,17 @@ The workspace `Cargo.toml` enables aggressive lints. Notably forbidden everywher
 
 Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `as_conversions` (casting `u8` repr), `shadow_reuse` (rebinding a variable for normalization), `arithmetic_side_effects` (usize counter), `else_if_without_else` (empty else branch), `panic_in_result_fn` (test assertions). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as the existing test does.
 
+The workspace also blanket-allows the rustc `linker_messages` lint: `idalib-build`'s `configure_linkage()` emits a duplicate `-rpath` link arg for `libida`/`libidalib`, which would otherwise surface as a warning (and fail CI under `-D warnings`).
+
 ## IDA Pro Integration Notes
 
 - `IDB::open_with(path, true, true)` opens or creates an `.i64` IDB file with auto-analysis enabled and the database kept after closing.
 - `idalib::force_batch_mode()` must be called before opening any database (suppresses IDA UI).
 - Annotation is idempotent — existing bookmarks/comments are not duplicated.
 - `.plt` sections in ELF binaries require following one level of thunk indirection to reach the real import; `traverse_xrefs` handles this.
+
+## CI Workflows
+
+- **`build.yml`** — lint/build/test matrix across Linux, macOS, and Windows, plus a `zizmor` job that audits `.github/workflows/*.yml` for security issues (credential handling, injection, etc.).
+- **`doc.yml`** — builds rustdoc and pushes it to the `gh-pages` branch on `v*` tags; its `checkout` step needs persisted git credentials to `git push` later, so it carries a `# zizmor: ignore[artipacked]` suppression comment.
+- To suppress a specific zizmor finding, add an inline `# zizmor: ignore[<rule-id>]` comment on the flagged step with a short justification, rather than disabling the rule globally.
