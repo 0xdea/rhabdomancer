@@ -35,7 +35,7 @@ cargo doc
 cargo audit
 ```
 
-CI's own `test` step only runs `cargo test --lib` — a compile-only smoke check, since `src/lib.rs` has no `#[test]` functions. The real integration suite in `tests/main.rs` needs a working IDA Pro installation, which CI runners don't have, so it only runs locally.
+CI's own `test` step only runs `cargo test --no-run` — a compile-only smoke check. The real integration suite in `tests/main.rs` needs a working IDA Pro installation, which CI runners don't have, so it only runs locally.
 
 ## Architecture
 
@@ -62,12 +62,11 @@ All "bad" functions are defined in `conf/rhabdomancer.toml`, grouped into `high`
 ## Lint Policy
 
 The workspace `Cargo.toml` enables aggressive lints. Notably forbidden everywhere except tests:
+
 - `unwrap`, `expect`, `panic`, `todo`, `unimplemented`, `unreachable`, `dbg_macro`
 - Unsafe blocks require a `reason` attribute
 
 Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `as_conversions` (casting `u8` repr), `shadow_reuse` (rebinding a variable for normalization), `arithmetic_side_effects` (usize counter), `else_if_without_else` (empty else branch), `panic_in_result_fn` (test assertions). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as the existing test does.
-
-The workspace also blanket-allows the rustc `linker_messages` lint: `idalib-build`'s `configure_linkage()` emits a duplicate `-rpath` link arg for `libida`/`libidalib`, which would otherwise surface as a warning (and fail CI under `-D warnings`).
 
 ## IDA Pro Integration Notes
 
