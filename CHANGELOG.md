@@ -5,20 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.10.0] - 2026-07-27
 
 ### Changed
 
+- Update idalib to v0.10.0 to support IDA Pro 9.4.
+- Update other dependencies.
 - Use `AsRef<Path>` bounds for all public functions that take a `Path` argument.
 - Enable all clippy restriction lints and fix any resulting issues.
-- Add credits section to README.
+- Add credits section to `README.md`.
 - Improve comments.
 - Improve CI.
-- Update dependencies.
-
-### Fixed
-
-- Silence linker warnings from idalib-build.
 
 ## [0.9.3] - 2026-06-06
 
@@ -73,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix CHANGELOG link in README.
+- Fix CHANGELOG link in `README.md`.
 - Fix doc workflow.
 
 ### Security
@@ -413,7 +410,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add integration tests with a custom harness because they must run in the main thread.
-- Add instructions for installing via `cargo install` in README and crate comments.
+- Add instructions for installing via `cargo install` in `README.md` and crate comments.
 - Add Markdown links to version tags on release headings in CHANGELOG.
 
 ### Changed
@@ -429,7 +426,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release to be published to [crates.io](https://crates.io/).
 
-[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.9.3...HEAD
+[unreleased]: https://github.com/0xdea/rhabdomancer/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/0xdea/rhabdomancer/compare/v0.9.3...v0.10.0
 [0.9.3]: https://github.com/0xdea/rhabdomancer/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/0xdea/rhabdomancer/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/0xdea/rhabdomancer/compare/v0.9.0...v0.9.1

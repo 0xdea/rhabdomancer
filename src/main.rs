@@ -13,7 +13,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
 fn main() -> ExitCode {
-    eprintln!("{PROGRAM} {VERSION} - IDA Pro vulnerability research assistant");
+    eprintln!("{PROGRAM} {VERSION} - Tool to locate insecure function calls");
     eprintln!("Copyright (c) 2024-2026 {AUTHORS}");
     eprintln!();
 

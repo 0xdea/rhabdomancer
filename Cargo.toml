@@ -1,6 +1,6 @@
 [package]
 name = "rhabdomancer"
-version = "0.9.4-alpha"
+version = "0.10.0"
 authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2024"
 description = "Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file."
@@ -22,13 +22,13 @@ exclude = [
 ]
 
 [dependencies]
-idalib = "0.9"
+idalib = "0.10"
 anyhow = "1.0"
 config = { version = "0.15", default-features = false, features = ["toml"] }
 serde = { version = "1.0", features = ["derive"] }
 
 [build-dependencies]
-idalib-build = "0.9"
+idalib-build = "0.10"
 
 [[test]]
 name = "tests"
@@ -50,8 +50,6 @@ workspace = true
 
 [workspace.lints.rust]
 missing_docs = { level = "warn" }
-# idalib-build emits a duplicate -rpath for libida/libidalib on macOS and Linux
-linker_messages = "allow"
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
