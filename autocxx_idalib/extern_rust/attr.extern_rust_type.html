@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Declare that this is a Rust type which is to be exported to C++. You can use this in two ways:"><title>extern_rust_type in autocxx_idalib::extern_rust - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-17e0aaed.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="autocxx_idalib" data-themes="" data-resource-suffix="" data-rustdoc-version="1.97.1 (8bab26f4f 2026-07-14)" data-channel="1.97.1" data-search-js="search-fd9372ac.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-fcd733ba.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc attr"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">extern_rust_type</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../autocxx_idalib/index.html">autocxx_<wbr>idalib</a><span class="version">0.30.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">extern_<wbr>rust_<wbr>type</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#finding-these-bindings-from-c" title="Finding these bindings from C++">Finding these bindings from C++</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="index.html">In autocxx_<wbr>idalib::<wbr>extern_<wbr>rust</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">autocxx_idalib</a>::<wbr><a href="index.html">extern_rust</a></div><h1>Attribute Macro <span class="attr">extern_<wbr>rust_<wbr>type</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/autocxx_macro_idalib/lib.rs.html#86">Source</a> </span></div><pre class="rust item-decl"><code>#[extern_rust_type]</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Declare that this is a Rust type which is to be exported to C++.
+You can use this in two ways:</p>
+<ul>
+<li>as an attribute macro on a Rust type, for instance:
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[extern_rust_type]
+</span><span class="kw">struct </span>Bar;</code></pre></div></li>
+<li>as a directive within the <a href="../macro.include_cpp.html" title="macro autocxx_idalib::include_cpp">include_cpp</a> macro, in which case
+provide the type path in brackets:
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="macro">include_cpp!</span>(
+    #include <span class="string">"input.h"
+    </span><span class="macro">extern_rust_type!</span>(Bar)
+    <span class="macro">safety!</span>(<span class="kw">unsafe</span>)
+);
+<span class="kw">struct </span>Bar;</code></pre></div></li>
+</ul>
+<p>These may be used within references in the signatures of C++ functions,
+for instance. This will contribute to an <code>extern "Rust"</code> section of the
+generated <code>cxx</code> bindings, and this type will appear in the C++ header
+generated for use in C++.</p>
+<h2 id="finding-these-bindings-from-c"><a class="doc-anchor" href="#finding-these-bindings-from-c">§</a>Finding these bindings from C++</h2>
+<p>You will likely need to forward-declare this type within your C++ headers
+before you can use it in such function signatures. autocxx can’t generate
+headers (with this type definition) until it’s parsed your header files;
+logically therefore if your header files mention one of these types
+it’s impossible for them to see the definition of the type.</p>
+<p>If you’re using multiple sets of <code>include_cpp!</code> directives, or
+a mixture of <code>include_cpp!</code> and <code>#[cxx::bridge]</code> bindings, then you
+may be able to <code>#include "cxxgen.h"</code> to refer to the generated C++
+function prototypes. In this particular circumstance, you’ll want to know
+how exactly the <code>cxxgen.h</code> header is named, because one will be
+generated for each of the sets of bindings encountered. The pattern
+can be set manually using <code>autocxxgen</code>’s command-line options. If you’re
+using <code>autocxx</code>’s <code>build.rs</code> support, those headers will be named
+<code>cxxgen.h</code>, <code>cxxgen1.h</code>, <code>cxxgen2.h</code> according to the order in which
+the <code>include_cpp</code> or <code>cxx::bridge</code> bindings are encountered.
+Attribute to state that a Rust type is to be exported to C++
+in the <code>extern "Rust"</code> section of the generated <code>cxx</code> bindings.</p>
+</div></details></section></div></main></body></html>

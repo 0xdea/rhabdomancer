@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Include some C++ headers in your Rust project."><title>include_cpp in autocxx_idalib::prelude - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-17e0aaed.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="autocxx_idalib" data-themes="" data-resource-suffix="" data-rustdoc-version="1.97.1 (8bab26f4f 2026-07-14)" data-channel="1.97.1" data-search-js="search-fd9372ac.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-fcd733ba.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc macro"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">include_cpp</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../autocxx_idalib/index.html">autocxx_<wbr>idalib</a><span class="version">0.30.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">include_<wbr>cpp</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#examples" title="Examples">Examples</a></li><li><a href="#the-include_cpp-macro" title="The `include_cpp` macro">The <code>include_cpp</code> macro</a></li><li><a href="#allowlisting" title="Allowlisting">Allowlisting</a></li><li><a href="#internals" title="Internals">Internals</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="index.html">In autocxx_<wbr>idalib::<wbr>prelude</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">autocxx_idalib</a>::<wbr><a href="index.html">prelude</a></div><h1>Macro <span class="macro">include_<wbr>cpp</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/autocxx_idalib/lib.rs.html#106-118">Source</a> </span></div><pre class="rust item-decl"><code>macro_rules! include_cpp {
+    (
+        $(#$include:ident $lit:literal)*
+        $($mac:ident!($($arg:tt)*))*
+    ) =&gt; { ... };
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Include some C++ headers in your Rust project.</p>
+<p>This macro allows you to include one or more C++ headers within
+your Rust code, and call their functions fairly naturally.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>C++ header (<code>input.h</code>):</p>
+<div class="example-wrap"><pre class="language-cpp"><code>#include &lt;cstdint&gt;
+
+uint32_t do_math(uint32_t a);</code></pre></div>
+<p>Rust code:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="macro">include_cpp!</span>(
+   #include <span class="string">"input.h"
+   </span><span class="macro">generate!</span>(<span class="string">"do_math"</span>)
+   <span class="macro">safety!</span>(<span class="kw">unsafe</span>)
+);
+
+ffi::do_math(<span class="number">3</span>);</code></pre></div>
+<p>The resulting bindings will use idiomatic Rust wrappers for types from the <a href="../../cxx/index.html" title="mod cxx">cxx</a>
+crate, for example <a href="struct.UniquePtr.html" title="struct autocxx_idalib::prelude::UniquePtr"><code>cxx::UniquePtr</code></a> or <a href="../../cxx/string/struct.CxxString.html" title="struct cxx::string::CxxString"><code>cxx::CxxString</code></a>. Due to the care and thought
+that’s gone into the <a href="../../cxx/index.html" title="mod cxx">cxx</a> crate, such bindings are pleasant and idiomatic to use
+from Rust, and usually don’t require the <code>unsafe</code> keyword.</p>
+<p>For full documentation, see <a href="https://google.github.io/autocxx/">the manual</a>.</p>
+<h2 id="the-include_cpp-macro"><a class="doc-anchor" href="#the-include_cpp-macro">§</a>The <a href="../macro.include_cpp.html" title="macro autocxx_idalib::include_cpp"><code>include_cpp</code></a> macro</h2>
+<p>Within the braces of the <code>include_cpp!{...}</code> macro, you should provide
+a list of at least the following:</p>
+<ul>
+<li><code>#include "cpp_header.h"</code>: a header filename to parse and include</li>
+<li><code>generate!("type_or_function_name")</code>: a type or function name whose declaration
+should be made available to C++. (See the section on Allowlisting, below).</li>
+<li>Optionally, <code>safety!(unsafe)</code> - see discussion of <a href="../macro.safety.html" title="macro autocxx_idalib::safety"><code>safety</code></a>.</li>
+</ul>
+<p>Other directives are possible as documented in this crate.</p>
+<p>Now, try to build your Rust project. <code>autocxx</code> may fail to generate bindings
+for some of the items you specified with <a href="../macro.generate.html" title="macro autocxx_idalib::generate">generate</a> directives: remove
+those directives for now, then see the next section for advice.</p>
+<h2 id="allowlisting"><a class="doc-anchor" href="#allowlisting">§</a>Allowlisting</h2>
+<p>How do you inform autocxx which bindings to generate? There are three
+strategies:</p>
+<ul>
+<li><em>Recommended</em>: provide various <a href="../macro.generate.html" title="macro autocxx_idalib::generate"><code>generate</code></a> directives in the
+<a href="../macro.include_cpp.html" title="macro autocxx_idalib::include_cpp"><code>include_cpp</code></a> macro. This can specify functions or types.</li>
+<li><em>Not recommended</em>: in your <code>build.rs</code>, call <code>Builder::auto_allowlist</code>.
+This will attempt to spot <em>uses</em> of FFI bindings anywhere in your Rust code
+and build the allowlist that way. This is experimental and has known limitations.</li>
+<li><em>Strongly not recommended</em>: use <a href="../macro.generate_all.html" title="macro autocxx_idalib::generate_all"><code>generate_all</code></a>. This will attempt to
+generate Rust bindings for <em>any</em> C++ type or function discovered in the
+header files. This is generally a disaster if you’re including any
+remotely complex header file: we’ll try to generate bindings for all sorts
+of STL types. This will be slow, and some may well cause problems.
+Effectively this is just a debug option to discover such problems. Don’t
+use it!</li>
+</ul>
+<h2 id="internals"><a class="doc-anchor" href="#internals">§</a>Internals</h2>
+<p>For documentation on how this all actually <em>works</em>, see
+<code>IncludeCppEngine</code> within the <code>autocxx_engine</code> crate.</p>
+</div></details></section></div></main></body></html>

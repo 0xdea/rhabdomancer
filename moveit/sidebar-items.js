@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["moveit","slot"],"mod":["drop_flag","move_ref","new","slot"],"trait":["MakeCppStorage"]};
+window.SIDEBAR_ITEMS = {"macro":[["moveit",1],["slot",1]],"mod":["drop_flag","move_ref","new","slot"],"trait":["MakeCppStorage"]};

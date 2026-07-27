@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Performs an emplacement operation."><title>moveit in autocxx_idalib::prelude - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-17e0aaed.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="autocxx_idalib" data-themes="" data-resource-suffix="" data-rustdoc-version="1.97.1 (8bab26f4f 2026-07-14)" data-channel="1.97.1" data-search-js="search-fd9372ac.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-fcd733ba.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc macro"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">moveit</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../autocxx_idalib/index.html">autocxx_<wbr>idalib</a><span class="version">0.30.0</span></h2></div><div class="sidebar-elems"><div id="rustdoc-modnav"><h2><a href="index.html">In autocxx_<wbr>idalib::<wbr>prelude</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">autocxx_idalib</a>::<wbr><a href="index.html">prelude</a></div><h1>Macro <span class="macro">moveit</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/moveit/move_ref.rs.html#526">Source</a> </span></div><pre class="rust item-decl"><code>macro_rules! moveit {
+    (let $name:ident $(: $ty:ty)? = &amp;move *$expr:expr $(; $($rest:tt)*)?) =&gt; { ... };
+    (let mut $name:ident $(: $ty:ty)? = &amp;move *$expr:expr $(; $($rest:tt)*)?) =&gt; { ... };
+    (let $name:ident $(: $ty:ty)? = &amp;move $expr:expr $(; $($rest:tt)*)?) =&gt; { ... };
+    (let mut $name:ident $(: $ty:ty)? = &amp;move $expr:expr $(; $($rest:tt)*)?) =&gt; { ... };
+    (let $name:ident $(: $ty:ty)? = $expr:expr $(; $($rest:tt)*)?) =&gt; { ... };
+    (let mut $name:ident $(: $ty:ty)? = $expr:expr $(; $($rest:tt)*)?) =&gt; { ... };
+    ($(;)?) =&gt; { ... };
+    (&amp;move *$expr:expr) =&gt; { ... };
+    (&amp;move $expr:expr) =&gt; { ... };
+    ($expr:expr) =&gt; { ... };
+    (@move $(($mut:tt))? $name:ident, $($ty:ty)?, $expr:expr) =&gt; { ... };
+    (@put $(($mut:tt))? $name:ident, $($ty:ty)?, $expr:expr) =&gt; { ... };
+    (@emplace $(($mut:tt))? $name:ident, $($ty:ty)?, $expr:expr) =&gt; { ... };
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Performs an emplacement operation.</p>
+<p>This macro allows for three exotic types of <code>let</code> bindings:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>bx = Box::new(<span class="number">42</span>);
+
+<span class="macro">moveit!</span> {
+  <span class="comment">// Use a `New` to construct a new value in place on the stack. This
+  // produces a value of type `Pin&lt;MoveRef&lt;_&gt;&gt;`.
+  </span><span class="kw">let </span>x = new::default::&lt;i32&gt;();
+   
+  <span class="comment">// Move out of an existing `DerefMove` type, such as a `Box`. This has
+  // type `MoveRef&lt;_&gt;`, but can be pinned using `MoveRef::into_pin()`.
+  </span><span class="kw">let </span>y = <span class="kw-2">&amp;</span><span class="kw">move </span><span class="kw-2">*</span>bx;
+   
+  <span class="comment">// Create a `MoveRef` of an existing type on the stack. This also has
+  // type `MoveRef&lt;_&gt;`.
+  </span><span class="kw">let </span>z = <span class="kw-2">&amp;</span><span class="kw">move </span>y;
+}</code></pre></div>
+<p>All three <code>lets</code>, including in-place construction, pin to the stack.
+Consider using something like <a href="trait.Emplace.html#method.emplace" title="associated function autocxx_idalib::prelude::Emplace::emplace"><code>Box::emplace()</code></a> to perform construction on
+the heap.</p>
+<p>This macro also has <em>temporary</em> forms, where rather than creating a binding,
+a temporary (which cannot outlive its complete expression) is created:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>do_thing(x: Pin&lt;MoveRef&lt;i32&gt;&gt;) {
+  <span class="comment">// ...
+</span>}
+
+do_thing(<span class="macro">moveit!</span>(new::of(<span class="number">42</span>)));</code></pre></div>
+<p>Note that these bindings cannot outlive the subexpression:</p>
+
+<div class="example-wrap compile_fail"><a href="#" class="tooltip" title="This example deliberately fails to compile">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">let </span>x = <span class="macro">moveit!</span>(new::of(<span class="number">42</span>));
+<span class="kw">let </span>y = <span class="kw-2">*</span>x;  <span class="comment">// Borrow checker error.</span></code></pre></div></div></details></section></div></main></body></html>

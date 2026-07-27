@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"attr":["is_subclass","subclass"],"mod":["prelude"],"trait":["CppPeerConstructor","CppSubclass","CppSubclassDefault","CppSubclassSelfOwned","CppSubclassSelfOwnedDefault"]};

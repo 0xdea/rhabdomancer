@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["bridge"],"macro":["let_cxx_string","type_id"],"mod":["kind","memory","vector"],"struct":["CxxString","CxxVector","Exception","SharedPtr","UniquePtr","WeakPtr"],"trait":["ExternType"],"type":["String","Vector"]};
+window.SIDEBAR_ITEMS = {"attr":["bridge"],"macro":[["let_cxx_string",1],["type_id",1]],"mod":["kind","memory","vector"],"struct":["CxxString","CxxVector","Exception","SharedPtr","UniquePtr","WeakPtr"],"trait":["ExternType"],"type":["String","Vector"]};
