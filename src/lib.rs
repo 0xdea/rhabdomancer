@@ -32,15 +32,15 @@ enum Priority {
 }
 
 impl Priority {
-    /// Returns the priority code as a byte.
-    #[expect(clippy::as_conversions, reason = "priority is stored as a `u8`")]
-    const fn code(self) -> u8 {
-        self as u8
-    }
-
     /// Returns the tag prefix to use for bookmarks and comments.
-    fn tag_prefix(self) -> String {
-        format!("{PREFIX}{}]", self.code())
+    ///
+    /// The tag text must stay in sync with the `PREFIX` constant and each variant's discriminant.
+    const fn tag_prefix(self) -> &'static str {
+        match self {
+            Self::High => "[BAD 0]",
+            Self::Medium => "[BAD 1]",
+            Self::Low => "[BAD 2]",
+        }
     }
 
     /// Returns a description for a bad API function with the specified name.
