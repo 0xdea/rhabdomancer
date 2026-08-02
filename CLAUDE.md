@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Project Is
 
-**Rhabdomancer** is a headless IDA Pro 9.x plugin (written in Rust) that locates calls to potentially insecure API functions in binary files. It uses `idalib` — Rust bindings to the IDA Pro SDK — and requires a valid IDA Pro installation to build and run.
+**Rhabdomancer** is a headless IDA 9.x plugin (written in Rust) that locates calls to potentially insecure API functions in binary files. It uses `idalib` — Rust bindings to the IDA SDK — and requires a valid IDA installation to build and run.
 
 ## Build Requirements
 
-- IDA Pro 9.x installation with `IDADIR` environment variable set
+- IDA 9.x installation with `IDADIR` environment variable set
 - LLVM/Clang (required by `idalib` for bindgen)
 - Rust (edition 2024)
 
@@ -35,7 +35,7 @@ cargo doc
 cargo audit
 ```
 
-CI's own `test` step only runs `cargo test --no-run` — a compile-only smoke check. The real integration suite in `tests/main.rs` needs a working IDA Pro installation, which CI runners don't have, so it only runs locally.
+CI's own `test` step only runs `cargo test --no-run` — a compile-only smoke check. The real integration suite in `tests/main.rs` needs a working IDA installation, which CI runners don't have, so it only runs locally.
 
 ## Architecture
 
@@ -68,7 +68,7 @@ The workspace `Cargo.toml` enables aggressive lints. Notably forbidden everywher
 
 Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `as_conversions` (casting `u8` repr), `shadow_reuse` (rebinding a variable for normalization), `arithmetic_side_effects` (usize counter), `else_if_without_else` (empty else branch), `panic_in_result_fn` (test assertions). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as the existing test does.
 
-## IDA Pro Integration Notes
+## IDA Integration Notes
 
 - `IDB::open_with(path, true, true)` opens or creates an `.i64` IDB file with auto-analysis enabled and the database kept after closing.
 - `idalib::force_batch_mode()` must be called before opening any database (suppresses IDA UI).

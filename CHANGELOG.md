@@ -10,13 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Optimize performance in the implementation of `Priority`.
+- Update documentation.
 - Update dependencies.
 
 ## [0.10.0] - 2026-07-27
 
 ### Changed
 
-- Update idalib to v0.10.0 to support IDA Pro 9.4.
+- Update idalib to v0.10.0 to support IDA 9.4.
 - Update other dependencies.
 - Use `AsRef<Path>` bounds for all public functions that take a `Path` argument.
 - Enable all clippy restriction lints and fix any resulting issues.
@@ -58,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Compatibility release for IDA Pro 9.3sp2.
+- Compatibility release for IDA 9.3sp2.
 - Update documentation.
 - Update dependencies.
 
@@ -70,7 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update idalib to v0.9.0 to support IDA Pro 9.3sp1.
+- Update idalib to v0.9.0 to support IDA 9.3sp1.
 - Update IDA plugin stub and metadata.
 - Improve integration tests and documentation.
 - Update other dependencies.
@@ -355,7 +356,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bump to IDA Pro 9.0.241217 (9.0sp1).
+- Bump to IDA 9.0.241217 (9.0sp1).
 - Switch to idalib v0.4 and update other dependencies.
 
 ## [0.2.4] - 2024-12-16
@@ -366,7 +367,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Emit a warning in case the build script cannot find an IDA Pro installation.
+- Emit a warning in case the build script cannot find an IDA installation.
 - Document the `IDADIR` optional environment variable.
 
 ## [0.2.3] - 2024-12-04
@@ -385,7 +386,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Improve output and force IDA Pro to stay quiet via `idalib::force_batch_mode`.
+- Improve output and force IDA to stay quiet via `idalib::force_batch_mode`.
 
 ## [0.2.1] - 2024-11-16
 
@@ -397,8 +398,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add support for IDA Pro's `bookmarks_t` API that I've contributed to idalib.
-- Add support for IDA Pro's search API that I've contributed to idalib (only used in tests).
+- Add support for IDA's `bookmarks_t` API that I've contributed to idalib.
+- Add support for IDA's search API that I've contributed to idalib (only used in tests).
 - Add build and doc GitHub workflows as [documented](https://github.com/idalib-rs/idalib/blob/master/GITHUB-ACTIONS.md)
   in idalib.
 

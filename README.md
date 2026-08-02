@@ -13,15 +13,15 @@
 >
 > -- Mark Dowd
 
-Rhabdomancer is a blazing fast IDA Pro headless plugin that locates calls to potentially insecure API functions in
+Rhabdomancer is a blazing fast IDA headless plugin that locates calls to potentially insecure API functions in
 a binary file. Auditors can backtrace from these candidate points to find pathways allowing access to untrusted input.
 
 ![](https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/screen01.png)
 
 ## Features
 
-- Blazing fast, headless user experience courtesy of IDA Pro 9.x and idalib-rs Rust bindings.
-- Support for C/C++ binary targets compiled for any architecture implemented by IDA Pro.
+- Blazing fast, headless user experience courtesy of IDA 9.x and idalib-rs Rust bindings.
+- Support for C/C++ binary targets compiled for any architecture implemented by IDA.
 - Bad API function call locations are printed to stdout and marked in the IDB.
 - Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
   - [BAD 0] High priority - Functions that are generally considered insecure.
@@ -45,7 +45,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 The easiest way to get the latest release is via [crates.io](https://crates.io/crates/rhabdomancer):
 
-1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
+1. Download, install, and configure IDA (see <https://hex-rays.com/ida-pro>).
 2. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
 3. On Linux/macOS, install as follows:
    ```sh
@@ -64,7 +64,7 @@ The easiest way to get the latest release is via [crates.io](https://crates.io/c
 
 Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer):
 
-1. Download, install, and configure IDA Pro (see <https://hex-rays.com/ida-pro>).
+1. Download, install, and configure IDA (see <https://hex-rays.com/ida-pro>).
 2. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
 3. On Linux/macOS, compile as follows:
    ```sh
@@ -85,37 +85,37 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 
 ## Usage
 
-1. Make sure IDA Pro is properly configured with a valid license.
+1. Make sure IDA is properly configured with a valid license.
 2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed. You can override the default
    configuration file location by setting the `RHABDOMANCER_CONFIG` environment variable.
-3. Make sure the `IDADIR` environment variable is set if your IDA Pro installation is in a non-standard location.
+3. Make sure the `IDADIR` environment variable is set if your IDA installation is in a non-standard location.
 4. Run as follows:
    ```sh
    rhabdomancer <binary_file>
    ```
    Any existing `.i64` IDB file will be updated; otherwise, a new IDB file will be created.
-5. Open the resulting `.i64` IDB file with IDA Pro.
+5. Open the resulting `.i64` IDB file with IDA.
 6. Select `View` > `Open subviews` > `Bookmarks`
-7. Enjoy your results conveniently collected into an IDA Pro window.
+7. Enjoy your results conveniently collected into an IDA window.
 
 > [!NOTE]
 > Rhabdomancer also adds comments at marked call locations.
 
 ## Compatibility
 
-Only the latest IDA Pro release is officially supported, but older versions may work as well. The following table
-summarizes the latest compatible release for each IDA Pro version:
+Only the latest IDA release is officially supported, but older versions may work as well. The following table
+summarizes the latest compatible release for each IDA version:
 
-| IDA Pro version | Latest compatible release |
-| --------------- | ------------------------- |
-| v9.0.240925     | v0.2.4                    |
-| v9.0.241217     | v0.3.5                    |
-| v9.1.250226     | v0.6.2                    |
-| v9.2.250908     | v0.7.6                    |
-| v9.3.260213     | v0.8.1                    |
-| v9.3.260327     | v0.9.0                    |
-| v9.3.260421     | v0.9.3                    |
-| v9.4.260714     | current release           |
+| IDA version | Latest compatible release |
+| ----------- | ------------------------- |
+| v9.0.240925 | v0.2.4                    |
+| v9.0.241217 | v0.3.5                    |
+| v9.1.250226 | v0.6.2                    |
+| v9.2.250908 | v0.7.6                    |
+| v9.3.260213 | v0.8.1                    |
+| v9.3.260327 | v0.9.0                    |
+| v9.3.260421 | v0.9.3                    |
+| v9.4.260714 | current release           |
 
 > [!NOTE]
 > Check the [idalib-rs](https://github.com/idalib-rs/idalib) documentation for additional information.

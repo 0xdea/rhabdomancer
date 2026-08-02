@@ -17,7 +17,7 @@ fn main() -> ExitCode {
     eprintln!("Copyright (c) 2024-2026 {AUTHORS}");
     eprintln!();
 
-    // Force IDA Pro to stay quiet.
+    // Force IDA to stay quiet.
     idalib::force_batch_mode();
 
     // Parse command line arguments.
