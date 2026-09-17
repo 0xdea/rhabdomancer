@@ -83,7 +83,7 @@ impl KnownBadFunctions {
 
     /// Checks if a function is in the list of known bad API function names and return its priority.
     #[expect(clippy::shadow_reuse, reason = "shadowing is convenient here")]
-    fn check_function(&self, func: &Function) -> Option<Priority> {
+    fn check_function(&self, func: &Function<'_>) -> Option<Priority> {
         let func_name = func.name()?;
         let func_name = normalize_name(&func_name);
 
@@ -179,7 +179,7 @@ impl<'a> BadFunctions<'a> {
     /// Locates calls to the specified function and marks them.
     fn mark_calls(
         idb: &IDB,
-        func: &Function,
+        func: &Function<'_>,
         priority: Priority,
         marked: &mut BookmarkIndex,
     ) -> Result<(), IDAError> {
@@ -214,7 +214,7 @@ impl<'a> BadFunctions<'a> {
     )]
     fn traverse_xrefs(
         idb: &IDB,
-        first_xref: XRef,
+        first_xref: XRef<'_>,
         desc: &str,
         marked: &mut BookmarkIndex,
     ) -> Result<(), IDAError> {
