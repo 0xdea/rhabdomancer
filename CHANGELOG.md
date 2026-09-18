@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use the `--locked` flag for all suitable `cargo` commands.
 - Update documentation.
 
+### Fixed
+
+- Allow linker messages to prevent Windows build from failing.
+
 ## [0.10.0] - 2026-07-27
 
 ### Changed
