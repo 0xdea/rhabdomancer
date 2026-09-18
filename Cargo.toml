@@ -30,6 +30,11 @@ serde = { version = "1.0", features = ["derive"] }
 [build-dependencies]
 idalib-build = "0.10"
 
+# [patch.crates-io]
+# idalib = { git = "https://github.com/0xdea/idalib", branch = "feature/hexrays-improvements" }
+# idalib-build = { git = "https://github.com/0xdea/idalib", branch = "feature/hexrays-improvements" }
+# idalib-sys = { git = "https://github.com/0xdea/idalib", branch = "feature/hexrays-improvements" }
+
 [[test]]
 name = "tests"
 path = "tests/main.rs"
