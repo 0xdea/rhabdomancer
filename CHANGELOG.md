@@ -9,10 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update idalib to v0.10.1 and other dependencies.
 - Optimize performance in the implementation of `Priority`.
 - Use the `--locked` flag for all suitable `cargo` commands.
 - Update documentation.
-- Update dependencies.
 
 ## [0.10.0] - 2026-07-27
 
