@@ -5,6 +5,7 @@
 
 use std::collections::{BTreeMap, HashSet};
 use std::path::{Path, PathBuf};
+use std::time::Instant;
 use std::{env, mem};
 
 use anyhow::Context as _;
@@ -276,6 +277,8 @@ impl<'a> BadFunctions<'a> {
 ///
 /// Returns [`anyhow::Error`] in case something goes wrong with analyzing the binary file or finding bad API calls.
 pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
+    let start = Instant::now();
+
     // Load known bad API function names from the configuration file.
     println!("[*] Loading known bad API function names");
     let known_bad =
@@ -310,8 +313,9 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     println!();
     println!("[+] Marked {marked} new call locations");
     println!(
-        "[+] Done processing binary file `{}`",
-        filepath.as_ref().display()
+        "[+] Done processing binary file `{}` in {:.1} seconds",
+        filepath.as_ref().display(),
+        start.elapsed().as_secs_f64()
     );
     Ok(marked)
 }

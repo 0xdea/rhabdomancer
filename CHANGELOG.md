@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Display elapsed time in the `run` function.
+
 ### Changed
 
 - Update idalib to v0.10.1 and other dependencies.
