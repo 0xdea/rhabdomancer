@@ -71,7 +71,7 @@ impl KnownBadFunctions {
             PathBuf::from,
         );
 
-        println!("[*] Using configuration file `{}`", path.display());
+        eprintln!("[*] Using configuration file `{}`", path.display());
         let mut this = Config::builder()
             .add_source(File::from(path))
             .build()?
@@ -280,12 +280,12 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     let start = Instant::now();
 
     // Load known bad API function names from the configuration file.
-    println!("[*] Loading known bad API function names");
+    eprintln!("[*] Loading known bad API function names");
     let known_bad =
         KnownBadFunctions::load().context("Failed to load known bad API function names")?;
 
     // Open the target binary, run auto-analysis, and keep results.
-    println!(
+    eprintln!(
         "[*] Analyzing binary file `{}`",
         filepath.as_ref().display()
     );
@@ -295,24 +295,24 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
             filepath.as_ref().display()
         )
     })?;
-    println!("[+] Successfully analyzed binary file");
-    println!();
+    eprintln!("[+] Successfully analyzed binary file");
+    eprintln!();
 
     // Print binary file information.
-    println!("[-] Processor: {}", idb.processor().long_name());
-    println!("[-] Compiler: {:?}", idb.meta().cc_id());
-    println!("[-] File type: {:?}", idb.meta().filetype());
-    println!();
+    eprintln!("[-] Processor: {}", idb.processor().long_name());
+    eprintln!("[-] Compiler: {:?}", idb.meta().cc_id());
+    eprintln!("[-] File type: {:?}", idb.meta().filetype());
+    eprintln!();
 
     // Locate and mark bad API function calls in the target binary.
-    println!("[*] Finding bad API function calls...");
+    eprintln!("[*] Finding bad API function calls...");
     let marked = BadFunctions::find_all(&idb, &known_bad)
         .locate_calls(&idb)
         .context("Failed to find bad API function calls")?;
 
-    println!();
-    println!("[+] Marked {marked} new call locations");
-    println!(
+    eprintln!();
+    eprintln!("[+] Marked {marked} new call locations");
+    eprintln!(
         "[+] Done processing binary file `{}` in {:.1} seconds",
         filepath.as_ref().display(),
         start.elapsed().as_secs_f64()

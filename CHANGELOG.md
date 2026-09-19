@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update idalib to v0.10.1 and other dependencies.
 - Optimize performance in the implementation of `Priority`.
+- Move informational messages to `stderr`.
 - Use the `--locked` flag for all suitable `cargo` commands.
 - Use `CARGO_BIN_NAME` instead of `CARGO_PKG_NAME` for the program name.
 - Update documentation.
