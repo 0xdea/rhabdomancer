@@ -77,7 +77,6 @@ impl KnownBadFunctions {
             .build()?
             .try_deserialize::<Self>()?;
 
-        // Return the list of normalized configuration entries.
         this.normalize_sets();
         Ok(this)
     }
@@ -189,10 +188,7 @@ impl<'a> BadFunctions<'a> {
             return Err(IDAError::ffi_with("empty function name"));
         };
 
-        // Prepare description.
         let desc = priority.description(normalize_name(&func_name));
-
-        // Print description.
         if is_in_plt(idb, func.start_address()) {
             println!("\n{desc} (thunk)");
         } else {
@@ -219,7 +215,7 @@ impl<'a> BadFunctions<'a> {
         desc: &str,
         marked: &mut BookmarkIndex,
     ) -> Result<(), IDAError> {
-        // Each entry in the stackis the head of an XREF chain still to be processed.
+        // Each entry in the stack is the head of an XREF chain still to be processed.
         let mut stack = vec![first_xref];
 
         while let Some(xref) = stack.pop() {
@@ -279,7 +275,6 @@ impl<'a> BadFunctions<'a> {
 pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     let start = Instant::now();
 
-    // Load known bad API function names from the configuration file.
     eprintln!("[*] Loading known bad API function names");
     let known_bad =
         KnownBadFunctions::load().context("Failed to load known bad API function names")?;
@@ -298,13 +293,11 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     eprintln!("[+] Successfully analyzed binary file");
     eprintln!();
 
-    // Print binary file information.
     eprintln!("[-] Processor: {}", idb.processor().long_name());
     eprintln!("[-] Compiler: {:?}", idb.meta().cc_id());
     eprintln!("[-] File type: {:?}", idb.meta().filetype());
     eprintln!();
 
-    // Locate and mark bad API function calls in the target binary.
     eprintln!("[*] Finding bad API function calls...");
     let marked = BadFunctions::find_all(&idb, &known_bad)
         .locate_calls(&idb)

@@ -20,7 +20,6 @@ fn main() -> ExitCode {
     // Force IDA to stay quiet.
     idalib::force_batch_mode();
 
-    // Parse command line arguments.
     let mut args = env::args_os();
     let argv0 = args.next().unwrap_or_else(|| PROGRAM.into());
     let is_help = |a: &OsStr| a == OsStr::new("-h") || a == OsStr::new("--help");
@@ -35,7 +34,6 @@ fn main() -> ExitCode {
         _ => return usage(prog),
     };
 
-    // Let's do it.
     match rhabdomancer::run(Path::new(&filename)) {
         Ok(_) => ExitCode::SUCCESS,
         Err(err) => {
