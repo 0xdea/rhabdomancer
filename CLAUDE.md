@@ -49,6 +49,7 @@ Three source files:
   - `traverse_xrefs()`: Iteratively walks cross-references using an explicit `Vec` stack. Handles `.plt` thunk indirection for ELF binaries.
   - `is_in_plt()`: Checks whether an address falls within a `.plt` segment.
   - `normalize_name()`: Strips leading dots/underscores from function names for cross-platform matching.
+  - Output convention: scan results (bad-function headers and call-site locations) print to stdout via `println!`; everything else (banners, progress, summary/timing, errors) prints to stderr via `eprintln!`. Preserve this split when adding new output.
 - **`tests/main.rs`** — Integration test with three scenarios against `tests/data/ls`:
   1. Default config: asserts exactly 86 marked locations, then verifies bookmark count, that every bookmark description starts with `[BAD `, comment count, and that every comment starts with `[BAD `.
   2. Idempotency: second run on the same IDB must return 0 new marks.
