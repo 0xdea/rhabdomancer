@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml-1.1.3+spec-1.1.0/src/de/parser/document.rs`."><title>document.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-17e0aaed.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="toml" data-themes="" data-resource-suffix="" data-rustdoc-version="1.97.1 (8bab26f4f 2026-07-14)" data-channel="1.97.1" data-search-js="search-fd9372ac.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../../static.files/src-script-813739b1.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-fcd733ba.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">toml/de/parser/</div>document.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span>serde_spanned::Spanned;
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml-1.1.6+spec-1.1.0/src/de/parser/document.rs`."><title>document.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-1ed95124.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="toml" data-themes="" data-resource-suffix="" data-rustdoc-version="1.98.1 (48a229cea 2026-09-01)" data-channel="1.98.1" data-search-js="search-9944d736.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../../static.files/src-script-813739b1.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">toml/de/parser/</div>document.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span>serde_spanned::Spanned;
 <a href=#2 id=2 data-nosnippet>2</a>
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span><span class="kw">crate</span>::alloc_prelude::<span class="kw-2">*</span>;
 <a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span><span class="kw">crate</span>::de::DeString;
@@ -262,7 +262,7 @@
 <a href=#262 id=262 data-nosnippet>262</a>        </span><span class="kw">let </span>_scope = TraceScope::new(<span class="string">"document::finish_table"</span>);
 <a href=#263 id=263 data-nosnippet>263</a>        <span class="kw">let </span>prev_table = core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.current_table);
 <a href=#264 id=264 data-nosnippet>264</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(header) = <span class="self">self</span>.current_header.take() {
-<a href=#265 id=265 data-nosnippet>265</a>            <span class="kw">let </span><span class="prelude-val">Some</span>(key) = <span class="kw-2">&amp;</span>header.key <span class="kw">else </span>{
+<a href=#265 id=265 data-nosnippet>265</a>            <span class="kw">let </span><span class="prelude-val">Some</span>(key) = header.key <span class="kw">else </span>{
 <a href=#266 id=266 data-nosnippet>266</a>                <span class="kw">return</span>;
 <a href=#267 id=267 data-nosnippet>267</a>            };
 <a href=#268 id=268 data-nosnippet>268</a>            <span class="kw">let </span>header_span = header.span.start()..header.span.end();
@@ -280,22 +280,22 @@
 <a href=#280 id=280 data-nosnippet>280</a>                anstyle::AnsiColor::Blue.on_default(),
 <a href=#281 id=281 data-nosnippet>281</a>            );
 <a href=#282 id=282 data-nosnippet>282</a>            <span class="kw">if </span>header.is_array {
-<a href=#283 id=283 data-nosnippet>283</a>                <span class="kw">let </span>entry = parent_table.entry(key.clone()).or_insert_with(|| {
-<a href=#284 id=284 data-nosnippet>284</a>                    <span class="kw">let </span><span class="kw-2">mut </span>array = DeArray::new();
-<a href=#285 id=285 data-nosnippet>285</a>                    array.set_array_of_tables(<span class="bool-val">true</span>);
-<a href=#286 id=286 data-nosnippet>286</a>                    Spanned::new(header_span, DeValue::Array(array))
-<a href=#287 id=287 data-nosnippet>287</a>                });
-<a href=#288 id=288 data-nosnippet>288</a>                <span class="kw">let </span><span class="prelude-val">Some</span>(array) = entry
-<a href=#289 id=289 data-nosnippet>289</a>                    .as_mut()
-<a href=#290 id=290 data-nosnippet>290</a>                    .as_array_mut()
-<a href=#291 id=291 data-nosnippet>291</a>                    .filter(|a| a.is_array_of_tables())
-<a href=#292 id=292 data-nosnippet>292</a>                <span class="kw">else </span>{
-<a href=#293 id=293 data-nosnippet>293</a>                    <span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
-<a href=#294 id=294 data-nosnippet>294</a>                    </span>trace(
-<a href=#295 id=295 data-nosnippet>295</a>                        <span class="string">"is_array_of_tables=false"</span>,
-<a href=#296 id=296 data-nosnippet>296</a>                        anstyle::AnsiColor::Red.on_default(),
-<a href=#297 id=297 data-nosnippet>297</a>                    );
-<a href=#298 id=298 data-nosnippet>298</a>                    <span class="kw">let </span>key_span = get_key_span(key);
+<a href=#283 id=283 data-nosnippet>283</a>                <span class="kw">let </span>key_span = get_key_span(<span class="kw-2">&amp;</span>key);
+<a href=#284 id=284 data-nosnippet>284</a>                <span class="kw">let </span>entry = parent_table.entry(key).or_insert_with(|| {
+<a href=#285 id=285 data-nosnippet>285</a>                    <span class="kw">let </span><span class="kw-2">mut </span>array = DeArray::new();
+<a href=#286 id=286 data-nosnippet>286</a>                    array.set_array_of_tables(<span class="bool-val">true</span>);
+<a href=#287 id=287 data-nosnippet>287</a>                    Spanned::new(header_span, DeValue::Array(array))
+<a href=#288 id=288 data-nosnippet>288</a>                });
+<a href=#289 id=289 data-nosnippet>289</a>                <span class="kw">let </span><span class="prelude-val">Some</span>(array) = entry
+<a href=#290 id=290 data-nosnippet>290</a>                    .as_mut()
+<a href=#291 id=291 data-nosnippet>291</a>                    .as_array_mut()
+<a href=#292 id=292 data-nosnippet>292</a>                    .filter(|a| a.is_array_of_tables())
+<a href=#293 id=293 data-nosnippet>293</a>                <span class="kw">else </span>{
+<a href=#294 id=294 data-nosnippet>294</a>                    <span class="attr">#[cfg(feature = <span class="string">"debug"</span>)]
+<a href=#295 id=295 data-nosnippet>295</a>                    </span>trace(
+<a href=#296 id=296 data-nosnippet>296</a>                        <span class="string">"is_array_of_tables=false"</span>,
+<a href=#297 id=297 data-nosnippet>297</a>                        anstyle::AnsiColor::Red.on_default(),
+<a href=#298 id=298 data-nosnippet>298</a>                    );
 <a href=#299 id=299 data-nosnippet>299</a>                    <span class="kw">let </span>old_span = entry.span();
 <a href=#300 id=300 data-nosnippet>300</a>                    <span class="kw">let </span>old_span = toml_parser::Span::new_unchecked(old_span.start, old_span.end);
 <a href=#301 id=301 data-nosnippet>301</a>                    errors.report_error(
@@ -307,7 +307,7 @@
 <a href=#307 id=307 data-nosnippet>307</a>                };
 <a href=#308 id=308 data-nosnippet>308</a>                array.push(prev_table);
 <a href=#309 id=309 data-nosnippet>309</a>            } <span class="kw">else </span>{
-<a href=#310 id=310 data-nosnippet>310</a>                <span class="kw">let </span>existing = parent_table.insert(key.clone(), prev_table);
+<a href=#310 id=310 data-nosnippet>310</a>                <span class="kw">let </span>existing = parent_table.insert(key, prev_table);
 <a href=#311 id=311 data-nosnippet>311</a>                <span class="macro">debug_assert!</span>(existing.is_none());
 <a href=#312 id=312 data-nosnippet>312</a>            }
 <a href=#313 id=313 data-nosnippet>313</a>        } <span class="kw">else </span>{
