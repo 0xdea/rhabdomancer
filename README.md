@@ -86,7 +86,7 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 ## Usage
 
 1. Make sure IDA is properly configured with a valid license.
-2. Customize the list of known bad API functions in `conf/rhabdomancer.toml` if needed. You can override the default
+2. Optionally customize the list of known bad API functions in `conf/rhabdomancer.toml`. You can override the default
    configuration file location by setting the `RHABDOMANCER_CONFIG` environment variable.
 3. Make sure the `IDADIR` environment variable is set if your IDA installation is in a non-standard location.
 4. Run as follows:
