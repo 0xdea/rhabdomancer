@@ -116,6 +116,7 @@ summarizes the latest compatible release for each IDA version:
 | v9.3.260327 | v0.9.0                    |
 | v9.3.260421 | v0.9.3                    |
 | v9.4.260714 | current release           |
+| v9.4.260915 | current release           |
 
 > [!NOTE]
 > Check the [idalib-rs](https://github.com/idalib-rs/idalib) documentation for additional information.
