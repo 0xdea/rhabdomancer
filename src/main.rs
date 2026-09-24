@@ -22,11 +22,11 @@ fn main() -> ExitCode {
 
     let mut args = env::args_os();
     let argv0 = args.next().unwrap_or_else(|| PROGRAM.into());
-    let is_help = |a: &OsStr| a == OsStr::new("-h") || a == OsStr::new("--help");
+    let is_help = |arg: &OsStr| arg == OsStr::new("-h") || arg == OsStr::new("--help");
 
     let prog = Path::new(&argv0)
         .file_name()
-        .and_then(|s| s.to_str())
+        .and_then(OsStr::to_str)
         .unwrap_or(PROGRAM);
 
     let filename = match (args.next(), args.next()) {
