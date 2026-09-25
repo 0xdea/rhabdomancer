@@ -22,7 +22,7 @@ fn main() -> ExitCode {
 
     let mut args = env::args_os();
     let argv0 = args.next().unwrap_or_else(|| PROGRAM.into());
-    let is_help = |arg: &OsStr| arg == OsStr::new("-h") || arg == OsStr::new("--help");
+    let is_help = |arg: &OsStr| matches!(arg.to_str(), Some("-h" | "--help"));
 
     let prog = Path::new(&argv0)
         .file_name()
@@ -34,7 +34,7 @@ fn main() -> ExitCode {
         _ => return usage(prog),
     };
 
-    match rhabdomancer::run(Path::new(&filename)) {
+    match rhabdomancer::run(&filename) {
         Ok(_) => ExitCode::SUCCESS,
         Err(err) => {
             eprintln!("[!] Error: {err:#}");
