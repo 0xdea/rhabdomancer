@@ -105,7 +105,7 @@ impl KnownBadFunctions {
         for set in [&mut self.high, &mut self.medium, &mut self.low] {
             *set = mem::take(set)
                 .into_iter()
-                .map(|s| normalize_name(&s).to_owned())
+                .map(|string| normalize_name(&string).to_owned())
                 .collect();
         }
     }
@@ -134,9 +134,9 @@ impl<'a> BadFunctions<'a> {
             marked: 0,
         };
 
-        for (id, f) in idb.functions() {
-            if let Some(p) = bad.check_function(&f) {
-                found.insert_function(id, f, p);
+        for (id, func) in idb.functions() {
+            if let Some(pri) = bad.check_function(&func) {
+                found.insert_function(id, func, pri);
             }
         }
 
@@ -167,8 +167,8 @@ impl<'a> BadFunctions<'a> {
             (Priority::Medium, &self.medium),
             (Priority::Low, &self.low),
         ] {
-            for f in functions.values() {
-                Self::mark_calls(idb, f, priority, &mut marked)?;
+            for func in functions.values() {
+                Self::mark_calls(idb, func, priority, &mut marked)?;
             }
         }
 
