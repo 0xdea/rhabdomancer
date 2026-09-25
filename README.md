@@ -136,5 +136,6 @@ This project's development has been supported by the following organizations:
 
 - Further enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
 - Consider broadening the scope of normalization in `normalize_name` to account for more cases.
+- Implement serialized output to facilitate automated parsing and analysis.
 - Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
