@@ -105,7 +105,7 @@ impl KnownBadFunctions {
         for set in [&mut self.high, &mut self.medium, &mut self.low] {
             *set = mem::take(set)
                 .into_iter()
-                .map(|string| normalize_name(&string).to_owned())
+                .map(|name| normalize_name(&name).to_owned())
                 .collect();
         }
     }
