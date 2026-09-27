@@ -21,7 +21,10 @@ The `build.rs` script uses `idalib-build` to auto-configure IDA SDK linkage. It 
 cargo build --release --locked     # optimized (LTO, stripped, O3)
 cargo build --locked               # debug build
 
-# Test (uses a custom harness, not the standard Rust test framework)
+# Unit tests (standard test framework, no IDA database needed)
+cargo test --lib --locked
+
+# Integration tests (use a custom harness, not the standard Rust test framework)
 cargo test --test tests --locked
 
 # Lint & format (CI enforces these as errors)
@@ -35,7 +38,7 @@ cargo doc --locked
 cargo audit
 ```
 
-CI's own `test` step only runs `cargo test --no-run` — a compile-only smoke check. The real integration suite in `tests/main.rs` needs a working IDA installation, which CI runners don't have, so it only runs locally.
+CI's own `test` step only runs `cargo test --no-run` — a compile-only smoke check. Both test suites link against the IDA libraries, and the integration suite in `tests/main.rs` also needs a working IDA installation to analyze binaries, which CI runners don't have, so both only run locally.
 
 ## Architecture
 
@@ -43,13 +46,15 @@ Three source files:
 
 - **`src/main.rs`** — CLI entry point. Parses a single binary path argument, calls `force_batch_mode()` to suppress IDA UI, then delegates to `lib::run()`.
 - **`src/lib.rs`** — Core analysis logic. Public entry point: `run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex>`. Key types:
-  - `KnownBadFunctions`: Loads `conf/rhabdomancer.toml`, normalizes function names for matching.
+  - `KnownBadFunctionsConfig`: Mirrors the configuration file (`high`/`medium`/`low` name lists); only used as the deserialization source of `KnownBadFunctions`.
+  - `KnownBadFunctions`: Loads `conf/rhabdomancer.toml` into a single `HashMap<String, Priority>` keyed by normalized name. Deserialized via `#[serde(try_from = "KnownBadFunctionsConfig")]`: the `TryFrom` impl normalizes every name and rejects the configuration at the first name that is empty or is listed under multiple priorities (after normalization), so `load()` deserializes straight into `Self`. Duplicates are detected with `*functions.entry(name).or_insert(priority) != priority`, which keeps the first occurrence and compares against it in one expression. `check_function()` gets a function's name and delegates to `priority_of()`, a single lookup on a `&str` that is unit-testable without an IDB.
   - `BadFunctions<'a>`: Scans the opened IDB for calls to bad functions and annotates them with IDA bookmarks and inline comments (`[BAD 0]`/`[BAD 1]`/`[BAD 2]`).
   - `Priority` enum: `High`/`Medium`/`Low` — maps to BAD 0/1/2; has `tag_prefix()` (hardcoded `[BAD n]` tags, which must stay in sync with the `PREFIX` constant) and `description()` helpers.
   - `traverse_xrefs()`: Iteratively walks cross-references using an explicit `Vec` stack. Handles `.plt` thunk indirection for ELF binaries.
   - `BadFunctions::is_in_plt()`: Checks whether an address falls within a `.plt` segment, using the address ranges of all `.plt*` segments collected once in `find_all()` (no per-call FFI lookups). The ranges are half-open `Range<Address>` values, matching IDA's `range_t` (`end_ea` excluded).
   - `normalize_name()`: Strips leading dots/underscores from function names for cross-platform matching.
   - Output convention: scan results (bad-function headers and call-site locations) print to stdout via `println!`; everything else (banners, progress, summary/timing, errors) prints to stderr via `eprintln!`. Preserve this split when adding new output.
+- **Unit tests** — `#[cfg(test)] mod tests` at the end of `src/lib.rs` covers `KnownBadFunctions` without an IDB: priority mapping, normalization of both configuration and function names, merging of duplicates within the same priority, rejection of names that normalize to empty (and no match for function names that do), rejection of names listed under multiple priorities (via `TryFrom` and via TOML deserialization, checking the error message), and validity of the shipped `conf/rhabdomancer.toml` (embedded with `include_str!`, so a duplicate there fails the unit tests).
 - **`tests/main.rs`** — Integration test with three scenarios against `tests/data/ls`:
   1. Default config: asserts exactly 86 marked locations, then verifies bookmark count, that every bookmark description starts with `[BAD `, comment count, and that every comment starts with `[BAD `.
   2. Idempotency: second run on the same IDB must return 0 new marks.
@@ -58,7 +63,7 @@ Three source files:
 
 ## Configuration
 
-All "bad" functions are defined in `conf/rhabdomancer.toml`, grouped into `high`, `medium`, and `low` arrays. The config path can be overridden with the `RHABDOMANCER_CONFIG` environment variable. The loader uses the `config` crate with serde deserialization.
+All "bad" functions are defined in `conf/rhabdomancer.toml`, grouped into `high`, `medium`, and `low` arrays. The config path can be overridden with the `RHABDOMANCER_CONFIG` environment variable. The loader uses the `config` crate with serde deserialization. Each name may appear under only one priority (leading dots/underscores are ignored when comparing names); otherwise loading fails with an error naming the (normalized) duplicate. Repeats within the same priority are harmless and merged. Entries that are empty once normalized (e.g. `""`, `"_"`, `"."`) are also rejected, with an error showing the original spelling.
 
 ## Lint Policy
 

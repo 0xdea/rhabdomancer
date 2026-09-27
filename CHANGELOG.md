@@ -10,12 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add a note to `usage` explaining the `RHABDOMANCER_CONFIG` environment variable.
+- Add unit tests for `KnownBadFunctions`.
 
 ### Changed
 
+- Refactor `KnownBadFunctions` to use a single lookup table.
+- Reject configuration files that list the same function under multiple priorities or contain empty function names
+  (can break existing configurations).
 - Cache `.plt` segment address ranges to avoid repeated FFI lookups.
 - Improve code style.
 - Update documentation.
+
+### Fixed
+
+- Remove duplicate `strtrns` entry with medium priority.
 
 ## [0.10.1] - 2026-09-21
 

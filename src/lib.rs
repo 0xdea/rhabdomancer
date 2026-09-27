@@ -3,11 +3,11 @@
 #![cfg_attr(doc, doc = include_str!("../README.md"))]
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
+use std::env;
 use std::ops::Range;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use std::{env, mem};
 
 use anyhow::Context as _;
 use config::{Config, ConfigError, File};
@@ -51,19 +51,70 @@ impl Priority {
     }
 }
 
-/// Set of known bad API function names organized by priority.
+/// Known bad API function names organized by priority, as listed in the configuration file.
 #[derive(serde::Deserialize)]
-struct KnownBadFunctions {
+struct KnownBadFunctionsConfig {
     /// High-priority known bad functions.
-    high: HashSet<String>,
+    high: Vec<String>,
     /// Medium-priority known bad functions.
-    medium: HashSet<String>,
+    medium: Vec<String>,
     /// Low-priority known bad functions.
-    low: HashSet<String>,
+    low: Vec<String>,
+}
+
+/// Known bad API function names, normalized for matching and mapped to their priority.
+///
+/// Deserialized from a [`KnownBadFunctionsConfig`], which is rejected if any name is empty or is listed under
+/// multiple priorities, once normalized.
+#[derive(serde::Deserialize)]
+#[serde(try_from = "KnownBadFunctionsConfig")]
+struct KnownBadFunctions {
+    /// Priority of each known bad function, keyed by normalized name.
+    functions: HashMap<String, Priority>,
+}
+
+impl TryFrom<KnownBadFunctionsConfig> for KnownBadFunctions {
+    type Error = String;
+
+    /// Normalizes the names in `config` and maps each of them to its priority.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error message if a name is empty or is listed under multiple priorities, once normalized.
+    fn try_from(config: KnownBadFunctionsConfig) -> Result<Self, Self::Error> {
+        let mut functions = HashMap::new();
+
+        for (priority, names) in [
+            (Priority::High, config.high),
+            (Priority::Medium, config.medium),
+            (Priority::Low, config.low),
+        ] {
+            for name in names {
+                let normalized = normalize_name(&name);
+
+                if normalized.is_empty() {
+                    return Err(format!("`{name}` is not a valid function name"));
+                }
+
+                if *functions.entry(normalized.to_owned()).or_insert(priority) != priority {
+                    return Err(format!(
+                        "`{normalized}` is listed under multiple priorities"
+                    ));
+                }
+            }
+        }
+
+        Ok(Self { functions })
+    }
 }
 
 impl KnownBadFunctions {
     /// Populates the list of bad API function names from the configuration file.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ConfigError`] if the configuration file can't be read or parsed, or if a name is empty or is listed
+    /// under multiple priorities, once normalized.
     fn load() -> Result<Self, ConfigError> {
         // Use configuration file path specified in the `RHABDOMANCER_CONFIG` environment variable
         // if set, otherwise fall back to the default file location.
@@ -73,41 +124,20 @@ impl KnownBadFunctions {
         );
 
         eprintln!("[*] Using configuration file `{}`", path.display());
-        let mut this = Config::builder()
+        Config::builder()
             .add_source(File::from(path))
             .build()?
-            .try_deserialize::<Self>()?;
-
-        this.normalize_sets();
-        Ok(this)
+            .try_deserialize()
     }
 
-    /// Checks if a function is in the list of known bad API function names and return its priority.
+    /// Checks if a function is in the list of known bad API function names and returns its priority.
     fn check_function(&self, func: &Function<'_>) -> Option<Priority> {
-        let func_name = func.name()?;
-        let func_name = normalize_name(&func_name);
-
-        if self.high.contains(func_name) {
-            return Some(Priority::High);
-        }
-        if self.medium.contains(func_name) {
-            return Some(Priority::Medium);
-        }
-        if self.low.contains(func_name) {
-            return Some(Priority::Low);
-        }
-
-        None
+        self.priority_of(&func.name()?)
     }
 
-    /// Normalizes configuration entries so runtime lookups are trivial and consistent.
-    fn normalize_sets(&mut self) {
-        for set in [&mut self.high, &mut self.medium, &mut self.low] {
-            *set = mem::take(set)
-                .into_iter()
-                .map(|name| normalize_name(&name).to_owned())
-                .collect();
-        }
+    /// Returns the priority of the known bad API function with the specified name, if any.
+    fn priority_of(&self, func_name: &str) -> Option<Priority> {
+        self.functions.get(normalize_name(func_name)).copied()
     }
 }
 
@@ -334,4 +364,216 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
 /// Normalizes a function name for matching against configuration entries.
 fn normalize_name(name: &str) -> &str {
     name.trim_start_matches(['.', '_'])
+}
+
+#[cfg(test)]
+#[expect(clippy::panic_in_result_fn, reason = "panics are allowed in test code")]
+mod tests {
+    use config::FileFormat;
+
+    use super::*;
+
+    /// Returns a [`KnownBadFunctionsConfig`] with the specified names for each priority.
+    fn config(high: &[&str], medium: &[&str], low: &[&str]) -> KnownBadFunctionsConfig {
+        let to_owned = |names: &[&str]| names.iter().copied().map(str::to_owned).collect();
+        KnownBadFunctionsConfig {
+            high: to_owned(high),
+            medium: to_owned(medium),
+            low: to_owned(low),
+        }
+    }
+
+    /// Deserializes [`KnownBadFunctions`] from a TOML string, like [`KnownBadFunctions::load`] does from a file.
+    fn deserialize(toml: &str) -> Result<KnownBadFunctions, ConfigError> {
+        Config::builder()
+            .add_source(File::from_str(toml, FileFormat::Toml))
+            .build()?
+            .try_deserialize()
+    }
+
+    #[test]
+    fn try_from_maps_names_to_their_priority() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["memcpy"], &["getenv"]))?;
+
+        assert_eq!(
+            known_bad.priority_of("strcpy"),
+            Some(Priority::High),
+            "wrong priority"
+        );
+        assert_eq!(
+            known_bad.priority_of("memcpy"),
+            Some(Priority::Medium),
+            "wrong priority"
+        );
+        assert_eq!(
+            known_bad.priority_of("getenv"),
+            Some(Priority::Low),
+            "wrong priority"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn try_from_normalizes_configuration_names() -> Result<(), String> {
+        let known_bad =
+            KnownBadFunctions::try_from(config(&["_strcpy"], &[".memset"], &["__getenv"]))?;
+
+        assert_eq!(
+            known_bad.priority_of("strcpy"),
+            Some(Priority::High),
+            "decorated name should match"
+        );
+        assert_eq!(
+            known_bad.priority_of("memset"),
+            Some(Priority::Medium),
+            "decorated name should match"
+        );
+        assert_eq!(
+            known_bad.priority_of("getenv"),
+            Some(Priority::Low),
+            "decorated name should match"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn priority_of_normalizes_function_names() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &[], &[]))?;
+
+        for func_name in ["_strcpy", ".strcpy", "__strcpy", "._strcpy"] {
+            assert_eq!(
+                known_bad.priority_of(func_name),
+                Some(Priority::High),
+                "decorated function name `{func_name}` should match"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn priority_of_unknown_name_returns_none() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &[], &[]))?;
+
+        assert_eq!(
+            known_bad.priority_of("strncpy"),
+            None,
+            "unknown name should not match"
+        );
+        assert_eq!(
+            known_bad.priority_of(""),
+            None,
+            "empty name should not match"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn try_from_accepts_duplicates_within_the_same_priority() -> Result<(), String> {
+        let known_bad =
+            KnownBadFunctions::try_from(config(&[], &["fwrite", "_fwrite", "fwrite"], &[]))?;
+
+        assert_eq!(
+            known_bad.priority_of("fwrite"),
+            Some(Priority::Medium),
+            "wrong priority"
+        );
+        assert_eq!(known_bad.functions.len(), 1, "duplicates should be merged");
+        Ok(())
+    }
+
+    #[test]
+    fn try_from_rejects_names_listed_under_multiple_priorities() {
+        for (high, medium, low) in [
+            (&["strtrns"][..], &["strtrns"][..], &[][..]),
+            (&[], &["_memcpy"], &[".memcpy"]),
+            (&["getenv"], &[], &["__getenv"]),
+        ] {
+            let result = KnownBadFunctions::try_from(config(high, medium, low));
+            assert!(
+                result.is_err_and(|err| err.contains("is listed under multiple priorities")),
+                "names listed under multiple priorities should be rejected"
+            );
+        }
+    }
+
+    #[test]
+    fn try_from_error_names_the_normalized_duplicate() {
+        let result = KnownBadFunctions::try_from(config(&[], &["_memcpy"], &[".memcpy"]));
+        assert!(
+            result.is_err_and(|err| err == "`memcpy` is listed under multiple priorities"),
+            "error should name the normalized duplicate"
+        );
+    }
+
+    #[test]
+    fn try_from_rejects_names_that_normalize_to_empty() {
+        for name in ["", "_", ".", "._", "__"] {
+            for (high, medium, low) in [
+                (&[name][..], &[][..], &[][..]),
+                (&[], &[name], &[]),
+                (&[], &[], &[name]),
+            ] {
+                let result = KnownBadFunctions::try_from(config(high, medium, low));
+                assert!(
+                    result
+                        .is_err_and(|err| err == format!("`{name}` is not a valid function name")),
+                    "name `{name}` that normalizes to empty should be rejected"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn priority_of_name_that_normalizes_to_empty_returns_none() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["memcpy"], &["getenv"]))?;
+
+        for func_name in ["", "_", ".", "__"] {
+            assert_eq!(
+                known_bad.priority_of(func_name),
+                None,
+                "function name `{func_name}` that normalizes to empty should not match"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn deserialize_uses_try_from() -> Result<(), ConfigError> {
+        let known_bad = deserialize("high = [\"_strcpy\"]\nmedium = [\"memcpy\"]\nlow = []\n")?;
+
+        assert_eq!(
+            known_bad.priority_of("strcpy"),
+            Some(Priority::High),
+            "wrong priority"
+        );
+        assert_eq!(
+            known_bad.priority_of("memcpy"),
+            Some(Priority::Medium),
+            "wrong priority"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn deserialize_rejects_names_listed_under_multiple_priorities() {
+        let result = deserialize("high = [\"strtrns\"]\nmedium = [\"strtrns\"]\nlow = []\n");
+        assert!(
+            result.is_err_and(|err| err
+                .to_string()
+                .contains("`strtrns` is listed under multiple priorities")),
+            "configuration with names listed under multiple priorities should be rejected"
+        );
+    }
+
+    #[test]
+    fn default_configuration_is_valid() -> Result<(), ConfigError> {
+        let toml = include_str!("../conf/rhabdomancer.toml");
+        let known_bad = deserialize(toml)?;
+
+        assert!(
+            !known_bad.functions.is_empty(),
+            "default configuration should not be empty"
+        );
+        Ok(())
+    }
 }
