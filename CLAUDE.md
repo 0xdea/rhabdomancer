@@ -45,9 +45,9 @@ Three source files:
 - **`src/lib.rs`** — Core analysis logic. Public entry point: `run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex>`. Key types:
   - `KnownBadFunctions`: Loads `conf/rhabdomancer.toml`, normalizes function names for matching.
   - `BadFunctions<'a>`: Scans the opened IDB for calls to bad functions and annotates them with IDA bookmarks and inline comments (`[BAD 0]`/`[BAD 1]`/`[BAD 2]`).
-  - `Priority` enum: `High`/`Medium`/`Low` — maps to BAD 0/1/2 via `#[repr(u8)]`; has `code()`, `tag_prefix()`, and `description()` helpers.
+  - `Priority` enum: `High`/`Medium`/`Low` — maps to BAD 0/1/2; has `tag_prefix()` (hardcoded `[BAD n]` tags, which must stay in sync with the `PREFIX` constant) and `description()` helpers.
   - `traverse_xrefs()`: Iteratively walks cross-references using an explicit `Vec` stack. Handles `.plt` thunk indirection for ELF binaries.
-  - `is_in_plt()`: Checks whether an address falls within a `.plt` segment.
+  - `BadFunctions::is_in_plt()`: Checks whether an address falls within a `.plt` segment, using the address ranges of all `.plt*` segments collected once in `find_all()` (no per-call FFI lookups). The ranges are half-open `Range<Address>` values, matching IDA's `range_t` (`end_ea` excluded).
   - `normalize_name()`: Strips leading dots/underscores from function names for cross-platform matching.
   - Output convention: scan results (bad-function headers and call-site locations) print to stdout via `println!`; everything else (banners, progress, summary/timing, errors) prints to stderr via `eprintln!`. Preserve this split when adding new output.
 - **`tests/main.rs`** — Integration test with three scenarios against `tests/data/ls`:
@@ -67,7 +67,9 @@ The workspace `Cargo.toml` enables aggressive lints. Notably forbidden everywher
 - `unwrap`, `expect`, `panic`, `todo`, `unimplemented`, `unreachable`, `dbg_macro`
 - Unsafe blocks require a `reason` attribute
 
-Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `as_conversions` (casting `u8` repr), `shadow_reuse` (rebinding a variable for normalization), `arithmetic_side_effects` (usize counter), `else_if_without_else` (empty else branch), `panic_in_result_fn` (test assertions). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as the existing test does.
+`clippy::min_ident_chars` is enabled, so single-character identifiers (e.g. `|s|`, `for f in`, `for i in`) are flagged — use descriptive names like `name`, `func`, `idx`.
+
+Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `shadow_reuse` (rebinding a variable for normalization), `arithmetic_side_effects` (`BookmarkIndex` counter), `else_if_without_else` (empty else branch), `expect_used`/`panic_in_result_fn` (test assertions), `as_conversions` (casting `BookmarkIndex` to `usize` in tests). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as the existing test does.
 
 ## IDA Integration Notes
 

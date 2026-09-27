@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Cache `.plt` segment address ranges to avoid repeated FFI lookups.
 - Improve code style.
 - Update documentation.
 

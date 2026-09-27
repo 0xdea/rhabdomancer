@@ -4,6 +4,7 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
 
 use std::collections::{BTreeMap, HashSet};
+use std::ops::Range;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 use std::{env, mem};
@@ -122,6 +123,10 @@ struct BadFunctions<'a> {
     low: BTreeMap<FunctionId, Function<'a>>,
     /// Number of marked call locations.
     marked: BookmarkIndex,
+    /// Address ranges of .plt segments.
+    ///
+    /// Half-open like IDA's `range_t`, which excludes `end_ea`.
+    plt: Vec<Range<Address>>,
 }
 
 impl<'a> BadFunctions<'a> {
@@ -132,6 +137,11 @@ impl<'a> BadFunctions<'a> {
             medium: BTreeMap::new(),
             low: BTreeMap::new(),
             marked: 0,
+            plt: idb
+                .segments()
+                .filter(|(_, segm)| segm.name().is_some_and(|name| name.starts_with(".plt")))
+                .map(|(_, segm)| segm.start_address()..segm.end_address())
+                .collect(),
         };
 
         for (id, func) in idb.functions() {
@@ -168,7 +178,7 @@ impl<'a> BadFunctions<'a> {
             (Priority::Low, &self.low),
         ] {
             for func in functions.values() {
-                Self::mark_calls(idb, func, priority, &mut marked)?;
+                self.mark_calls(idb, func, priority, &mut marked)?;
             }
         }
 
@@ -178,6 +188,7 @@ impl<'a> BadFunctions<'a> {
 
     /// Locates calls to the specified function and marks them.
     fn mark_calls(
+        &self,
         idb: &IDB,
         func: &Function<'_>,
         priority: Priority,
@@ -189,7 +200,7 @@ impl<'a> BadFunctions<'a> {
         };
 
         let desc = priority.description(normalize_name(&func_name));
-        if is_in_plt(idb, func.start_address()) {
+        if self.is_in_plt(func.start_address()) {
             println!("\n{desc} (thunk)");
         } else {
             println!("\n{desc}");
@@ -197,7 +208,7 @@ impl<'a> BadFunctions<'a> {
 
         // Traverse XREFs and mark call locations.
         idb.first_xref_to(func.start_address(), XRefQuery::ALL)
-            .map_or(Ok(()), |cur| Self::traverse_xrefs(idb, cur, &desc, marked))
+            .map_or(Ok(()), |cur| self.traverse_xrefs(idb, cur, &desc, marked))
     }
 
     /// Iteratively traverses XREFs and marks call locations.
@@ -210,6 +221,7 @@ impl<'a> BadFunctions<'a> {
         reason = "`usize` can hardly overflow here"
     )]
     fn traverse_xrefs(
+        &self,
         idb: &IDB,
         first_xref: XRef<'_>,
         desc: &str,
@@ -227,7 +239,7 @@ impl<'a> BadFunctions<'a> {
                 stack.push(next);
             }
 
-            if is_in_plt(idb, from) {
+            if self.is_in_plt(from) {
                 // Handle .plt indirection in ELF binaries by queueing the thunk's own XREF chain for later processing.
                 let target = idb
                     .function_at(from)
@@ -262,6 +274,13 @@ impl<'a> BadFunctions<'a> {
         }
 
         Ok(())
+    }
+
+    /// Checks if an address is in a .plt segment.
+    ///
+    /// Equivalent to IDA's `range_t::contains`, i.e., `start_ea <= addr < end_ea`, without any FFI calls.
+    fn is_in_plt(&self, addr: Address) -> bool {
+        self.plt.iter().any(|range| range.contains(&addr))
     }
 }
 
@@ -311,12 +330,6 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
         start.elapsed().as_secs_f64()
     );
     Ok(marked)
-}
-
-/// Checks if an address is in the .plt segment.
-fn is_in_plt(idb: &IDB, addr: Address) -> bool {
-    idb.segment_at(addr)
-        .is_some_and(|segm| segm.name().unwrap_or_default().starts_with(".plt"))
 }
 
 /// Normalizes a function name for matching against configuration entries.
