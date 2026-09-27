@@ -130,11 +130,6 @@ impl KnownBadFunctions {
             .try_deserialize()
     }
 
-    /// Checks if a function is in the list of known bad API function names and returns its priority.
-    fn check_function(&self, func: &Function<'_>) -> Option<Priority> {
-        self.priority_of(&func.name()?)
-    }
-
     /// Returns the priority of the known bad API function with the specified name, if any.
     fn priority_of(&self, func_name: &str) -> Option<Priority> {
         self.functions.get(normalize_name(func_name)).copied()
@@ -144,12 +139,12 @@ impl KnownBadFunctions {
 /// Ordered list of bad API functions found in the target binary organized by
 /// priority and number of marked call locations expressed as a [`BookmarkIndex`].
 struct BadFunctions<'a> {
-    /// High-priority found bad functions.
-    high: BTreeMap<FunctionId, Function<'a>>,
-    /// Medium-priority found bad functions.
-    medium: BTreeMap<FunctionId, Function<'a>>,
-    /// Low-priority found bad functions.
-    low: BTreeMap<FunctionId, Function<'a>>,
+    /// High-priority found bad functions, with their descriptions.
+    high: BTreeMap<FunctionId, (Function<'a>, String)>,
+    /// Medium-priority found bad functions, with their descriptions.
+    medium: BTreeMap<FunctionId, (Function<'a>, String)>,
+    /// Low-priority found bad functions, with their descriptions.
+    low: BTreeMap<FunctionId, (Function<'a>, String)>,
     /// Number of marked call locations.
     marked: BookmarkIndex,
     /// Address ranges of .plt segments.
@@ -174,40 +169,41 @@ impl<'a> BadFunctions<'a> {
         };
 
         for (id, func) in idb.functions() {
-            if let Some(pri) = bad.check_function(&func) {
-                found.insert_function(id, func, pri);
+            let Some(func_name) = func.name() else {
+                continue;
+            };
+            if let Some(priority) = bad.priority_of(&func_name) {
+                let desc = priority.description(normalize_name(&func_name));
+                found.insert_function(id, func, desc, priority);
             }
         }
 
         found
     }
 
-    /// Inserts a new bad API function in the list.
-    fn insert_function(&mut self, id: FunctionId, func: Function<'a>, priority: Priority) {
-        match priority {
-            Priority::High => {
-                self.high.insert(id, func);
-            }
-            Priority::Medium => {
-                self.medium.insert(id, func);
-            }
-            Priority::Low => {
-                self.low.insert(id, func);
-            }
-        }
+    /// Inserts a new bad API function with its description in the list.
+    fn insert_function(
+        &mut self,
+        id: FunctionId,
+        func: Function<'a>,
+        desc: String,
+        priority: Priority,
+    ) {
+        let functions = match priority {
+            Priority::High => &mut self.high,
+            Priority::Medium => &mut self.medium,
+            Priority::Low => &mut self.low,
+        };
+        functions.insert(id, (func, desc));
     }
 
     /// Locates calls to bad API functions and marks them.
     fn locate_calls(&mut self, idb: &'a IDB) -> anyhow::Result<BookmarkIndex> {
         let mut marked = 0;
 
-        for (priority, functions) in [
-            (Priority::High, &self.high),
-            (Priority::Medium, &self.medium),
-            (Priority::Low, &self.low),
-        ] {
-            for func in functions.values() {
-                self.mark_calls(idb, func, priority, &mut marked)?;
+        for functions in [&self.high, &self.medium, &self.low] {
+            for (func, desc) in functions.values() {
+                self.mark_calls(idb, func, desc, &mut marked)?;
             }
         }
 
@@ -215,20 +211,14 @@ impl<'a> BadFunctions<'a> {
         Ok(self.marked)
     }
 
-    /// Locates calls to the specified function and marks them.
+    /// Locates calls to the specified function and marks them with the specified description.
     fn mark_calls(
         &self,
         idb: &IDB,
         func: &Function<'_>,
-        priority: Priority,
+        desc: &str,
         marked: &mut BookmarkIndex,
     ) -> Result<(), IDAError> {
-        // Return an error if the function name is empty (shouldn't happen).
-        let Some(func_name) = func.name() else {
-            return Err(IDAError::ffi_with("empty function name"));
-        };
-
-        let desc = priority.description(normalize_name(&func_name));
         if self.is_in_plt(func.start_address()) {
             println!("\n{desc} (thunk)");
         } else {
@@ -237,7 +227,7 @@ impl<'a> BadFunctions<'a> {
 
         // Traverse XREFs and mark call locations.
         idb.first_xref_to(func.start_address(), XRefQuery::ALL)
-            .map_or(Ok(()), |cur| self.traverse_xrefs(idb, cur, &desc, marked))
+            .map_or(Ok(()), |cur| self.traverse_xrefs(idb, cur, desc, marked))
     }
 
     /// Iteratively traverses XREFs and marks call locations.

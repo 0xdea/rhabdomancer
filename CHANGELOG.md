@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reject configuration files that list the same function under multiple priorities or contain empty function names
   (can break existing configurations).
 - Cache `.plt` segment address ranges to avoid repeated FFI lookups.
+- Fetch each bad function's name only once.
 - Improve code style.
 - Update documentation.
 
