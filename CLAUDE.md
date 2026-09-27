@@ -69,7 +69,7 @@ The workspace `Cargo.toml` enables aggressive lints. Notably forbidden everywher
 
 `clippy::min_ident_chars` is enabled, so single-character identifiers (e.g. `|s|`, `for f in`, `for i in`) are flagged — use descriptive names like `name`, `func`, `idx`.
 
-Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `shadow_reuse` (rebinding a variable for normalization), `arithmetic_side_effects` (`BookmarkIndex` counter), `else_if_without_else` (empty else branch), `expect_used`/`panic_in_result_fn` (test assertions), `as_conversions` (casting `BookmarkIndex` to `usize` in tests). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as the existing test does.
+Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `arithmetic_side_effects` (`BookmarkIndex` counter), `else_if_without_else` (empty else branch), `expect_used`/`panic_in_result_fn` (test assertions), `as_conversions` (casting `BookmarkIndex` to `usize` in tests). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as the existing test does.
 
 ## IDA Integration Notes
 

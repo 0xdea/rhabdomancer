@@ -83,7 +83,6 @@ impl KnownBadFunctions {
     }
 
     /// Checks if a function is in the list of known bad API function names and return its priority.
-    #[expect(clippy::shadow_reuse, reason = "shadowing is convenient here")]
     fn check_function(&self, func: &Function<'_>) -> Option<Priority> {
         let func_name = func.name()?;
         let func_name = normalize_name(&func_name);
