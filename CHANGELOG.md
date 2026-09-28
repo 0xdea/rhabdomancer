@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (can break existing configurations).
 - Cache `.plt` segment address ranges to avoid repeated FFI lookups.
 - Fetch each bad function's name only once.
+- Refactor `BadFunctions` to use a single ordered map.
+- Improve integration tests.
 - Improve code style.
 - Update documentation.
 

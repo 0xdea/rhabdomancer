@@ -18,15 +18,20 @@ use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
 use idalib::{Address, IDAError};
 
-/// Prefix for bookmarks and comments.
+/// Prefix of the tags in the bookmarks and comments added by rhabdomancer, e.g., `[BAD 0]`.
+///
+/// This is part of the public API: search for it to find rhabdomancer's annotations in an IDB. Changing it breaks
+/// compatibility with IDBs annotated by previous versions.
 pub const PREFIX: &str = "[BAD ";
 
 /// Priority of bad API functions.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[repr(u8)]
+///
+/// Variants are declared from highest to lowest priority: the derived [`Ord`] follows this order, which determines
+/// the order in which found bad functions are processed.
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 enum Priority {
     /// High priority - These functions are generally considered insecure.
-    High = 0,
+    High,
     /// Medium priority - These functions are interesting and should be checked for insecure use cases.
     Medium,
     /// Low priority - Code paths involving these functions should be carefully checked.
@@ -34,20 +39,22 @@ enum Priority {
 }
 
 impl Priority {
-    /// Returns the tag prefix to use for bookmarks and comments.
-    ///
-    /// The tag text must stay in sync with the `PREFIX` constant and each variant's discriminant.
-    const fn tag_prefix(self) -> &'static str {
+    /// Returns the numeric level shown in bookmark and comment tags (`[BAD 0]` for high priority, and so on).
+    #[must_use]
+    const fn level(self) -> u8 {
         match self {
-            Self::High => "[BAD 0]",
-            Self::Medium => "[BAD 1]",
-            Self::Low => "[BAD 2]",
+            Self::High => 0,
+            Self::Medium => 1,
+            Self::Low => 2,
         }
     }
 
-    /// Returns a description for a bad API function with the specified name.
+    /// Returns a description for a bad API function with the specified name, e.g., `[BAD 0] strcpy`.
+    ///
+    /// The tag is built from [`PREFIX`], so that it always stays in sync with it.
+    #[must_use]
     fn description(self, func_name: &str) -> String {
-        format!("{} {}", self.tag_prefix(), func_name)
+        format!("{PREFIX}{}] {func_name}", self.level())
     }
 }
 
@@ -130,21 +137,20 @@ impl KnownBadFunctions {
             .try_deserialize()
     }
 
-    /// Returns the priority of the known bad API function with the specified name, if any.
-    fn priority_of(&self, func_name: &str) -> Option<Priority> {
-        self.functions.get(normalize_name(func_name)).copied()
+    /// Returns the normalized name and priority of the known bad API function with the specified name, if any.
+    #[must_use]
+    fn lookup(&self, func_name: &str) -> Option<(&str, Priority)> {
+        self.functions
+            .get_key_value(normalize_name(func_name))
+            .map(|(name, &priority)| (name.as_str(), priority))
     }
 }
 
-/// Ordered list of bad API functions found in the target binary organized by
-/// priority and number of marked call locations expressed as a [`BookmarkIndex`].
+/// Ordered list of bad API functions found in the target binary and number of marked call locations expressed as a
+/// [`BookmarkIndex`].
 struct BadFunctions<'a> {
-    /// High-priority found bad functions, with their descriptions.
-    high: BTreeMap<FunctionId, (Function<'a>, String)>,
-    /// Medium-priority found bad functions, with their descriptions.
-    medium: BTreeMap<FunctionId, (Function<'a>, String)>,
-    /// Low-priority found bad functions, with their descriptions.
-    low: BTreeMap<FunctionId, (Function<'a>, String)>,
+    /// Found bad functions with their normalized names, ordered by priority and then by function ID.
+    functions: BTreeMap<(Priority, FunctionId), (Function<'a>, &'a str)>,
     /// Number of marked call locations.
     marked: BookmarkIndex,
     /// Address ranges of .plt segments.
@@ -155,11 +161,9 @@ struct BadFunctions<'a> {
 
 impl<'a> BadFunctions<'a> {
     /// Finds bad API functions in the target binary.
-    fn find_all(idb: &'a IDB, bad: &KnownBadFunctions) -> Self {
+    fn find_all(idb: &'a IDB, bad: &'a KnownBadFunctions) -> Self {
         let mut found = Self {
-            high: BTreeMap::new(),
-            medium: BTreeMap::new(),
-            low: BTreeMap::new(),
+            functions: BTreeMap::new(),
             marked: 0,
             plt: idb
                 .segments()
@@ -169,56 +173,38 @@ impl<'a> BadFunctions<'a> {
         };
 
         for (id, func) in idb.functions() {
-            let Some(func_name) = func.name() else {
-                continue;
-            };
-            if let Some(priority) = bad.priority_of(&func_name) {
-                let desc = priority.description(normalize_name(&func_name));
-                found.insert_function(id, func, desc, priority);
+            if let Some(func_name) = func.name()
+                && let Some((name, priority)) = bad.lookup(&func_name)
+            {
+                found.functions.insert((priority, id), (func, name));
             }
         }
 
         found
     }
 
-    /// Inserts a new bad API function with its description in the list.
-    fn insert_function(
-        &mut self,
-        id: FunctionId,
-        func: Function<'a>,
-        desc: String,
-        priority: Priority,
-    ) {
-        let functions = match priority {
-            Priority::High => &mut self.high,
-            Priority::Medium => &mut self.medium,
-            Priority::Low => &mut self.low,
-        };
-        functions.insert(id, (func, desc));
-    }
-
     /// Locates calls to bad API functions and marks them.
     fn locate_calls(&mut self, idb: &'a IDB) -> anyhow::Result<BookmarkIndex> {
         let mut marked = 0;
 
-        for functions in [&self.high, &self.medium, &self.low] {
-            for (func, desc) in functions.values() {
-                self.mark_calls(idb, func, desc, &mut marked)?;
-            }
+        for (&(priority, _), (func, name)) in &self.functions {
+            self.mark_calls(idb, func, priority, name, &mut marked)?;
         }
 
         self.marked = marked;
         Ok(self.marked)
     }
 
-    /// Locates calls to the specified function and marks them with the specified description.
+    /// Locates calls to the specified function and marks them with its priority and normalized name.
     fn mark_calls(
         &self,
         idb: &IDB,
         func: &Function<'_>,
-        desc: &str,
+        priority: Priority,
+        name: &str,
         marked: &mut BookmarkIndex,
     ) -> Result<(), IDAError> {
+        let desc = priority.description(name);
         if self.is_in_plt(func.start_address()) {
             println!("\n{desc} (thunk)");
         } else {
@@ -227,7 +213,7 @@ impl<'a> BadFunctions<'a> {
 
         // Traverse XREFs and mark call locations.
         idb.first_xref_to(func.start_address(), XRefQuery::ALL)
-            .map_or(Ok(()), |cur| self.traverse_xrefs(idb, cur, desc, marked))
+            .map_or(Ok(()), |cur| self.traverse_xrefs(idb, cur, &desc, marked))
     }
 
     /// Iteratively traverses XREFs and marks call locations.
@@ -298,6 +284,7 @@ impl<'a> BadFunctions<'a> {
     /// Checks if an address is in a .plt segment.
     ///
     /// Equivalent to IDA's `range_t::contains`, i.e., `start_ea <= addr < end_ea`, without any FFI calls.
+    #[must_use]
     fn is_in_plt(&self, addr: Address) -> bool {
         self.plt.iter().any(|range| range.contains(&addr))
     }
@@ -352,6 +339,7 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
 }
 
 /// Normalizes a function name for matching against configuration entries.
+#[must_use]
 fn normalize_name(name: &str) -> &str {
     name.trim_start_matches(['.', '_'])
 }
@@ -382,23 +370,50 @@ mod tests {
     }
 
     #[test]
+    fn description_formats_tag_and_name() {
+        assert_eq!(
+            Priority::High.description("strcpy"),
+            "[BAD 0] strcpy",
+            "wrong high-priority description"
+        );
+        assert_eq!(
+            Priority::Medium.description("memcpy"),
+            "[BAD 1] memcpy",
+            "wrong medium-priority description"
+        );
+        assert_eq!(
+            Priority::Low.description("getenv"),
+            "[BAD 2] getenv",
+            "wrong low-priority description"
+        );
+    }
+
+    #[test]
+    fn priority_order_is_high_medium_low() {
+        assert!(
+            Priority::High < Priority::Medium && Priority::Medium < Priority::Low,
+            "priorities should be ordered from highest to lowest, which determines the processing order"
+        );
+    }
+
+    #[test]
     fn try_from_maps_names_to_their_priority() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["memcpy"], &["getenv"]))?;
 
         assert_eq!(
-            known_bad.priority_of("strcpy"),
-            Some(Priority::High),
-            "wrong priority"
+            known_bad.lookup("strcpy"),
+            Some(("strcpy", Priority::High)),
+            "wrong normalized name or priority"
         );
         assert_eq!(
-            known_bad.priority_of("memcpy"),
-            Some(Priority::Medium),
-            "wrong priority"
+            known_bad.lookup("memcpy"),
+            Some(("memcpy", Priority::Medium)),
+            "wrong normalized name or priority"
         );
         assert_eq!(
-            known_bad.priority_of("getenv"),
-            Some(Priority::Low),
-            "wrong priority"
+            known_bad.lookup("getenv"),
+            Some(("getenv", Priority::Low)),
+            "wrong normalized name or priority"
         );
         Ok(())
     }
@@ -409,31 +424,31 @@ mod tests {
             KnownBadFunctions::try_from(config(&["_strcpy"], &[".memset"], &["__getenv"]))?;
 
         assert_eq!(
-            known_bad.priority_of("strcpy"),
-            Some(Priority::High),
+            known_bad.lookup("strcpy"),
+            Some(("strcpy", Priority::High)),
             "decorated name should match"
         );
         assert_eq!(
-            known_bad.priority_of("memset"),
-            Some(Priority::Medium),
+            known_bad.lookup("memset"),
+            Some(("memset", Priority::Medium)),
             "decorated name should match"
         );
         assert_eq!(
-            known_bad.priority_of("getenv"),
-            Some(Priority::Low),
+            known_bad.lookup("getenv"),
+            Some(("getenv", Priority::Low)),
             "decorated name should match"
         );
         Ok(())
     }
 
     #[test]
-    fn priority_of_normalizes_function_names() -> Result<(), String> {
+    fn lookup_normalizes_function_names() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &[], &[]))?;
 
         for func_name in ["_strcpy", ".strcpy", "__strcpy", "._strcpy"] {
             assert_eq!(
-                known_bad.priority_of(func_name),
-                Some(Priority::High),
+                known_bad.lookup(func_name),
+                Some(("strcpy", Priority::High)),
                 "decorated function name `{func_name}` should match"
             );
         }
@@ -441,19 +456,15 @@ mod tests {
     }
 
     #[test]
-    fn priority_of_unknown_name_returns_none() -> Result<(), String> {
+    fn lookup_unknown_name_returns_none() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &[], &[]))?;
 
         assert_eq!(
-            known_bad.priority_of("strncpy"),
+            known_bad.lookup("strncpy"),
             None,
             "unknown name should not match"
         );
-        assert_eq!(
-            known_bad.priority_of(""),
-            None,
-            "empty name should not match"
-        );
+        assert_eq!(known_bad.lookup(""), None, "empty name should not match");
         Ok(())
     }
 
@@ -463,9 +474,9 @@ mod tests {
             KnownBadFunctions::try_from(config(&[], &["fwrite", "_fwrite", "fwrite"], &[]))?;
 
         assert_eq!(
-            known_bad.priority_of("fwrite"),
-            Some(Priority::Medium),
-            "wrong priority"
+            known_bad.lookup("fwrite"),
+            Some(("fwrite", Priority::Medium)),
+            "wrong normalized name or priority"
         );
         assert_eq!(known_bad.functions.len(), 1, "duplicates should be merged");
         Ok(())
@@ -514,12 +525,12 @@ mod tests {
     }
 
     #[test]
-    fn priority_of_name_that_normalizes_to_empty_returns_none() -> Result<(), String> {
+    fn lookup_name_that_normalizes_to_empty_returns_none() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["memcpy"], &["getenv"]))?;
 
         for func_name in ["", "_", ".", "__"] {
             assert_eq!(
-                known_bad.priority_of(func_name),
+                known_bad.lookup(func_name),
                 None,
                 "function name `{func_name}` that normalizes to empty should not match"
             );
@@ -532,14 +543,14 @@ mod tests {
         let known_bad = deserialize("high = [\"_strcpy\"]\nmedium = [\"memcpy\"]\nlow = []\n")?;
 
         assert_eq!(
-            known_bad.priority_of("strcpy"),
-            Some(Priority::High),
-            "wrong priority"
+            known_bad.lookup("strcpy"),
+            Some(("strcpy", Priority::High)),
+            "wrong normalized name or priority"
         );
         assert_eq!(
-            known_bad.priority_of("memcpy"),
-            Some(Priority::Medium),
-            "wrong priority"
+            known_bad.lookup("memcpy"),
+            Some(("memcpy", Priority::Medium)),
+            "wrong normalized name or priority"
         );
         Ok(())
     }
