@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add a note to `usage` explaining the `RHABDOMANCER_CONFIG` environment variable.
-- Add unit tests for `KnownBadFunctions`.
+- Add unit tests for `KnownBadFunctions`, `Priority`, and `PltSegments`.
 
 ### Changed
 
@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fetch each bad function's name only once.
 - Refactor `BadFunctions` to use a single ordered map.
 - Return marked call location counts instead of updating a shared counter.
+- Split `.plt` segment handling and call marking out of `BadFunctions` into `PltSegments` and `CallMarker`.
 - Improve integration tests.
 - Improve code style.
 - Update documentation.

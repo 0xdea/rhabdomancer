@@ -146,47 +146,89 @@ impl KnownBadFunctions {
     }
 }
 
-/// Ordered list of bad API functions found in the target binary, together with the address ranges of its .plt
-/// segments, which are needed to follow thunk indirection when marking their call locations.
+/// Bad API functions found in the target binary with their normalized names, ordered by priority and then by
+/// function ID.
 struct BadFunctions<'a> {
-    /// Found bad functions with their normalized names, ordered by priority and then by function ID.
+    /// Found bad functions with their normalized names, keyed by priority and function ID.
     functions: BTreeMap<(Priority, FunctionId), (Function<'a>, &'a str)>,
-    /// Address ranges of .plt segments.
-    ///
-    /// Half-open like IDA's `range_t`, which excludes `end_ea`.
-    plt: Vec<Range<Address>>,
 }
 
 impl<'a> BadFunctions<'a> {
     /// Finds bad API functions in the target binary.
     fn find_all(idb: &'a IDB, bad: &'a KnownBadFunctions) -> Self {
-        let mut found = Self {
-            functions: BTreeMap::new(),
-            plt: idb
+        Self {
+            functions: idb
+                .functions()
+                .filter_map(|(id, func)| {
+                    let (name, priority) = bad.lookup(&func.name()?)?;
+                    Some(((priority, id), (func, name)))
+                })
+                .collect(),
+        }
+    }
+
+    /// Returns an iterator over the found bad functions as `(priority, id, func, name)` tuples, ordered
+    /// by priority and then by function ID.
+    fn iter(&self) -> impl Iterator<Item = (Priority, FunctionId, &Function<'a>, &'a str)> {
+        self.functions
+            .iter()
+            .map(|(&(priority, id), (func, name))| (priority, id, func, *name))
+    }
+}
+
+/// Address ranges of the .plt segments of a binary.
+struct PltSegments {
+    /// Address ranges of the .plt segments.
+    ///
+    /// Half-open like IDA's `range_t`, which excludes `end_ea`.
+    ranges: Vec<Range<Address>>,
+}
+
+impl PltSegments {
+    /// Collects the address ranges of all .plt segments in `idb`.
+    fn new(idb: &IDB) -> Self {
+        Self {
+            ranges: idb
                 .segments()
                 .filter(|(_, segm)| segm.name().is_some_and(|name| name.starts_with(".plt")))
                 .map(|(_, segm)| segm.start_address()..segm.end_address())
                 .collect(),
-        };
-
-        for (id, func) in idb.functions() {
-            if let Some(func_name) = func.name()
-                && let Some((name, priority)) = bad.lookup(&func_name)
-            {
-                found.functions.insert((priority, id), (func, name));
-            }
         }
-
-        found
     }
 
-    /// Locates calls to bad API functions and marks them.
+    /// Checks if an address is in a .plt segment.
+    ///
+    /// Equivalent to IDA's `range_t::contains`, i.e., `start_ea <= addr < end_ea`, without any FFI calls.
+    #[must_use]
+    fn contains(&self, addr: Address) -> bool {
+        self.ranges.iter().any(|range| range.contains(&addr))
+    }
+}
+
+/// Marks the call locations of bad API functions in an IDB with bookmarks and comments.
+struct CallMarker<'a> {
+    /// IDB to annotate.
+    idb: &'a IDB,
+    /// Address ranges of the IDB's .plt segments, used to follow thunk indirection in ELF binaries.
+    plt: PltSegments,
+}
+
+impl<'a> CallMarker<'a> {
+    /// Creates a marker for `idb`, collecting the address ranges of its .plt segments.
+    fn new(idb: &'a IDB) -> Self {
+        Self {
+            idb,
+            plt: PltSegments::new(idb),
+        }
+    }
+
+    /// Locates calls to the bad API functions in `found` and marks them.
     ///
     /// Returns the total number of newly marked call locations, stopping at the first error.
-    fn locate_calls(&self, idb: &IDB) -> Result<BookmarkIndex, IDAError> {
-        self.functions
+    fn mark_all(&self, found: &BadFunctions<'_>) -> Result<BookmarkIndex, IDAError> {
+        found
             .iter()
-            .map(|(&(priority, _), (func, name))| self.mark_calls(idb, func, priority, name))
+            .map(|(priority, _, func, name)| self.mark_calls(func, priority, name))
             .sum()
     }
 
@@ -195,21 +237,21 @@ impl<'a> BadFunctions<'a> {
     /// Returns the number of newly marked call locations.
     fn mark_calls(
         &self,
-        idb: &IDB,
         func: &Function<'_>,
         priority: Priority,
         name: &str,
     ) -> Result<BookmarkIndex, IDAError> {
         let desc = priority.description(name);
-        if self.is_in_plt(func.start_address()) {
+        if self.plt.contains(func.start_address()) {
             println!("\n{desc} (thunk)");
         } else {
             println!("\n{desc}");
         }
 
         // Traverse XREFs and mark call locations.
-        idb.first_xref_to(func.start_address(), XRefQuery::ALL)
-            .map_or(Ok(0), |cur| self.traverse_xrefs(idb, cur, &desc))
+        self.idb
+            .first_xref_to(func.start_address(), XRefQuery::ALL)
+            .map_or(Ok(0), |cur| self.traverse_xrefs(cur, &desc))
     }
 
     /// Iteratively traverses XREFs and marks call locations.
@@ -219,12 +261,7 @@ impl<'a> BadFunctions<'a> {
     ///
     /// Returns the number of newly marked call locations.
     #[expect(clippy::else_if_without_else, reason = "else branch would be empty")]
-    fn traverse_xrefs(
-        &self,
-        idb: &IDB,
-        first_xref: XRef<'_>,
-        desc: &str,
-    ) -> Result<BookmarkIndex, IDAError> {
+    fn traverse_xrefs(&self, first_xref: XRef<'_>, desc: &str) -> Result<BookmarkIndex, IDAError> {
         let mut marked = BookmarkIndex::default();
 
         // Each entry in the stack is the head of an XREF chain still to be processed.
@@ -239,49 +276,43 @@ impl<'a> BadFunctions<'a> {
                 stack.push(next);
             }
 
-            if self.is_in_plt(from) {
+            if self.plt.contains(from) {
                 // Handle .plt indirection in ELF binaries by queueing the thunk's own XREF chain for later processing.
-                let target = idb
+                let target = self
+                    .idb
                     .function_at(from)
                     .map_or_else(|| BADADDR.into(), |func| func.start_address());
-                if let Some(thunk) = idb.first_xref_to(target, XRefQuery::ALL) {
+                if let Some(thunk) = self.idb.first_xref_to(target, XRefQuery::ALL) {
                     stack.push(thunk);
                 }
             } else if is_code {
                 // Print address with caller function name if available.
-                let caller = idb.function_at(from).map_or_else(
+                let caller = self.idb.function_at(from).map_or_else(
                     || "[unknown]".into(),
                     |func| func.name().unwrap_or_else(|| "[no name]".into()),
                 );
                 println!("{from:#X} in {caller}");
 
                 // Add a bookmark if not already present to mark the call location.
-                if !idb
+                if !self
+                    .idb
                     .bookmarks()
                     .get_description(from)
                     .unwrap_or_default()
                     .contains(PREFIX)
                 {
-                    idb.bookmarks().mark(from, desc)?;
+                    self.idb.bookmarks().mark(from, desc)?;
                     marked = marked.saturating_add(1);
                 }
 
                 // Add a comment if not already present to mark the call location.
-                if !idb.get_cmt(from).unwrap_or_default().contains(PREFIX) {
-                    idb.append_cmt(from, desc)?;
+                if !self.idb.get_cmt(from).unwrap_or_default().contains(PREFIX) {
+                    self.idb.append_cmt(from, desc)?;
                 }
             }
         }
 
         Ok(marked)
-    }
-
-    /// Checks if an address is in a .plt segment.
-    ///
-    /// Equivalent to IDA's `range_t::contains`, i.e., `start_ea <= addr < end_ea`, without any FFI calls.
-    #[must_use]
-    fn is_in_plt(&self, addr: Address) -> bool {
-        self.plt.iter().any(|range| range.contains(&addr))
     }
 }
 
@@ -319,8 +350,9 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     eprintln!();
 
     eprintln!("[*] Finding bad API function calls...");
-    let marked = BadFunctions::find_all(&idb, &known_bad)
-        .locate_calls(&idb)
+    let found = BadFunctions::find_all(&idb, &known_bad);
+    let marked = CallMarker::new(&idb)
+        .mark_all(&found)
         .context("Failed to find bad API function calls")?;
 
     eprintln!();
@@ -364,6 +396,13 @@ mod tests {
             .try_deserialize()
     }
 
+    /// Returns [`PltSegments`] with the specified `(start, end)` address ranges.
+    fn plt(ranges: &[(Address, Address)]) -> PltSegments {
+        PltSegments {
+            ranges: ranges.iter().map(|&(start, end)| start..end).collect(),
+        }
+    }
+
     #[test]
     fn description_formats_tag_and_name() {
         assert_eq!(
@@ -384,10 +423,56 @@ mod tests {
     }
 
     #[test]
+    fn plt_segments_contain_start_but_not_end() {
+        let segments = plt(&[(0x1000, 0x1010)]);
+
+        assert!(
+            !segments.contains(0x0FFF),
+            "address before the start should not match"
+        );
+        assert!(segments.contains(0x1000), "start address should match");
+        assert!(segments.contains(0x100F), "last address should match");
+        assert!(!segments.contains(0x1010), "end address should not match");
+    }
+
+    #[test]
+    fn plt_segments_check_every_range() {
+        let segments = plt(&[(0x1000, 0x1010), (0x2000, 0x2010)]);
+
+        assert!(
+            segments.contains(0x1008),
+            "address in the first range should match"
+        );
+        assert!(
+            segments.contains(0x2008),
+            "address in the second range should match"
+        );
+        assert!(
+            !segments.contains(0x1800),
+            "address between ranges should not match"
+        );
+    }
+
+    #[test]
+    fn plt_segments_without_ranges_or_with_empty_ranges_contain_nothing() {
+        let no_ranges = plt(&[]);
+        let empty_range = plt(&[(0x1000, 0x1000)]);
+
+        assert!(
+            !no_ranges.contains(0x1000),
+            "no ranges should match nothing"
+        );
+        assert!(
+            !empty_range.contains(0x1000),
+            "an empty range should match nothing"
+        );
+    }
+
+    #[test]
     fn priority_order_is_high_medium_low() {
         assert!(
             Priority::High < Priority::Medium && Priority::Medium < Priority::Low,
-            "priorities should be ordered from highest to lowest, which determines the processing order"
+            "priorities should be ordered from highest to lowest, which sets the processing order"
         );
     }
 
