@@ -18,28 +18,34 @@ use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
 use idalib::{Address, IDAError};
 
-/// Prefix of the tags in the bookmarks and comments added by rhabdomancer, e.g., `[BAD 0]`.
+/// Prefix of the tags in the bookmarks and comments added by rhabdomancer,
+/// e.g., `[BAD 0]`.
 ///
-/// This is part of the public API: search for it to find rhabdomancer's annotations in an IDB. Changing it breaks
-/// compatibility with IDBs annotated by previous versions.
+/// This is part of the public API: search for it to find rhabdomancer's
+/// annotations in an IDB. Changing it breaks compatibility with IDBs annotated
+/// by previous versions.
 pub const PREFIX: &str = "[BAD ";
 
 /// Priority of bad API functions.
 ///
-/// Variants are declared from highest to lowest priority: the derived [`Ord`] follows this order, which determines
-/// the order in which found bad functions are processed.
+/// Variants are declared from highest to lowest priority: the derived [`Ord`]
+/// follows this order, which determines the order in which found bad functions
+/// are processed.
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 enum Priority {
     /// High priority - These functions are generally considered insecure.
     High,
-    /// Medium priority - These functions are interesting and should be checked for insecure use cases.
+    /// Medium priority - These functions are interesting and should be checked for
+    /// insecure use cases.
     Medium,
-    /// Low priority - Code paths involving these functions should be carefully checked.
+    /// Low priority - Code paths involving these functions should be carefully
+    /// checked.
     Low,
 }
 
 impl Priority {
-    /// Returns the numeric level shown in bookmark and comment tags (`[BAD 0]` for high priority, and so on).
+    /// Returns the numeric level shown in bookmark and comment tags (`[BAD 0]` for
+    /// high priority, and so on).
     #[must_use]
     const fn level(self) -> u8 {
         match self {
@@ -49,7 +55,8 @@ impl Priority {
         }
     }
 
-    /// Returns a description for a bad API function with the specified name, e.g., `[BAD 0] strcpy`.
+    /// Returns a description for a bad API function with the specified name, e.g.,
+    /// `[BAD 0] strcpy`.
     ///
     /// The tag is built from [`PREFIX`], so that it always stays in sync with it.
     #[must_use]
@@ -58,7 +65,8 @@ impl Priority {
     }
 }
 
-/// Known bad API function names organized by priority, as listed in the configuration file.
+/// Known bad API function names organized by priority, as listed in the
+/// configuration file.
 #[derive(serde::Deserialize)]
 struct KnownBadFunctionsConfig {
     /// High-priority known bad functions.
@@ -69,10 +77,11 @@ struct KnownBadFunctionsConfig {
     low: Vec<String>,
 }
 
-/// Known bad API function names, normalized for matching and mapped to their priority.
+/// Known bad API function names, normalized for matching and mapped to their
+/// priority.
 ///
-/// Deserialized from a [`KnownBadFunctionsConfig`], which is rejected if any name is empty or is listed under
-/// multiple priorities, once normalized.
+/// Deserialized from a [`KnownBadFunctionsConfig`], which is rejected if any
+/// name is empty or is listed under multiple priorities, once normalized.
 #[derive(serde::Deserialize)]
 #[serde(try_from = "KnownBadFunctionsConfig")]
 struct KnownBadFunctions {
@@ -87,7 +96,8 @@ impl TryFrom<KnownBadFunctionsConfig> for KnownBadFunctions {
     ///
     /// # Errors
     ///
-    /// Returns an error message if a name is empty or is listed under multiple priorities, once normalized.
+    /// Returns an error message if a name is empty or is listed under multiple
+    /// priorities, once normalized.
     fn try_from(config: KnownBadFunctionsConfig) -> Result<Self, Self::Error> {
         let mut functions = HashMap::new();
 
@@ -120,11 +130,13 @@ impl KnownBadFunctions {
     ///
     /// # Errors
     ///
-    /// Returns [`ConfigError`] if the configuration file can't be read or parsed, or if a name is empty or is listed
-    /// under multiple priorities, once normalized.
+    /// Returns [`ConfigError`] if the configuration file can't be read or parsed,
+    /// or if a name is empty or is listed under multiple priorities, once
+    /// normalized.
     fn load() -> Result<Self, ConfigError> {
-        // Use configuration file path specified in the `RHABDOMANCER_CONFIG` environment variable
-        // if set, otherwise fall back to the default file location.
+        // Use configuration file path specified in the `RHABDOMANCER_CONFIG`
+        // environment variable if set, otherwise fall back to the default file
+        // location.
         let path = env::var_os("RHABDOMANCER_CONFIG").map_or_else(
             || Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml"),
             PathBuf::from,
@@ -137,7 +149,8 @@ impl KnownBadFunctions {
             .try_deserialize()
     }
 
-    /// Returns the normalized name and priority of the known bad API function with the specified name, if any.
+    /// Returns the normalized name and priority of the known bad API function with
+    /// the specified name, if any.
     #[must_use]
     fn lookup(&self, func_name: &str) -> Option<(&str, Priority)> {
         self.functions
@@ -146,10 +159,11 @@ impl KnownBadFunctions {
     }
 }
 
-/// Bad API functions found in the target binary with their normalized names, ordered by priority and then by
-/// function ID.
+/// Bad API functions found in the target binary with their normalized names,
+/// ordered by priority and then by function ID.
 struct BadFunctions<'a> {
-    /// Found bad functions with their normalized names, keyed by priority and function ID.
+    /// Found bad functions with their normalized names, keyed by priority and
+    /// function ID.
     functions: BTreeMap<(Priority, FunctionId), (Function<'a>, &'a str)>,
 }
 
@@ -167,8 +181,9 @@ impl<'a> BadFunctions<'a> {
         }
     }
 
-    /// Returns an iterator over the found bad functions as `(priority, id, func, name)` tuples, ordered
-    /// by priority and then by function ID.
+    /// Returns an iterator over the found bad functions as
+    /// `(priority, id, func, name)` tuples, ordered by priority and then by
+    /// function ID.
     fn iter(&self) -> impl Iterator<Item = (Priority, FunctionId, &Function<'a>, &'a str)> {
         self.functions
             .iter()
@@ -198,23 +213,27 @@ impl PltSegments {
 
     /// Checks if an address is in a .plt segment.
     ///
-    /// Equivalent to IDA's `range_t::contains`, i.e., `start_ea <= addr < end_ea`, without any FFI calls.
+    /// Equivalent to IDA's `range_t::contains`, i.e., `start_ea <= addr < end_ea`,
+    /// without any FFI calls.
     #[must_use]
     fn contains(&self, addr: Address) -> bool {
         self.ranges.iter().any(|range| range.contains(&addr))
     }
 }
 
-/// Marks the call locations of bad API functions in an IDB with bookmarks and comments.
+/// Marks the call locations of bad API functions in an IDB with bookmarks and
+/// comments.
 struct CallMarker<'a> {
     /// IDB to annotate.
     idb: &'a IDB,
-    /// Address ranges of the IDB's .plt segments, used to follow thunk indirection in ELF binaries.
+    /// Address ranges of the IDB's .plt segments, used to follow thunk indirection
+    /// in ELF binaries.
     plt: PltSegments,
 }
 
 impl<'a> CallMarker<'a> {
-    /// Creates a marker for `idb`, collecting the address ranges of its .plt segments.
+    /// Creates a marker for `idb`, collecting the address ranges of its .plt
+    /// segments.
     fn new(idb: &'a IDB) -> Self {
         Self {
             idb,
@@ -224,7 +243,8 @@ impl<'a> CallMarker<'a> {
 
     /// Locates calls to the bad API functions in `found` and marks them.
     ///
-    /// Returns the total number of newly marked call locations, stopping at the first error.
+    /// Returns the total number of newly marked call locations, stopping at the
+    /// first error.
     fn mark_all(&self, found: &BadFunctions<'_>) -> Result<BookmarkIndex, IDAError> {
         found
             .iter()
@@ -232,7 +252,8 @@ impl<'a> CallMarker<'a> {
             .sum()
     }
 
-    /// Locates calls to the specified function and marks them with its priority and normalized name.
+    /// Locates calls to the specified function and marks them with its priority and
+    /// normalized name.
     ///
     /// Returns the number of newly marked call locations.
     fn mark_calls(
@@ -256,8 +277,8 @@ impl<'a> CallMarker<'a> {
 
     /// Iteratively traverses XREFs and marks call locations.
     ///
-    /// An explicit work stack is used instead of recursion so that binaries with very long XREF chains or deep .plt
-    /// indirection don't overflow the stack.
+    /// An explicit work stack is used instead of recursion so that binaries with
+    /// very long XREF chains or deep .plt indirection don't overflow the stack.
     ///
     /// Returns the number of newly marked call locations.
     #[expect(clippy::else_if_without_else, reason = "else branch would be empty")]
@@ -277,7 +298,8 @@ impl<'a> CallMarker<'a> {
             }
 
             if self.plt.contains(from) {
-                // Handle .plt indirection in ELF binaries by queueing the thunk's own XREF chain for later processing.
+                // Handle .plt indirection in ELF binaries by queueing the thunk's own XREF
+                // chain for later processing.
                 let target = self
                     .idb
                     .function_at(from)
@@ -316,13 +338,16 @@ impl<'a> CallMarker<'a> {
     }
 }
 
-/// Locates calls to potentially insecure API functions in the binary file at `filepath`.
+/// Locates calls to potentially insecure API functions in the binary file at
+/// `filepath`.
 ///
-/// Returns a [`BookmarkIndex`] that indicates how many call locations were marked.
+/// Returns a [`BookmarkIndex`] that indicates how many call locations were
+/// marked.
 ///
 /// # Errors
 ///
-/// Returns [`anyhow::Error`] in case something goes wrong with analyzing the binary file or finding bad API calls.
+/// Returns [`anyhow::Error`] in case something goes wrong with analyzing the
+/// binary file or finding bad API calls.
 pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     let start = Instant::now();
 
@@ -378,7 +403,8 @@ mod tests {
 
     use super::*;
 
-    /// Returns a [`KnownBadFunctionsConfig`] with the specified names for each priority.
+    /// Returns a [`KnownBadFunctionsConfig`] with the specified names for each
+    /// priority.
     fn config(high: &[&str], medium: &[&str], low: &[&str]) -> KnownBadFunctionsConfig {
         let to_owned = |names: &[&str]| names.iter().copied().map(str::to_owned).collect();
         KnownBadFunctionsConfig {
@@ -388,7 +414,8 @@ mod tests {
         }
     }
 
-    /// Deserializes [`KnownBadFunctions`] from a TOML string, like [`KnownBadFunctions::load`] does from a file.
+    /// Deserializes [`KnownBadFunctions`] from a TOML string, like
+    /// [`KnownBadFunctions::load`] does from a file.
     fn deserialize(toml: &str) -> Result<KnownBadFunctions, ConfigError> {
         Config::builder()
             .add_source(File::from_str(toml, FileFormat::Toml))
