@@ -146,13 +146,11 @@ impl KnownBadFunctions {
     }
 }
 
-/// Ordered list of bad API functions found in the target binary and number of marked call locations expressed as a
-/// [`BookmarkIndex`].
+/// Ordered list of bad API functions found in the target binary, together with the address ranges of its .plt
+/// segments, which are needed to follow thunk indirection when marking their call locations.
 struct BadFunctions<'a> {
     /// Found bad functions with their normalized names, ordered by priority and then by function ID.
     functions: BTreeMap<(Priority, FunctionId), (Function<'a>, &'a str)>,
-    /// Number of marked call locations.
-    marked: BookmarkIndex,
     /// Address ranges of .plt segments.
     ///
     /// Half-open like IDA's `range_t`, which excludes `end_ea`.
@@ -164,7 +162,6 @@ impl<'a> BadFunctions<'a> {
     fn find_all(idb: &'a IDB, bad: &'a KnownBadFunctions) -> Self {
         let mut found = Self {
             functions: BTreeMap::new(),
-            marked: 0,
             plt: idb
                 .segments()
                 .filter(|(_, segm)| segm.name().is_some_and(|name| name.starts_with(".plt")))
@@ -184,26 +181,25 @@ impl<'a> BadFunctions<'a> {
     }
 
     /// Locates calls to bad API functions and marks them.
-    fn locate_calls(&mut self, idb: &'a IDB) -> anyhow::Result<BookmarkIndex> {
-        let mut marked = 0;
-
-        for (&(priority, _), (func, name)) in &self.functions {
-            self.mark_calls(idb, func, priority, name, &mut marked)?;
-        }
-
-        self.marked = marked;
-        Ok(self.marked)
+    ///
+    /// Returns the total number of newly marked call locations, stopping at the first error.
+    fn locate_calls(&self, idb: &IDB) -> Result<BookmarkIndex, IDAError> {
+        self.functions
+            .iter()
+            .map(|(&(priority, _), (func, name))| self.mark_calls(idb, func, priority, name))
+            .sum()
     }
 
     /// Locates calls to the specified function and marks them with its priority and normalized name.
+    ///
+    /// Returns the number of newly marked call locations.
     fn mark_calls(
         &self,
         idb: &IDB,
         func: &Function<'_>,
         priority: Priority,
         name: &str,
-        marked: &mut BookmarkIndex,
-    ) -> Result<(), IDAError> {
+    ) -> Result<BookmarkIndex, IDAError> {
         let desc = priority.description(name);
         if self.is_in_plt(func.start_address()) {
             println!("\n{desc} (thunk)");
@@ -213,25 +209,24 @@ impl<'a> BadFunctions<'a> {
 
         // Traverse XREFs and mark call locations.
         idb.first_xref_to(func.start_address(), XRefQuery::ALL)
-            .map_or(Ok(()), |cur| self.traverse_xrefs(idb, cur, &desc, marked))
+            .map_or(Ok(0), |cur| self.traverse_xrefs(idb, cur, &desc))
     }
 
     /// Iteratively traverses XREFs and marks call locations.
     ///
     /// An explicit work stack is used instead of recursion so that binaries with very long XREF chains or deep .plt
     /// indirection don't overflow the stack.
+    ///
+    /// Returns the number of newly marked call locations.
     #[expect(clippy::else_if_without_else, reason = "else branch would be empty")]
-    #[expect(
-        clippy::arithmetic_side_effects,
-        reason = "`usize` can hardly overflow here"
-    )]
     fn traverse_xrefs(
         &self,
         idb: &IDB,
         first_xref: XRef<'_>,
         desc: &str,
-        marked: &mut BookmarkIndex,
-    ) -> Result<(), IDAError> {
+    ) -> Result<BookmarkIndex, IDAError> {
+        let mut marked = BookmarkIndex::default();
+
         // Each entry in the stack is the head of an XREF chain still to be processed.
         let mut stack = vec![first_xref];
 
@@ -268,7 +263,7 @@ impl<'a> BadFunctions<'a> {
                     .contains(PREFIX)
                 {
                     idb.bookmarks().mark(from, desc)?;
-                    *marked += 1;
+                    marked = marked.saturating_add(1);
                 }
 
                 // Add a comment if not already present to mark the call location.
@@ -278,7 +273,7 @@ impl<'a> BadFunctions<'a> {
             }
         }
 
-        Ok(())
+        Ok(marked)
     }
 
     /// Checks if an address is in a .plt segment.

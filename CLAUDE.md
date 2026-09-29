@@ -29,14 +29,16 @@ cargo test --test tests --locked
 
 # Lint & format (CI enforces these as errors)
 cargo fmt --all --check
-cargo clippy --all-targets --locked -- -D warnings
+cargo clippy --workspace --all-targets --locked -- -D warnings
 
 # Documentation (CI enforces this as an error via RUSTDOCFLAGS=-D warnings)
-cargo doc --locked
+RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps --locked
 
 # Dependency vulnerability audit (CI enforces this; requires cargo-audit)
 cargo audit
 ```
+
+`--workspace` follows the `rust-style` skill; rhabdomancer is a single crate, so it is equivalent to CI's `cargo clippy --all-targets --locked -- -D warnings`. `--no-deps` matches CI's `build.yml` doc step and skips documenting dependencies (`doc.yml`, which publishes to `gh-pages`, runs a plain `cargo doc --locked`).
 
 CI's own `test` step only runs `cargo test --no-run` — a compile-only smoke check. Both test suites link against the IDA libraries, and the integration suite in `tests/main.rs` also needs a working IDA installation to analyze binaries, which CI runners don't have, so both only run locally.
 
@@ -48,7 +50,7 @@ Three source files:
 - **`src/lib.rs`** — Core analysis logic. Public entry point: `run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex>`. The only other public item is `PREFIX` (`"[BAD "`), deliberately kept public as the stable marker downstream tools search IDBs for: changing or unexporting it is a breaking change (CI runs `cargo-semver-checks`) and breaks compatibility with IDBs annotated by previous versions. Key types:
   - `KnownBadFunctionsConfig`: Mirrors the configuration file (`high`/`medium`/`low` name lists); only used as the deserialization source of `KnownBadFunctions`.
   - `KnownBadFunctions`: Loads `conf/rhabdomancer.toml` into a single `HashMap<String, Priority>` keyed by normalized name. Deserialized via `#[serde(try_from = "KnownBadFunctionsConfig")]`: the `TryFrom` impl normalizes every name and rejects the configuration at the first name that is empty or is listed under multiple priorities (after normalization), so `load()` deserializes straight into `Self`. Duplicates are detected with `*functions.entry(name).or_insert(priority) != priority`, which keeps the first occurrence and compares against it in one expression. `lookup()` normalizes a `&str` and returns the stored normalized name (via `get_key_value`, borrowed from the map) and its priority, so callers never normalize twice; it is unit-testable without an IDB.
-  - `BadFunctions<'a>`: Scans the opened IDB for calls to bad functions and annotates them with IDA bookmarks and inline comments (`[BAD 0]`/`[BAD 1]`/`[BAD 2]`). Found functions live in a single `BTreeMap<(Priority, FunctionId), (Function<'a>, &'a str)>`, so iteration visits high, then medium, then low priority, each ordered by function ID. `find_all()` fetches each function's name once (an FFI call plus a `String` allocation) and stores the function with the normalized name returned by `lookup()`, borrowed from `KnownBadFunctions` (hence `find_all(idb: &'a IDB, bad: &'a KnownBadFunctions)`, a single lifetime for both borrows). `mark_calls()` receives the priority and name and formats the description (`[BAD n] <normalized name>`) itself.
+  - `BadFunctions<'a>`: Scans the opened IDB for calls to bad functions and annotates them with IDA bookmarks and inline comments (`[BAD 0]`/`[BAD 1]`/`[BAD 2]`). Found functions live in a single `BTreeMap<(Priority, FunctionId), (Function<'a>, &'a str)>`, so iteration visits high, then medium, then low priority, each ordered by function ID. `find_all()` fetches each function's name once (an FFI call plus a `String` allocation) and stores the function with the normalized name returned by `lookup()`, borrowed from `KnownBadFunctions` (hence `find_all(idb: &'a IDB, bad: &'a KnownBadFunctions)`, a single lifetime for both borrows). `mark_calls()` receives the priority and name and formats the description (`[BAD n] <normalized name>`) itself. Mark counts are returned rather than accumulated in shared state: `traverse_xrefs()` counts newly added bookmarks with `saturating_add` and returns the count, `mark_calls()` returns it (or `0` for a function without XREFs), and `locate_calls(&self)` totals them with `.sum()` over `Result<BookmarkIndex, IDAError>`, which stops at the first error; `run()` adds the `anyhow` context. `BadFunctions` holds no counter field.
   - `Priority` enum: `High`/`Medium`/`Low` — maps to BAD 0/1/2. Variants are declared from highest to lowest priority, and the derived `Ord` follows declaration order (no explicit discriminants or `#[repr]`), which is what orders `BadFunctions`' map: keep this order when editing the enum. `level()` maps each variant to its tag digit with an explicit `match` (deliberately not a cast, so tags don't depend on declaration order), and `description()` builds `[BAD n] <name>` as `format!("{PREFIX}{}] {func_name}", self.level())`, so tags are derived from the `PREFIX` constant and can't drift from it. The `description_formats_tag_and_name` unit test pins the full format with literals.
   - `traverse_xrefs()`: Iteratively walks cross-references using an explicit `Vec` stack. Handles `.plt` thunk indirection for ELF binaries.
   - `BadFunctions::is_in_plt()`: Checks whether an address falls within a `.plt` segment, using the address ranges of all `.plt*` segments collected once in `find_all()` (no per-call FFI lookups). The ranges are half-open `Range<Address>` values, matching IDA's `range_t` (`end_ea` excluded).
@@ -80,7 +82,7 @@ The workspace `Cargo.toml` enables aggressive lints. Notably forbidden everywher
 
 Pure functions whose result matters carry `#[must_use]`, private ones included (clippy's `must_use_candidate` only flags public items): currently `Priority::level()`, `Priority::description()`, `KnownBadFunctions::lookup()`, `BadFunctions::is_in_plt()`, and `normalize_name()`.
 
-Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `arithmetic_side_effects` (`BookmarkIndex` counter), `else_if_without_else` (empty else branch), `panic_in_result_fn` (test assertions, as a module-level `#![expect]` in `tests/main.rs` and on `mod tests` in `src/lib.rs`). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as `run_with_config()` in `tests/main.rs` does.
+Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. Examples already in the codebase: `else_if_without_else` (empty else branch), `panic_in_result_fn` (test assertions, as a module-level `#![expect]` in `tests/main.rs` and on `mod tests` in `src/lib.rs`). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as `run_with_config()` in `tests/main.rs` does.
 
 ## IDA Integration Notes
 
