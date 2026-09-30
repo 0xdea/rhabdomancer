@@ -772,7 +772,7 @@ dependencies = [
 
 [[package]]
 name = "rhabdomancer"
-version = "0.10.2-alpha"
+version = "1.0.0-alpha"
 dependencies = [
  "anyhow",
  "config",

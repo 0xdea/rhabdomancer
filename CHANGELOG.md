@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Return marked call location counts instead of updating a shared counter.
 - Split `.plt` segment handling and call marking out of `BadFunctions` into `PltSegments` and `CallMarker`.
 - Walk XREF chains with `iter::successors` and replace the `BADADDR` sentinel with `Option` combinators.
+- Walk each XREF chain fully before the chains of the `.plt` thunks it references (can change the order of
+  listed call sites).
 - Improve integration tests.
 - Improve code style.
 - Update documentation.

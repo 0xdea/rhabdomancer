@@ -276,61 +276,58 @@ impl<'a> CallMarker<'a> {
 
     /// Iteratively traverses XREFs and marks call locations.
     ///
-    /// Each XREF chain is walked with [`iter::successors`]. A thunk's own chain is
-    /// walked as soon as it's found, as recursion would, but on an explicit stack
-    /// of chains so that deep .plt indirection can't overflow the call stack.
+    /// Each XREF chain is walked with [`iter::successors`]. The chains of the .plt
+    /// thunks found along the way are queued on an explicit worklist and walked
+    /// afterwards, so that deep .plt indirection can't overflow the call stack.
     ///
     /// Returns the number of newly marked call locations.
     fn traverse_xrefs(&self, first_xref: XRef<'_>, desc: &str) -> Result<BookmarkIndex, IDAError> {
         let bookmarks = self.idb.bookmarks();
         let mut marked = BookmarkIndex::default();
 
-        // Each entry in the stack is an XREF chain still being walked.
-        let mut chains = vec![iter::successors(Some(first_xref), XRef::next_to)];
+        // Heads of the XREF chains still to be walked: the first one, plus one per
+        // .plt thunk found.
+        let mut heads = vec![first_xref];
 
-        while let Some(chain) = chains.last_mut() {
-            let Some(xref) = chain.next() else {
-                chains.pop();
-                continue;
-            };
-            let from = xref.from();
+        while let Some(head) = heads.pop() {
+            for xref in iter::successors(Some(head), XRef::next_to) {
+                let from = xref.from();
 
-            if self.plt.contains(from) {
-                // Handle .plt indirection in ELF binaries by walking the thunk's own XREF
-                // chain next.
-                if let Some(thunk) = self
-                    .idb
-                    .function_at(from)
-                    .and_then(|func| self.idb.first_xref_to(func.start_address(), XRefQuery::ALL))
-                {
-                    chains.push(iter::successors(Some(thunk), XRef::next_to));
+                if self.plt.contains(from) {
+                    // Handle .plt indirection in ELF binaries by also walking the thunk's own
+                    // XREF chain.
+                    if let Some(thunk) = self.idb.function_at(from).and_then(|func| {
+                        self.idb.first_xref_to(func.start_address(), XRefQuery::ALL)
+                    }) {
+                        heads.push(thunk);
+                    }
+                    continue;
                 }
-                continue;
-            }
-            if !xref.is_code() {
-                continue;
-            }
+                if !xref.is_code() {
+                    continue;
+                }
 
-            // Print address with caller function name if available.
-            let caller = self.idb.function_at(from).map_or_else(
-                || "[unknown]".into(),
-                |func| func.name().unwrap_or_else(|| "[no name]".into()),
-            );
-            println!("{from:#X} in {caller}");
+                // Print address with caller function name if available.
+                let caller = self.idb.function_at(from).map_or_else(
+                    || "[unknown]".into(),
+                    |func| func.name().unwrap_or_else(|| "[no name]".into()),
+                );
+                println!("{from:#X} in {caller}");
 
-            // Add a bookmark if not already present to mark the call location.
-            if !bookmarks
-                .get_description(from)
-                .unwrap_or_default()
-                .contains(PREFIX)
-            {
-                bookmarks.mark(from, desc)?;
-                marked = marked.saturating_add(1);
-            }
+                // Add a bookmark if not already present to mark the call location.
+                if !bookmarks
+                    .get_description(from)
+                    .unwrap_or_default()
+                    .contains(PREFIX)
+                {
+                    bookmarks.mark(from, desc)?;
+                    marked = marked.saturating_add(1);
+                }
 
-            // Add a comment if not already present to mark the call location.
-            if !self.idb.get_cmt(from).unwrap_or_default().contains(PREFIX) {
-                self.idb.append_cmt(from, desc)?;
+                // Add a comment if not already present to mark the call location.
+                if !self.idb.get_cmt(from).unwrap_or_default().contains(PREFIX) {
+                    self.idb.append_cmt(from, desc)?;
+                }
             }
         }
 
