@@ -351,12 +351,12 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
 
     eprintln!("[*] Loading known bad API function names");
     let known_bad =
-        KnownBadFunctions::load().context("Failed to load known bad API function names")?;
+        KnownBadFunctions::load().context("failed to load known bad API function names")?;
 
     // Open the target binary, run auto-analysis, and keep results.
     eprintln!("[*] Analyzing binary file `{}`", filepath.display());
     let idb = IDB::open_with(filepath, true, true)
-        .with_context(|| format!("Failed to analyze binary file `{}`", filepath.display()))?;
+        .with_context(|| format!("failed to analyze binary file `{}`", filepath.display()))?;
     eprintln!("[+] Successfully analyzed binary file");
     eprintln!();
 
@@ -369,7 +369,7 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     let found = BadFunctions::find_all(&idb, &known_bad);
     let marked = CallMarker::new(&idb)
         .mark_all(&found)
-        .context("Failed to find bad API function calls")?;
+        .context("failed to find bad API function calls")?;
 
     eprintln!();
     eprintln!("[+] Marked {marked} new call locations");

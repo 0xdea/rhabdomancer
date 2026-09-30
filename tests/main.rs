@@ -389,7 +389,7 @@ fn check_missing_binary_error(result: anyhow::Result<BookmarkIndex>) -> anyhow::
         .err()
         .context("expected an error for a missing binary")?;
     assert!(
-        format!("{err:#}").contains("Failed to analyze binary file"),
+        format!("{err:#}").contains("failed to analyze binary file"),
         "wrong error returned: {err:#}"
     );
     eprintln!("Ok.");
