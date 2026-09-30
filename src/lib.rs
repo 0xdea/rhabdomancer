@@ -347,22 +347,16 @@ impl<'a> CallMarker<'a> {
 /// binary file or finding bad API calls.
 pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     let start = Instant::now();
+    let filepath = filepath.as_ref();
 
     eprintln!("[*] Loading known bad API function names");
     let known_bad =
         KnownBadFunctions::load().context("Failed to load known bad API function names")?;
 
     // Open the target binary, run auto-analysis, and keep results.
-    eprintln!(
-        "[*] Analyzing binary file `{}`",
-        filepath.as_ref().display()
-    );
-    let idb = IDB::open_with(&filepath, true, true).with_context(|| {
-        format!(
-            "Failed to analyze binary file `{}`",
-            filepath.as_ref().display()
-        )
-    })?;
+    eprintln!("[*] Analyzing binary file `{}`", filepath.display());
+    let idb = IDB::open_with(filepath, true, true)
+        .with_context(|| format!("Failed to analyze binary file `{}`", filepath.display()))?;
     eprintln!("[+] Successfully analyzed binary file");
     eprintln!();
 
@@ -381,7 +375,7 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     eprintln!("[+] Marked {marked} new call locations");
     eprintln!(
         "[+] Done processing binary file `{}` in {:.1} seconds",
-        filepath.as_ref().display(),
+        filepath.display(),
         start.elapsed().as_secs_f64()
     );
     Ok(marked)
