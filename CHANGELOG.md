@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactor `BadFunctions` to use a single ordered map.
 - Return marked call location counts instead of updating a shared counter.
 - Split `.plt` segment handling and call marking out of `BadFunctions` into `PltSegments` and `CallMarker`.
+- Walk XREF chains with `iter::successors` and replace the `BADADDR` sentinel with `Option` combinators.
 - Improve integration tests.
 - Improve code style.
 - Update documentation.

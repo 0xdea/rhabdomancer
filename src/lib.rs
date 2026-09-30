@@ -4,15 +4,14 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
 
 use std::collections::{BTreeMap, HashMap};
-use std::env;
 use std::ops::Range;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
+use std::{env, iter};
 
 use anyhow::Context as _;
 use config::{Config, ConfigError, File};
 use idalib::bookmarks::BookmarkIndex;
-use idalib::ffi::BADADDR;
 use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
@@ -277,60 +276,61 @@ impl<'a> CallMarker<'a> {
 
     /// Iteratively traverses XREFs and marks call locations.
     ///
-    /// An explicit work stack is used instead of recursion so that binaries with
-    /// very long XREF chains or deep .plt indirection don't overflow the stack.
+    /// Each XREF chain is walked with [`iter::successors`]. A thunk's own chain is
+    /// walked as soon as it's found, as recursion would, but on an explicit stack
+    /// of chains so that deep .plt indirection can't overflow the call stack.
     ///
     /// Returns the number of newly marked call locations.
-    #[expect(clippy::else_if_without_else, reason = "else branch would be empty")]
     fn traverse_xrefs(&self, first_xref: XRef<'_>, desc: &str) -> Result<BookmarkIndex, IDAError> {
+        let bookmarks = self.idb.bookmarks();
         let mut marked = BookmarkIndex::default();
 
-        // Each entry in the stack is the head of an XREF chain still to be processed.
-        let mut stack = vec![first_xref];
+        // Each entry in the stack is an XREF chain still being walked.
+        let mut chains = vec![iter::successors(Some(first_xref), XRef::next_to)];
 
-        while let Some(xref) = stack.pop() {
+        while let Some(chain) = chains.last_mut() {
+            let Some(xref) = chain.next() else {
+                chains.pop();
+                continue;
+            };
             let from = xref.from();
-            let is_code = xref.is_code();
-
-            // Queue the next XREF in the chain before processing the current one.
-            if let Some(next) = xref.next_to() {
-                stack.push(next);
-            }
 
             if self.plt.contains(from) {
-                // Handle .plt indirection in ELF binaries by queueing the thunk's own XREF
-                // chain for later processing.
-                let target = self
+                // Handle .plt indirection in ELF binaries by walking the thunk's own XREF
+                // chain next.
+                if let Some(thunk) = self
                     .idb
                     .function_at(from)
-                    .map_or_else(|| BADADDR.into(), |func| func.start_address());
-                if let Some(thunk) = self.idb.first_xref_to(target, XRefQuery::ALL) {
-                    stack.push(thunk);
-                }
-            } else if is_code {
-                // Print address with caller function name if available.
-                let caller = self.idb.function_at(from).map_or_else(
-                    || "[unknown]".into(),
-                    |func| func.name().unwrap_or_else(|| "[no name]".into()),
-                );
-                println!("{from:#X} in {caller}");
-
-                // Add a bookmark if not already present to mark the call location.
-                if !self
-                    .idb
-                    .bookmarks()
-                    .get_description(from)
-                    .unwrap_or_default()
-                    .contains(PREFIX)
+                    .and_then(|func| self.idb.first_xref_to(func.start_address(), XRefQuery::ALL))
                 {
-                    self.idb.bookmarks().mark(from, desc)?;
-                    marked = marked.saturating_add(1);
+                    chains.push(iter::successors(Some(thunk), XRef::next_to));
                 }
+                continue;
+            }
+            if !xref.is_code() {
+                continue;
+            }
 
-                // Add a comment if not already present to mark the call location.
-                if !self.idb.get_cmt(from).unwrap_or_default().contains(PREFIX) {
-                    self.idb.append_cmt(from, desc)?;
-                }
+            // Print address with caller function name if available.
+            let caller = self.idb.function_at(from).map_or_else(
+                || "[unknown]".into(),
+                |func| func.name().unwrap_or_else(|| "[no name]".into()),
+            );
+            println!("{from:#X} in {caller}");
+
+            // Add a bookmark if not already present to mark the call location.
+            if !bookmarks
+                .get_description(from)
+                .unwrap_or_default()
+                .contains(PREFIX)
+            {
+                bookmarks.mark(from, desc)?;
+                marked = marked.saturating_add(1);
+            }
+
+            // Add a comment if not already present to mark the call location.
+            if !self.idb.get_cmt(from).unwrap_or_default().contains(PREFIX) {
+                self.idb.append_cmt(from, desc)?;
             }
         }
 
