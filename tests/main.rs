@@ -2,7 +2,7 @@
 
 #![expect(clippy::panic_in_result_fn, reason = "panics are allowed in test code")]
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::{env, fs, process};
 
 use anyhow::Context as _;
@@ -21,6 +21,8 @@ const IDB_EXTENSIONS: [&str; 6] = ["i64", "id0", "id1", "id2", "nam", "til"];
 
 /// Target binary.
 const FILENAME: &str = "./tests/data/ls";
+/// Target binary without calls to known bad API functions.
+const NO_CALLS: &str = "./tests/data/no_calls";
 /// Target binary that doesn't exist.
 const MISSING: &str = "./tests/data/missing";
 
@@ -55,6 +57,10 @@ medium = ["_strcpy"]
 low = []
 "#;
 
+/// Label of the configuration file that the tests never write, to test a
+/// missing configuration.
+const MISSING_CONFIG: &str = "missing";
+
 /// Custom harness for integration tests.
 fn main() -> anyhow::Result<()> {
     // Force IDA to stay quiet.
@@ -63,6 +69,8 @@ fn main() -> anyhow::Result<()> {
     test_default_configuration()?;
     test_custom_configuration()?;
     test_invalid_configuration()?;
+    test_missing_configuration()?;
+    test_binary_without_calls()?;
     test_missing_binary()?;
 
     eprintln!();
@@ -133,6 +141,43 @@ fn test_invalid_configuration() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Runs rhabdomancer with a configuration file that doesn't exist and checks
+/// that it fails before analyzing the binary.
+fn test_missing_configuration() -> anyhow::Result<()> {
+    reset_idb(FILENAME)?;
+    let missing_config = config_path(MISSING_CONFIG);
+    if missing_config.is_file() {
+        fs::remove_file(&missing_config)?;
+    }
+
+    let result = run_with_config_path(FILENAME, &missing_config);
+    eprintln!();
+    check_missing_configuration_error(result, &missing_config)?;
+    check_no_idb_created(FILENAME);
+    eprintln!();
+    Ok(())
+}
+
+/// Runs rhabdomancer against a binary without calls to known bad API functions
+/// and checks that it marks no call locations.
+fn test_binary_without_calls() -> anyhow::Result<()> {
+    reset_idb(NO_CALLS)?;
+
+    let n_marks = rhabdomancer::run(NO_CALLS)?;
+    eprintln!();
+    check_number_of_marks(n_marks, 0);
+
+    let idb = open_idb(NO_CALLS)?;
+    check_number_of_bookmarks(&idb, n_marks);
+    check_number_of_comments(&idb, n_marks)?;
+    drop(idb);
+
+    // Remove the IDB file at the end.
+    reset_idb(NO_CALLS)?;
+    eprintln!();
+    Ok(())
+}
+
 /// Runs rhabdomancer against a binary that doesn't exist and checks that it
 /// fails without creating an IDB.
 fn test_missing_binary() -> anyhow::Result<()> {
@@ -168,10 +213,34 @@ fn open_idb(filename: &str) -> anyhow::Result<IDB> {
     Ok(idb)
 }
 
-/// Runs rhabdomancer against the binary at `filename` with `toml` written to a
-/// configuration file in a temporary directory, scoped to `label` and the
-/// current process, and selected via the `RHABDOMANCER_CONFIG` environment
-/// variable, then removes the configuration file and unsets the variable.
+/// Returns the path of a configuration file in a temporary directory, scoped to
+/// `label` and the current process.
+fn config_path(label: &str) -> PathBuf {
+    env::temp_dir().join(format!("rhabdomancer_{label}_{}.toml", process::id()))
+}
+
+/// Runs rhabdomancer against the binary at `filename` with the configuration
+/// file at `config_path`, selected via the `RHABDOMANCER_CONFIG` environment
+/// variable, then unsets the variable.
+fn run_with_config_path(filename: &str, config_path: &Path) -> anyhow::Result<BookmarkIndex> {
+    // Safety: safe to call as this is a single-threaded test binary.
+    unsafe {
+        env::set_var("RHABDOMANCER_CONFIG", config_path);
+    };
+
+    eprintln!();
+    let result = rhabdomancer::run(filename);
+
+    // Safety: safe to call as this is a single-threaded test binary.
+    unsafe {
+        env::remove_var("RHABDOMANCER_CONFIG");
+    };
+    result
+}
+
+/// Runs rhabdomancer against the binary at `filename` with `toml` written to
+/// the configuration file for `label` (see [`config_path`]), then removes the
+/// configuration file.
 ///
 /// Returns the result of the run, so that callers can check expected errors.
 ///
@@ -183,20 +252,9 @@ fn run_with_config(
     label: &str,
     toml: &str,
 ) -> anyhow::Result<anyhow::Result<BookmarkIndex>> {
-    let config_path = env::temp_dir().join(format!("rhabdomancer_{label}_{}.toml", process::id()));
+    let config_path = config_path(label);
     fs::write(&config_path, toml)?;
-    // Safety: safe to call as this is a single-threaded test binary.
-    unsafe {
-        env::set_var("RHABDOMANCER_CONFIG", &config_path);
-    };
-
-    eprintln!();
-    let result = rhabdomancer::run(filename);
-
-    // Safety: safe to call as this is a single-threaded test binary.
-    unsafe {
-        env::remove_var("RHABDOMANCER_CONFIG");
-    };
+    let result = run_with_config_path(filename, &config_path);
     fs::remove_file(&config_path)?;
     Ok(result)
 }
@@ -298,6 +356,25 @@ fn check_invalid_configuration_error(result: anyhow::Result<BookmarkIndex>) -> a
         .context("expected an error for an invalid configuration")?;
     assert!(
         format!("{err:#}").contains("`strcpy` is listed under multiple priorities"),
+        "wrong error returned: {err:#}"
+    );
+    eprintln!("Ok.");
+    Ok(())
+}
+
+/// Checks that `run` returns the expected error for the missing configuration
+/// file at `config_path`.
+fn check_missing_configuration_error(
+    result: anyhow::Result<BookmarkIndex>,
+    config_path: &Path,
+) -> anyhow::Result<()> {
+    eprint!("[*] Checking missing configuration returns an error... ");
+    let err = result
+        .err()
+        .context("expected an error for a missing configuration")?;
+    let expected = format!("configuration file \"{}\" not found", config_path.display());
+    assert!(
+        format!("{err:#}").contains(&expected),
         "wrong error returned: {err:#}"
     );
     eprintln!("Ok.");
