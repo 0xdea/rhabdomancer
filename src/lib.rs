@@ -20,10 +20,10 @@ use toml::de::Error as TomlError;
 /// Prefix of the tags in the bookmarks and comments added by rhabdomancer,
 /// e.g., `[BAD 0]`.
 ///
-/// This is part of the public API: search for it to find rhabdomancer's
-/// annotations in an IDB. Changing it breaks compatibility with IDBs annotated
-/// by previous versions.
-pub const PREFIX: &str = "[BAD ";
+/// Users and scripts search IDBs for these tags (the annotation format is
+/// documented in the README), and IDBs annotated by previous versions carry
+/// the same prefix, so it must never change.
+const PREFIX: &str = "[BAD ";
 
 /// Priority of bad API functions.
 ///

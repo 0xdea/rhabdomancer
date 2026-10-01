@@ -12,9 +12,8 @@ use idalib::idb::IDB;
 
 /// Prefix of the bookmarks and comments added by rhabdomancer.
 ///
-/// Deliberately a literal rather than `rhabdomancer::PREFIX`: users and scripts
-/// search IDBs for this text, so an accidental change to the production
-/// constant must fail the tests.
+/// Deliberately a literal: users and scripts search IDBs for this text, so an
+/// accidental change to the tags that rhabdomancer writes must fail the tests.
 const BAD_PREFIX: &str = "[BAD ";
 
 /// Extensions of the files that make up an IDB, packed (`i64`) or unpacked.

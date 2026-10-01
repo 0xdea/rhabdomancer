@@ -102,7 +102,9 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 7. Enjoy your results conveniently collected into an IDA window.
 
 > [!NOTE]
-> Rhabdomancer also adds comments at marked call locations.
+> Rhabdomancer also adds comments at marked call locations. Both bookmarks and comments are tagged as
+> `[BAD n] <function_name>`, where `n` is the priority tier (0 = high, 1 = medium, 2 = low), so that scripts can
+> search IDBs for them. This format is stable across releases.
 
 ## Compatibility
 

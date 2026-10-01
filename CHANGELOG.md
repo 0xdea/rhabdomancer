@@ -34,6 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve code style.
 - Update documentation.
 
+### Removed
+
+- Make `PREFIX` private; the annotation format is now documented in the README.
+
 ### Fixed
 
 - Remove duplicate `strtrns` entry with medium priority.
