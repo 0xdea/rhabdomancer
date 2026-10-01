@@ -91,11 +91,11 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 
 1. Make sure IDA is properly configured with a valid license.
 2. Optionally customize the list of known bad API functions: copy
-   [`conf/rhabdomancer.toml`](https://github.com/0xdea/rhabdomancer/blob/master/conf/rhabdomancer.toml) (pick the
-   tag that matches your installed version for its exact built-in list), edit the copy, and set the
-   `RHABDOMANCER_CONFIG` environment variable to its path. Otherwise (or if the variable is empty), the built-in list
-   is used, which is embedded in the binary at build time from `conf/rhabdomancer.toml` (editing that file requires
-   a rebuild).
+   [`conf/rhabdomancer.toml`](https://github.com/0xdea/rhabdomancer/blob/master/conf/rhabdomancer.toml) (pick the tag
+   that matches your installed version for its exact built-in list), edit the copy, and set the `RHABDOMANCER_CONFIG`
+   environment variable to its path. The file must define the `high`, `medium`, and `low` arrays, and no other keys.
+   Otherwise (or if the variable is empty), the built-in list is used, which is embedded in the binary at build time
+   from `conf/rhabdomancer.toml` (editing that file requires a rebuild).
 3. Make sure the `IDADIR` environment variable is set if your IDA installation is in a non-standard location.
 4. Run as follows:
    ```sh

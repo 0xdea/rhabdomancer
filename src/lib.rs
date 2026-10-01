@@ -752,7 +752,9 @@ mod tests {
 
     #[test]
     fn parse_rejects_invalid_toml() {
-        let result = KnownBadFunctions::parse("high = [\"strcpy\"\n");
+        // The rest of the configuration is valid, so that only the syntax error
+        // (the unclosed array) can make parsing fail.
+        let result = KnownBadFunctions::parse("high = [\"strcpy\"\nmedium = []\nlow = []\n");
         assert!(result.is_err(), "invalid TOML should be rejected");
     }
 
