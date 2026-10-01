@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Walk each XREF chain fully before the chains of the `.plt` thunks it references (can change the order of
   listed call sites).
 - Replace the `config` crate with `toml` to load the configuration file.
+- Embed the default configuration in the binary, so that it no longer depends on the source tree; set
+  `RHABDOMANCER_CONFIG` to use a custom one (editing `conf/rhabdomancer.toml` now requires a rebuild; an empty
+  value counts as unset).
 - Lowercase error messages, following the Rust API Guidelines.
 - Improve integration tests.
 - Improve code style.

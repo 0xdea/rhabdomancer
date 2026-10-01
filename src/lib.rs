@@ -25,6 +25,10 @@ use toml::de::Error as TomlError;
 /// the same prefix, so it must never change.
 const PREFIX: &str = "[BAD ";
 
+/// Default configuration, embedded from `conf/rhabdomancer.toml` at build time
+/// so that the binary doesn't depend on the source tree.
+const DEFAULT_CONFIG: &str = include_str!("../conf/rhabdomancer.toml");
+
 /// Priority of bad API functions.
 ///
 /// Variants are declared from highest to lowest priority: the derived [`Ord`]
@@ -89,20 +93,25 @@ struct KnownBadFunctions {
 }
 
 impl KnownBadFunctions {
-    /// Populates the list of bad API function names from the configuration file.
+    /// Populates the list of bad API function names from the configuration file
+    /// at the path in the `RHABDOMANCER_CONFIG` environment variable if set, or
+    /// from the built-in [`DEFAULT_CONFIG`] otherwise. An empty value counts as
+    /// unset, so that clearing the variable restores the built-in configuration.
     ///
     /// # Errors
     ///
-    /// Returns [`anyhow::Error`] if the configuration file can't be read or
-    /// parsed (see [`KnownBadFunctions::parse`]).
+    /// Returns [`anyhow::Error`] if the configuration file can't be read, or if
+    /// the configuration can't be parsed (see [`KnownBadFunctions::parse`]).
     fn load() -> anyhow::Result<Self> {
-        // Use configuration file path specified in the `RHABDOMANCER_CONFIG`
-        // environment variable if set, otherwise fall back to the default file
-        // location.
-        let path = env::var_os("RHABDOMANCER_CONFIG").map_or_else(
-            || Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml"),
-            PathBuf::from,
-        );
+        let Some(path) = env::var_os("RHABDOMANCER_CONFIG")
+            .filter(|path| !path.is_empty())
+            .map(PathBuf::from)
+        else {
+            eprintln!(
+                "[*] Using built-in configuration (set RHABDOMANCER_CONFIG to use a custom one)"
+            );
+            return Self::parse(DEFAULT_CONFIG).context("failed to parse built-in configuration");
+        };
 
         eprintln!("[*] Using configuration file `{}`", path.display());
         let text = fs::read_to_string(&path)
@@ -711,8 +720,7 @@ mod tests {
 
     #[test]
     fn default_configuration_is_valid() -> Result<(), TomlError> {
-        let toml = include_str!("../conf/rhabdomancer.toml");
-        let known_bad = KnownBadFunctions::parse(toml)?;
+        let known_bad = KnownBadFunctions::parse(DEFAULT_CONFIG)?;
 
         assert!(
             !known_bad.functions.is_empty(),

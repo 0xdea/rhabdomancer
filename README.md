@@ -30,7 +30,8 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
   - [BAD 0] High priority - Functions that are generally considered insecure.
   - [BAD 1] Medium priority - Interesting functions that should be checked for insecure use cases.
   - [BAD 2] Low priority - Code paths involving these functions should be carefully checked.
-- The list of known bad API functions can be easily customized by editing `conf/rhabdomancer.toml`.
+- The list of known bad API functions is built in and can be easily customized with a configuration file based on
+  `conf/rhabdomancer.toml`.
 
 ## Articles
 
@@ -89,8 +90,12 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 ## Usage
 
 1. Make sure IDA is properly configured with a valid license.
-2. Optionally customize the list of known bad API functions in `conf/rhabdomancer.toml`. You can override the default
-   configuration file location by setting the `RHABDOMANCER_CONFIG` environment variable.
+2. Optionally customize the list of known bad API functions: copy
+   [`conf/rhabdomancer.toml`](https://github.com/0xdea/rhabdomancer/blob/master/conf/rhabdomancer.toml) (pick the
+   tag that matches your installed version for its exact built-in list), edit the copy, and set the
+   `RHABDOMANCER_CONFIG` environment variable to its path. Otherwise (or if the variable is empty), the built-in list
+   is used, which is embedded in the binary at build time from `conf/rhabdomancer.toml` (editing that file requires
+   a rebuild).
 3. Make sure the `IDADIR` environment variable is set if your IDA installation is in a non-standard location.
 4. Run as follows:
    ```sh

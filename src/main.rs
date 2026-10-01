@@ -49,8 +49,8 @@ fn usage(prog: &str) -> ExitCode {
     eprintln!("{prog} <binary_file>");
     eprintln!();
     eprintln!(
-        "To override the default rhabdomancer.toml configuration file\n\
-        location, set the RHABDOMANCER_CONFIG environment variable."
+        "To use a custom configuration file instead of the built-in one,\n\
+        set the `RHABDOMANCER_CONFIG` environment variable to its path."
     );
 
     ExitCode::FAILURE
