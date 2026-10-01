@@ -228,15 +228,39 @@ struct CallMarker<'a> {
     /// Address ranges of the IDB's .plt segments, used to follow thunk indirection
     /// in ELF binaries.
     plt: PltSegments,
+    /// Addresses that already carry one of rhabdomancer's bookmarks, including
+    /// the ones added during this run.
+    bookmarked: HashSet<Address>,
 }
 
 impl<'a> CallMarker<'a> {
     /// Creates a marker for `idb`, collecting the address ranges of its .plt
-    /// segments.
+    /// segments and the addresses that already carry one of rhabdomancer's
+    /// bookmarks.
+    ///
+    /// Every bookmark is checked, rather than looking one up by address: IDA
+    /// overlays bookmarks added at an already bookmarked address, and a lookup by
+    /// address returns only one of them, which may be a user's own.
+    ///
+    /// A bookmark is ours if its description contains [`PREFIX`] anywhere, not
+    /// only at the start, so that one of our bookmarks that a user has edited by
+    /// prepending text is still recognized and not marked again. The trade-off
+    /// is that a user's own bookmark merely mentioning the prefix counts as ours.
     fn new(idb: &'a IDB) -> Self {
+        let bookmarks = idb.bookmarks();
         Self {
             idb,
             plt: PltSegments::new(idb),
+            bookmarked: (0..bookmarks.len())
+                // Is it ours?
+                .filter(|&idx| {
+                    bookmarks
+                        .get_description_by_index(idx)
+                        .is_some_and(|desc| desc.contains(PREFIX))
+                })
+                // Where is it?
+                .filter_map(|idx| bookmarks.get_address(idx))
+                .collect(),
         }
     }
 
@@ -244,7 +268,7 @@ impl<'a> CallMarker<'a> {
     ///
     /// Returns the total number of newly marked call locations, stopping at the
     /// first error.
-    fn mark_all(&self, found: &BadFunctions<'_>) -> Result<BookmarkIndex, IDAError> {
+    fn mark_all(&mut self, found: &BadFunctions<'_>) -> Result<BookmarkIndex, IDAError> {
         found
             .iter()
             .map(|(priority, _, func, name)| self.mark_calls(func, priority, name))
@@ -256,7 +280,7 @@ impl<'a> CallMarker<'a> {
     ///
     /// Returns the number of newly marked call locations.
     fn mark_calls(
-        &self,
+        &mut self,
         func: &Function<'_>,
         priority: Priority,
         name: &str,
@@ -281,7 +305,7 @@ impl<'a> CallMarker<'a> {
     /// crafted or unusual binaries) can't make the traversal loop forever.
     ///
     /// Returns the number of newly marked call locations.
-    fn traverse_xrefs(&self, target: Address, desc: &str) -> Result<BookmarkIndex, IDAError> {
+    fn traverse_xrefs(&mut self, target: Address, desc: &str) -> Result<BookmarkIndex, IDAError> {
         let bookmarks = self.idb.bookmarks();
         let mut marked = BookmarkIndex::default();
 
@@ -317,16 +341,14 @@ impl<'a> CallMarker<'a> {
                 println!("{from:#X} in {caller}");
 
                 // Add a bookmark if not already present to mark the call location.
-                if !bookmarks
-                    .get_description(from)
-                    .unwrap_or_default()
-                    .contains(PREFIX)
-                {
+                if self.bookmarked.insert(from) {
                     bookmarks.mark(from, desc)?;
                     marked = marked.saturating_add(1);
                 }
 
-                // Add a comment if not already present to mark the call location.
+                // Add a comment if not already present to mark the call location. The
+                // check uses `contains` because `append_cmt` adds our tag after any
+                // existing comment, so it isn't necessarily at the start.
                 if !self.idb.get_cmt(from).unwrap_or_default().contains(PREFIX) {
                     self.idb.append_cmt(from, desc)?;
                 }

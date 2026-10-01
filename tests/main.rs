@@ -6,6 +6,7 @@ use std::path::{Path, PathBuf};
 use std::{env, fs, process};
 
 use anyhow::Context as _;
+use idalib::Address;
 use idalib::bookmarks::BookmarkIndex;
 use idalib::idb::IDB;
 
@@ -48,6 +49,12 @@ const DOUBLE_XREF_LISTING: &str = "
 0x7F4 in main
 ";
 
+/// Call site in `DOUBLE_XREF` where the tests add a bookmark of their own,
+/// as a user would.
+const USER_BOOKMARK_ADDR: Address = 0x7F4;
+/// Description of the bookmark that the tests add at `USER_BOOKMARK_ADDR`.
+const USER_BOOKMARK_DESC: &str = "user note";
+
 /// Label of the custom configuration file written by the tests to a temporary
 /// directory.
 const CUSTOM_CONFIG: &str = "custom";
@@ -87,6 +94,7 @@ fn main() -> anyhow::Result<()> {
     test_missing_configuration()?;
     test_binary_without_calls()?;
     test_thunk_with_repeated_xrefs()?;
+    test_user_bookmark_at_call_site()?;
     test_missing_binary()?;
 
     eprintln!();
@@ -216,6 +224,34 @@ fn test_thunk_with_repeated_xrefs() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Adds a bookmark of its own at a call site, as a user would, then runs
+/// rhabdomancer twice and checks that the second run marks no new call
+/// locations and that the user's bookmark is preserved (regression test for
+/// overlaid bookmarks hiding rhabdomancer's own).
+fn test_user_bookmark_at_call_site() -> anyhow::Result<()> {
+    reset_idb(DOUBLE_XREF)?;
+    add_user_bookmark(DOUBLE_XREF)?;
+
+    let n_marks = rhabdomancer::run(DOUBLE_XREF)?;
+    eprintln!();
+    check_number_of_marks(n_marks, N_MARKS_DOUBLE_XREF);
+
+    eprintln!();
+    let n_marks_new = rhabdomancer::run(DOUBLE_XREF)?;
+    eprintln!();
+    check_no_new_marks(n_marks_new);
+
+    let idb = open_idb(DOUBLE_XREF)?;
+    check_number_of_bookmarks(&idb, N_MARKS_DOUBLE_XREF.saturating_add(1));
+    check_user_bookmark_preserved(&idb);
+    drop(idb);
+
+    // Remove the IDB file at the end.
+    reset_idb(DOUBLE_XREF)?;
+    eprintln!();
+    Ok(())
+}
+
 /// Runs rhabdomancer against a binary that doesn't exist and checks that it
 /// fails without creating an IDB.
 fn test_missing_binary() -> anyhow::Result<()> {
@@ -249,6 +285,15 @@ fn open_idb(filename: &str) -> anyhow::Result<IDB> {
     idb.meta_mut().set_show_hidden_insns();
     idb.meta_mut().set_show_hidden_segms();
     Ok(idb)
+}
+
+/// Creates the IDB of the binary at `filename` with a bookmark at
+/// `USER_BOOKMARK_ADDR`, as a user would add it, and saves it.
+fn add_user_bookmark(filename: &str) -> anyhow::Result<()> {
+    let idb = IDB::open_with(filename, true, true)?;
+    idb.bookmarks()
+        .mark(USER_BOOKMARK_ADDR, USER_BOOKMARK_DESC)?;
+    Ok(())
 }
 
 /// Returns the path of a configuration file in a temporary directory, scoped to
@@ -414,6 +459,21 @@ fn check_custom_bookmark_descriptions(idb: &IDB) {
 fn check_listing(listing: &str, expected: &str) {
     eprint!("[*] Checking listing of call sites... ");
     assert_eq!(listing, expected, "wrong listing of call sites");
+    eprintln!("Ok.");
+}
+
+/// Checks that the bookmark added at `USER_BOOKMARK_ADDR` is still there,
+/// unchanged.
+fn check_user_bookmark_preserved(idb: &IDB) {
+    eprint!("[*] Checking user bookmark is preserved... ");
+    let preserved = (0..idb.bookmarks().len()).any(|idx| {
+        idb.bookmarks().get_address(idx) == Some(USER_BOOKMARK_ADDR)
+            && idb.bookmarks().get_description_by_index(idx).as_deref() == Some(USER_BOOKMARK_DESC)
+    });
+    assert!(
+        preserved,
+        "user bookmark at {USER_BOOKMARK_ADDR:#X} was lost or changed"
+    );
     eprintln!("Ok.");
 }
 
