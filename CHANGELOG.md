@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add regression tests for duplicated call-site lines and for call sites with a user's bookmark or comment, with
   an AArch64 test binary.
 - Add integration tests for a missing configuration file and a binary without calls to known bad API functions.
+- Add an integration test for the priority order of listed bad functions.
 
 ### Changed
 

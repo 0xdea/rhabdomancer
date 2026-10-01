@@ -109,6 +109,7 @@ fn main() -> anyhow::Result<()> {
     test_missing_configuration()?;
     test_binary_without_calls()?;
     test_thunk_with_repeated_xrefs()?;
+    test_priority_order()?;
     test_user_bookmark_at_call_site()?;
     test_user_comment_at_call_site()?;
     test_missing_binary()?;
@@ -236,6 +237,23 @@ fn test_thunk_with_repeated_xrefs() -> anyhow::Result<()> {
 
     // Remove the IDB file at the end.
     reset_idb(DOUBLE_XREF)?;
+    eprintln!();
+    Ok(())
+}
+
+/// Runs the rhabdomancer binary against `FILENAME` with the default
+/// configuration and checks that bad functions are listed from highest to
+/// lowest priority.
+fn test_priority_order() -> anyhow::Result<()> {
+    reset_idb(FILENAME)?;
+
+    eprintln!();
+    let listing = run_binary(FILENAME)?;
+    eprintln!();
+    check_priority_order(&listing)?;
+
+    // Remove the IDB file at the end.
+    reset_idb(FILENAME)?;
     eprintln!();
     Ok(())
 }
@@ -513,6 +531,29 @@ fn check_listing(listing: &str, expected: &str) {
     eprint!("[*] Checking listing of call sites... ");
     assert_eq!(listing, expected, "wrong listing of call sites");
     eprintln!("Ok.");
+}
+
+/// Checks that the bad function headers in `listing` (`[BAD n] <name>`) are
+/// ordered by priority level, from `0` (highest) to `2` (lowest), and that
+/// `listing` has more than one level, so that the check isn't vacuous.
+fn check_priority_order(listing: &str) -> anyhow::Result<()> {
+    eprint!("[*] Checking bad functions are listed by priority... ");
+    let levels = listing
+        .lines()
+        .filter_map(|line| line.strip_prefix(BAD_PREFIX))
+        .map(|tag| tag.chars().next()?.to_digit(10))
+        .collect::<Option<Vec<_>>>()
+        .context("invalid priority level in listing")?;
+    assert!(
+        levels.is_sorted(),
+        "bad functions not listed by priority: {levels:?}"
+    );
+    assert!(
+        levels.first() != levels.last(),
+        "listing should have more than one priority level: {levels:?}"
+    );
+    eprintln!("Ok.");
+    Ok(())
 }
 
 /// Checks that the bookmark added at `USER_BOOKMARK_ADDR` is still there,
