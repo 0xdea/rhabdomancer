@@ -113,6 +113,8 @@ fn main() -> anyhow::Result<()> {
     test_user_bookmark_at_call_site()?;
     test_user_comment_at_call_site()?;
     test_missing_binary()?;
+    test_invalid_arguments()?;
+    test_empty_configuration_variable()?;
 
     eprintln!();
     Ok(())
@@ -327,6 +329,38 @@ fn test_missing_binary() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Runs the rhabdomancer binary with invalid arguments and checks that each
+/// time it prints usage information and fails without analyzing anything.
+fn test_invalid_arguments() -> anyhow::Result<()> {
+    reset_idb(NO_CALLS)?;
+
+    for args in [&[][..], &[NO_CALLS, NO_CALLS], &["-h"], &["--help"]] {
+        eprintln!();
+        let output = run_binary_with(args, None)?;
+        check_usage(&output, args);
+    }
+    check_no_idb_created(NO_CALLS);
+    eprintln!();
+    Ok(())
+}
+
+/// Runs the rhabdomancer binary with `RHABDOMANCER_CONFIG` set to an empty
+/// value and checks that it uses the built-in configuration, rather than
+/// failing to read a configuration file with an empty path.
+fn test_empty_configuration_variable() -> anyhow::Result<()> {
+    reset_idb(NO_CALLS)?;
+
+    eprintln!();
+    let output = run_binary_with(&[NO_CALLS], Some(""))?;
+    eprintln!();
+    check_empty_configuration_variable(&output);
+
+    // Remove the IDB file at the end.
+    reset_idb(NO_CALLS)?;
+    eprintln!();
+    Ok(())
+}
+
 /// Removes the IDB files of the binary at `filename`, packed or unpacked, if
 /// they exist.
 fn reset_idb(filename: &str) -> anyhow::Result<()> {
@@ -424,17 +458,33 @@ fn run_with_config(
 /// Returns an error if the binary cannot be run, fails, or prints non-UTF-8
 /// output.
 fn run_binary(filename: &str) -> anyhow::Result<String> {
-    let output = process::Command::new(env!("CARGO_BIN_EXE_rhabdomancer"))
-        .arg(filename)
-        .env_remove("RHABDOMANCER_CONFIG")
-        .output()?;
-    eprint!("{}", String::from_utf8_lossy(&output.stderr));
+    let output = run_binary_with(&[filename], None)?;
     anyhow::ensure!(
         output.status.success(),
         "rhabdomancer failed: {}",
         output.status
     );
     Ok(String::from_utf8(output.stdout)?)
+}
+
+/// Runs the rhabdomancer binary with `args`, with `RHABDOMANCER_CONFIG` set to
+/// `config` if any, or removed otherwise, forwards its stderr, and returns its
+/// output.
+///
+/// # Errors
+///
+/// Returns an error if the binary cannot be run.
+fn run_binary_with(args: &[&str], config: Option<&str>) -> anyhow::Result<process::Output> {
+    let mut command = process::Command::new(env!("CARGO_BIN_EXE_rhabdomancer"));
+    command.args(args);
+    if let Some(config) = config {
+        command.env("RHABDOMANCER_CONFIG", config);
+    } else {
+        command.env_remove("RHABDOMANCER_CONFIG");
+    }
+    let output = command.output()?;
+    eprint!("{}", String::from_utf8_lossy(&output.stderr));
+    Ok(output)
 }
 
 /// Checks the number of marked call locations.
@@ -580,6 +630,37 @@ fn check_user_comment_marked(idb: &IDB) {
         cmt.as_deref(),
         Some(USER_COMMENT_MARKED),
         "wrong comment at {USER_COMMENT_ADDR:#X}"
+    );
+    eprintln!("Ok.");
+}
+
+/// Checks that the rhabdomancer binary run with the invalid arguments `args`
+/// printed usage information to stderr, nothing to stdout, and failed.
+fn check_usage(output: &process::Output, args: &[&str]) {
+    eprint!("[*] Checking usage is printed for arguments {args:?}... ");
+    assert!(
+        !output.status.success(),
+        "invalid arguments {args:?} should fail"
+    );
+    assert!(
+        String::from_utf8_lossy(&output.stderr).contains("Usage:"),
+        "usage information should be printed for arguments {args:?}"
+    );
+    assert!(
+        output.stdout.is_empty(),
+        "nothing should be printed to stdout for arguments {args:?}"
+    );
+    eprintln!("Ok.");
+}
+
+/// Checks that the rhabdomancer binary run with an empty `RHABDOMANCER_CONFIG`
+/// succeeded, i.e., used the built-in configuration.
+fn check_empty_configuration_variable(output: &process::Output) {
+    eprint!("[*] Checking empty RHABDOMANCER_CONFIG uses the built-in configuration... ");
+    assert!(
+        output.status.success(),
+        "empty RHABDOMANCER_CONFIG should use the built-in configuration: {}",
+        output.status
     );
     eprintln!("Ok.");
 }
