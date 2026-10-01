@@ -88,6 +88,40 @@ struct KnownBadFunctions {
     functions: HashMap<String, Priority>,
 }
 
+impl KnownBadFunctions {
+    /// Populates the list of bad API function names from the configuration file.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ConfigError`] if the configuration file can't be read or parsed,
+    /// or if a name is empty or is listed under multiple priorities, once
+    /// normalized.
+    fn load() -> Result<Self, ConfigError> {
+        // Use configuration file path specified in the `RHABDOMANCER_CONFIG`
+        // environment variable if set, otherwise fall back to the default file
+        // location.
+        let path = env::var_os("RHABDOMANCER_CONFIG").map_or_else(
+            || Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml"),
+            PathBuf::from,
+        );
+
+        eprintln!("[*] Using configuration file `{}`", path.display());
+        Config::builder()
+            .add_source(File::from(path))
+            .build()?
+            .try_deserialize()
+    }
+
+    /// Returns the normalized name and priority of the known bad API function with
+    /// the specified name, if any.
+    #[must_use]
+    fn lookup(&self, func_name: &str) -> Option<(&str, Priority)> {
+        self.functions
+            .get_key_value(normalize_name(func_name))
+            .map(|(name, &priority)| (name.as_str(), priority))
+    }
+}
+
 impl TryFrom<KnownBadFunctionsConfig> for KnownBadFunctions {
     type Error = String;
 
@@ -121,40 +155,6 @@ impl TryFrom<KnownBadFunctionsConfig> for KnownBadFunctions {
         }
 
         Ok(Self { functions })
-    }
-}
-
-impl KnownBadFunctions {
-    /// Populates the list of bad API function names from the configuration file.
-    ///
-    /// # Errors
-    ///
-    /// Returns [`ConfigError`] if the configuration file can't be read or parsed,
-    /// or if a name is empty or is listed under multiple priorities, once
-    /// normalized.
-    fn load() -> Result<Self, ConfigError> {
-        // Use configuration file path specified in the `RHABDOMANCER_CONFIG`
-        // environment variable if set, otherwise fall back to the default file
-        // location.
-        let path = env::var_os("RHABDOMANCER_CONFIG").map_or_else(
-            || Path::new(env!("CARGO_MANIFEST_DIR")).join("conf/rhabdomancer.toml"),
-            PathBuf::from,
-        );
-
-        eprintln!("[*] Using configuration file `{}`", path.display());
-        Config::builder()
-            .add_source(File::from(path))
-            .build()?
-            .try_deserialize()
-    }
-
-    /// Returns the normalized name and priority of the known bad API function with
-    /// the specified name, if any.
-    #[must_use]
-    fn lookup(&self, func_name: &str) -> Option<(&str, Priority)> {
-        self.functions
-            .get_key_value(normalize_name(func_name))
-            .map(|(name, &priority)| (name.as_str(), priority))
     }
 }
 
