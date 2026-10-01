@@ -87,6 +87,13 @@ fn main() -> anyhow::Result<()> {
     // Force IDA to stay quiet.
     idalib::force_batch_mode();
 
+    // Make sure the scenarios that expect the built-in configuration don't pick
+    // up a custom one from the environment.
+    // Safety: safe to call as this is a single-threaded test binary.
+    unsafe {
+        env::remove_var("RHABDOMANCER_CONFIG");
+    };
+
     test_default_configuration()?;
     test_custom_configuration()?;
     test_invalid_configuration()?;
