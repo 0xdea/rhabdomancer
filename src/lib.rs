@@ -54,7 +54,7 @@ impl Priority {
         }
     }
 
-    /// Returns a description for a bad API function with the specified name, e.g.,
+    /// Returns a description for a bad API function named `func_name`, e.g.,
     /// `[BAD 0] strcpy`.
     ///
     /// The tag is built from [`PREFIX`], so that it always stays in sync with it.
@@ -112,8 +112,8 @@ impl KnownBadFunctions {
             .try_deserialize()
     }
 
-    /// Returns the normalized name and priority of the known bad API function with
-    /// the specified name, if any.
+    /// Returns the normalized name and priority of the known bad API function
+    /// named `func_name`, if any.
     #[must_use]
     fn lookup(&self, func_name: &str) -> Option<(&str, Priority)> {
         self.functions
@@ -167,7 +167,7 @@ struct BadFunctions<'a> {
 }
 
 impl<'a> BadFunctions<'a> {
-    /// Finds bad API functions in the target binary.
+    /// Finds the functions in `idb` that are listed in `bad`.
     ///
     /// In ELF binaries, a bad API function usually matches twice: as its .plt
     /// stub (listed as a thunk) and as its import, whose traversal reaches the
@@ -219,7 +219,7 @@ impl PltSegments {
         }
     }
 
-    /// Checks if an address is in a .plt segment.
+    /// Checks if `addr` is in a .plt segment.
     ///
     /// Equivalent to IDA's `range_t::contains`, i.e., `start_ea <= addr < end_ea`,
     /// without any FFI calls.
@@ -275,8 +275,12 @@ impl<'a> CallMarker<'a> {
 
     /// Locates calls to the bad API functions in `found` and marks them.
     ///
-    /// Returns the total number of newly marked call locations, stopping at the
-    /// first error.
+    /// Returns the total number of newly marked call locations.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`IDAError`] if a bookmark or comment can't be added, stopping at
+    /// the first error.
     fn mark_all(&mut self, found: &BadFunctions<'_>) -> Result<BookmarkIndex, IDAError> {
         found
             .iter()
@@ -284,10 +288,13 @@ impl<'a> CallMarker<'a> {
             .sum()
     }
 
-    /// Locates calls to the specified function and marks them with its priority and
-    /// normalized name.
+    /// Locates calls to `func` and marks them with `priority` and `name`.
     ///
     /// Returns the number of newly marked call locations.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`IDAError`] if a bookmark or comment can't be added.
     fn mark_calls(
         &mut self,
         func: &Function<'_>,
@@ -314,6 +321,10 @@ impl<'a> CallMarker<'a> {
     /// crafted or unusual binaries) can't make the traversal loop forever.
     ///
     /// Returns the number of newly marked call locations.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`IDAError`] if a bookmark or comment can't be added.
     fn traverse_xrefs(&mut self, target: Address, desc: &str) -> Result<BookmarkIndex, IDAError> {
         let bookmarks = self.idb.bookmarks();
         let mut marked = BookmarkIndex::default();
@@ -376,8 +387,8 @@ impl<'a> CallMarker<'a> {
 ///
 /// # Errors
 ///
-/// Returns [`anyhow::Error`] in case something goes wrong with analyzing the
-/// binary file or finding bad API calls.
+/// Returns [`anyhow::Error`] if the configuration can't be loaded, the binary
+/// file can't be analyzed, or a call location can't be marked.
 pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     let start = Instant::now();
     let filepath = filepath.as_ref();
