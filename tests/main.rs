@@ -426,7 +426,7 @@ fn run_with_config_path(filename: &str, config_path: &Path) -> anyhow::Result<Bo
     result
 }
 
-/// Runs rhabdomancer against the binary at `filename` with `toml` written to
+/// Runs rhabdomancer against the binary at `filename` with `text` written to
 /// the configuration file for `label` (see [`config_path`]), then removes the
 /// configuration file.
 ///
@@ -438,10 +438,10 @@ fn run_with_config_path(filename: &str, config_path: &Path) -> anyhow::Result<Bo
 fn run_with_config(
     filename: &str,
     label: &str,
-    toml: &str,
+    text: &str,
 ) -> anyhow::Result<anyhow::Result<BookmarkIndex>> {
     let config_path = config_path(label);
-    fs::write(&config_path, toml)?;
+    fs::write(&config_path, text)?;
     let result = run_with_config_path(filename, &config_path);
     fs::remove_file(&config_path)?;
     Ok(result)
