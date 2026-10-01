@@ -70,7 +70,11 @@ impl Priority {
 
 /// Known bad API function names organized by priority, as listed in the
 /// configuration file.
+///
+/// Unknown keys are rejected, so that a misspelled priority (e.g., `meduim`)
+/// fails loudly instead of being silently ignored.
 #[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 struct KnownBadFunctionsConfig {
     /// High-priority known bad functions.
     high: Vec<String>,
@@ -716,6 +720,40 @@ mod tests {
                 .contains("`strtrns` is listed under multiple priorities")),
             "configuration with names listed under multiple priorities should be rejected"
         );
+    }
+
+    #[test]
+    fn parse_rejects_unknown_keys() {
+        let result =
+            KnownBadFunctions::parse("high = []\nmedium = []\nlow = []\nmeduim = [\"memcpy\"]\n");
+        assert!(
+            result.is_err_and(|err| err.to_string().contains("unknown field `meduim`")),
+            "configuration with unknown keys should be rejected"
+        );
+    }
+
+    #[test]
+    fn parse_rejects_missing_priorities() {
+        let result = KnownBadFunctions::parse("high = [\"strcpy\"]\nmedium = []\n");
+        assert!(
+            result.is_err_and(|err| err.to_string().contains("missing field `low`")),
+            "configuration with missing priorities should be rejected"
+        );
+    }
+
+    #[test]
+    fn parse_rejects_wrong_types() {
+        let result = KnownBadFunctions::parse("high = \"strcpy\"\nmedium = []\nlow = []\n");
+        assert!(
+            result.is_err_and(|err| err.to_string().contains("invalid type")),
+            "configuration with a string instead of an array should be rejected"
+        );
+    }
+
+    #[test]
+    fn parse_rejects_invalid_toml() {
+        let result = KnownBadFunctions::parse("high = [\"strcpy\"\n");
+        assert!(result.is_err(), "invalid TOML should be rejected");
     }
 
     #[test]

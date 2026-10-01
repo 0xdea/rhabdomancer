@@ -20,8 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Refactor `KnownBadFunctions` to use a single lookup table.
-- Reject configuration files that list the same function under multiple priorities or contain empty function names
-  (can break existing configurations).
+- Reject configuration files that list the same function under multiple priorities, contain empty function names,
+  or contain unknown keys (can break existing configurations).
 - Cache `.plt` segment address ranges to avoid repeated FFI lookups.
 - Fetch each bad function's name only once.
 - Refactor `BadFunctions` to use a single ordered map.
