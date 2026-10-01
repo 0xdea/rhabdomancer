@@ -23,6 +23,9 @@ const IDB_EXTENSIONS: [&str; 6] = ["i64", "id0", "id1", "id2", "nam", "til"];
 const FILENAME: &str = "./tests/data/ls";
 /// Target binary without calls to known bad API functions.
 const NO_CALLS: &str = "./tests/data/no_calls";
+/// ARM64 target binary whose `main` calls `system` through a .plt stub that
+/// IDA sees referencing the import more than once.
+const DOUBLE_XREF: &str = "./tests/data/double_xref";
 /// Target binary that doesn't exist.
 const MISSING: &str = "./tests/data/missing";
 
@@ -32,6 +35,18 @@ const N_MARKS: BookmarkIndex = 86;
 /// Expected number of marked call locations in `FILENAME` with
 /// `CUSTOM_CONFIG_TOML`.
 const N_MARKS_CUSTOM: BookmarkIndex = 13;
+/// Expected number of marked call locations in `DOUBLE_XREF`.
+const N_MARKS_DOUBLE_XREF: BookmarkIndex = 1;
+/// Expected stdout of rhabdomancer for `DOUBLE_XREF`, with the call site
+/// listed once per bad function, even though the .plt stub references the
+/// import more than once.
+const DOUBLE_XREF_LISTING: &str = "
+[BAD 0] system (thunk)
+0x7F4 in main
+
+[BAD 0] system
+0x7F4 in main
+";
 
 /// Label of the custom configuration file written by the tests to a temporary
 /// directory.
@@ -71,6 +86,7 @@ fn main() -> anyhow::Result<()> {
     test_invalid_configuration()?;
     test_missing_configuration()?;
     test_binary_without_calls()?;
+    test_thunk_with_repeated_xrefs()?;
     test_missing_binary()?;
 
     eprintln!();
@@ -178,6 +194,28 @@ fn test_binary_without_calls() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Runs the rhabdomancer binary against a binary whose .plt stub references a
+/// bad API function more than once, and checks that each call site is listed
+/// only once (regression test for walking the stub's XREFs once per reference).
+fn test_thunk_with_repeated_xrefs() -> anyhow::Result<()> {
+    reset_idb(DOUBLE_XREF)?;
+
+    let listing = run_binary(DOUBLE_XREF)?;
+    eprintln!();
+    check_listing(&listing, DOUBLE_XREF_LISTING);
+
+    let idb = open_idb(DOUBLE_XREF)?;
+    check_number_of_bookmarks(&idb, N_MARKS_DOUBLE_XREF);
+    check_number_of_comments(&idb, N_MARKS_DOUBLE_XREF)?;
+    check_comments_match_bookmarks(&idb)?;
+    drop(idb);
+
+    // Remove the IDB file at the end.
+    reset_idb(DOUBLE_XREF)?;
+    eprintln!();
+    Ok(())
+}
+
 /// Runs rhabdomancer against a binary that doesn't exist and checks that it
 /// fails without creating an IDB.
 fn test_missing_binary() -> anyhow::Result<()> {
@@ -257,6 +295,30 @@ fn run_with_config(
     let result = run_with_config_path(filename, &config_path);
     fs::remove_file(&config_path)?;
     Ok(result)
+}
+
+/// Runs the rhabdomancer binary against the binary at `filename` with the
+/// default configuration, forwards its stderr, and returns its stdout.
+///
+/// Unlike [`rhabdomancer::run`], this captures the listing of call sites that
+/// rhabdomancer prints to stdout.
+///
+/// # Errors
+///
+/// Returns an error if the binary cannot be run, fails, or prints non-UTF-8
+/// output.
+fn run_binary(filename: &str) -> anyhow::Result<String> {
+    let output = process::Command::new(env!("CARGO_BIN_EXE_rhabdomancer"))
+        .arg(filename)
+        .env_remove("RHABDOMANCER_CONFIG")
+        .output()?;
+    eprint!("{}", String::from_utf8_lossy(&output.stderr));
+    anyhow::ensure!(
+        output.status.success(),
+        "rhabdomancer failed: {}",
+        output.status
+    );
+    Ok(String::from_utf8(output.stdout)?)
 }
 
 /// Checks the number of marked call locations.
@@ -345,6 +407,13 @@ fn check_custom_bookmark_descriptions(idb: &IDB) {
             "custom configuration produced an unexpected bookmark description: {desc:?}"
         );
     }
+    eprintln!("Ok.");
+}
+
+/// Checks that the listing of call sites printed to stdout is `expected`.
+fn check_listing(listing: &str, expected: &str) {
+    eprint!("[*] Checking listing of call sites... ");
+    assert_eq!(listing, expected, "wrong listing of call sites");
     eprintln!("Ok.");
 }
 

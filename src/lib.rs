@@ -3,7 +3,7 @@
 #![cfg_attr(doc, doc = include_str!("../README.md"))]
 #![doc(html_logo_url = "https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png")]
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::ops::Range;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
@@ -269,37 +269,39 @@ impl<'a> CallMarker<'a> {
         }
 
         // Traverse XREFs and mark call locations.
-        self.idb
-            .first_xref_to(func.start_address(), XRefQuery::ALL)
-            .map_or(Ok(0), |cur| self.traverse_xrefs(cur, &desc))
+        self.traverse_xrefs(func.start_address(), &desc)
     }
 
-    /// Iteratively traverses XREFs and marks call locations.
+    /// Iteratively traverses the XREFs to `target` and marks call locations.
     ///
-    /// Each XREF chain is walked with [`iter::successors`]. The chains of the .plt
-    /// thunks found along the way are queued on an explicit worklist and walked
+    /// Each XREF chain is walked with [`iter::successors`]. The .plt thunks found
+    /// along the way are queued on an explicit worklist and their chains walked
     /// afterwards, so that deep .plt indirection can't overflow the call stack.
+    /// Each address is walked at most once, so that cyclic .plt references (in
+    /// crafted or unusual binaries) can't make the traversal loop forever.
     ///
     /// Returns the number of newly marked call locations.
-    fn traverse_xrefs(&self, first_xref: XRef<'_>, desc: &str) -> Result<BookmarkIndex, IDAError> {
+    fn traverse_xrefs(&self, target: Address, desc: &str) -> Result<BookmarkIndex, IDAError> {
         let bookmarks = self.idb.bookmarks();
         let mut marked = BookmarkIndex::default();
 
-        // Heads of the XREF chains still to be walked: the first one, plus one per
-        // .plt thunk found.
-        let mut heads = vec![first_xref];
+        // Addresses whose XREF chains are still to be walked: `target`, plus each .plt
+        // thunk found, each queued only once.
+        let mut visited = HashSet::from([target]);
+        let mut targets = vec![target];
 
-        while let Some(head) = heads.pop() {
-            for xref in iter::successors(Some(head), XRef::next_to) {
+        while let Some(addr) = targets.pop() {
+            let first_xref = self.idb.first_xref_to(addr, XRefQuery::ALL);
+            for xref in iter::successors(first_xref, XRef::next_to) {
                 let from = xref.from();
 
                 if self.plt.contains(from) {
-                    // Handle .plt indirection in ELF binaries by also walking the thunk's own
-                    // XREF chain.
-                    if let Some(thunk) = self.idb.function_at(from).and_then(|func| {
-                        self.idb.first_xref_to(func.start_address(), XRefQuery::ALL)
-                    }) {
-                        heads.push(thunk);
+                    // Handle .plt indirection in ELF binaries by also walking the XREFs to the
+                    // thunk, unless it was already queued.
+                    if let Some(thunk) = self.idb.function_at(from).map(|func| func.start_address())
+                        && visited.insert(thunk)
+                    {
+                        targets.push(thunk);
                     }
                     continue;
                 }

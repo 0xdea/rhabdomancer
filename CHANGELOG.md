@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add a note to `usage` explaining the `RHABDOMANCER_CONFIG` environment variable.
 - Add unit tests for `KnownBadFunctions`, `Priority`, and `PltSegments`.
+- Add a regression test for duplicated call-site lines, with an AArch64 test binary.
 - Add integration tests for a missing configuration file and a binary without calls to known bad API functions.
 
 ### Changed
@@ -34,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Remove duplicate `strtrns` entry with medium priority.
+- Fix duplicated call-site lines when a `.plt` stub references an import more than once (e.g., on AArch64),
+  and harden XREF traversal against cyclic `.plt` references in crafted or unusual binaries.
 
 ## [0.10.1] - 2026-09-21
 
