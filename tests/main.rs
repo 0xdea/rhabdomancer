@@ -3,7 +3,7 @@
 #![expect(clippy::panic_in_result_fn, reason = "panics are allowed in test code")]
 
 use std::path::{Path, PathBuf};
-use std::{env, fs, process};
+use std::{env, fs, io, process};
 
 use anyhow::Context as _;
 use idalib::Address;
@@ -176,7 +176,7 @@ fn test_missing_configuration() -> anyhow::Result<()> {
 
     let result = run_with_config_path(FILENAME, &missing_config);
     eprintln!();
-    check_missing_configuration_error(result, &missing_config)?;
+    check_missing_configuration_error(result)?;
     check_no_idb_created(FILENAME);
     eprintln!();
     Ok(())
@@ -491,19 +491,20 @@ fn check_invalid_configuration_error(result: anyhow::Result<BookmarkIndex>) -> a
     Ok(())
 }
 
-/// Checks that `run` returns the expected error for the missing configuration
-/// file at `config_path`.
-fn check_missing_configuration_error(
-    result: anyhow::Result<BookmarkIndex>,
-    config_path: &Path,
-) -> anyhow::Result<()> {
+/// Checks that `run` returns the expected error for a missing configuration
+/// file.
+///
+/// Checks the kind of the underlying [`io::Error`] rather than any message,
+/// whose wording depends on the OS.
+fn check_missing_configuration_error(result: anyhow::Result<BookmarkIndex>) -> anyhow::Result<()> {
     eprint!("[*] Checking missing configuration returns an error... ");
     let err = result
         .err()
         .context("expected an error for a missing configuration")?;
-    let expected = format!("configuration file \"{}\" not found", config_path.display());
     assert!(
-        format!("{err:#}").contains(&expected),
+        err.chain()
+            .filter_map(|cause| cause.downcast_ref::<io::Error>())
+            .any(|io_err| io_err.kind() == io::ErrorKind::NotFound),
         "wrong error returned: {err:#}"
     );
     eprintln!("Ok.");

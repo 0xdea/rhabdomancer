@@ -7,15 +7,15 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::ops::Range;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use std::{env, iter};
+use std::{env, fs, iter};
 
 use anyhow::Context as _;
-use config::{Config, ConfigError, File};
 use idalib::bookmarks::BookmarkIndex;
 use idalib::func::{Function, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
 use idalib::{Address, IDAError};
+use toml::de::Error as TomlError;
 
 /// Prefix of the tags in the bookmarks and comments added by rhabdomancer,
 /// e.g., `[BAD 0]`.
@@ -93,10 +93,9 @@ impl KnownBadFunctions {
     ///
     /// # Errors
     ///
-    /// Returns [`ConfigError`] if the configuration file can't be read or parsed,
-    /// or if a name is empty or is listed under multiple priorities, once
-    /// normalized.
-    fn load() -> Result<Self, ConfigError> {
+    /// Returns [`anyhow::Error`] if the configuration file can't be read or
+    /// parsed (see [`KnownBadFunctions::parse`]).
+    fn load() -> anyhow::Result<Self> {
         // Use configuration file path specified in the `RHABDOMANCER_CONFIG`
         // environment variable if set, otherwise fall back to the default file
         // location.
@@ -106,10 +105,21 @@ impl KnownBadFunctions {
         );
 
         eprintln!("[*] Using configuration file `{}`", path.display());
-        Config::builder()
-            .add_source(File::from(path))
-            .build()?
-            .try_deserialize()
+        let text = fs::read_to_string(&path)
+            .with_context(|| format!("failed to read configuration file `{}`", path.display()))?;
+        Self::parse(&text)
+            .with_context(|| format!("failed to parse configuration file `{}`", path.display()))
+    }
+
+    /// Parses known bad API function names from `text`, a configuration in TOML
+    /// format.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`TomlError`] if `text` isn't a valid configuration, or if a
+    /// name is empty or is listed under multiple priorities, once normalized.
+    fn parse(text: &str) -> Result<Self, TomlError> {
+        toml::from_str(text)
     }
 
     /// Returns the normalized name and priority of the known bad API function
@@ -434,8 +444,6 @@ fn normalize_name(name: &str) -> &str {
 #[cfg(test)]
 #[expect(clippy::panic_in_result_fn, reason = "panics are allowed in test code")]
 mod tests {
-    use config::FileFormat;
-
     use super::*;
 
     /// Returns a [`KnownBadFunctionsConfig`] with the specified names for each
@@ -447,15 +455,6 @@ mod tests {
             medium: to_owned(medium),
             low: to_owned(low),
         }
-    }
-
-    /// Deserializes [`KnownBadFunctions`] from a TOML string, like
-    /// [`KnownBadFunctions::load`] does from a file.
-    fn deserialize(toml: &str) -> Result<KnownBadFunctions, ConfigError> {
-        Config::builder()
-            .add_source(File::from_str(toml, FileFormat::Toml))
-            .build()?
-            .try_deserialize()
     }
 
     /// Returns [`PltSegments`] with the specified `(start, end)` address ranges.
@@ -681,8 +680,9 @@ mod tests {
     }
 
     #[test]
-    fn deserialize_uses_try_from() -> Result<(), ConfigError> {
-        let known_bad = deserialize("high = [\"_strcpy\"]\nmedium = [\"memcpy\"]\nlow = []\n")?;
+    fn parse_uses_try_from() -> Result<(), TomlError> {
+        let known_bad =
+            KnownBadFunctions::parse("high = [\"_strcpy\"]\nmedium = [\"memcpy\"]\nlow = []\n")?;
 
         assert_eq!(
             known_bad.lookup("strcpy"),
@@ -698,8 +698,9 @@ mod tests {
     }
 
     #[test]
-    fn deserialize_rejects_names_listed_under_multiple_priorities() {
-        let result = deserialize("high = [\"strtrns\"]\nmedium = [\"strtrns\"]\nlow = []\n");
+    fn parse_rejects_names_listed_under_multiple_priorities() {
+        let result =
+            KnownBadFunctions::parse("high = [\"strtrns\"]\nmedium = [\"strtrns\"]\nlow = []\n");
         assert!(
             result.is_err_and(|err| err
                 .to_string()
@@ -709,9 +710,9 @@ mod tests {
     }
 
     #[test]
-    fn default_configuration_is_valid() -> Result<(), ConfigError> {
+    fn default_configuration_is_valid() -> Result<(), TomlError> {
         let toml = include_str!("../conf/rhabdomancer.toml");
-        let known_bad = deserialize(toml)?;
+        let known_bad = KnownBadFunctions::parse(toml)?;
 
         assert!(
             !known_bad.functions.is_empty(),
