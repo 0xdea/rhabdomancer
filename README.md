@@ -23,6 +23,9 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 - Blazing-fast, headless user experience courtesy of IDA 9.x and idalib-rs Rust bindings.
 - Support for C/C++ binary targets compiled for any architecture implemented by IDA.
 - Bad API function call locations are printed to stdout and marked in the IDB.
+  - In ELF binaries, a function is typically listed twice with the same call locations: once as its `.plt` stub
+    (marked as thunk) and once as its import. This redundancy is deliberate: it ensures that no call location is
+    missed. Each call location is marked only once in the IDB.
 - Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
   - [BAD 0] High priority - Functions that are generally considered insecure.
   - [BAD 1] Medium priority - Interesting functions that should be checked for insecure use cases.

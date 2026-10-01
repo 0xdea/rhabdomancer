@@ -168,6 +168,15 @@ struct BadFunctions<'a> {
 
 impl<'a> BadFunctions<'a> {
     /// Finds bad API functions in the target binary.
+    ///
+    /// In ELF binaries, a bad API function usually matches twice: as its .plt
+    /// stub (listed as a thunk) and as its import, whose traversal reaches the
+    /// same callers through the stub, so their call sites are listed twice. This
+    /// is deliberate: dropping the stub when its name matches the import's could
+    /// lose marks whenever the import's traversal doesn't actually reach the
+    /// stub's callers (e.g., an unrelated function that normalizes to the same
+    /// name, or a stub that IDA doesn't link to the import). Marks aren't
+    /// affected by the repetition, since each call site is bookmarked only once.
     fn find_all(idb: &'a IDB, bad: &'a KnownBadFunctions) -> Self {
         Self {
             functions: idb
