@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add a note to `usage` explaining the `RHABDOMANCER_CONFIG` environment variable.
 - Add unit tests for `KnownBadFunctions`, `Priority`, and `PltSegments`.
-- Add regression tests for duplicated call-site lines and for call sites with a user's bookmark, with an
-  AArch64 test binary.
+- Add regression tests for duplicated call-site lines and for call sites with a user's bookmark or comment, with
+  an AArch64 test binary.
 - Add integration tests for a missing configuration file and a binary without calls to known bad API functions.
 
 ### Changed

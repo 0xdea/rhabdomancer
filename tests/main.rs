@@ -53,6 +53,15 @@ const DOUBLE_XREF_LISTING: &str = "
 const USER_BOOKMARK_ADDR: Address = 0x7F4;
 /// Description of the bookmark that the tests add at `USER_BOOKMARK_ADDR`.
 const USER_BOOKMARK_DESC: &str = "user note";
+/// Call site in `DOUBLE_XREF` where the tests add a comment of their own, as a
+/// user would.
+const USER_COMMENT_ADDR: Address = 0x7F4;
+/// Comment that the tests add at `USER_COMMENT_ADDR`.
+const USER_COMMENT: &str = "user comment";
+/// Expected comment at `USER_COMMENT_ADDR` after rhabdomancer runs, with its
+/// tag appended to the user's comment exactly once (`append_cmt` separates
+/// them with a newline).
+const USER_COMMENT_MARKED: &str = "user comment\n[BAD 0] system";
 
 /// Label of the custom configuration file written by the tests to a temporary
 /// directory.
@@ -101,6 +110,7 @@ fn main() -> anyhow::Result<()> {
     test_binary_without_calls()?;
     test_thunk_with_repeated_xrefs()?;
     test_user_bookmark_at_call_site()?;
+    test_user_comment_at_call_site()?;
     test_missing_binary()?;
 
     eprintln!();
@@ -258,6 +268,35 @@ fn test_user_bookmark_at_call_site() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Adds a comment of its own at a call site, as a user would, then runs
+/// rhabdomancer twice and checks that the tag is appended to the user's
+/// comment exactly once (regression test for the comment check, which must
+/// find the tag after any existing text).
+fn test_user_comment_at_call_site() -> anyhow::Result<()> {
+    reset_idb(DOUBLE_XREF)?;
+    add_user_comment(DOUBLE_XREF)?;
+
+    let n_marks = rhabdomancer::run(DOUBLE_XREF)?;
+    eprintln!();
+    check_number_of_marks(n_marks, N_MARKS_DOUBLE_XREF);
+
+    eprintln!();
+    let n_marks_new = rhabdomancer::run(DOUBLE_XREF)?;
+    eprintln!();
+    check_no_new_marks(n_marks_new);
+
+    let idb = open_idb(DOUBLE_XREF)?;
+    check_number_of_bookmarks(&idb, N_MARKS_DOUBLE_XREF);
+    check_number_of_comments(&idb, N_MARKS_DOUBLE_XREF)?;
+    check_user_comment_marked(&idb);
+    drop(idb);
+
+    // Remove the IDB file at the end.
+    reset_idb(DOUBLE_XREF)?;
+    eprintln!();
+    Ok(())
+}
+
 /// Runs rhabdomancer against a binary that doesn't exist and checks that it
 /// fails without creating an IDB.
 fn test_missing_binary() -> anyhow::Result<()> {
@@ -299,6 +338,14 @@ fn add_user_bookmark(filename: &str) -> anyhow::Result<()> {
     let idb = IDB::open_with(filename, true, true)?;
     idb.bookmarks()
         .mark(USER_BOOKMARK_ADDR, USER_BOOKMARK_DESC)?;
+    Ok(())
+}
+
+/// Creates the IDB of the binary at `filename` with a comment at
+/// `USER_COMMENT_ADDR`, as a user would add it, and saves it.
+fn add_user_comment(filename: &str) -> anyhow::Result<()> {
+    let idb = IDB::open_with(filename, true, true)?;
+    idb.set_cmt(USER_COMMENT_ADDR, USER_COMMENT)?;
     Ok(())
 }
 
@@ -479,6 +526,19 @@ fn check_user_bookmark_preserved(idb: &IDB) {
     assert!(
         preserved,
         "user bookmark at {USER_BOOKMARK_ADDR:#X} was lost or changed"
+    );
+    eprintln!("Ok.");
+}
+
+/// Checks that the user's comment at `USER_COMMENT_ADDR` is preserved and
+/// tagged exactly once.
+fn check_user_comment_marked(idb: &IDB) {
+    eprint!("[*] Checking user comment is preserved and tagged once... ");
+    let cmt = idb.get_cmt(USER_COMMENT_ADDR);
+    assert_eq!(
+        cmt.as_deref(),
+        Some(USER_COMMENT_MARKED),
+        "wrong comment at {USER_COMMENT_ADDR:#X}"
     );
     eprintln!("Ok.");
 }
