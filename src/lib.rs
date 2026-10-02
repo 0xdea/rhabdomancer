@@ -283,6 +283,7 @@ impl<'a> CallMarker<'a> {
     #[must_use]
     fn new(idb: &'a IDB) -> Self {
         let bookmarks = idb.bookmarks();
+
         Self {
             idb,
             plt: PltSegments::new(idb),
@@ -301,7 +302,10 @@ impl<'a> CallMarker<'a> {
 
     /// Locates calls to the bad API functions in `found` and marks them.
     ///
-    /// Returns the total number of newly marked call locations.
+    /// Returns the total number of newly marked call locations. The total can't
+    /// overflow: each location counted is a new bookmark at a distinct address,
+    /// and IDA indexes bookmarks with [`BookmarkIndex`] values, so their number
+    /// always fits in one.
     ///
     /// # Errors
     ///
