@@ -89,7 +89,7 @@ struct KnownBadFunctionsConfig {
 ///
 /// Deserialized from a [`KnownBadFunctionsConfig`], which is rejected if any
 /// name is empty or is listed under multiple priorities, once normalized.
-#[derive(serde::Deserialize)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize)]
 #[serde(try_from = "KnownBadFunctionsConfig")]
 struct KnownBadFunctions {
     /// Priority of each known bad function, keyed by normalized name.
@@ -200,6 +200,7 @@ impl<'a> BadFunctions<'a> {
     /// stub's callers (e.g., an unrelated function that normalizes to the same
     /// name, or a stub that IDA doesn't link to the import). Marks aren't
     /// affected by the repetition, since each call site is bookmarked only once.
+    #[must_use]
     fn find_all(idb: &'a IDB, bad: &'a KnownBadFunctions) -> Self {
         Self {
             functions: idb
@@ -232,6 +233,7 @@ struct PltSegments {
 
 impl PltSegments {
     /// Collects the address ranges of all .plt segments in `idb`.
+    #[must_use]
     fn new(idb: &IDB) -> Self {
         Self {
             ranges: idb
@@ -278,6 +280,7 @@ impl<'a> CallMarker<'a> {
     /// only at the start, so that one of our bookmarks that a user has edited by
     /// prepending text is still recognized and not marked again. The trade-off
     /// is that a user's own bookmark merely mentioning the prefix counts as ours.
+    #[must_use]
     fn new(idb: &'a IDB) -> Self {
         let bookmarks = idb.bookmarks();
         Self {
