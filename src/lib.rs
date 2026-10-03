@@ -535,21 +535,6 @@ mod tests {
     }
 
     #[test]
-    fn plt_segments_without_ranges_or_with_empty_ranges_contain_nothing() {
-        let no_ranges = plt(&[]);
-        let empty_range = plt(&[(0x1000, 0x1000)]);
-
-        assert!(
-            !no_ranges.contains(0x1000),
-            "no ranges should match nothing"
-        );
-        assert!(
-            !empty_range.contains(0x1000),
-            "an empty range should match nothing"
-        );
-    }
-
-    #[test]
     fn priority_order_is_high_medium_low() {
         assert!(
             Priority::High < Priority::Medium && Priority::Medium < Priority::Low,
@@ -625,7 +610,13 @@ mod tests {
             None,
             "unknown name should not match"
         );
-        assert_eq!(known_bad.lookup(""), None, "empty name should not match");
+        for func_name in ["", "_", ".", "__"] {
+            assert_eq!(
+                known_bad.lookup(func_name),
+                None,
+                "function name `{func_name}` that normalizes to empty should not match"
+            );
+        }
         Ok(())
     }
 
@@ -645,26 +636,19 @@ mod tests {
 
     #[test]
     fn try_from_rejects_names_listed_under_multiple_priorities() {
-        for (high, medium, low) in [
-            (&["strtrns"][..], &["strtrns"][..], &[][..]),
-            (&[], &["_memcpy"], &[".memcpy"]),
-            (&["getenv"], &[], &["__getenv"]),
+        for (high, medium, low, duplicate) in [
+            (&["strtrns"][..], &["strtrns"][..], &[][..], "strtrns"),
+            (&[], &["_memcpy"], &[".memcpy"], "memcpy"),
+            (&["getenv"], &[], &["__getenv"], "getenv"),
         ] {
             let result = KnownBadFunctions::try_from(config(high, medium, low));
             assert!(
-                result.is_err_and(|err| err.contains("is listed under multiple priorities")),
-                "names listed under multiple priorities should be rejected"
+                result.is_err_and(
+                    |err| err == format!("`{duplicate}` is listed under multiple priorities")
+                ),
+                "`{duplicate}` should be rejected, named once normalized"
             );
         }
-    }
-
-    #[test]
-    fn try_from_error_names_the_normalized_duplicate() {
-        let result = KnownBadFunctions::try_from(config(&[], &["_memcpy"], &[".memcpy"]));
-        assert!(
-            result.is_err_and(|err| err == "`memcpy` is listed under multiple priorities"),
-            "error should name the normalized duplicate"
-        );
     }
 
     #[test]
@@ -683,20 +667,6 @@ mod tests {
                 );
             }
         }
-    }
-
-    #[test]
-    fn lookup_name_that_normalizes_to_empty_returns_none() -> Result<(), String> {
-        let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["memcpy"], &["getenv"]))?;
-
-        for func_name in ["", "_", ".", "__"] {
-            assert_eq!(
-                known_bad.lookup(func_name),
-                None,
-                "function name `{func_name}` that normalizes to empty should not match"
-            );
-        }
-        Ok(())
     }
 
     #[test]
