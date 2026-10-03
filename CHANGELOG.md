@@ -19,9 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** reject configuration files that list the same function under multiple priorities, contain empty
+  function names, or contain unknown keys.
+- **Breaking:** embed the default configuration in the binary, so that it no longer depends on the source tree;
+  editing `conf/rhabdomancer.toml` now requires a rebuild, and setting `RHABDOMANCER_CONFIG` selects a custom one
+  (an empty value counts as unset).
+- **Breaking:** make `PREFIX` private; the annotation format is now documented in the README.
+
 - Refactor `KnownBadFunctions` to use a single lookup table.
-- Reject configuration files that list the same function under multiple priorities, contain empty function names,
-  or contain unknown keys (can break existing configurations).
 - Cache `.plt` segment address ranges to avoid repeated FFI lookups.
 - Fetch each bad function's name only once.
 - Refactor `BadFunctions` to use a single ordered map.
@@ -31,17 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Walk each XREF chain fully before the chains of the `.plt` thunks it references (can change the order of
   listed call sites).
 - Replace the `config` crate with `toml` to load the configuration file.
-- Embed the default configuration in the binary, so that it no longer depends on the source tree; set
-  `RHABDOMANCER_CONFIG` to use a custom one (editing `conf/rhabdomancer.toml` now requires a rebuild; an empty
-  value counts as unset).
 - Lowercase error messages, following the Rust API Guidelines.
 - Improve integration tests.
 - Improve code style.
 - Update documentation.
-
-### Removed
-
-- Make `PREFIX` private; the annotation format is now documented in the README.
 
 ### Fixed
 
