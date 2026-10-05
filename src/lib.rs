@@ -454,6 +454,7 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
         filepath.display(),
         start.elapsed().as_secs_f64()
     );
+
     Ok(marked)
 }
 

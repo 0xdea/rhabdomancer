@@ -351,7 +351,6 @@ fn test_invalid_arguments() -> anyhow::Result<()> {
         check_usage(&output, args);
     }
     check_no_idb_created(NO_CALLS);
-    eprintln!();
     Ok(())
 }
 
@@ -679,8 +678,8 @@ fn check_user_comment_marked(idb: &IDB) {
     eprintln!("Ok.");
 }
 
-/// Checks that the rhabdomancer binary run with the invalid arguments `args`
-/// printed usage information to stderr, nothing to stdout, and failed.
+/// Checks that the rhabdomancer binary failed and printed usage information to
+/// stderr, and nothing to stdout, for the invalid `args`.
 fn check_usage(output: &process::Output, args: &[&str]) {
     eprint!("[*] Checking usage is printed for arguments {args:?}... ");
     assert!(
