@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build requirements
 
-- IDA 9.4+ (see the README's compatibility table), with `IDADIR` set to the installation directory at both build time and runtime. The build script (`build.rs`, via `idalib-build`) checks common installation paths if it's unset, and only warns if it can't find IDA.
+- IDA 9.4+ (see the README's compatibility table), with `IDADIR` set to the installation directory at both build time and runtime. The build script (`build.rs`, via `idalib-build`) checks common installation paths if it's unset, and only warns if it can't find IDA, so set it explicitly for non-standard locations (`export IDADIR=/path/to/ida`).
 - LLVM/Clang, used by bindgen when building `idalib`. On Windows, `LIBCLANG_PATH` must also be set to the LLVM/Clang `bin` directory.
 - Rust edition 2024.
 
@@ -48,7 +48,7 @@ CI's own `test` step only runs `cargo test --no-run` — a compile-only smoke ch
 This is a single crate: `src/main.rs` (CLI entry point) and `src/lib.rs` (all core logic).
 
 - **`src/main.rs`** — CLI entry point. Parses a single binary path argument, calls `force_batch_mode()` to suppress IDA UI, then delegates to `lib::run()`.
-- **`src/lib.rs`** — Core analysis logic. Public entry point: `run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex>`. It is the only public item: everything else, including `PREFIX` (`"[BAD "`, private since 1.0), is internal, so the public API stays minimal (making items public later is non-breaking; CI runs `cargo-semver-checks`). A library API for other crates (e.g., a `scan()` returning findings without printing) would be designed separately rather than by exporting these CLI-oriented types. The annotation text is an external contract (see Output). Key types:
+- **`src/lib.rs`** — Core analysis logic. Public entry point: `run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex>`. It is the only public item: everything else, including `PREFIX` (`"[BAD "`, private since 1.0), is internal, so the public API stays minimal (making items public later is non-breaking; CI runs `cargo-semver-checks`). A library API for other crates (e.g., a `scan()` returning findings without printing) would be designed separately rather than by exporting these CLI-oriented types. The annotation text is an external contract (see Output).
 
 ### Key types and functions
 
@@ -64,7 +64,7 @@ This is a single crate: `src/main.rs` (CLI entry point) and `src/lib.rs` (all co
 
 ## Output
 
-Output convention: scan results (bad-function headers and call-site locations) print to stdout via `println!`; everything else (banners, progress, summary/timing, errors) prints to stderr via `eprintln!`. Preserve this split when adding new output.
+Results go to stdout (`println!`); everything else (banner, progress, summary, timing, errors) goes to stderr (`eprintln!`), with the prefixes `[*]` for progress, `[+]` for success and summaries, `[-]` for information, and `[!]` for warnings and errors, and the elapsed time as `{:.1} seconds`. Preserve this split when adding new output. The results are the bad-function headers and call-site locations.
 
 stdout layout:
 
@@ -83,24 +83,34 @@ All "bad" functions are defined in `conf/rhabdomancer.toml`, grouped into `high`
 
 ## Error handling
 
-- Functions below `run()` return concrete error types (`IDAError` from marking, `TomlError` from parsing); only `run()` and `KnownBadFunctions::load()`, which combines reading the file and parsing it, use `anyhow`, adding context. `main()` prints errors as `[!] Error: {err:#}`.
+- Functions below `run()` return concrete error types (`IDAError` from marking, `TomlError` from parsing); only `run()` and `KnownBadFunctions::load()`, which combines reading the file and parsing it, use `anyhow`, adding context.
 - The configuration is loaded before the binary is opened, so a configuration error never creates an IDB.
 - Marking stops at the first error (`CallMarker::mark_all()` sums over `Result`).
 - Finding no calls is not an error: `run()` returns `Ok(0)`, since a re-run on an annotated IDB legitimately marks nothing (unlike augur and haruspex, which reject zero results, since their output would be empty).
 - XREFs outside any function are printed as `[unknown]` and still marked.
+- `main()` prints errors as `[!] Error: {err:#}` (the full context chain) and exits with `ExitCode::FAILURE`.
 
 ## Lint policy
 
-The workspace `Cargo.toml` enables aggressive lints. Notably forbidden everywhere except tests:
+All clippy lint groups (`all`, `pedantic`, `nursery`, `cargo`, `restriction`) are enabled as warnings in the workspace lints of `Cargo.toml` (the same configuration in augur, haruspex, and rhabdomancer) and treated as errors by `cargo clippy -- -D warnings`. A curated set of restriction lints is explicitly allowed (e.g., `implicit_return`, `question_mark_used`, `print_stdout`, `pattern_type_mismatch`), and `linker_messages = "allow"` is a temporary workaround for <https://github.com/idalib-rs/idalib/issues/81>. Notably forbidden outside tests:
 
-- `unwrap`, `expect`, `panic`, `todo`, `unimplemented`, `unreachable`, `dbg_macro`
-- Unsafe blocks without a `// Safety:` comment (`undocumented_unsafe_blocks`)
+- `unwrap`, `expect`, `panic`, `todo`, `unimplemented`, `unreachable`, `dbg_macro`: use `?`, `anyhow` context, and `Option` combinators instead.
+- Unsafe blocks without a `// Safety:` comment (`undocumented_unsafe_blocks`).
+- Undocumented items (`missing_docs`, `missing_docs_in_private_items`): every item has a doc comment, private ones and test helpers included.
 
 `clippy::min_ident_chars` is enabled, so single-character identifiers (e.g. `|s|`, `for f in`) are flagged — use descriptive names like `name`, `func`, `idx`. Clippy's default `allowed-idents-below-min-chars` still permits `i`, `j`, `x`, `y`, `z`, `w`, and `n`, and parameters that keep a trait's own name (such as `f` in `fmt::Display::fmt`) are not flagged either; prefer descriptive names (e.g. `idx`) anyway.
 
-Pure functions whose result matters carry `#[must_use]`, private ones included (clippy's `must_use_candidate` only flags public items): currently `Priority::level()`, `Priority::description()`, `KnownBadFunctions::lookup()`, `PltSegments::contains()`, and `normalize_name()`.
+Pure functions whose result matters carry `#[must_use]`, private ones included (clippy's `must_use_candidate` only flags public items), e.g., `Priority::level()`, `KnownBadFunctions::lookup()`, `PltSegments::contains()`, `function_name()`, and `normalize_name()`.
 
-Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specific lint anywhere it genuinely cannot be avoided — in both library code and tests. The only one left in the codebase: `panic_in_result_fn` (test assertions, as a module-level `#![expect]` in `tests/main.rs` and on `mod tests` in `src/lib.rs`). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as `run_with_config()` in `tests/main.rs` does.
+Use `#[expect(clippy::some_lint, reason = "...")]`, never `#[allow]`, to locally suppress a lint that genuinely cannot be avoided, in both library code and tests. The only one in the codebase: `panic_in_result_fn` (test assertions, as a module-level `#![expect]` in `tests/main.rs` and on `mod tests` in `src/lib.rs`). `env::set_var`/`remove_var` are `unsafe` in Rust edition 2024; wrap them in `unsafe {}` with a `// Safety:` comment explaining the single-threaded context, as `run_with_config()` in `tests/main.rs` does.
+
+Taplo enforces TOML formatting (`.taplo.toml`: 120-char line width, 4-space indent).
+
+The crate-level documentation in `src/lib.rs` is assembled in a specific order to satisfy two restriction lints simultaneously, and should not be "simplified" back to a plain `#![doc = include_str!("../README.md")]`:
+
+- `#![doc = env!("CARGO_PKG_DESCRIPTION")]` is always present (pulls the `description` from `Cargo.toml` with no duplication) so the crate is documented in every build configuration — this satisfies `missing_docs`, which runs without `--cfg doc`.
+- `#![cfg_attr(doc, doc = include_str!("../README.md"))]` pulls in the README only under `cfg(doc)`, satisfying `clippy::doc_include_without_cfg`.
+- The `#![doc = ""]` between them forces a Markdown paragraph break so the description and the README's leading heading don't merge.
 
 ## Tests
 
@@ -125,14 +135,24 @@ Use `#[expect(clippy::some_lint, reason = "...")]` to locally suppress a specifi
 11. `test_invalid_arguments()`: runs the real binary (via `run_binary()`) with no arguments, two arguments, `-h`, and `--help`, and checks with `check_usage()` that each run fails, prints `Usage:` to stderr and nothing to stdout, and creates no IDB file for `tests/data/no_calls` (the two-argument case passes it twice). Covers the only branching in `src/main.rs`; IDA never opens a database here, so it's fast.
 - `BAD_PREFIX` is deliberately the literal `"[BAD "` (`PREFIX` is private anyway): the annotation text is an external contract (users and scripts search IDBs for it), so an accidental change to the tags rhabdomancer writes must fail the tests. The same applies to other expected values (`CUSTOM_MEDIUM`, the `[BAD 1] ` tag, error substrings): keep them as literals.
 - `main()` removes `RHABDOMANCER_CONFIG` before running any scenario, so a value exported in the developer's shell can't replace the built-in configuration that the in-process scenarios expect (all but 2, 8, and 9, which set their own) (`run_binary()` also removes it from the subprocess's environment).
-- Helpers: `reset_idb()` removes all IDB files of a binary, packed (`.i64`) or unpacked (`IDB_EXTENSIONS`), if present (every scenario starts and ends with it, so a crashed run doesn't poison the next); `open_idb()` opens an IDB and enables hidden comments/functions/instructions/segments before checks; `config_path()` returns a configuration file path under `env::temp_dir()` (named by label and process ID, never inside the source tree); `run_with_config_path()` sets `RHABDOMANCER_CONFIG` to a path for one run, then unsets it; `run_with_config()` writes a configuration file at `config_path(label)`, runs via `run_with_config_path()`, then removes the file, returning the run's result (nested in the outer `anyhow::Result` for file I/O errors) so that callers can check expected errors. `run_binary(args, config)` runs the real binary with `args` and `RHABDOMANCER_CONFIG` set to `config` or removed (`None`), forwards its stderr, and returns its `process::Output`, without checking its status: scenarios expecting success call `check_binary_succeeded()` (same names and pattern as augur and haruspex), and the stdout checks (`check_listing()`, `check_priority_order()`) take the `Output`. Error checks match against `{err:#}` (the full context chain). Scenarios `drop()` their IDB before rhabdomancer reopens the database.
-- Only the module-level `#![expect(clippy::panic_in_result_fn)]` is needed: fallible lookups use `.context(...)?` instead of `expect`, and conversions use `usize::try_from` instead of `as`.
-- New checks must be shown to fail: temporarily break the behavior they guard, run the suite, restore.
+- Helpers: `reset_idb()` removes all IDB files of a binary, packed (`.i64`) or unpacked (`IDB_EXTENSIONS`), if present (every scenario starts and ends with it, so a crashed run doesn't poison the next); `open_idb()` opens an IDB and enables hidden comments/functions/instructions/segments before checks; `config_path()` returns a configuration file path under `env::temp_dir()` (named by label and process ID, never inside the source tree); `run_with_config_path()` sets `RHABDOMANCER_CONFIG` to a path for one run, then unsets it; `run_with_config()` writes a configuration file at `config_path(label)`, runs via `run_with_config_path()`, then removes the file, returning the run's result (nested in the outer `anyhow::Result` for file I/O errors) so that callers can check expected errors. `run_binary(args, config)` runs the real binary with `args` and `RHABDOMANCER_CONFIG` set to `config` or removed (`None`), forwards its stderr, and returns its `process::Output`, without checking its status: scenarios expecting success call `check_binary_succeeded()` (same names and pattern as augur and haruspex), and the stdout checks (`check_listing()`, `check_priority_order()`) take the `Output`. Scenarios `drop()` their IDB before rhabdomancer reopens the database.
+
+Conventions shared by the augur, haruspex, and rhabdomancer harnesses:
+
+- All scenarios run sequentially in the same process; the harness stops at the first failed check, and its progress messages go to stderr.
+- Expected values that pin an external contract (CLI output lines, summaries, file names, annotation tags, error substrings) are literals, never production constants, so that an accidental change fails the tests.
+- Expected errors are matched against the full error chain (`format!("{err:#}")`), i.e., what users see; OS-dependent failures are checked by downcasting to `io::ErrorKind`, not by message.
+- Only the module-level `#![expect(clippy::panic_in_result_fn)]` is needed: fallible lookups use `.context(...)?` instead of `expect`, and conversions use `try_from` instead of `as`.
+- New checks must be shown to fail: temporarily break the behavior they guard, run the suite, restore. If an earlier check catches the break first, break it differently, so that the new check is shown to fail on its own.
 
 ## IDA integration notes
 
 - `IDB::open_with(path, true, true)` opens or creates an `.i64` IDB file with auto-analysis enabled and the database kept after closing.
-- `idalib::force_batch_mode()` must be called before opening any database (suppresses IDA UI).
+- `idalib::force_batch_mode()` must be called before opening any database (suppresses IDA UI); `main()` and the test harness both call it first.
+- IDA must run on the main thread and isn't thread-safe, so standard `#[test]` functions, which run on worker threads, can't use it: that's why the integration tests use a custom harness (`harness = false`).
+- Objects derived from an `IDB` (e.g., `Function`, `CFunction`) must be dropped before the `IDB` itself, since their destructors call into IDA: idalib's lifetimes don't enforce this at implicit scope-end drops, and getting it wrong hangs the process.
+- Names from the analyzed binary (function names, strings) are untrusted: print them escaped with `str::escape_debug()` (or `{:?}`) at the print site, and build file names from them only through a sanitizer.
+- To probe IDA's view of a binary, write a temporary `examples/` program (`cargo run --example ...`), then delete it.
 - Annotation is idempotent — existing bookmarks/comments are not duplicated, even when a user's own bookmark shares the address (see `CallMarker`).
 - `.plt` sections in ELF binaries require following one level of thunk indirection to reach the real import; `traverse_xrefs` handles this.
 
