@@ -227,9 +227,10 @@ fn test_binary_without_calls() -> anyhow::Result<()> {
 fn test_thunk_with_repeated_xrefs() -> anyhow::Result<()> {
     reset_idb(DOUBLE_XREF)?;
 
-    let listing = run_binary(DOUBLE_XREF)?;
+    let output = run_binary(&[DOUBLE_XREF], None)?;
     eprintln!();
-    check_listing(&listing, DOUBLE_XREF_LISTING);
+    check_binary_succeeded(&output);
+    check_listing(&output, DOUBLE_XREF_LISTING);
 
     let idb = open_idb(DOUBLE_XREF)?;
     check_number_of_bookmarks(&idb, N_MARKS_DOUBLE_XREF);
@@ -250,9 +251,10 @@ fn test_priority_order() -> anyhow::Result<()> {
     reset_idb(FILENAME)?;
 
     eprintln!();
-    let listing = run_binary(FILENAME)?;
+    let output = run_binary(&[FILENAME], None)?;
     eprintln!();
-    check_priority_order(&listing)?;
+    check_binary_succeeded(&output);
+    check_priority_order(&output)?;
 
     // Remove the IDB file at the end.
     reset_idb(FILENAME)?;
@@ -336,7 +338,7 @@ fn test_invalid_arguments() -> anyhow::Result<()> {
 
     for args in [&[][..], &[NO_CALLS, NO_CALLS], &["-h"], &["--help"]] {
         eprintln!();
-        let output = run_binary_with(args, None)?;
+        let output = run_binary(args, None)?;
         check_usage(&output, args);
     }
     check_no_idb_created(NO_CALLS);
@@ -351,9 +353,9 @@ fn test_empty_configuration_variable() -> anyhow::Result<()> {
     reset_idb(NO_CALLS)?;
 
     eprintln!();
-    let output = run_binary_with(&[NO_CALLS], Some(""))?;
+    let output = run_binary(&[NO_CALLS], Some(""))?;
     eprintln!();
-    check_empty_configuration_variable(&output);
+    check_binary_succeeded(&output);
 
     // Remove the IDB file at the end.
     reset_idb(NO_CALLS)?;
@@ -447,34 +449,17 @@ fn run_with_config(
     Ok(result)
 }
 
-/// Runs the rhabdomancer binary against the binary at `filename` with the
-/// default configuration, forwards its stderr, and returns its stdout.
+/// Runs the rhabdomancer binary with `args`, with `RHABDOMANCER_CONFIG` set to
+/// `config` if any, or removed otherwise, forwards its stderr, and returns its
+/// output.
 ///
 /// Unlike [`rhabdomancer::run`], this captures the listing of call sites that
 /// rhabdomancer prints to stdout.
 ///
 /// # Errors
 ///
-/// Returns an error if the binary cannot be run, fails, or prints non-UTF-8
-/// output.
-fn run_binary(filename: &str) -> anyhow::Result<String> {
-    let output = run_binary_with(&[filename], None)?;
-    anyhow::ensure!(
-        output.status.success(),
-        "rhabdomancer failed: {}",
-        output.status
-    );
-    Ok(String::from_utf8(output.stdout)?)
-}
-
-/// Runs the rhabdomancer binary with `args`, with `RHABDOMANCER_CONFIG` set to
-/// `config` if any, or removed otherwise, forwards its stderr, and returns its
-/// output.
-///
-/// # Errors
-///
 /// Returns an error if the binary cannot be run.
-fn run_binary_with(args: &[&str], config: Option<&str>) -> anyhow::Result<process::Output> {
+fn run_binary(args: &[&str], config: Option<&str>) -> anyhow::Result<process::Output> {
     let mut command = process::Command::new(env!("CARGO_BIN_EXE_rhabdomancer"));
     command.args(args);
     if let Some(config) = config {
@@ -485,6 +470,17 @@ fn run_binary_with(args: &[&str], config: Option<&str>) -> anyhow::Result<proces
     let output = command.output()?;
     eprint!("{}", String::from_utf8_lossy(&output.stderr));
     Ok(output)
+}
+
+/// Checks that the rhabdomancer binary exited successfully.
+fn check_binary_succeeded(output: &process::Output) {
+    eprint!("[*] Checking binary exits successfully... ");
+    assert!(
+        output.status.success(),
+        "binary failed with {}",
+        output.status
+    );
+    eprintln!("Ok.");
 }
 
 /// Checks the number of marked call locations.
@@ -577,18 +573,22 @@ fn check_custom_bookmark_descriptions(idb: &IDB) {
 }
 
 /// Checks that the listing of call sites printed to stdout is `expected`.
-fn check_listing(listing: &str, expected: &str) {
+fn check_listing(output: &process::Output, expected: &str) {
     eprint!("[*] Checking listing of call sites... ");
-    assert_eq!(listing, expected, "wrong listing of call sites");
+    assert_eq!(
+        String::from_utf8_lossy(&output.stdout),
+        expected,
+        "wrong listing of call sites"
+    );
     eprintln!("Ok.");
 }
 
-/// Checks that the bad function headers in `listing` (`[BAD n] <name>`) are
-/// ordered by priority level, from `0` (highest) to `2` (lowest), and that
-/// `listing` has more than one level, so that the check isn't vacuous.
-fn check_priority_order(listing: &str) -> anyhow::Result<()> {
+/// Checks that the bad function headers printed to stdout (`[BAD n] <name>`)
+/// are ordered by priority level, from `0` (highest) to `2` (lowest), and that
+/// there is more than one level, so that the check isn't vacuous.
+fn check_priority_order(output: &process::Output) -> anyhow::Result<()> {
     eprint!("[*] Checking bad functions are listed by priority... ");
-    let levels = listing
+    let levels = String::from_utf8_lossy(&output.stdout)
         .lines()
         .filter_map(|line| line.strip_prefix(BAD_PREFIX))
         .map(|tag| tag.chars().next()?.to_digit(10))
@@ -649,18 +649,6 @@ fn check_usage(output: &process::Output, args: &[&str]) {
     assert!(
         output.stdout.is_empty(),
         "nothing should be printed to stdout for arguments {args:?}"
-    );
-    eprintln!("Ok.");
-}
-
-/// Checks that the rhabdomancer binary run with an empty `RHABDOMANCER_CONFIG`
-/// succeeded, i.e., used the built-in configuration.
-fn check_empty_configuration_variable(output: &process::Output) {
-    eprint!("[*] Checking empty RHABDOMANCER_CONFIG uses the built-in configuration... ");
-    assert!(
-        output.status.success(),
-        "empty RHABDOMANCER_CONFIG should use the built-in configuration: {}",
-        output.status
     );
     eprintln!("Ok.");
 }
