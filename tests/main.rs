@@ -19,8 +19,8 @@ const BAD_PREFIX: &str = "[BAD ";
 /// Extensions of the files that make up an IDB, packed (`i64`) or unpacked.
 const IDB_EXTENSIONS: [&str; 6] = ["i64", "id0", "id1", "id2", "nam", "til"];
 
-/// Target binary.
-const FILENAME: &str = "./tests/data/ls";
+/// Target binary with calls to known bad API functions.
+const LS: &str = "./tests/data/ls";
 /// Target binary without calls to known bad API functions.
 const NO_CALLS: &str = "./tests/data/no_calls";
 /// ARM64 target binary whose `main` calls `system` through a .plt stub that
@@ -29,19 +29,18 @@ const DOUBLE_XREF: &str = "./tests/data/double_xref";
 /// Target binary that doesn't exist.
 const MISSING: &str = "./tests/data/missing";
 
-/// Expected number of marked call locations in `FILENAME` with the default
+/// Expected number of marked call locations in `LS` with the default
 /// configuration.
 const N_MARKS: BookmarkIndex = 86;
-/// Expected number of bad functions found in `FILENAME` with the default
+/// Expected number of bad functions found in `LS` with the default
 /// configuration, counting .plt stubs and imports separately, each printed on
 /// stdout as a header after a blank line.
 const N_BAD_FUNCTIONS: usize = 20;
-/// Expected number of call-site lines printed on stdout for `FILENAME` with the
+/// Expected number of call-site lines printed on stdout for `LS` with the
 /// default configuration (each of the `N_MARKS` call locations is listed under
 /// both the .plt stub and the import).
 const N_CALL_SITE_LINES: usize = 172;
-/// Expected number of marked call locations in `FILENAME` with
-/// `CUSTOM_CONFIG_TOML`.
+/// Expected number of marked call locations in `LS` with `CUSTOM_CONFIG_TOML`.
 const N_MARKS_CUSTOM: BookmarkIndex = 13;
 /// Expected number of marked call locations in `DOUBLE_XREF`.
 const N_MARKS_DOUBLE_XREF: BookmarkIndex = 1;
@@ -113,15 +112,15 @@ fn main() -> anyhow::Result<()> {
 
     test_default_configuration()?;
     test_custom_configuration()?;
-    test_invalid_configuration()?;
-    test_missing_configuration()?;
     test_binary_without_calls()?;
     test_thunk_with_repeated_xrefs()?;
     test_user_bookmark_at_call_site()?;
     test_user_comment_at_call_site()?;
+    test_empty_configuration_variable()?;
+    test_invalid_configuration()?;
+    test_missing_configuration()?;
     test_missing_binary()?;
     test_invalid_arguments()?;
-    test_empty_configuration_variable()?;
 
     eprintln!();
     Ok(())
@@ -131,9 +130,9 @@ fn main() -> anyhow::Result<()> {
 /// prints and its annotations, then runs rhabdomancer again on the same IDB and
 /// checks that no new call locations are marked.
 fn test_default_configuration() -> anyhow::Result<()> {
-    reset_idb(FILENAME)?;
+    reset_idb(LS)?;
 
-    let output = run_binary(&[FILENAME], None)?;
+    let output = run_binary(&[LS], None)?;
     eprintln!();
     check_binary_succeeded(&output);
     check_number_of_output_lines(&output);
@@ -141,7 +140,7 @@ fn test_default_configuration() -> anyhow::Result<()> {
     check_summary(&output, "[+] Marked 86 new call locations");
     check_priority_order(&output)?;
 
-    let idb = open_idb(FILENAME)?;
+    let idb = open_idb(LS)?;
     check_number_of_bookmarks(&idb, N_MARKS);
     check_bookmark_descriptions(&idb);
     check_number_of_comments(&idb, N_MARKS)?;
@@ -150,12 +149,12 @@ fn test_default_configuration() -> anyhow::Result<()> {
     drop(idb);
 
     eprintln!();
-    let n_marks_new = rhabdomancer::run(FILENAME)?;
+    let n_marks_new = rhabdomancer::run(LS)?;
     eprintln!();
     check_no_new_marks(n_marks_new);
 
     // Remove the IDB file at the end.
-    reset_idb(FILENAME)?;
+    reset_idb(LS)?;
     eprintln!();
     Ok(())
 }
@@ -163,13 +162,13 @@ fn test_default_configuration() -> anyhow::Result<()> {
 /// Runs rhabdomancer with a custom configuration set via `RHABDOMANCER_CONFIG`
 /// and checks its annotations.
 fn test_custom_configuration() -> anyhow::Result<()> {
-    reset_idb(FILENAME)?;
+    reset_idb(LS)?;
 
-    let n_marks = run_with_config(FILENAME, CUSTOM_CONFIG, CUSTOM_CONFIG_TOML)??;
+    let n_marks = run_with_config(LS, CUSTOM_CONFIG, CUSTOM_CONFIG_TOML)??;
     eprintln!();
     check_number_of_marks(n_marks, N_MARKS_CUSTOM);
 
-    let idb = open_idb(FILENAME)?;
+    let idb = open_idb(LS)?;
     check_number_of_bookmarks(&idb, n_marks);
     check_custom_bookmark_descriptions(&idb);
     check_number_of_comments(&idb, n_marks)?;
@@ -177,37 +176,7 @@ fn test_custom_configuration() -> anyhow::Result<()> {
     drop(idb);
 
     // Remove the IDB file at the end.
-    reset_idb(FILENAME)?;
-    eprintln!();
-    Ok(())
-}
-
-/// Runs rhabdomancer with an invalid configuration and checks that it fails
-/// before analyzing the binary.
-fn test_invalid_configuration() -> anyhow::Result<()> {
-    reset_idb(FILENAME)?;
-
-    let result = run_with_config(FILENAME, INVALID_CONFIG, INVALID_CONFIG_TOML)?;
-    eprintln!();
-    check_invalid_configuration_error(result)?;
-    check_no_idb_created(FILENAME);
-    eprintln!();
-    Ok(())
-}
-
-/// Runs rhabdomancer with a configuration file that doesn't exist and checks
-/// that it fails before analyzing the binary.
-fn test_missing_configuration() -> anyhow::Result<()> {
-    reset_idb(FILENAME)?;
-    let missing_config = config_path(MISSING_CONFIG);
-    if missing_config.is_file() {
-        fs::remove_file(&missing_config)?;
-    }
-
-    let result = run_with_config_path(FILENAME, &missing_config);
-    eprintln!();
-    check_missing_configuration_error(result)?;
-    check_no_idb_created(FILENAME);
+    reset_idb(LS)?;
     eprintln!();
     Ok(())
 }
@@ -312,6 +281,53 @@ fn test_user_comment_at_call_site() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Runs the rhabdomancer binary with `RHABDOMANCER_CONFIG` set to an empty
+/// value and checks that it uses the built-in configuration, rather than
+/// failing to read a configuration file with an empty path.
+fn test_empty_configuration_variable() -> anyhow::Result<()> {
+    reset_idb(NO_CALLS)?;
+
+    eprintln!();
+    let output = run_binary(&[NO_CALLS], Some(""))?;
+    eprintln!();
+    check_binary_succeeded(&output);
+
+    // Remove the IDB file at the end.
+    reset_idb(NO_CALLS)?;
+    eprintln!();
+    Ok(())
+}
+
+/// Runs rhabdomancer with an invalid configuration and checks that it fails
+/// before analyzing the binary.
+fn test_invalid_configuration() -> anyhow::Result<()> {
+    reset_idb(LS)?;
+
+    let result = run_with_config(LS, INVALID_CONFIG, INVALID_CONFIG_TOML)?;
+    eprintln!();
+    check_invalid_configuration_error(result)?;
+    check_no_idb_created(LS);
+    eprintln!();
+    Ok(())
+}
+
+/// Runs rhabdomancer with a configuration file that doesn't exist and checks
+/// that it fails before analyzing the binary.
+fn test_missing_configuration() -> anyhow::Result<()> {
+    reset_idb(LS)?;
+    let missing_config = config_path(MISSING_CONFIG);
+    if missing_config.is_file() {
+        fs::remove_file(&missing_config)?;
+    }
+
+    let result = run_with_config_path(LS, &missing_config);
+    eprintln!();
+    check_missing_configuration_error(result)?;
+    check_no_idb_created(LS);
+    eprintln!();
+    Ok(())
+}
+
 /// Runs rhabdomancer against a binary that doesn't exist and checks that it
 /// fails without creating an IDB.
 fn test_missing_binary() -> anyhow::Result<()> {
@@ -335,23 +351,6 @@ fn test_invalid_arguments() -> anyhow::Result<()> {
         check_usage(&output, args);
     }
     check_no_idb_created(NO_CALLS);
-    eprintln!();
-    Ok(())
-}
-
-/// Runs the rhabdomancer binary with `RHABDOMANCER_CONFIG` set to an empty
-/// value and checks that it uses the built-in configuration, rather than
-/// failing to read a configuration file with an empty path.
-fn test_empty_configuration_variable() -> anyhow::Result<()> {
-    reset_idb(NO_CALLS)?;
-
-    eprintln!();
-    let output = run_binary(&[NO_CALLS], Some(""))?;
-    eprintln!();
-    check_binary_succeeded(&output);
-
-    // Remove the IDB file at the end.
-    reset_idb(NO_CALLS)?;
     eprintln!();
     Ok(())
 }
@@ -477,7 +476,7 @@ fn check_binary_succeeded(output: &process::Output) {
 }
 
 /// Checks that stdout has a header line (after a blank line) per bad function
-/// found in `FILENAME`, one line per call site, and nothing else.
+/// found in `LS`, one line per call site, and nothing else.
 fn check_number_of_output_lines(output: &process::Output) {
     eprint!("[*] Checking number of stdout lines by kind... ");
     let stdout = String::from_utf8_lossy(&output.stdout);
