@@ -32,6 +32,14 @@ const MISSING: &str = "./tests/data/missing";
 /// Expected number of marked call locations in `FILENAME` with the default
 /// configuration.
 const N_MARKS: BookmarkIndex = 86;
+/// Expected number of bad functions found in `FILENAME` with the default
+/// configuration, counting .plt stubs and imports separately, each printed on
+/// stdout as a header after a blank line.
+const N_BAD_FUNCTIONS: usize = 20;
+/// Expected number of call-site lines printed on stdout for `FILENAME` with the
+/// default configuration (each of the `N_MARKS` call locations is listed under
+/// both the .plt stub and the import).
+const N_CALL_SITE_LINES: usize = 172;
 /// Expected number of marked call locations in `FILENAME` with
 /// `CUSTOM_CONFIG_TOML`.
 const N_MARKS_CUSTOM: BookmarkIndex = 13;
@@ -109,7 +117,6 @@ fn main() -> anyhow::Result<()> {
     test_missing_configuration()?;
     test_binary_without_calls()?;
     test_thunk_with_repeated_xrefs()?;
-    test_priority_order()?;
     test_user_bookmark_at_call_site()?;
     test_user_comment_at_call_site()?;
     test_missing_binary()?;
@@ -120,20 +127,24 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Runs rhabdomancer with the default configuration, checks its annotations,
-/// then runs it again on the same IDB and checks that no new call locations are
-/// marked.
+/// Runs the rhabdomancer binary with the default configuration, checks what it
+/// prints and its annotations, then runs rhabdomancer again on the same IDB and
+/// checks that no new call locations are marked.
 fn test_default_configuration() -> anyhow::Result<()> {
     reset_idb(FILENAME)?;
 
-    let n_marks = rhabdomancer::run(FILENAME)?;
+    let output = run_binary(&[FILENAME], None)?;
     eprintln!();
-    check_number_of_marks(n_marks, N_MARKS);
+    check_binary_succeeded(&output);
+    check_number_of_output_lines(&output);
+    check_stdout_line(&output, "0x2C5F in sub_2C30");
+    check_summary(&output, "[+] Marked 86 new call locations");
+    check_priority_order(&output)?;
 
     let idb = open_idb(FILENAME)?;
-    check_number_of_bookmarks(&idb, n_marks);
+    check_number_of_bookmarks(&idb, N_MARKS);
     check_bookmark_descriptions(&idb);
-    check_number_of_comments(&idb, n_marks)?;
+    check_number_of_comments(&idb, N_MARKS)?;
     check_comments_match_bookmarks(&idb)?;
     // The IDB must be closed before rhabdomancer opens it again.
     drop(idb);
@@ -240,24 +251,6 @@ fn test_thunk_with_repeated_xrefs() -> anyhow::Result<()> {
 
     // Remove the IDB file at the end.
     reset_idb(DOUBLE_XREF)?;
-    eprintln!();
-    Ok(())
-}
-
-/// Runs the rhabdomancer binary against `FILENAME` with the default
-/// configuration and checks that bad functions are listed from highest to
-/// lowest priority.
-fn test_priority_order() -> anyhow::Result<()> {
-    reset_idb(FILENAME)?;
-
-    eprintln!();
-    let output = run_binary(&[FILENAME], None)?;
-    eprintln!();
-    check_binary_succeeded(&output);
-    check_priority_order(&output)?;
-
-    // Remove the IDB file at the end.
-    reset_idb(FILENAME)?;
     eprintln!();
     Ok(())
 }
@@ -479,6 +472,59 @@ fn check_binary_succeeded(output: &process::Output) {
         output.status.success(),
         "binary failed with {}",
         output.status
+    );
+    eprintln!("Ok.");
+}
+
+/// Checks that stdout has a header line (after a blank line) per bad function
+/// found in `FILENAME`, one line per call site, and nothing else.
+fn check_number_of_output_lines(output: &process::Output) {
+    eprint!("[*] Checking number of stdout lines by kind... ");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let count = |is_kind: fn(&str) -> bool| stdout.lines().filter(|line| is_kind(line)).count();
+
+    assert_eq!(
+        count(str::is_empty),
+        N_BAD_FUNCTIONS,
+        "wrong number of blank lines"
+    );
+    assert_eq!(
+        count(|line| line.starts_with(BAD_PREFIX)),
+        N_BAD_FUNCTIONS,
+        "wrong number of bad function header lines"
+    );
+    assert_eq!(
+        count(|line| line.starts_with("0x") && line.contains(" in ")),
+        N_CALL_SITE_LINES,
+        "wrong number of call-site lines"
+    );
+    assert_eq!(
+        stdout.lines().count(),
+        2 * N_BAD_FUNCTIONS + N_CALL_SITE_LINES,
+        "unexpected stdout lines"
+    );
+    eprintln!("Ok.");
+}
+
+/// Checks that stdout contains the known `line`, which pins the output format.
+fn check_stdout_line(output: &process::Output, line: &str) {
+    eprint!("[*] Checking stdout contains `{line}`... ");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.lines().any(|stdout_line| stdout_line == line),
+        "known stdout line missing from:\n{stdout}"
+    );
+    eprintln!("Ok.");
+}
+
+/// Checks that stderr contains the final `summary`, which reports the number of
+/// newly marked call locations.
+fn check_summary(output: &process::Output, summary: &str) {
+    eprint!("[*] Checking summary reports marked call locations... ");
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.lines().any(|line| line == summary),
+        "summary missing or wrong in stderr"
     );
     eprintln!("Ok.");
 }
