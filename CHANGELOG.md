@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and harden XREF traversal against cyclic `.plt` references in crafted or unusual binaries.
 - Keep runs idempotent when a call site already has a bookmark of its own, which previously made
   rhabdomancer re-mark it on every run.
+- Escape caller function names in the output, since they come from the analyzed binary.
 
 ## [0.10.1] - 2026-09-21
 

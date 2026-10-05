@@ -383,12 +383,14 @@ impl<'a> CallMarker<'a> {
                     continue;
                 }
 
-                // Print address with caller function name if available.
-                let caller = self.idb.function_at(from).map_or_else(
-                    || "[unknown]".into(),
-                    |func| func.name().unwrap_or_else(|| "[no name]".into()),
-                );
-                println!("{from:#X} in {caller}");
+                // Print address with caller function name if available. The name
+                // comes from the analyzed binary, so escape it to keep terminal
+                // escape sequences and other non-printable chars (e.g., bidi
+                // overrides) out of the output.
+                match self.idb.function_at(from) {
+                    Some(func) => println!("{from:#X} in {}", function_name(&func).escape_debug()),
+                    None => println!("{from:#X} in [unknown]"),
+                }
 
                 // Add a bookmark if not already present to mark the call location.
                 if self.bookmarked.insert(from) {
@@ -453,6 +455,15 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
         start.elapsed().as_secs_f64()
     );
     Ok(marked)
+}
+
+/// Returns the name of [`Function`] `func`, or `[no name]` if it has none.
+///
+/// The name comes from the analyzed binary, so it's untrusted: escape it with
+/// [`str::escape_debug`] before printing it.
+#[must_use]
+fn function_name(func: &Function<'_>) -> String {
+    func.name().unwrap_or_else(|| "[no name]".to_owned())
 }
 
 /// Normalizes a function name for matching against configuration entries.
