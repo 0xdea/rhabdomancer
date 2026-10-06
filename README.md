@@ -36,6 +36,11 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
   of Universal CRT wrappers (e.g., `__o_malloc`), and, for thunks and such wrappers only, the numeric suffix that IDA
   appends to names already in use (e.g., `memset_0`).
 
+> [!NOTE]
+> Fortified functions (e.g., `__strcpy_chk`, used instead of `strcpy` when building with `_FORTIFY_SOURCE`) are
+> deliberately not matched, since they are the checked variants of the listed functions. To also mark their calls,
+> add them explicitly to a custom configuration (e.g., `"__strcpy_chk"` with the same priority as `strcpy`).
+
 ## Articles
 
 - <https://hex-rays.com/blog/streamlining-vulnerability-research-idalib-rust-bindings>
