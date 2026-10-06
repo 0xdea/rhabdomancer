@@ -18,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add integration tests for invalid command-line arguments and an empty `RHABDOMANCER_CONFIG` variable.
 - Add a regression test for import stubs with a numeric suffix, with a PE test binary.
 - Add a regression test for glibc aliases, with a statically linked ARM64 test binary.
-- Label call locations in library code recognized by IDA with `(lib)`.
 
 ### Changed
 
@@ -42,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lowercase error messages, following the Rust API Guidelines.
 - Improve integration tests.
 - List every stub as a thunk (e.g., PE and Mach-O import stubs), not only those in `.plt` segments.
+- Label call locations in library code recognized by IDA with `(lib)`, printed after the address (e.g.,
+  `0x40CA00 (lib) in realloc`), which changes the format of those lines.
 - Improve code style.
 - Update documentation.
 

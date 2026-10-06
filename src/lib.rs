@@ -428,12 +428,20 @@ impl<'a> CallMarker<'a> {
                 // Print address with caller function name if available, labeled if
                 // IDA recognizes the caller as library code. The name comes from the
                 // analyzed binary, so escape it to keep terminal escape sequences and
-                // other non-printable chars (e.g., bidi overrides) out of the output.
+                // other non-printable chars (e.g., bidi overrides) out of the output,
+                // and print the label before it, so that no name can fake it.
                 match self.idb.function_at(from) {
-                    Some(func) if func.flags().contains(FunctionFlags::LIB) => {
-                        println!("{from:#X} in {} (lib)", function_name(&func).escape_debug());
+                    Some(func) => {
+                        let label = if func.flags().contains(FunctionFlags::LIB) {
+                            " (lib)"
+                        } else {
+                            ""
+                        };
+                        println!(
+                            "{from:#X}{label} in {}",
+                            function_name(&func).escape_debug()
+                        );
                     }
-                    Some(func) => println!("{from:#X} in {}", function_name(&func).escape_debug()),
                     None => println!("{from:#X} in [unknown]"),
                 }
 
