@@ -30,6 +30,9 @@ const DOUBLE_XREF: &str = "./tests/data/double_xref";
 /// PE target binary whose import stubs IDA names with a numeric suffix (e.g.,
 /// `strcpy_0`).
 const IMPORT_STUBS: &str = "./tests/data/import_stubs";
+/// Statically linked ARM64 target binary in which IDA names glibc functions
+/// after their aliases (e.g., `system` as `__libc_system`).
+const STATIC_GLIBC: &str = "./tests/data/static_glibc";
 /// Target binary that doesn't exist.
 const MISSING: &str = "./tests/data/missing";
 
@@ -60,6 +63,8 @@ const DOUBLE_XREF_LISTING: &str = "
 ";
 /// Expected number of marked call locations in `IMPORT_STUBS`.
 const N_MARKS_IMPORT_STUBS: BookmarkIndex = 22;
+/// Expected number of marked call locations in `STATIC_GLIBC`.
+const N_MARKS_STATIC_GLIBC: BookmarkIndex = 760;
 
 /// Call site in `DOUBLE_XREF` where the tests add a bookmark of their own,
 /// as a user would.
@@ -121,6 +126,7 @@ fn main() -> anyhow::Result<()> {
     test_binary_without_calls()?;
     test_thunk_with_repeated_xrefs()?;
     test_import_stubs_with_numeric_suffix()?;
+    test_glibc_aliases()?;
     test_user_bookmark_at_call_site()?;
     test_user_comment_at_call_site()?;
     test_empty_configuration_variable()?;
@@ -253,6 +259,32 @@ fn test_import_stubs_with_numeric_suffix() -> anyhow::Result<()> {
 
     // Remove the IDB file at the end.
     reset_idb(IMPORT_STUBS)?;
+    eprintln!();
+    Ok(())
+}
+
+/// Runs the rhabdomancer binary against a statically linked binary in which
+/// IDA names glibc functions after their aliases (e.g., `__libc_system`), and
+/// checks that their calls are marked (regression test for missing them).
+fn test_glibc_aliases() -> anyhow::Result<()> {
+    reset_idb(STATIC_GLIBC)?;
+
+    let output = run_binary(&[STATIC_GLIBC], None)?;
+    eprintln!();
+    check_binary_succeeded(&output);
+    check_stdout_line(&output, "[BAD 0] system");
+    check_stdout_line(&output, "0x4007CC in main");
+    check_summary(&output, "[+] Marked 760 new call locations");
+
+    let idb = open_idb(STATIC_GLIBC)?;
+    check_function_exists(&idb, "__libc_system");
+    check_number_of_bookmarks(&idb, N_MARKS_STATIC_GLIBC);
+    check_number_of_comments(&idb, N_MARKS_STATIC_GLIBC)?;
+    check_comments_match_bookmarks(&idb)?;
+    drop(idb);
+
+    // Remove the IDB file at the end.
+    reset_idb(STATIC_GLIBC)?;
     eprintln!();
     Ok(())
 }
@@ -646,6 +678,19 @@ fn check_custom_bookmark_descriptions(idb: &IDB) {
             "custom configuration produced an unexpected bookmark description: {desc:?}"
         );
     }
+    eprintln!("Ok.");
+}
+
+/// Checks that the IDB has a function named `name`, which a scenario relies
+/// on, so that it can't pass without testing what it's meant to (e.g., if a
+/// future IDA names the function differently).
+fn check_function_exists(idb: &IDB, name: &str) {
+    eprint!("[*] Checking `{name}` is a function in the IDB... ");
+    assert!(
+        idb.functions()
+            .any(|(_, func)| func.name().as_deref() == Some(name)),
+        "no function named `{name}`, the test binary no longer tests what it should"
+    );
     eprintln!("Ok.");
 }
 

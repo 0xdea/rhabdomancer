@@ -34,9 +34,9 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
   - [BAD 2] Low priority - Code paths involving these functions should be carefully checked.
 - The list of known bad API functions is built in and can be easily customized with a configuration file based on
   `conf/rhabdomancer.toml`.
-- Function names are matched without these decorations: leading dots and underscores (e.g., `_strcpy`), the prefix
-  of Universal CRT wrappers (e.g., `__o_malloc`), and, for stubs and such wrappers only, the numeric suffix that IDA
-  appends to names already in use (e.g., `memset_0`).
+- Function names are matched without these decorations: leading dots and underscores (e.g., `_strcpy`), the prefixes
+  of library aliases (e.g., `__o_malloc` in the Universal CRT, `__libc_system` and `__GI___snprintf` in glibc), and,
+  for stubs and such aliases only, the numeric suffix that IDA appends to names already in use (e.g., `memset_0`).
 
 > [!NOTE]
 > Fortified functions (e.g., `__strcpy_chk`, used instead of `strcpy` when building with `_FORTIFY_SOURCE`) are

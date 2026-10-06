@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add an integration test for the priority order of listed bad functions.
 - Add integration tests for invalid command-line arguments and an empty `RHABDOMANCER_CONFIG` variable.
 - Add a regression test for import stubs with a numeric suffix, with a PE test binary.
+- Add a regression test for glibc aliases, with a statically linked ARM64 test binary.
 
 ### Changed
 
@@ -53,6 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Escape caller function names in the output, since they come from the analyzed binary.
 - Match import stubs that IDA names with a numeric suffix (e.g., `memset_0`) and Universal CRT wrappers (e.g.,
   `__o_malloc`), whose calls were missed in PE binaries.
+- Match the glibc aliases that IDA may pick over the plain names in statically linked binaries (e.g., `__libc_system`,
+  `__GI___snprintf`), whose calls were missed.
 
 ## [0.10.1] - 2026-09-21
 

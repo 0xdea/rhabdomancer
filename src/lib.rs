@@ -29,6 +29,14 @@ const PREFIX: &str = "[BAD ";
 /// so that the binary doesn't depend on the source tree.
 const DEFAULT_CONFIG: &str = include_str!("../conf/rhabdomancer.toml");
 
+/// Prefixes of the names of library aliases of functions: the Universal CRT's
+/// wrappers (e.g., `__o_malloc`) and glibc's aliases (e.g., `__libc_system`,
+/// `__GI___snprintf`), which IDA may pick over the plain name.
+///
+/// Matched on the raw name: the leading underscores tell an alias apart from a
+/// function such as `o_write` or `libc_system`.
+const ALIAS_PREFIXES: [&str; 4] = ["__o_", "_o_", "__libc_", "__GI_"];
+
 /// Priority of bad API functions.
 ///
 /// Variants are declared from highest to lowest priority: the derived [`Ord`]
@@ -140,24 +148,24 @@ impl KnownBadFunctions {
     /// (see [`is_stub`]).
     ///
     /// Tries, in order, the normalized name, the name without the prefix of
-    /// Universal CRT wrappers (see [`strip_ucrt_prefix`]), and then that name
-    /// without the numeric suffix that IDA appends to names already in use
-    /// (see [`strip_ida_suffix`]), so that, e.g., `__o_malloc` and `memset_0`
-    /// match `malloc` and `memset`. The suffix is only stripped from stubs and
-    /// Universal CRT wrappers, so that an unrelated function such as `read_16`
-    /// doesn't match `read`.
+    /// library aliases (see [`strip_alias_prefix`]), and then that name without
+    /// the numeric suffix that IDA appends to names already in use (see
+    /// [`strip_ida_suffix`]), so that, e.g., `__libc_system` and `memset_0`
+    /// match `system` and `memset`. The suffix is only stripped from stubs and
+    /// library aliases, so that an unrelated function such as `read_16` doesn't
+    /// match `read`.
     #[must_use]
     fn lookup(&self, func_name: &str, stub: bool) -> Option<(&str, Priority)> {
         let normalized = normalize_name(func_name);
-        let unprefixed = strip_ucrt_prefix(func_name);
+        let unprefixed = strip_alias_prefix(func_name);
         let may_have_suffix = stub || unprefixed.is_some();
         let unsuffixed = may_have_suffix
             .then(|| strip_ida_suffix(unprefixed.unwrap_or(normalized)))
             .flatten();
 
-        // Try the normalized name, then the name without the prefix of
-        // Universal CRT wrappers, and finally that name without the numeric
-        // suffix that IDA appends to names already in use.
+        // Try the normalized name, then the name without the prefix of library
+        // aliases, and finally that name without the numeric suffix that IDA
+        // appends to names already in use.
         [Some(normalized), unprefixed, unsuffixed]
             .into_iter()
             .flatten()
@@ -509,17 +517,15 @@ fn normalize_name(name: &str) -> &str {
     name.trim_start_matches(['.', '_'])
 }
 
-/// Returns the normalized name of the function wrapped by the Universal CRT
-/// wrapper named `func_name` (e.g., `malloc` for `__o_malloc`, `wpopen` for
-/// `__o__wpopen`), or `None` if `func_name` isn't one.
-///
-/// Checked on the raw name, since the leading underscores of the `__o_`/`_o_`
-/// prefix tell a wrapper apart from a function such as `o_write`.
+/// Returns the normalized name of the function aliased by the library alias
+/// named `func_name` (e.g., `malloc` for `__o_malloc`, `system` for
+/// `__libc_system`, `snprintf` for `__GI___snprintf`), or `None` if
+/// `func_name` doesn't start with one of the [`ALIAS_PREFIXES`].
 #[must_use]
-fn strip_ucrt_prefix(func_name: &str) -> Option<&str> {
-    func_name
-        .strip_prefix("__o_")
-        .or_else(|| func_name.strip_prefix("_o_"))
+fn strip_alias_prefix(func_name: &str) -> Option<&str> {
+    ALIAS_PREFIXES
+        .iter()
+        .find_map(|prefix| func_name.strip_prefix(prefix))
         .map(normalize_name)
 }
 
@@ -751,15 +757,47 @@ mod tests {
     }
 
     #[test]
-    fn lookup_requires_underscores_before_ucrt_prefix() -> Result<(), String> {
-        let known_bad = KnownBadFunctions::try_from(config(&[], &["write"], &["malloc"]))?;
+    fn lookup_strips_glibc_prefixes() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(
+            &["system"],
+            &["snprintf", "strlen"],
+            &["realloc"],
+        ))?;
+
+        for (func_name, expected) in [
+            ("__libc_system", ("system", Priority::High)),
+            ("__libc_realloc", ("realloc", Priority::Low)),
+            ("__GI___snprintf", ("snprintf", Priority::Medium)),
+            ("__GI_strlen", ("strlen", Priority::Medium)),
+        ] {
+            assert_eq!(
+                known_bad.lookup(func_name, false),
+                Some(expected),
+                "function name `{func_name}` with a glibc prefix should match"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_requires_underscores_before_alias_prefix() -> Result<(), String> {
+        let known_bad =
+            KnownBadFunctions::try_from(config(&["system"], &["write", "snprintf"], &["malloc"]))?;
 
         for stub in [false, true] {
-            for func_name in ["o_write", "o_malloc", ".o_malloc"] {
+            for func_name in [
+                "o_write",
+                "o_malloc",
+                ".o_malloc",
+                "libc_system",
+                "_libc_system",
+                "GI_snprintf",
+                "_GI_snprintf",
+            ] {
                 assert_eq!(
                     known_bad.lookup(func_name, stub),
                     None,
-                    "function name `{func_name}` without a UCRT prefix should not match"
+                    "function name `{func_name}` without an alias prefix should not match"
                 );
             }
         }
@@ -773,7 +811,7 @@ mod tests {
         assert_eq!(
             known_bad.lookup("__o_foo_2", false),
             Some(("foo_2", Priority::High)),
-            "name without the UCRT prefix should be tried before stripping the suffix"
+            "name without the alias prefix should be tried before stripping the suffix"
         );
         Ok(())
     }
@@ -811,6 +849,9 @@ mod tests {
             "o_",
             "o_0",
             "__o_",
+            "__libc_",
+            "__GI_",
+            "__libc_strcpy_s",
         ] {
             assert_eq!(
                 known_bad.lookup(func_name, true),
