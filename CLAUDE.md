@@ -73,9 +73,12 @@ stdout layout:
 ```
                                   # blank line before each bad function
 [BAD {level}] {name} (thunk)      # ` (thunk)` only for stubs (see `is_stub()`)
-{addr:#X} in {caller}             # one line per call site, `[unknown]` outside any function
+{addr:#X} in {caller} (lib)       # one line per call site, `[unknown]` outside any function,
+                                  # ` (lib)` only if IDA flags the caller as library code
 ...
 ```
+
+The ` (lib)` suffix marks call sites in functions that IDA recognizes as library code (`FunctionFlags::LIB`, from FLIRT signatures), typically in statically linked runtimes, so that users can filter them out (e.g., `grep -v ' (lib)$'`); they are still marked in the IDB, and there's no option to skip them yet (a README TODO). It's only a suffix: a fuller version that also counted them separately in the summary (`MarkCounts` with an `iter::Sum` impl) was dropped as not worth its code, since IDA only recognizes runtimes it has signatures for (in IDA 9.4: Visual C++ for x86 and x64, Go's standard library, and a few others, but nothing that matched the ARM64 MSVC `cmd.exe`, and no glibc for ARM64), so nothing is flagged on any binary checked (`ls`, `static_glibc`, `cmd.exe`, Mach-O and mingw builds); for other runtimes, apply suitable signatures in IDA first and run rhabdomancer on that IDB. No test binary has call sites in library code, so the label is verified by hand only (it was exercised by temporarily checking `FunctionFlags::THUNK` instead).
 
 The label deliberately stays `(thunk)`, although the code calls the concept a stub (`is_stub()`): it's IDA's own term (the THUNK flag, `j_` names), and it has been in the output since v0.1.0, so scripts may rely on it. `stub` is used internally only because `is_thunk` would suggest IDA's flag alone, while `is_stub()` also covers `.plt` functions that IDA doesn't flag.
 

@@ -384,7 +384,8 @@ impl<'a> CallMarker<'a> {
     /// Each address is walked at most once, so that cyclic .plt references (in
     /// crafted or unusual binaries) can't make the traversal loop forever.
     /// Ordinary-flow XREFs (fall-throughs) aren't call locations, so they are
-    /// skipped.
+    /// skipped. Call locations in functions that IDA recognizes as library code
+    /// are listed with a `(lib)` label.
     ///
     /// Returns the number of newly marked call locations.
     ///
@@ -424,11 +425,14 @@ impl<'a> CallMarker<'a> {
                     continue;
                 }
 
-                // Print address with caller function name if available. The name
-                // comes from the analyzed binary, so escape it to keep terminal
-                // escape sequences and other non-printable chars (e.g., bidi
-                // overrides) out of the output.
+                // Print address with caller function name if available, labeled if
+                // IDA recognizes the caller as library code. The name comes from the
+                // analyzed binary, so escape it to keep terminal escape sequences and
+                // other non-printable chars (e.g., bidi overrides) out of the output.
                 match self.idb.function_at(from) {
+                    Some(func) if func.flags().contains(FunctionFlags::LIB) => {
+                        println!("{from:#X} in {} (lib)", function_name(&func).escape_debug());
+                    }
                     Some(func) => println!("{from:#X} in {}", function_name(&func).escape_debug()),
                     None => println!("{from:#X} in [unknown]"),
                 }

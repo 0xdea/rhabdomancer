@@ -23,6 +23,8 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 - Blazing-fast, headless user experience courtesy of IDA 9.x and idalib-rs Rust bindings.
 - Support for C/C++ binary targets compiled for any architecture implemented by IDA.
 - Bad API function call locations are printed to stdout and marked in the IDB.
+  - Call locations in library code recognized by IDA (e.g., a statically linked runtime matched by FLIRT signatures) are
+    labeled `(lib)`, so that they can be filtered out.
   - Calls through stubs (e.g., the `.plt` entries of ELF binaries or the import stubs of PE and Mach-O binaries,
     listed as thunks) are traced back to their callers.
   - In ELF binaries, a function is typically listed twice with the same call locations: once as its `.plt` stub
@@ -157,6 +159,7 @@ This project's development has been supported by the following organizations:
 - Further enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
 - Consider broadening the scope of normalization in `normalize_name` to account for more cases.
 - Follow calls through thunks outside `.plt` segments (e.g., MSVC incremental-linking `j_` thunks) to their callers.
+- Consider an option to skip marking call locations in library code recognized by IDA (now only labeled `(lib)`).
 - Implement serialized output to facilitate automated parsing and analysis.
 - Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
