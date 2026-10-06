@@ -64,7 +64,7 @@ const DOUBLE_XREF_LISTING: &str = "
 /// Expected number of marked call locations in `IMPORT_STUBS`.
 const N_MARKS_IMPORT_STUBS: BookmarkIndex = 22;
 /// Expected number of marked call locations in `STATIC_GLIBC`.
-const N_MARKS_STATIC_GLIBC: BookmarkIndex = 760;
+const N_MARKS_STATIC_GLIBC: BookmarkIndex = 756;
 
 /// Call site in `DOUBLE_XREF` where the tests add a bookmark of their own,
 /// as a user would.
@@ -265,7 +265,9 @@ fn test_import_stubs_with_numeric_suffix() -> anyhow::Result<()> {
 
 /// Runs the rhabdomancer binary against a statically linked binary in which
 /// IDA names glibc functions after their aliases (e.g., `__libc_system`), and
-/// checks that their calls are marked (regression test for missing them).
+/// checks that their calls are marked (regression test for missing them), but
+/// not the instructions that fall through into a bad function (regression test
+/// for marking them).
 fn test_glibc_aliases() -> anyhow::Result<()> {
     reset_idb(STATIC_GLIBC)?;
 
@@ -274,7 +276,8 @@ fn test_glibc_aliases() -> anyhow::Result<()> {
     check_binary_succeeded(&output);
     check_stdout_line(&output, "[BAD 0] system");
     check_stdout_line(&output, "0x4007CC in main");
-    check_summary(&output, "[+] Marked 760 new call locations");
+    check_no_stdout_line(&output, "0x40CA00 in __malloc_arena_thread_freeres");
+    check_summary(&output, "[+] Marked 756 new call locations");
 
     let idb = open_idb(STATIC_GLIBC)?;
     check_function_exists(&idb, "__libc_system");
@@ -576,6 +579,18 @@ fn check_stdout_line(output: &process::Output, line: &str) {
     assert!(
         stdout.lines().any(|stdout_line| stdout_line == line),
         "known stdout line missing from:\n{stdout}"
+    );
+    eprintln!("Ok.");
+}
+
+/// Checks that stdout doesn't contain `line`, e.g., a location that must not be
+/// listed as a call site.
+fn check_no_stdout_line(output: &process::Output, line: &str) {
+    eprint!("[*] Checking stdout doesn't contain `{line}`... ");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        !stdout.lines().any(|stdout_line| stdout_line == line),
+        "unexpected stdout line `{line}`"
     );
     eprintln!("Ok.");
 }

@@ -56,6 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `__o_malloc`), whose calls were missed in PE binaries.
 - Match the glibc aliases that IDA may pick over the plain names in statically linked binaries (e.g., `__libc_system`,
   `__GI___snprintf`), whose calls were missed.
+- Stop marking instructions that fall through into a bad function (e.g., alignment padding, or a call that never
+  returns), which aren't call locations.
 
 ## [0.10.1] - 2026-09-21
 

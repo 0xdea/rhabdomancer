@@ -383,6 +383,8 @@ impl<'a> CallMarker<'a> {
     /// afterwards, so that deep .plt indirection can't overflow the call stack.
     /// Each address is walked at most once, so that cyclic .plt references (in
     /// crafted or unusual binaries) can't make the traversal loop forever.
+    /// Ordinary-flow XREFs (fall-throughs) aren't call locations, so they are
+    /// skipped.
     ///
     /// Returns the number of newly marked call locations.
     ///
@@ -399,7 +401,12 @@ impl<'a> CallMarker<'a> {
         let mut targets = vec![target];
 
         while let Some(addr) = targets.pop() {
-            let first_xref = self.idb.first_xref_to(addr, XRefQuery::ALL);
+            // Skip ordinary-flow XREFs, i.e., the previous instruction falling
+            // through into `addr`: compilers reach another function with calls or
+            // jumps (including tail calls), which are kept, while fall-throughs
+            // into a function's start are padding or follow calls that never
+            // return.
+            let first_xref = self.idb.first_xref_to(addr, XRefQuery::FAR);
             for xref in iter::successors(first_xref, XRef::next_to) {
                 let from = xref.from();
 
