@@ -11,24 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add a note to `usage` explaining the `RHABDOMANCER_CONFIG` environment variable.
 - Add unit tests for `KnownBadFunctions`, `Priority`, and `PltSegments`.
-- Add regression tests for duplicated call-site lines and for call sites with a user's bookmark or comment, with
-  an AArch64 test binary.
+- Add integration tests for invalid command-line arguments and an empty `RHABDOMANCER_CONFIG` variable.
 - Add integration tests for a missing configuration file and a binary without calls to known bad API functions.
 - Add an integration test for the priority order of listed bad functions.
-- Add integration tests for invalid command-line arguments and an empty `RHABDOMANCER_CONFIG` variable.
+- Add regression tests for duplicated call-site lines and for call sites with a user's bookmark or comment.
 - Add a regression test for import stubs with a numeric suffix, with a PE test binary.
 - Add a regression test for glibc aliases, with a statically linked ARM64 test binary.
-- Label call locations in library code recognized by IDA with `(lib)` after the address.
 
 ### Changed
 
-- **Breaking:** reject configuration files that list the same function under multiple priorities, contain empty
-  function names, or contain unknown keys.
 - **Breaking:** embed the default configuration in the binary, so that it no longer depends on the source tree;
   editing `conf/rhabdomancer.toml` now requires a rebuild, and setting `RHABDOMANCER_CONFIG` selects a custom one
   (an empty value counts as unset).
+- **Breaking:** reject configuration files that list the same function under multiple priorities, contain empty
+  function names, or contain unknown keys.
 - **Breaking:** make `PREFIX` private; the annotation format is now documented in the README.
-
 - Refactor `KnownBadFunctions` to use a single lookup table.
 - Cache `.plt` segment address ranges to avoid repeated FFI lookups.
 - Fetch each bad function's name only once.
@@ -38,27 +35,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Walk XREF chains with `iter::successors` and replace the `BADADDR` sentinel with `Option` combinators.
 - Walk each XREF chain fully before the chains of the `.plt` thunks it references (can change the order of
   listed call sites).
+- List every stub as a thunk (e.g., PE and Mach-O import stubs), not only those in `.plt` segments.
+- Label call locations in library code recognized by IDA with `(lib)` after the address.
 - Replace the `config` crate with `toml` to load the configuration file.
 - Lowercase error messages, following the Rust API Guidelines.
-- Improve integration tests.
-- List every stub as a thunk (e.g., PE and Mach-O import stubs), not only those in `.plt` segments.
 - Improve code style.
+- Improve integration tests.
 - Update documentation.
 
 ### Fixed
 
 - Remove duplicate `strtrns` entry with medium priority.
-- Fix duplicated call-site lines when a `.plt` stub references an import more than once (e.g., on AArch64),
-  and harden XREF traversal against cyclic `.plt` references in crafted or unusual binaries.
+- Fix duplicated call-site lines when a `.plt` stub references an import more than once, and harden XREF traversal
+  against cyclic `.plt` references in crafted or unusual binaries.
 - Keep runs idempotent when a call site already has a bookmark of its own, which previously made
   rhabdomancer re-mark it on every run.
-- Escape caller function names in the output, since they come from the analyzed binary.
 - Match import stubs that IDA names with a numeric suffix (e.g., `memset_0`) and Universal CRT wrappers (e.g.,
   `__o_malloc`), whose calls were missed in PE binaries.
 - Match the glibc aliases that IDA may pick over the plain names in statically linked binaries (e.g., `__libc_system`,
   `__GI___snprintf`), whose calls were missed.
 - Stop marking instructions that fall through into a bad function (e.g., alignment padding, or a call that never
   returns), which aren't call locations.
+- Escape caller function names in the output, since they come from the analyzed binary.
 
 ## [0.10.1] - 2026-09-21
 

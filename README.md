@@ -24,12 +24,11 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 - Support for C/C++ binary targets compiled for any architecture implemented by IDA.
 - Bad API function call locations are printed to stdout and marked in the IDB.
   - Call locations in library code recognized by IDA (e.g., a statically linked runtime matched by FLIRT signatures) are
-    labeled `(lib)` after the address (`0x... (lib) in <caller>`).
+    labeled `(lib)`.
   - Calls through stubs (e.g., the `.plt` entries of ELF binaries or the import stubs of PE and Mach-O binaries,
     listed as thunks) are traced back to their callers.
-  - In ELF binaries, a function is typically listed twice with the same call locations: once as its `.plt` stub
-    (marked as thunk) and once as its import. This redundancy is deliberate: it ensures that no call location is
-    missed. Each call location is marked only once in the IDB.
+  - In ELF binaries, a function is deliberately listed twice with the same call locations: once as its `.plt` stub
+    (marked as thunk) and once as its import. Each call location is marked only once in the IDB.
 - Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
   - [BAD 0] High priority - Functions that are generally considered insecure.
   - [BAD 1] Medium priority - Interesting functions that should be checked for insecure use cases.
@@ -106,8 +105,8 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
    [`conf/rhabdomancer.toml`](https://github.com/0xdea/rhabdomancer/blob/master/conf/rhabdomancer.toml) (pick the tag
    that matches your installed version for its exact built-in list), edit the copy, and set the `RHABDOMANCER_CONFIG`
    environment variable to its path. The file must define the `high`, `medium`, and `low` arrays, and no other keys.
-   Otherwise (or if the variable is empty), the built-in list is used, which is embedded in the binary at build time
-   from `conf/rhabdomancer.toml` (editing that file requires a rebuild).
+   Otherwise, the built-in list is used, which is embedded in the binary at build time from `conf/rhabdomancer.toml`
+   (editing that file requires a rebuild).
 3. Make sure the `IDADIR` environment variable is set if your IDA installation is in a non-standard location.
 4. Run as follows:
    ```sh
@@ -157,9 +156,8 @@ This project's development has been supported by the following organizations:
 ## TODO
 
 - Further enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
-- Consider broadening the scope of normalization in `normalize_name` to account for more cases.
-- Follow calls through thunks outside `.plt` segments (e.g., MSVC incremental-linking `j_` thunks) to their callers.
-- Consider an option to skip marking call locations in library code recognized by IDA (now only labeled `(lib)`).
+- Follow calls through thunks outside `.plt` segments (e.g., MSVC incremental-linking `j_` thunks).
+- Consider skipping marking call locations in library code recognized by IDA (now only labeled `(lib)`).
 - Implement serialized output to facilitate automated parsing and analysis.
 - Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
