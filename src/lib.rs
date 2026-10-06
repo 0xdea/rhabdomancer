@@ -366,11 +366,8 @@ impl<'a> CallMarker<'a> {
         stub: bool,
     ) -> Result<BookmarkIndex, IDAError> {
         let desc = priority.description(name);
-        if stub {
-            println!("\n{desc} (thunk)");
-        } else {
-            println!("\n{desc}");
-        }
+        let label = if stub { " (thunk)" } else { "" };
+        println!("\n{desc}{label}");
 
         // Traverse XREFs and mark call locations.
         self.traverse_xrefs(func.start_address(), &desc)
