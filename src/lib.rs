@@ -11,7 +11,7 @@ use std::{env, fs, iter};
 
 use anyhow::Context as _;
 use idalib::bookmarks::BookmarkIndex;
-use idalib::func::{Function, FunctionId};
+use idalib::func::{Function, FunctionFlags, FunctionId};
 use idalib::idb::IDB;
 use idalib::xref::{XRef, XRefQuery};
 use idalib::{Address, IDAError};
@@ -136,11 +136,32 @@ impl KnownBadFunctions {
     }
 
     /// Returns the normalized name and priority of the known bad API function
-    /// named `func_name`, if any.
+    /// named `func_name`, if any. `is_thunk` tells whether the function is
+    /// flagged as a thunk.
+    ///
+    /// Tries, in order, the normalized name, the name without the prefix of
+    /// Universal CRT wrappers (see [`strip_ucrt_prefix`]), and then that name
+    /// without the numeric suffix that IDA appends to names already in use
+    /// (see [`strip_ida_suffix`]), so that, e.g., `__o_malloc` and `memset_0`
+    /// match `malloc` and `memset`. The suffix is only stripped from evident
+    /// stubs, i.e., thunks and Universal CRT wrappers, so that an unrelated
+    /// function such as `read_16` doesn't match `read`.
     #[must_use]
-    fn lookup(&self, func_name: &str) -> Option<(&str, Priority)> {
-        self.functions
-            .get_key_value(normalize_name(func_name))
+    fn lookup(&self, func_name: &str, is_thunk: bool) -> Option<(&str, Priority)> {
+        let normalized = normalize_name(func_name);
+        let unprefixed = strip_ucrt_prefix(func_name);
+        let is_stub = is_thunk || unprefixed.is_some();
+        let unsuffixed = is_stub
+            .then(|| strip_ida_suffix(unprefixed.unwrap_or(normalized)))
+            .flatten();
+
+        // Try the normalized name, then the name without the prefix of
+        // Universal CRT wrappers, and finally that name without the numeric
+        // suffix that IDA appends to names already in use.
+        [Some(normalized), unprefixed, unsuffixed]
+            .into_iter()
+            .flatten()
+            .find_map(|name| self.functions.get_key_value(name))
             .map(|(name, &priority)| (name.as_str(), priority))
     }
 }
@@ -206,7 +227,8 @@ impl<'a> BadFunctions<'a> {
             functions: idb
                 .functions()
                 .filter_map(|(id, func)| {
-                    let (name, priority) = bad.lookup(&func.name()?)?;
+                    let is_thunk = func.flags().contains(FunctionFlags::THUNK);
+                    let (name, priority) = bad.lookup(&func.name()?, is_thunk)?;
                     Some(((priority, id), (func, name)))
                 })
                 .collect(),
@@ -473,6 +495,35 @@ fn normalize_name(name: &str) -> &str {
     name.trim_start_matches(['.', '_'])
 }
 
+/// Returns the normalized name of the function wrapped by the Universal CRT
+/// wrapper named `func_name` (e.g., `malloc` for `__o_malloc`, `wpopen` for
+/// `__o__wpopen`), or `None` if `func_name` isn't one.
+///
+/// Checked on the raw name, since the leading underscores of the `__o_`/`_o_`
+/// prefix tell a wrapper apart from a function such as `o_write`.
+#[must_use]
+fn strip_ucrt_prefix(func_name: &str) -> Option<&str> {
+    func_name
+        .strip_prefix("__o_")
+        .or_else(|| func_name.strip_prefix("_o_"))
+        .map(normalize_name)
+}
+
+/// Returns the normalized name `name` without the numeric suffix that IDA
+/// appends to names already in use (e.g., `memset` for `memset_0`), or `None`
+/// if it has none. Only one suffix is stripped.
+#[must_use]
+fn strip_ida_suffix(name: &str) -> Option<&str> {
+    if let Some((base, suffix)) = name.rsplit_once('_')
+        && !suffix.is_empty()
+        && suffix.bytes().all(|byte| byte.is_ascii_digit())
+    {
+        Some(base)
+    } else {
+        None
+    }
+}
+
 #[cfg(test)]
 #[expect(clippy::panic_in_result_fn, reason = "panics are allowed in test code")]
 mod tests {
@@ -559,17 +610,17 @@ mod tests {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["memcpy"], &["getenv"]))?;
 
         assert_eq!(
-            known_bad.lookup("strcpy"),
+            known_bad.lookup("strcpy", false),
             Some(("strcpy", Priority::High)),
             "wrong normalized name or priority"
         );
         assert_eq!(
-            known_bad.lookup("memcpy"),
+            known_bad.lookup("memcpy", false),
             Some(("memcpy", Priority::Medium)),
             "wrong normalized name or priority"
         );
         assert_eq!(
-            known_bad.lookup("getenv"),
+            known_bad.lookup("getenv", false),
             Some(("getenv", Priority::Low)),
             "wrong normalized name or priority"
         );
@@ -582,17 +633,17 @@ mod tests {
             KnownBadFunctions::try_from(config(&["_strcpy"], &[".memset"], &["__getenv"]))?;
 
         assert_eq!(
-            known_bad.lookup("strcpy"),
+            known_bad.lookup("strcpy", false),
             Some(("strcpy", Priority::High)),
             "decorated name should match"
         );
         assert_eq!(
-            known_bad.lookup("memset"),
+            known_bad.lookup("memset", false),
             Some(("memset", Priority::Medium)),
             "decorated name should match"
         );
         assert_eq!(
-            known_bad.lookup("getenv"),
+            known_bad.lookup("getenv", false),
             Some(("getenv", Priority::Low)),
             "decorated name should match"
         );
@@ -605,7 +656,7 @@ mod tests {
 
         for func_name in ["_strcpy", ".strcpy", "__strcpy", "._strcpy"] {
             assert_eq!(
-                known_bad.lookup(func_name),
+                known_bad.lookup(func_name, false),
                 Some(("strcpy", Priority::High)),
                 "decorated function name `{func_name}` should match"
             );
@@ -618,15 +669,139 @@ mod tests {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &[], &[]))?;
 
         assert_eq!(
-            known_bad.lookup("strncpy"),
+            known_bad.lookup("strncpy", false),
             None,
             "unknown name should not match"
         );
         for func_name in ["", "_", ".", "__"] {
             assert_eq!(
-                known_bad.lookup(func_name),
+                known_bad.lookup(func_name, false),
                 None,
                 "function name `{func_name}` that normalizes to empty should not match"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_strips_ida_suffix_from_thunks() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["CreateProcessW"], &[]))?;
+
+        for func_name in ["strcpy_0", "strcpy_12", "_strcpy_0"] {
+            assert_eq!(
+                known_bad.lookup(func_name, true),
+                Some(("strcpy", Priority::High)),
+                "thunk name `{func_name}` with a numeric suffix should match"
+            );
+        }
+        assert_eq!(
+            known_bad.lookup("CreateProcessW_0", true),
+            Some(("CreateProcessW", Priority::Medium)),
+            "thunk name with a numeric suffix should match"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_keeps_ida_suffix_of_other_functions() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&[], &["read"], &["write"]))?;
+
+        for func_name in ["read_16", "write_32", "_read_8"] {
+            assert_eq!(
+                known_bad.lookup(func_name, false),
+                None,
+                "function name `{func_name}` that isn't a stub should not match"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_strips_ucrt_prefix() -> Result<(), String> {
+        let known_bad =
+            KnownBadFunctions::try_from(config(&[], &["_wpopen"], &["malloc", "rand"]))?;
+
+        for (func_name, expected) in [
+            ("__o_malloc", ("malloc", Priority::Low)),
+            ("_o_malloc", ("malloc", Priority::Low)),
+            ("__o__wpopen", ("wpopen", Priority::Medium)),
+            ("_o_rand_0", ("rand", Priority::Low)),
+        ] {
+            assert_eq!(
+                known_bad.lookup(func_name, false),
+                Some(expected),
+                "function name `{func_name}` with the UCRT prefix should match"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_requires_underscores_before_ucrt_prefix() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&[], &["write"], &["malloc"]))?;
+
+        for is_thunk in [false, true] {
+            for func_name in ["o_write", "o_malloc", ".o_malloc"] {
+                assert_eq!(
+                    known_bad.lookup(func_name, is_thunk),
+                    None,
+                    "function name `{func_name}` without a UCRT prefix should not match"
+                );
+            }
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_tries_unprefixed_name_before_stripping_suffix() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["foo_2"], &[], &["foo"]))?;
+
+        assert_eq!(
+            known_bad.lookup("__o_foo_2", false),
+            Some(("foo_2", Priority::High)),
+            "name without the UCRT prefix should be tried before stripping the suffix"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_prefers_exact_match_over_stripped_name() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["strcpy_1"], &[]))?;
+
+        assert_eq!(
+            known_bad.lookup("strcpy_1", true),
+            Some(("strcpy_1", Priority::Medium)),
+            "exact match should take precedence"
+        );
+        assert_eq!(
+            known_bad.lookup("strcpy_2", true),
+            Some(("strcpy", Priority::High)),
+            "thunk name without an exact match should match once stripped"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_keeps_other_suffixes_and_prefixes() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &[], &[]))?;
+
+        // As a thunk, where the most is stripped.
+        for func_name in [
+            "strcpy_s",
+            "strcpy_",
+            "strcpy_0x",
+            "strcpy0",
+            "strcpy_0_1",
+            "foo_strcpy",
+            "x_strcpy",
+            "o_",
+            "o_0",
+            "__o_",
+        ] {
+            assert_eq!(
+                known_bad.lookup(func_name, true),
+                None,
+                "function name `{func_name}` should not match"
             );
         }
         Ok(())
@@ -638,7 +813,7 @@ mod tests {
             KnownBadFunctions::try_from(config(&[], &["fwrite", "_fwrite", "fwrite"], &[]))?;
 
         assert_eq!(
-            known_bad.lookup("fwrite"),
+            known_bad.lookup("fwrite", false),
             Some(("fwrite", Priority::Medium)),
             "wrong normalized name or priority"
         );
@@ -687,12 +862,12 @@ mod tests {
             KnownBadFunctions::parse("high = [\"_strcpy\"]\nmedium = [\"memcpy\"]\nlow = []\n")?;
 
         assert_eq!(
-            known_bad.lookup("strcpy"),
+            known_bad.lookup("strcpy", false),
             Some(("strcpy", Priority::High)),
             "wrong normalized name or priority"
         );
         assert_eq!(
-            known_bad.lookup("memcpy"),
+            known_bad.lookup("memcpy", false),
             Some(("memcpy", Priority::Medium)),
             "wrong normalized name or priority"
         );

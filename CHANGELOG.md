@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add integration tests for a missing configuration file and a binary without calls to known bad API functions.
 - Add an integration test for the priority order of listed bad functions.
 - Add integration tests for invalid command-line arguments and an empty `RHABDOMANCER_CONFIG` variable.
+- Add a regression test for import stubs with a numeric suffix, with a PE test binary.
 
 ### Changed
 
@@ -49,6 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keep runs idempotent when a call site already has a bookmark of its own, which previously made
   rhabdomancer re-mark it on every run.
 - Escape caller function names in the output, since they come from the analyzed binary.
+- Match import stubs that IDA names with a numeric suffix (e.g., `memset_0`) and Universal CRT wrappers (e.g.,
+  `__o_malloc`), whose calls were missed in PE binaries.
 
 ## [0.10.1] - 2026-09-21
 

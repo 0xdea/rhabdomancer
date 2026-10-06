@@ -8,6 +8,7 @@ use std::{env, fs, io, process};
 use anyhow::Context as _;
 use idalib::Address;
 use idalib::bookmarks::BookmarkIndex;
+use idalib::func::FunctionFlags;
 use idalib::idb::IDB;
 
 /// Prefix of the bookmarks and comments added by rhabdomancer.
@@ -26,6 +27,9 @@ const NO_CALLS: &str = "./tests/data/no_calls";
 /// ARM64 target binary whose `main` calls `system` through a .plt stub that
 /// IDA sees referencing the import more than once.
 const DOUBLE_XREF: &str = "./tests/data/double_xref";
+/// PE target binary whose import stubs IDA names with a numeric suffix (e.g.,
+/// `strcpy_0`).
+const IMPORT_STUBS: &str = "./tests/data/import_stubs";
 /// Target binary that doesn't exist.
 const MISSING: &str = "./tests/data/missing";
 
@@ -54,6 +58,8 @@ const DOUBLE_XREF_LISTING: &str = "
 [BAD 0] system
 0x7F4 in main
 ";
+/// Expected number of marked call locations in `IMPORT_STUBS`.
+const N_MARKS_IMPORT_STUBS: BookmarkIndex = 22;
 
 /// Call site in `DOUBLE_XREF` where the tests add a bookmark of their own,
 /// as a user would.
@@ -114,6 +120,7 @@ fn main() -> anyhow::Result<()> {
     test_custom_configuration()?;
     test_binary_without_calls()?;
     test_thunk_with_repeated_xrefs()?;
+    test_import_stubs_with_numeric_suffix()?;
     test_user_bookmark_at_call_site()?;
     test_user_comment_at_call_site()?;
     test_empty_configuration_variable()?;
@@ -220,6 +227,32 @@ fn test_thunk_with_repeated_xrefs() -> anyhow::Result<()> {
 
     // Remove the IDB file at the end.
     reset_idb(DOUBLE_XREF)?;
+    eprintln!();
+    Ok(())
+}
+
+/// Runs the rhabdomancer binary against a PE binary whose import stubs IDA
+/// names with a numeric suffix (e.g., `strcpy_0`), and checks that their calls
+/// are marked (regression test for missing such stubs).
+fn test_import_stubs_with_numeric_suffix() -> anyhow::Result<()> {
+    reset_idb(IMPORT_STUBS)?;
+
+    let output = run_binary(&[IMPORT_STUBS], None)?;
+    eprintln!();
+    check_binary_succeeded(&output);
+    check_stdout_line(&output, "[BAD 0] strcpy");
+    check_stdout_line(&output, "0x1400014AB in helper");
+    check_summary(&output, "[+] Marked 22 new call locations");
+
+    let idb = open_idb(IMPORT_STUBS)?;
+    check_thunk_exists(&idb, "strcpy_0");
+    check_number_of_bookmarks(&idb, N_MARKS_IMPORT_STUBS);
+    check_number_of_comments(&idb, N_MARKS_IMPORT_STUBS)?;
+    check_comments_match_bookmarks(&idb)?;
+    drop(idb);
+
+    // Remove the IDB file at the end.
+    reset_idb(IMPORT_STUBS)?;
     eprintln!();
     Ok(())
 }
@@ -613,6 +646,20 @@ fn check_custom_bookmark_descriptions(idb: &IDB) {
             "custom configuration produced an unexpected bookmark description: {desc:?}"
         );
     }
+    eprintln!("Ok.");
+}
+
+/// Checks that the IDB has a function named `name` flagged as a thunk, which a
+/// scenario relies on, so that it can't pass without testing what it's meant
+/// to (e.g., if a future IDA names the stub differently).
+fn check_thunk_exists(idb: &IDB, name: &str) {
+    eprint!("[*] Checking `{name}` is a thunk in the IDB... ");
+    assert!(
+        idb.functions().any(|(_, func)| {
+            func.name().as_deref() == Some(name) && func.flags().contains(FunctionFlags::THUNK)
+        }),
+        "no thunk named `{name}`, the test binary no longer tests what it should"
+    );
     eprintln!("Ok.");
 }
 
