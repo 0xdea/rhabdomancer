@@ -24,9 +24,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 - Support for C/C++ binary targets compiled for any architecture implemented by IDA.
 - Bad API function call locations are printed to stdout and marked in the IDB.
   - Call locations in library code recognized by IDA (e.g., a statically linked runtime matched by FLIRT signatures) are
-    labeled `(lib)` after the address (`0x... (lib) in <caller>`), so that they can be filtered out, e.g., with
-    `grep -v '^0x[0-9A-F]* (lib) in '`. Filtering may also hide calls from your own code that reach a bad function only
-    through library code.
+    labeled `(lib)` after the address (`0x... (lib) in <caller>`).
   - Calls through stubs (e.g., the `.plt` entries of ELF binaries or the import stubs of PE and Mach-O binaries,
     listed as thunks) are traced back to their callers.
   - In ELF binaries, a function is typically listed twice with the same call locations: once as its `.plt` stub
