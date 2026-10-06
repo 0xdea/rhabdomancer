@@ -136,22 +136,22 @@ impl KnownBadFunctions {
     }
 
     /// Returns the normalized name and priority of the known bad API function
-    /// named `func_name`, if any. `is_thunk` tells whether the function is
-    /// flagged as a thunk.
+    /// named `func_name`, if any. `stub` tells whether the function is a stub
+    /// (see [`is_stub`]).
     ///
     /// Tries, in order, the normalized name, the name without the prefix of
     /// Universal CRT wrappers (see [`strip_ucrt_prefix`]), and then that name
     /// without the numeric suffix that IDA appends to names already in use
     /// (see [`strip_ida_suffix`]), so that, e.g., `__o_malloc` and `memset_0`
-    /// match `malloc` and `memset`. The suffix is only stripped from evident
-    /// stubs, i.e., thunks and Universal CRT wrappers, so that an unrelated
-    /// function such as `read_16` doesn't match `read`.
+    /// match `malloc` and `memset`. The suffix is only stripped from stubs and
+    /// Universal CRT wrappers, so that an unrelated function such as `read_16`
+    /// doesn't match `read`.
     #[must_use]
-    fn lookup(&self, func_name: &str, is_thunk: bool) -> Option<(&str, Priority)> {
+    fn lookup(&self, func_name: &str, stub: bool) -> Option<(&str, Priority)> {
         let normalized = normalize_name(func_name);
         let unprefixed = strip_ucrt_prefix(func_name);
-        let is_stub = is_thunk || unprefixed.is_some();
-        let unsuffixed = is_stub
+        let may_have_suffix = stub || unprefixed.is_some();
+        let unsuffixed = may_have_suffix
             .then(|| strip_ida_suffix(unprefixed.unwrap_or(normalized)))
             .flatten();
 
@@ -202,12 +202,12 @@ impl TryFrom<KnownBadFunctionsConfig> for KnownBadFunctions {
     }
 }
 
-/// Bad API functions found in the target binary with their normalized names,
-/// ordered by priority and then by function ID.
+/// Bad API functions found in the target binary with their normalized names
+/// and whether they are stubs, ordered by priority and then by function ID.
 struct BadFunctions<'a> {
-    /// Found bad functions with their normalized names, keyed by priority and
-    /// function ID.
-    functions: BTreeMap<(Priority, FunctionId), (Function<'a>, &'a str)>,
+    /// Found bad functions with their normalized names and whether they are
+    /// stubs (see [`is_stub`]), keyed by priority and function ID.
+    functions: BTreeMap<(Priority, FunctionId), (Function<'a>, &'a str, bool)>,
 }
 
 impl<'a> BadFunctions<'a> {
@@ -221,27 +221,30 @@ impl<'a> BadFunctions<'a> {
     /// stub's callers (e.g., an unrelated function that normalizes to the same
     /// name, or a stub that IDA doesn't link to the import). Marks aren't
     /// affected by the repetition, since each call site is bookmarked only once.
+    ///
+    /// `plt` holds the address ranges of the .plt segments of `idb`, used to
+    /// tell stubs apart (see [`is_stub`]).
     #[must_use]
-    fn find_all(idb: &'a IDB, bad: &'a KnownBadFunctions) -> Self {
+    fn find_all(idb: &'a IDB, bad: &'a KnownBadFunctions, plt: &PltSegments) -> Self {
         Self {
             functions: idb
                 .functions()
                 .filter_map(|(id, func)| {
-                    let is_thunk = func.flags().contains(FunctionFlags::THUNK);
-                    let (name, priority) = bad.lookup(&func.name()?, is_thunk)?;
-                    Some(((priority, id), (func, name)))
+                    let stub = is_stub(&func, plt);
+                    let (name, priority) = bad.lookup(&func.name()?, stub)?;
+                    Some(((priority, id), (func, name, stub)))
                 })
                 .collect(),
         }
     }
 
     /// Returns an iterator over the found bad functions as
-    /// `(priority, id, func, name)` tuples, ordered by priority and then by
-    /// function ID.
-    fn iter(&self) -> impl Iterator<Item = (Priority, FunctionId, &Function<'a>, &'a str)> {
+    /// `(priority, id, func, name, stub)` tuples, ordered by priority and then
+    /// by function ID.
+    fn iter(&self) -> impl Iterator<Item = (Priority, FunctionId, &Function<'a>, &'a str, bool)> {
         self.functions
             .iter()
-            .map(|(&(priority, id), (func, name))| (priority, id, func, *name))
+            .map(|(&(priority, id), (func, name, stub))| (priority, id, func, *name, *stub))
     }
 }
 
@@ -290,9 +293,8 @@ struct CallMarker<'a> {
 }
 
 impl<'a> CallMarker<'a> {
-    /// Creates a marker for `idb`, collecting the address ranges of its .plt
-    /// segments and the addresses that already carry one of rhabdomancer's
-    /// bookmarks.
+    /// Creates a marker for `idb`, whose .plt segments are in `plt`, collecting
+    /// the addresses that already carry one of rhabdomancer's bookmarks.
     ///
     /// Every bookmark is checked, rather than looking one up by address: IDA
     /// overlays bookmarks added at an already bookmarked address, and a lookup by
@@ -303,12 +305,12 @@ impl<'a> CallMarker<'a> {
     /// prepending text is still recognized and not marked again. The trade-off
     /// is that a user's own bookmark merely mentioning the prefix counts as ours.
     #[must_use]
-    fn new(idb: &'a IDB) -> Self {
+    fn new(idb: &'a IDB, plt: PltSegments) -> Self {
         let bookmarks = idb.bookmarks();
 
         Self {
             idb,
-            plt: PltSegments::new(idb),
+            plt,
             bookmarked: (0..bookmarks.len())
                 // Is it ours?
                 .filter(|&idx| {
@@ -336,11 +338,12 @@ impl<'a> CallMarker<'a> {
     fn mark_all(&mut self, found: &BadFunctions<'_>) -> Result<BookmarkIndex, IDAError> {
         found
             .iter()
-            .map(|(priority, _, func, name)| self.mark_calls(func, priority, name))
+            .map(|(priority, _, func, name, stub)| self.mark_calls(func, priority, name, stub))
             .sum()
     }
 
-    /// Locates calls to `func` and marks them with `priority` and `name`.
+    /// Locates calls to `func` and marks them with `priority` and `name`,
+    /// listing `func` as a thunk if `stub` is set.
     ///
     /// Returns the number of newly marked call locations.
     ///
@@ -352,9 +355,10 @@ impl<'a> CallMarker<'a> {
         func: &Function<'_>,
         priority: Priority,
         name: &str,
+        stub: bool,
     ) -> Result<BookmarkIndex, IDAError> {
         let desc = priority.description(name);
-        if self.plt.contains(func.start_address()) {
+        if stub {
             println!("\n{desc} (thunk)");
         } else {
             println!("\n{desc}");
@@ -464,8 +468,9 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
     eprintln!();
 
     eprintln!("[*] Finding bad API function calls...");
-    let found = BadFunctions::find_all(&idb, &known_bad);
-    let marked = CallMarker::new(&idb)
+    let plt = PltSegments::new(&idb);
+    let found = BadFunctions::find_all(&idb, &known_bad, &plt);
+    let marked = CallMarker::new(&idb, plt)
         .mark_all(&found)
         .context("failed to find bad API function calls")?;
 
@@ -487,6 +492,15 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
 #[must_use]
 fn function_name(func: &Function<'_>) -> String {
     func.name().unwrap_or_else(|| "[no name]".to_owned())
+}
+
+/// Checks if `func` is a stub, i.e., a function that only forwards to another
+/// one: a thunk according to IDA, or a function in one of the .plt segments in
+/// `plt` (which include ELF's lazy-binding stubs, which IDA doesn't flag as
+/// thunks).
+#[must_use]
+fn is_stub(func: &Function<'_>, plt: &PltSegments) -> bool {
+    func.flags().contains(FunctionFlags::THUNK) || plt.contains(func.start_address())
 }
 
 /// Normalizes a function name for matching against configuration entries.
@@ -684,20 +698,20 @@ mod tests {
     }
 
     #[test]
-    fn lookup_strips_ida_suffix_from_thunks() -> Result<(), String> {
+    fn lookup_strips_ida_suffix_from_stubs() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["CreateProcessW"], &[]))?;
 
         for func_name in ["strcpy_0", "strcpy_12", "_strcpy_0"] {
             assert_eq!(
                 known_bad.lookup(func_name, true),
                 Some(("strcpy", Priority::High)),
-                "thunk name `{func_name}` with a numeric suffix should match"
+                "stub name `{func_name}` with a numeric suffix should match"
             );
         }
         assert_eq!(
             known_bad.lookup("CreateProcessW_0", true),
             Some(("CreateProcessW", Priority::Medium)),
-            "thunk name with a numeric suffix should match"
+            "stub name with a numeric suffix should match"
         );
         Ok(())
     }
@@ -740,10 +754,10 @@ mod tests {
     fn lookup_requires_underscores_before_ucrt_prefix() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(&[], &["write"], &["malloc"]))?;
 
-        for is_thunk in [false, true] {
+        for stub in [false, true] {
             for func_name in ["o_write", "o_malloc", ".o_malloc"] {
                 assert_eq!(
-                    known_bad.lookup(func_name, is_thunk),
+                    known_bad.lookup(func_name, stub),
                     None,
                     "function name `{func_name}` without a UCRT prefix should not match"
                 );
@@ -776,7 +790,7 @@ mod tests {
         assert_eq!(
             known_bad.lookup("strcpy_2", true),
             Some(("strcpy", Priority::High)),
-            "thunk name without an exact match should match once stripped"
+            "stub name without an exact match should match once stripped"
         );
         Ok(())
     }
@@ -785,7 +799,7 @@ mod tests {
     fn lookup_keeps_other_suffixes_and_prefixes() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &[], &[]))?;
 
-        // As a thunk, where the most is stripped.
+        // As a stub, where the most is stripped.
         for func_name in [
             "strcpy_s",
             "strcpy_",

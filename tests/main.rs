@@ -240,7 +240,7 @@ fn test_import_stubs_with_numeric_suffix() -> anyhow::Result<()> {
     let output = run_binary(&[IMPORT_STUBS], None)?;
     eprintln!();
     check_binary_succeeded(&output);
-    check_stdout_line(&output, "[BAD 0] strcpy");
+    check_stdout_line(&output, "[BAD 0] strcpy (thunk)");
     check_stdout_line(&output, "0x1400014AB in helper");
     check_summary(&output, "[+] Marked 22 new call locations");
 

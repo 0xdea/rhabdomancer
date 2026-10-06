@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace the `config` crate with `toml` to load the configuration file.
 - Lowercase error messages, following the Rust API Guidelines.
 - Improve integration tests.
+- List every stub as a thunk (e.g., PE and Mach-O import stubs), not only those in `.plt` segments.
 - Improve code style.
 - Update documentation.
 

@@ -23,6 +23,8 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 - Blazing-fast, headless user experience courtesy of IDA 9.x and idalib-rs Rust bindings.
 - Support for C/C++ binary targets compiled for any architecture implemented by IDA.
 - Bad API function call locations are printed to stdout and marked in the IDB.
+  - Calls through stubs (e.g., the `.plt` entries of ELF binaries or the import stubs of PE and Mach-O binaries,
+    listed as thunks) are traced back to their callers.
   - In ELF binaries, a function is typically listed twice with the same call locations: once as its `.plt` stub
     (marked as thunk) and once as its import. This redundancy is deliberate: it ensures that no call location is
     missed. Each call location is marked only once in the IDB.
@@ -33,7 +35,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 - The list of known bad API functions is built in and can be easily customized with a configuration file based on
   `conf/rhabdomancer.toml`.
 - Function names are matched without these decorations: leading dots and underscores (e.g., `_strcpy`), the prefix
-  of Universal CRT wrappers (e.g., `__o_malloc`), and, for thunks and such wrappers only, the numeric suffix that IDA
+  of Universal CRT wrappers (e.g., `__o_malloc`), and, for stubs and such wrappers only, the numeric suffix that IDA
   appends to names already in use (e.g., `memset_0`).
 
 > [!NOTE]
