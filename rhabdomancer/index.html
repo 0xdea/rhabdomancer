@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file."><title>rhabdomancer - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-1ed95124.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="rhabdomancer" data-themes="" data-resource-suffix="" data-rustdoc-version="1.98.1 (48a229cea 2026-09-01)" data-channel="1.98.1" data-search-js="search-9944d736.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../static.files/storage-41dd4d93.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Crate rhabdomancer</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><a class="logo-container" href="../rhabdomancer/index.html"><img src="https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png" alt="logo"></a><h2><a href="../rhabdomancer/index.html">rhabdomancer</a><span class="version">0.10.1</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#rhabdomancer" title="rhabdomancer">rhabdomancer</a><ul><li><a href="#features" title="Features">Features</a></li><li><a href="#articles" title="Articles">Articles</a></li><li><a href="#see-also" title="See also">See also</a></li><li><a href="#installing" title="Installing">Installing</a></li><li><a href="#compiling" title="Compiling">Compiling</a></li><li><a href="#usage" title="Usage">Usage</a></li><li><a href="#compatibility" title="Compatibility">Compatibility</a></li><li><a href="#credits" title="Credits">Credits</a></li><li><a href="#changelog" title="Changelog">Changelog</a></li><li><a href="#todo" title="TODO">TODO</a></li></ul></li></ul><h3><a href="#constants">Crate Items</a></h3><ul class="block"><li><a href="#constants" title="Constants">Constants</a></li><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1>Crate <span>rhabdomancer</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/rhabdomancer/lib.rs.html#1-325">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file.</p>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file."><title>rhabdomancer - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-1ed95124.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="rhabdomancer" data-themes="" data-resource-suffix="" data-rustdoc-version="1.98.1 (48a229cea 2026-09-01)" data-channel="1.98.1" data-search-js="search-9944d736.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../static.files/storage-41dd4d93.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Crate rhabdomancer</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><a class="logo-container" href="../rhabdomancer/index.html"><img src="https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/logo.png" alt="logo"></a><h2><a href="../rhabdomancer/index.html">rhabdomancer</a><span class="version">1.0.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#rhabdomancer" title="rhabdomancer">rhabdomancer</a><ul><li><a href="#features" title="Features">Features</a></li><li><a href="#articles" title="Articles">Articles</a></li><li><a href="#see-also" title="See also">See also</a></li><li><a href="#installing" title="Installing">Installing</a></li><li><a href="#compiling" title="Compiling">Compiling</a></li><li><a href="#usage" title="Usage">Usage</a></li><li><a href="#compatibility" title="Compatibility">Compatibility</a></li><li><a href="#credits" title="Credits">Credits</a></li><li><a href="#changelog" title="Changelog">Changelog</a></li><li><a href="#todo" title="TODO">TODO</a></li></ul></li></ul><h3><a href="#functions">Crate Items</a></h3><ul class="block"><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1>Crate <span>rhabdomancer</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/rhabdomancer/lib.rs.html#1-1033">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Vulnerability research assistant that locates calls to potentially insecure API functions in a binary file.</p>
 <h2 id="rhabdomancer"><a class="doc-anchor" href="#rhabdomancer">§</a>rhabdomancer</h2>
 <p><a href="https://github.com/0xdea/rhabdomancer"><img src="https://img.shields.io/github/stars/0xdea/rhabdomancer.svg?style=flat&amp;color=yellow" alt="" /></a>
 <a href="https://crates.io/crates/rhabdomancer"><img src="https://img.shields.io/crates/v/rhabdomancer?style=flat&amp;color=green" alt="" /></a>
@@ -12,14 +12,23 @@
 <p>“The road to exploitable bugs is paved with unexploitable bugs.”</p>
 <p>– Mark Dowd</p>
 </blockquote>
-<p>Rhabdomancer is a blazing fast IDA headless plugin that locates calls to potentially insecure API functions in
+<p>Rhabdomancer is a blazing-fast IDA headless plugin that locates calls to potentially insecure API functions in
 a binary file. Auditors can backtrace from these candidate points to find pathways allowing access to untrusted input.</p>
 <p><img src="https://raw.githubusercontent.com/0xdea/rhabdomancer/master/.img/screen01.png" alt="" /></p>
 <h3 id="features"><a class="doc-anchor" href="#features">§</a>Features</h3>
 <ul>
-<li>Blazing fast, headless user experience courtesy of IDA 9.x and idalib-rs Rust bindings.</li>
+<li>Blazing-fast, headless user experience courtesy of IDA 9.x and idalib-rs Rust bindings.</li>
 <li>Support for C/C++ binary targets compiled for any architecture implemented by IDA.</li>
-<li>Bad API function call locations are printed to stdout and marked in the IDB.</li>
+<li>Bad API function call locations are printed to stdout and marked in the IDB.
+<ul>
+<li>Call locations in library code recognized by IDA (e.g., a statically linked runtime matched by FLIRT signatures) are
+labeled <code>(lib)</code>.</li>
+<li>Calls through stubs (e.g., the <code>.plt</code> entries of ELF binaries or the import stubs of PE and Mach-O binaries,
+listed as thunks) are traced back to their callers.</li>
+<li>In ELF binaries, a function is deliberately listed twice with the same call locations: once as its <code>.plt</code> stub
+(marked as thunk) and once as its import. Each call location is marked only once in the IDB.</li>
+</ul>
+</li>
 <li>Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
 <ul>
 <li>[BAD 0] High priority - Functions that are generally considered insecure.</li>
@@ -27,8 +36,18 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 <li>[BAD 2] Low priority - Code paths involving these functions should be carefully checked.</li>
 </ul>
 </li>
-<li>The list of known bad API functions can be easily customized by editing <code>conf/rhabdomancer.toml</code>.</li>
+<li>The list of known bad API functions is built in and can be easily customized with a configuration file based on
+<code>conf/rhabdomancer.toml</code>.</li>
+<li>Function names are matched without these decorations: leading dots and underscores (e.g., <code>_strcpy</code>), the prefixes
+of library aliases (e.g., <code>__o_malloc</code> in the Universal CRT, <code>__libc_system</code> and <code>__GI___snprintf</code> in glibc), and,
+for stubs and such aliases only, the numeric suffix that IDA appends to names already in use (e.g., <code>memset_0</code>).</li>
 </ul>
+<blockquote>
+<p>[!NOTE]
+Fortified functions (e.g., <code>__strcpy_chk</code>, used instead of <code>strcpy</code> when building with <code>_FORTIFY_SOURCE</code>) are
+deliberately not matched, since they are the checked variants of the listed functions. To also mark their calls,
+add them explicitly to a custom configuration (e.g., <code>"__strcpy_chk"</code> with the same priority as <code>strcpy</code>).</p>
+</blockquote>
 <h3 id="articles"><a class="doc-anchor" href="#articles">§</a>Articles</h3>
 <ul>
 <li><a href="https://hex-rays.com/blog/streamlining-vulnerability-research-idalib-rust-bindings">https://hex-rays.com/blog/streamlining-vulnerability-research-idalib-rust-bindings</a></li>
@@ -70,8 +89,12 @@ cargo build --release --locked</code></pre></div></li>
 <h3 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h3>
 <ol>
 <li>Make sure IDA is properly configured with a valid license.</li>
-<li>Customize the list of known bad API functions in <code>conf/rhabdomancer.toml</code> if needed. You can override the default
-configuration file location by setting the <code>RHABDOMANCER_CONFIG</code> environment variable.</li>
+<li>Optionally customize the list of known bad API functions: copy
+<a href="https://github.com/0xdea/rhabdomancer/blob/master/conf/rhabdomancer.toml"><code>conf/rhabdomancer.toml</code></a> (pick the tag
+that matches your installed version for its exact built-in list), edit the copy, and set the <code>RHABDOMANCER_CONFIG</code>
+environment variable to its path. The file must define the <code>high</code>, <code>medium</code>, and <code>low</code> arrays, and no other keys.
+Otherwise, the built-in list is used, which is embedded in the binary at build time from <code>conf/rhabdomancer.toml</code>
+(editing that file requires a rebuild).</li>
 <li>Make sure the <code>IDADIR</code> environment variable is set if your IDA installation is in a non-standard location.</li>
 <li>Run as follows:<div class="example-wrap"><pre class="language-sh"><code>rhabdomancer &lt;binary_file&gt;</code></pre></div>Any existing <code>.i64</code> IDB file will be updated; otherwise, a new IDB file will be created.</li>
 <li>Open the resulting <code>.i64</code> IDB file with IDA.</li>
@@ -80,7 +103,9 @@ configuration file location by setting the <code>RHABDOMANCER_CONFIG</code> envi
 </ol>
 <blockquote>
 <p>[!NOTE]
-Rhabdomancer also adds comments at marked call locations.</p>
+Rhabdomancer also adds comments at marked call locations. Both bookmarks and comments are tagged as
+<code>[BAD n] &lt;function_name&gt;</code>, where <code>n</code> is the priority tier (0 = high, 1 = medium, 2 = low), so that scripts can
+search IDBs for them. This format is stable across releases.</p>
 </blockquote>
 <h3 id="compatibility"><a class="doc-anchor" href="#compatibility">§</a>Compatibility</h3>
 <p>Only the latest IDA release is officially supported, but older versions may work as well. The following table
@@ -94,6 +119,7 @@ summarizes the latest compatible release for each IDA version:</p>
 <tr><td>v9.3.260327</td><td>v0.9.0</td></tr>
 <tr><td>v9.3.260421</td><td>v0.9.3</td></tr>
 <tr><td>v9.4.260714</td><td>current release</td></tr>
+<tr><td>v9.4.260915</td><td>current release</td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -113,8 +139,11 @@ Check the <a href="https://github.com/idalib-rs/idalib">idalib-rs</a> documentat
 <h3 id="todo"><a class="doc-anchor" href="#todo">§</a>TODO</h3>
 <ul>
 <li>Further enrich the known bad API function list (see <a href="https://github.com/0xdea/semgrep-rules">https://github.com/0xdea/semgrep-rules</a>).</li>
-<li>Consider broadening the scope of normalization in <code>normalize_name</code> to account for more cases.</li>
+<li>Follow calls through thunks outside <code>.plt</code> segments (e.g., MSVC incremental-linking <code>j_</code> thunks).</li>
+<li>Consider skipping marking call locations in library code recognized by IDA (now only labeled <code>(lib)</code>).</li>
+<li>Implement serialized output to facilitate automated parsing and analysis.</li>
 <li>Implement a basic ruleset in the style of <a href="https://github.com/Accenture/VulFi">VulFi</a>
 and <a href="https://github.com/Martyx00/VulnFanatic">VulnFanatic</a>.</li>
 </ul>
-</div></details><h2 id="constants" class="section-header">Constants<a href="#constants" class="anchor">§</a></h2><dl class="item-table"><dt><a class="constant" href="constant.PREFIX.html" title="constant rhabdomancer::PREFIX">PREFIX</a></dt><dd>Prefix for bookmarks and comments.</dd></dl><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.run.html" title="fn rhabdomancer::run">run</a></dt><dd>Locates calls to potentially insecure API functions in the binary file at <code>filepath</code>.</dd></dl></section></div></main></body></html>
+</div></details><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.run.html" title="fn rhabdomancer::run">run</a></dt><dd>Locates calls to potentially insecure API functions in the binary file at
+<code>filepath</code>.</dd></dl></section></div></main></body></html>

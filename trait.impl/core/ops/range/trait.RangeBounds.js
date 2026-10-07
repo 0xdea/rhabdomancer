@@ -1,9 +1,9 @@
 (function() {
-    const implementors = Object.fromEntries([["winnow",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.98.1/core/ops/range/trait.RangeBounds.html\" title=\"trait core::ops::range::RangeBounds\">RangeBounds</a>&lt;<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.98.1/std/primitive.usize.html\">usize</a>&gt; for <a class=\"struct\" href=\"winnow/stream/struct.Range.html\" title=\"struct winnow::stream::Range\">Range</a>",0]]]]);
+    const implementors = Object.fromEntries([["winnow",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.98.1/core/ops/range/trait.RangeBounds.html\" title=\"trait core::ops::range::RangeBounds\">RangeBounds</a>&lt;<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.98.1/core/primitive.usize.html\">usize</a>&gt; for <a class=\"struct\" href=\"winnow/stream/struct.Range.html\" title=\"struct winnow::stream::Range\">Range</a>",0]]]]);
     if (window.register_implementors) {
         window.register_implementors(implementors);
     } else {
         window.pending_implementors = implementors;
     }
 })()
-//{"start":59,"fragment_lengths":[405]}
+//{"start":59,"fragment_lengths":[406]}
