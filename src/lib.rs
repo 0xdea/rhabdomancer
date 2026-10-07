@@ -161,20 +161,21 @@ impl KnownBadFunctions {
     /// [`strip_ida_suffix`]), so that, e.g., `__libc_system` and `memset_0`
     /// match `system` and `memset`. The suffix is only stripped from stubs and
     /// library aliases, so that an unrelated function such as `read_16` doesn't
-    /// match `read`.
+    /// match `read`. Library aliases count as stubs here because IDA doesn't
+    /// always flag them as thunks (e.g., the Universal CRT's `_o_rand_0`).
     #[must_use]
     fn lookup(&self, func_name: &str, kind: FunctionKind) -> Option<(&str, Priority)> {
         let normalized = normalize_name(func_name);
-        let unprefixed = strip_alias_prefix(func_name);
-        let may_have_suffix = kind == FunctionKind::Stub || unprefixed.is_some();
+        let aliased = strip_alias_prefix(func_name);
+        let may_have_suffix = kind == FunctionKind::Stub || aliased.is_some();
         let unsuffixed = may_have_suffix
-            .then(|| strip_ida_suffix(unprefixed.unwrap_or(normalized)))
+            .then(|| strip_ida_suffix(aliased.unwrap_or(normalized)))
             .flatten();
 
         // Try the normalized name, then the name without the prefix of library
         // aliases, and finally that name without the numeric suffix that IDA
         // appends to names already in use.
-        [Some(normalized), unprefixed, unsuffixed]
+        [Some(normalized), aliased, unsuffixed]
             .into_iter()
             .flatten()
             .find_map(|name| self.functions.get_key_value(name))
@@ -847,7 +848,7 @@ mod tests {
     }
 
     #[test]
-    fn lookup_tries_unprefixed_name_before_stripping_suffix() -> Result<(), String> {
+    fn lookup_tries_aliased_name_before_stripping_suffix() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(&["foo_2"], &[], &["foo"]))?;
 
         assert_eq!(
