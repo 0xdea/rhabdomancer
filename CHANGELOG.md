@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Declare Rust 1.88 as the minimum supported Rust version (`rust-version`).
 - Add a note to `usage` explaining the `RHABDOMANCER_CONFIG` environment variable.
 - Add unit tests for `KnownBadFunctions`, `Priority`, and `PltSegments`.
 - Add integration tests for invalid command-line arguments and an empty `RHABDOMANCER_CONFIG` variable.
@@ -39,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Label call locations in library code recognized by IDA with `(lib)` after the address.
 - Replace the `config` crate with `toml` to load the configuration file.
 - Lowercase error messages, following the Rust API Guidelines.
+- Exclude `CLAUDE.md` from the published package.
 - Improve code style.
 - Improve integration tests.
 - Update documentation.

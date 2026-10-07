@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - IDA 9.4+ (see the README's compatibility table), with `IDADIR` set to the installation directory at both build time and runtime. The build script (`build.rs`, via `idalib-build`) checks common installation paths if it's unset, and only warns if it can't find IDA, so set it explicitly for non-standard locations (`export IDADIR=/path/to/ida`).
 - LLVM/Clang, used by bindgen when building `idalib`. On Windows, `LIBCLANG_PATH` must also be set to the LLVM/Clang `bin` directory.
-- Rust edition 2024.
+- Rust edition 2024, and Rust 1.88+ (declared as `rust-version` in `Cargo.toml`): the code uses `let` chains, and idalib's `cxx` dependencies require 1.88 too (checked by building with 1.86). Clippy's `incompatible_msrv` finds no API newer than 1.85, the minimum for edition 2024, so the floor comes from the language feature and the dependencies rather than from APIs.
 
 ## Commands
 
