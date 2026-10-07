@@ -76,6 +76,15 @@ impl Priority {
     }
 }
 
+/// Kind of a function, which affects how it's matched and listed.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum FunctionKind {
+    /// An ordinary function.
+    Plain,
+    /// A stub that only forwards to another function (see [`is_stub`]).
+    Stub,
+}
+
 /// Known bad API function names organized by priority, as listed in the
 /// configuration file.
 ///
@@ -144,8 +153,7 @@ impl KnownBadFunctions {
     }
 
     /// Returns the normalized name and priority of the known bad API function
-    /// named `func_name`, if any. `stub` tells whether the function is a stub
-    /// (see [`is_stub`]).
+    /// named `func_name`, if any, given the function's `kind`.
     ///
     /// Tries, in order, the normalized name, the name without the prefix of
     /// library aliases (see [`strip_alias_prefix`]), and then that name without
@@ -155,10 +163,10 @@ impl KnownBadFunctions {
     /// library aliases, so that an unrelated function such as `read_16` doesn't
     /// match `read`.
     #[must_use]
-    fn lookup(&self, func_name: &str, stub: bool) -> Option<(&str, Priority)> {
+    fn lookup(&self, func_name: &str, kind: FunctionKind) -> Option<(&str, Priority)> {
         let normalized = normalize_name(func_name);
         let unprefixed = strip_alias_prefix(func_name);
-        let may_have_suffix = stub || unprefixed.is_some();
+        let may_have_suffix = kind == FunctionKind::Stub || unprefixed.is_some();
         let unsuffixed = may_have_suffix
             .then(|| strip_ida_suffix(unprefixed.unwrap_or(normalized)))
             .flatten();
@@ -210,12 +218,21 @@ impl TryFrom<KnownBadFunctionsConfig> for KnownBadFunctions {
     }
 }
 
-/// Bad API functions found in the target binary with their normalized names
-/// and whether they are stubs, ordered by priority and then by function ID.
+/// A bad API function found in the target binary.
+struct FoundFunction<'a> {
+    /// The function.
+    func: Function<'a>,
+    /// Its normalized name, as listed in the configuration.
+    name: &'a str,
+    /// Its kind.
+    kind: FunctionKind,
+}
+
+/// Bad API functions found in the target binary, ordered by priority and then
+/// by function ID.
 struct BadFunctions<'a> {
-    /// Found bad functions with their normalized names and whether they are
-    /// stubs (see [`is_stub`]), keyed by priority and function ID.
-    functions: BTreeMap<(Priority, FunctionId), (Function<'a>, &'a str, bool)>,
+    /// Found bad functions, keyed by priority and function ID.
+    functions: BTreeMap<(Priority, FunctionId), FoundFunction<'a>>,
 }
 
 impl<'a> BadFunctions<'a> {
@@ -238,21 +255,27 @@ impl<'a> BadFunctions<'a> {
             functions: idb
                 .functions()
                 .filter_map(|(id, func)| {
-                    let stub = is_stub(&func, plt);
-                    let (name, priority) = bad.lookup(&func.name()?, stub)?;
-                    Some(((priority, id), (func, name, stub)))
+                    let kind = if is_stub(&func, plt) {
+                        FunctionKind::Stub
+                    } else {
+                        FunctionKind::Plain
+                    };
+                    let (name, priority) = bad.lookup(&func.name()?, kind)?;
+                    Some(((priority, id), FoundFunction { func, name, kind }))
                 })
                 .collect(),
         }
     }
 
     /// Returns an iterator over the found bad functions as
-    /// `(priority, id, func, name, stub)` tuples, ordered by priority and then
+    /// `(priority, id, func, name, kind)` tuples, ordered by priority and then
     /// by function ID.
-    fn iter(&self) -> impl Iterator<Item = (Priority, FunctionId, &Function<'a>, &'a str, bool)> {
+    fn iter(
+        &self,
+    ) -> impl Iterator<Item = (Priority, FunctionId, &Function<'a>, &'a str, FunctionKind)> {
         self.functions
             .iter()
-            .map(|(&(priority, id), (func, name, stub))| (priority, id, func, *name, *stub))
+            .map(|(&(priority, id), found)| (priority, id, &found.func, found.name, found.kind))
     }
 }
 
@@ -346,12 +369,12 @@ impl<'a> CallMarker<'a> {
     fn mark_all(&mut self, found: &BadFunctions<'_>) -> Result<BookmarkIndex, IDAError> {
         found
             .iter()
-            .map(|(priority, _, func, name, stub)| self.mark_calls(func, priority, name, stub))
+            .map(|(priority, _, func, name, kind)| self.mark_calls(func, priority, name, kind))
             .sum()
     }
 
     /// Locates calls to `func` and marks them with `priority` and `name`,
-    /// listing `func` as a thunk if `stub` is set.
+    /// listing `func` as a thunk if it's a stub, according to `kind`.
     ///
     /// Returns the number of newly marked call locations.
     ///
@@ -363,10 +386,13 @@ impl<'a> CallMarker<'a> {
         func: &Function<'_>,
         priority: Priority,
         name: &str,
-        stub: bool,
+        kind: FunctionKind,
     ) -> Result<BookmarkIndex, IDAError> {
         let desc = priority.description(name);
-        let label = if stub { " (thunk)" } else { "" };
+        let label = match kind {
+            FunctionKind::Stub => " (thunk)",
+            FunctionKind::Plain => "",
+        };
         println!("\n{desc}{label}");
 
         // Traverse XREFs and mark call locations.
@@ -646,17 +672,17 @@ mod tests {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["memcpy"], &["getenv"]))?;
 
         assert_eq!(
-            known_bad.lookup("strcpy", false),
+            known_bad.lookup("strcpy", FunctionKind::Plain),
             Some(("strcpy", Priority::High)),
             "wrong normalized name or priority"
         );
         assert_eq!(
-            known_bad.lookup("memcpy", false),
+            known_bad.lookup("memcpy", FunctionKind::Plain),
             Some(("memcpy", Priority::Medium)),
             "wrong normalized name or priority"
         );
         assert_eq!(
-            known_bad.lookup("getenv", false),
+            known_bad.lookup("getenv", FunctionKind::Plain),
             Some(("getenv", Priority::Low)),
             "wrong normalized name or priority"
         );
@@ -669,17 +695,17 @@ mod tests {
             KnownBadFunctions::try_from(config(&["_strcpy"], &[".memset"], &["__getenv"]))?;
 
         assert_eq!(
-            known_bad.lookup("strcpy", false),
+            known_bad.lookup("strcpy", FunctionKind::Plain),
             Some(("strcpy", Priority::High)),
             "decorated name should match"
         );
         assert_eq!(
-            known_bad.lookup("memset", false),
+            known_bad.lookup("memset", FunctionKind::Plain),
             Some(("memset", Priority::Medium)),
             "decorated name should match"
         );
         assert_eq!(
-            known_bad.lookup("getenv", false),
+            known_bad.lookup("getenv", FunctionKind::Plain),
             Some(("getenv", Priority::Low)),
             "decorated name should match"
         );
@@ -692,7 +718,7 @@ mod tests {
 
         for func_name in ["_strcpy", ".strcpy", "__strcpy", "._strcpy"] {
             assert_eq!(
-                known_bad.lookup(func_name, false),
+                known_bad.lookup(func_name, FunctionKind::Plain),
                 Some(("strcpy", Priority::High)),
                 "decorated function name `{func_name}` should match"
             );
@@ -705,13 +731,13 @@ mod tests {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &[], &[]))?;
 
         assert_eq!(
-            known_bad.lookup("strncpy", false),
+            known_bad.lookup("strncpy", FunctionKind::Plain),
             None,
             "unknown name should not match"
         );
         for func_name in ["", "_", ".", "__"] {
             assert_eq!(
-                known_bad.lookup(func_name, false),
+                known_bad.lookup(func_name, FunctionKind::Plain),
                 None,
                 "function name `{func_name}` that normalizes to empty should not match"
             );
@@ -725,13 +751,13 @@ mod tests {
 
         for func_name in ["strcpy_0", "strcpy_12", "_strcpy_0"] {
             assert_eq!(
-                known_bad.lookup(func_name, true),
+                known_bad.lookup(func_name, FunctionKind::Stub),
                 Some(("strcpy", Priority::High)),
                 "stub name `{func_name}` with a numeric suffix should match"
             );
         }
         assert_eq!(
-            known_bad.lookup("CreateProcessW_0", true),
+            known_bad.lookup("CreateProcessW_0", FunctionKind::Stub),
             Some(("CreateProcessW", Priority::Medium)),
             "stub name with a numeric suffix should match"
         );
@@ -744,7 +770,7 @@ mod tests {
 
         for func_name in ["read_16", "write_32", "_read_8"] {
             assert_eq!(
-                known_bad.lookup(func_name, false),
+                known_bad.lookup(func_name, FunctionKind::Plain),
                 None,
                 "function name `{func_name}` that isn't a stub should not match"
             );
@@ -764,7 +790,7 @@ mod tests {
             ("_o_rand_0", ("rand", Priority::Low)),
         ] {
             assert_eq!(
-                known_bad.lookup(func_name, false),
+                known_bad.lookup(func_name, FunctionKind::Plain),
                 Some(expected),
                 "function name `{func_name}` with the UCRT prefix should match"
             );
@@ -787,7 +813,7 @@ mod tests {
             ("__GI_strlen", ("strlen", Priority::Medium)),
         ] {
             assert_eq!(
-                known_bad.lookup(func_name, false),
+                known_bad.lookup(func_name, FunctionKind::Plain),
                 Some(expected),
                 "function name `{func_name}` with a glibc prefix should match"
             );
@@ -800,7 +826,7 @@ mod tests {
         let known_bad =
             KnownBadFunctions::try_from(config(&["system"], &["write", "snprintf"], &["malloc"]))?;
 
-        for stub in [false, true] {
+        for kind in [FunctionKind::Plain, FunctionKind::Stub] {
             for func_name in [
                 "o_write",
                 "o_malloc",
@@ -811,7 +837,7 @@ mod tests {
                 "_GI_snprintf",
             ] {
                 assert_eq!(
-                    known_bad.lookup(func_name, stub),
+                    known_bad.lookup(func_name, kind),
                     None,
                     "function name `{func_name}` without an alias prefix should not match"
                 );
@@ -825,7 +851,7 @@ mod tests {
         let known_bad = KnownBadFunctions::try_from(config(&["foo_2"], &[], &["foo"]))?;
 
         assert_eq!(
-            known_bad.lookup("__o_foo_2", false),
+            known_bad.lookup("__o_foo_2", FunctionKind::Plain),
             Some(("foo_2", Priority::High)),
             "name without the alias prefix should be tried before stripping the suffix"
         );
@@ -837,12 +863,12 @@ mod tests {
         let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["strcpy_1"], &[]))?;
 
         assert_eq!(
-            known_bad.lookup("strcpy_1", true),
+            known_bad.lookup("strcpy_1", FunctionKind::Stub),
             Some(("strcpy_1", Priority::Medium)),
             "exact match should take precedence"
         );
         assert_eq!(
-            known_bad.lookup("strcpy_2", true),
+            known_bad.lookup("strcpy_2", FunctionKind::Stub),
             Some(("strcpy", Priority::High)),
             "stub name without an exact match should match once stripped"
         );
@@ -870,7 +896,7 @@ mod tests {
             "__libc_strcpy_s",
         ] {
             assert_eq!(
-                known_bad.lookup(func_name, true),
+                known_bad.lookup(func_name, FunctionKind::Stub),
                 None,
                 "function name `{func_name}` should not match"
             );
@@ -884,7 +910,7 @@ mod tests {
             KnownBadFunctions::try_from(config(&[], &["fwrite", "_fwrite", "fwrite"], &[]))?;
 
         assert_eq!(
-            known_bad.lookup("fwrite", false),
+            known_bad.lookup("fwrite", FunctionKind::Plain),
             Some(("fwrite", Priority::Medium)),
             "wrong normalized name or priority"
         );
@@ -933,12 +959,12 @@ mod tests {
             KnownBadFunctions::parse("high = [\"_strcpy\"]\nmedium = [\"memcpy\"]\nlow = []\n")?;
 
         assert_eq!(
-            known_bad.lookup("strcpy", false),
+            known_bad.lookup("strcpy", FunctionKind::Plain),
             Some(("strcpy", Priority::High)),
             "wrong normalized name or priority"
         );
         assert_eq!(
-            known_bad.lookup("memcpy", false),
+            known_bad.lookup("memcpy", FunctionKind::Plain),
             Some(("memcpy", Priority::Medium)),
             "wrong normalized name or priority"
         );
