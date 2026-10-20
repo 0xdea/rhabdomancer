@@ -1,6 +1,6 @@
 [package]
 name = "rhabdomancer"
-version = "1.0.0"
+version = "1.0.1-alpha"
 authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2024"
 rust-version = "1.88"
