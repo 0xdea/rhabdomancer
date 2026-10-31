@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update documentation.
 
+### Fixed
+
+- Fall back to uncached builds in CI when sccache fails to start.
+
 ## [1.0.0] - 2026-10-07
 
 ### Added
