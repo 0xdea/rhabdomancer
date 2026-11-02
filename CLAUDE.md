@@ -101,7 +101,7 @@ All "bad" functions are defined in `conf/rhabdomancer.toml`, grouped into `high`
 
 ## Lint policy
 
-All clippy lint groups (`all`, `pedantic`, `nursery`, `cargo`, `restriction`) are enabled as warnings in the workspace lints of `Cargo.toml` (the same configuration in augur, haruspex, and rhabdomancer) and treated as errors by `cargo clippy -- -D warnings`. A curated set of restriction lints is explicitly allowed (e.g., `implicit_return`, `question_mark_used`, `print_stdout`, `pattern_type_mismatch`), and `linker_messages = "allow"` is a temporary workaround for <https://github.com/idalib-rs/idalib/issues/81>. Notably forbidden outside tests:
+All clippy lint groups (`all`, `pedantic`, `nursery`, `cargo`, `restriction`) are enabled as warnings in the workspace lints of `Cargo.toml` (the same configuration in augur, haruspex, and rhabdomancer) and treated as errors by `cargo clippy -- -D warnings`. A curated set of restriction lints is explicitly allowed (e.g., `implicit_return`, `question_mark_used`, `print_stdout`, `pattern_type_mismatch`), and `linker_messages = "allow"` silences linker warnings from IDA's Windows libraries (see <https://github.com/idalib-rs/idalib/issues/81>, closed with this suppression as the fix). Notably forbidden outside tests:
 
 - `unwrap`, `expect`, `panic`, `todo`, `unimplemented`, `unreachable`, `dbg_macro`: use `?`, `anyhow` context, and `Option` combinators instead.
 - Unsafe blocks without a `// Safety:` comment (`undocumented_unsafe_blocks`).

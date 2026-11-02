@@ -1,6 +1,6 @@
 [package]
 name = "rhabdomancer"
-version = "1.1.0"
+version = "1.1.1-alpha"
 authors = ["Marco Ivaldi <raptor@0xdeadbeef.info>"]
 edition = "2024"
 rust-version = "1.88"
@@ -60,7 +60,7 @@ missing_docs = { level = "warn" }
 elided_lifetimes_in_paths = { level = "warn" }
 bare_trait_objects = { level = "warn" }
 explicit_outlives_requirements = { level = "warn" }
-# temporary workaround for https://github.com/idalib-rs/idalib/issues/81
+# silence linker warnings from IDA's libraries on Windows (https://github.com/idalib-rs/idalib/issues/81)
 linker_messages = "allow"
 
 [workspace.lints.clippy]
