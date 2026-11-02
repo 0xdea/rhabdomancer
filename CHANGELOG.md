@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update idalib to v0.11.0 to support IDA 9.5.
+- Update other dependencies.
 - Update documentation.
 
 ### Fixed
