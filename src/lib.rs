@@ -37,6 +37,13 @@ const DEFAULT_CONFIG: &str = include_str!("../conf/rhabdomancer.toml");
 /// function such as `o_write` or `libc_system`.
 const ALIAS_PREFIXES: [&str; 4] = ["__o_", "_o_", "__libc_", "__GI_"];
 
+/// Prefix that Microsoft's toolchain adds to the symbol of the native version
+/// of a C function in ARM64EC and ARM64X binaries (e.g., `#memcpy`).
+///
+/// IDA 9.5 keeps it in function names, while earlier versions replaced it with
+/// an underscore (e.g., `_memcpy`).
+const ARM64EC_MARKER: char = '#';
+
 /// Priority of bad API functions.
 ///
 /// Variants are declared from highest to lowest priority: the derived [`Ord`]
@@ -155,16 +162,21 @@ impl KnownBadFunctions {
     /// Returns the normalized name and priority of the known bad API function
     /// named `func_name`, if any, given the function's `kind`.
     ///
-    /// Tries, in order, the normalized name, the name without the prefix of
-    /// library aliases (see [`strip_alias_prefix`]), and then that name without
-    /// the numeric suffix that IDA appends to names already in use (see
-    /// [`strip_ida_suffix`]), so that, e.g., `__libc_system` and `memset_0`
-    /// match `system` and `memset`. The suffix is only stripped from stubs and
+    /// First strips the decorations that platforms add to function symbols
+    /// (see [`strip_decorations`]), then tries, in order, the normalized name,
+    /// the name without the prefix of library aliases (see
+    /// [`strip_alias_prefix`]), and then that name without the numeric suffix
+    /// that IDA appends to names already in use (see [`strip_ida_suffix`]), so
+    /// that, e.g., `#memcpy`, `__libc_system`, and `memset_0` match `memcpy`,
+    /// `system`, and `memset`. The suffix is only stripped from stubs and
     /// library aliases, so that an unrelated function such as `read_16` doesn't
     /// match `read`. Library aliases count as stubs here because IDA doesn't
     /// always flag them as thunks (e.g., the Universal CRT's `_o_rand_0`).
     #[must_use]
     fn lookup(&self, func_name: &str, kind: FunctionKind) -> Option<(&str, Priority)> {
+        // Strip the decorations first, so that the alias prefixes and the suffix
+        // are recognized in decorated names too (e.g., `#_o_malloc`).
+        let func_name = strip_decorations(func_name);
         let normalized = normalize_name(func_name);
         let aliased = strip_alias_prefix(func_name);
         let may_have_suffix = kind == FunctionKind::Stub || aliased.is_some();
@@ -186,7 +198,9 @@ impl KnownBadFunctions {
 impl TryFrom<KnownBadFunctionsConfig> for KnownBadFunctions {
     type Error = String;
 
-    /// Normalizes the names in `config` and maps each of them to its priority.
+    /// Strips decorations from and normalizes the names in `config`, as
+    /// [`KnownBadFunctions::lookup`] does with function names, and maps each of
+    /// them to its priority.
     ///
     /// # Errors
     ///
@@ -201,7 +215,7 @@ impl TryFrom<KnownBadFunctionsConfig> for KnownBadFunctions {
             (Priority::Low, config.low),
         ] {
             for name in names {
-                let normalized = normalize_name(&name);
+                let normalized = normalize_name(strip_decorations(&name));
 
                 if normalized.is_empty() {
                     return Err(format!("`{name}` is not a valid function name"));
@@ -554,6 +568,18 @@ fn is_stub(func: &Function<'_>, plt: &PltSegments) -> bool {
     func.flags().contains(FunctionFlags::THUNK) || plt.contains(func.start_address())
 }
 
+/// Returns `name` without the decorations that platforms add to the symbol of
+/// a function: the [`ARM64EC_MARKER`] (e.g., `memcpy` for `#memcpy`). Only one
+/// marker is stripped.
+///
+/// Decorations are stripped before any other matching step, from function
+/// names and configuration names alike, so that, e.g., a configured `#memcpy`
+/// matches both `#memcpy` and `memcpy`.
+#[must_use]
+fn strip_decorations(name: &str) -> &str {
+    name.strip_prefix(ARM64EC_MARKER).unwrap_or(name)
+}
+
 /// Normalizes a function name for matching against configuration entries.
 #[must_use]
 fn normalize_name(name: &str) -> &str {
@@ -823,6 +849,73 @@ mod tests {
     }
 
     #[test]
+    fn strip_decorations_removes_one_arm64ec_marker() {
+        for (func_name, expected) in [
+            ("#memcpy", "memcpy"),
+            ("#_o_malloc", "_o_malloc"),
+            ("##memcpy", "#memcpy"),
+            ("#", ""),
+            ("memcpy", "memcpy"),
+            ("_#memcpy", "_#memcpy"),
+        ] {
+            assert_eq!(
+                strip_decorations(func_name),
+                expected,
+                "`{func_name}` should become `{expected}`"
+            );
+        }
+    }
+
+    #[test]
+    fn lookup_strips_arm64ec_marker() -> Result<(), String> {
+        let known_bad =
+            KnownBadFunctions::try_from(config(&["strcpy"], &["_wpopen", "memcpy"], &["malloc"]))?;
+
+        for (func_name, kind, expected) in [
+            ("#memcpy", FunctionKind::Plain, ("memcpy", Priority::Medium)),
+            ("#strcpy", FunctionKind::Stub, ("strcpy", Priority::High)),
+            ("#_o_malloc", FunctionKind::Plain, ("malloc", Priority::Low)),
+            (
+                "#_o__wpopen",
+                FunctionKind::Plain,
+                ("wpopen", Priority::Medium),
+            ),
+            ("#strcpy_0", FunctionKind::Stub, ("strcpy", Priority::High)),
+        ] {
+            assert_eq!(
+                known_bad.lookup(func_name, kind),
+                Some(expected),
+                "function name `{func_name}` with the ARM64EC marker should match"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_does_not_match_other_arm64ec_names() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["strcpy"], &["memcpy", "read"], &[]))?;
+
+        // The suffix is still only stripped from stubs and library aliases.
+        for func_name in ["#read_16", "#strcpy_0"] {
+            assert_eq!(
+                known_bad.lookup(func_name, FunctionKind::Plain),
+                None,
+                "function name `{func_name}` that isn't a stub should not match"
+            );
+        }
+        for kind in [FunctionKind::Plain, FunctionKind::Stub] {
+            for func_name in ["##memcpy", "_#memcpy", "#memcpy$exit_thunk", "#"] {
+                assert_eq!(
+                    known_bad.lookup(func_name, kind),
+                    None,
+                    "function name `{func_name}` should not match"
+                );
+            }
+        }
+        Ok(())
+    }
+
+    #[test]
     fn lookup_requires_underscores_before_alias_prefix() -> Result<(), String> {
         let known_bad =
             KnownBadFunctions::try_from(config(&["system"], &["write", "snprintf"], &["malloc"]))?;
@@ -906,6 +999,20 @@ mod tests {
     }
 
     #[test]
+    fn try_from_strips_arm64ec_marker_from_configuration_names() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&["#memcpy"], &[], &[]))?;
+
+        for func_name in ["#memcpy", "memcpy"] {
+            assert_eq!(
+                known_bad.lookup(func_name, FunctionKind::Plain),
+                Some(("memcpy", Priority::High)),
+                "configured `#memcpy` should match function name `{func_name}`"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
     fn try_from_accepts_duplicates_within_the_same_priority() -> Result<(), String> {
         let known_bad =
             KnownBadFunctions::try_from(config(&[], &["fwrite", "_fwrite", "fwrite"], &[]))?;
@@ -925,6 +1032,7 @@ mod tests {
             (&["strtrns"][..], &["strtrns"][..], &[][..], "strtrns"),
             (&[], &["_memcpy"], &[".memcpy"], "memcpy"),
             (&["getenv"], &[], &["__getenv"], "getenv"),
+            (&["strcpy"], &["#strcpy"], &[], "strcpy"),
         ] {
             let result = KnownBadFunctions::try_from(config(high, medium, low));
             assert!(
@@ -938,7 +1046,7 @@ mod tests {
 
     #[test]
     fn try_from_rejects_names_that_normalize_to_empty() {
-        for name in ["", "_", ".", "._", "__"] {
+        for name in ["", "_", ".", "._", "__", "#", "#_"] {
             for (high, medium, low) in [
                 (&[name][..], &[][..], &[][..]),
                 (&[], &[name], &[]),

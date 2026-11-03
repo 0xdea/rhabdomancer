@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Mark the `linker_messages` suppression as permanent.
+- Ignore a leading ARM64EC `#` in configuration names too, so that, e.g., `#memcpy` and `memcpy` are the same entry:
+  configurations listing both under different priorities, or a bare `#`, are now rejected.
+
+### Fixed
+
+- Match native ARM64EC functions, whose names IDA 9.5 keeps with their `#` prefix (e.g., `#memcpy`).
 
 ## [1.1.0] - 2026-11-02
 
