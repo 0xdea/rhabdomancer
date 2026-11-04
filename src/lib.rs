@@ -1303,4 +1303,22 @@ mod tests {
         );
         Ok(())
     }
+
+    #[test]
+    fn default_configuration_has_no_redundant_entries() -> Result<(), TomlError> {
+        let config: KnownBadFunctionsConfig = toml::from_str(DEFAULT_CONFIG)?;
+        let mut keys = HashSet::new();
+
+        for name in config.high.iter().chain(&config.medium).chain(&config.low) {
+            assert!(
+                strip_alias_prefix(name).is_none(),
+                "built-in `{name}` is an alias or redirect, which the alias prefixes already match"
+            );
+            assert!(
+                keys.insert(normalize_name(strip_decorations(name))),
+                "built-in `{name}` repeats another entry once normalized"
+            );
+        }
+        Ok(())
+    }
 }

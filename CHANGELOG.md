@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Match glibc's C99 and C23 redirects (e.g., `__isoc23_sscanf`), including the ELF `.plt` stubs of all library
   aliases and redirects (e.g., `.__isoc23_sscanf`).
 
+### Removed
+
+- Remove redundant entries from the built-in configuration (decorated duplicates and `__isoc99_*` redirects).
+
 ## [1.1.0] - 2026-11-02
 
 ### Changed

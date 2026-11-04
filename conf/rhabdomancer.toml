@@ -1,37 +1,37 @@
 # High priority - These functions are generally considered insecure
 high = [
     # strcpy family
-    "strcpy", "_strcpy", "strcpyA", "strcpyW", "wcscpy", "_wcscpy", "_tcscpy", "_mbscpy",
+    "strcpy", "strcpyA", "strcpyW", "wcscpy", "_tcscpy", "_mbscpy",
     "StrCpy", "StrCpyA", "StrCpyW",
     "lstrcpy", "lstrcpyA", "lstrcpyW", "_tccpy", "_mbccpy", "_ftcscpy",
     "stpcpy", "wcpcpy",
     "strccpy", "strecpy", "strcadd", "streadd", "strtrns",
     # strcat family
-    "strcat", "_strcat", "strcatA", "strcatW", "wcscat", "_wcscat", "_tcscat", "_mbscat",
+    "strcat", "strcatA", "strcatW", "wcscat", "_tcscat", "_mbscat",
     "StrCat", "StrCatA", "StrCatW",
-    "lstrcat", "_lstrcat", "lstrcatA", "_lstrcatA", "lstrcatW", "_lstrcatW",
+    "lstrcat", "lstrcatA", "lstrcatW",
     "StrCatBuff", "StrCatBuffA", "StrCatBuffW", "StrCatChainW",
     "_tccat", "_mbccat", "_ftcscat",
     # sprintf family
-    "sprintf", "_sprintf", "_sprintf_c89",
-    "vsprintf", "_vsprintf", "_vsprintf_c89",
-    "_wsprintfA", "_wsprintfW", "sprintfW", "sprintfA",
-    "wsprintf", "_wsprintf", "wsprintfW", "_wsprintfW", "wsprintfA", "_wsprintfA",
+    "sprintf", "_sprintf_c89",
+    "vsprintf", "_vsprintf_c89",
+    "sprintfW", "sprintfA",
+    "wsprintf", "wsprintfW", "wsprintfA",
     "_stprintf", "wvsprintf", "wvsprintfA", "wvsprintfW", "_vstprintf",
     # scanf family
-    "scanf", "_scanf", "__isoc99_scanf", "wscanf", "_tscanf",
-    "sscanf", "_sscanf", "__isoc99_sscanf", "_sscanf_c89", "swscanf", "_stscanf",
-    "fscanf", "_fscanf", "__isoc99_fscanf", "fwscanf",
-    "vscanf", "_vscanf", "__isoc99_vscanf", "vwscanf", "_vwscanf",
-    "vfscanf", "_vfscanf", "__isoc99_vfscanf", "vfwscanf", "_vfwscanf",
-    "vsscanf", "_vsscanf", "__isoc99_vsscanf", "vswscanf", "_vswscanf",
-    "snscanf", "_snscanf", "snwscanf", "_snwscanf", "_sntscanf",
+    "scanf", "wscanf", "_tscanf",
+    "sscanf", "_sscanf_c89", "swscanf", "_stscanf",
+    "fscanf", "fwscanf",
+    "vscanf", "vwscanf",
+    "vfscanf", "vfwscanf",
+    "vsscanf", "vswscanf",
+    "snscanf", "snwscanf", "_sntscanf",
     # gets family
-    "gets", "_gets", "_getts", "_getws", "_gettws", "getpw", "getpass", "getc", "getchar",
+    "gets", "_getts", "_getws", "_gettws", "getpw", "getpass", "getc", "getchar",
     # insecure memory allocation on the stack, it can also cause stack clash
-    "alloca", "_alloca",
+    "alloca",
     # command execution via shell
-    "system", "_system", "popen", "_popen", "wpopen", "_wpopen", "p2open", "wordexp",
+    "system", "popen", "wpopen", "p2open", "wordexp",
     # insecure temporary file creation
     "mktemp", "tmpnam", "tempnam", "tmpnam_r",
     # time family
@@ -46,12 +46,12 @@ high = [
 # Medium priority - These functions are interesting and should be checked for insecure use cases
 medium = [
     # strncpy needs explicit null-termination: buf[sizeof(buf) – 1] = '\0'
-    "strncpy", "_strncpy", "wcsncpy", "_tcsncpy", "_mbsncpy", "_mbsnbcpy",
+    "strncpy", "wcsncpy", "_tcsncpy", "_mbsncpy", "_mbsnbcpy",
     "StrCpyN", "StrCpyNA", "StrCpyNW", "StrNCpy", "strcpynA", "StrNCpyA", "StrNCpyW",
     "lstrcpyn", "lstrcpynA", "lstrcpynW", "_csncpy", "wcscpyn",
     "stpncpy", "wcpncpy",
     # strncat must be called with: sizeof(buf) - strlen(buf) - 1 to prevent off-by-one bugs (beware of underflow)
-    "strncat", "_strncat", "wcsncat", "_tcsncat", "_mbsncat", "_mbsnbcat",
+    "strncat", "wcsncat", "_tcsncat", "_mbsncat", "_mbsnbcat",
     "StrCatN", "StrCatNA", "StrCatNW", "StrNCat", "StrNCatA", "StrNCatW",
     "lstrncat", "lstrcatnA", "lstrcatnW", "lstrcatn",
     # strlcpy returns strlen(src), which can be larger than the dst buffer
@@ -64,14 +64,14 @@ medium = [
     "strtok", "_tcstok", "wcstok", "_mbstok",
     "strfind", "strrspn",
     # snprintf returns strlen(src), which can be larger than the dst buffer
-    "snprintf", "_sntprintf", "_snprintf", "_snprintf_c89", "_snwprintf",
-    "vsnprintf", "_vsnprintf", "_vsnprintf_c89",
-    "vsnwprintf", "_vsnwprintf", "wnsprintf", "wnsprintfA", "wnsprintfW", "_vsntprintf",
+    "snprintf", "_sntprintf", "_snprintf_c89", "_snwprintf",
+    "vsnprintf", "_vsnprintf_c89",
+    "vsnwprintf", "wnsprintf", "wnsprintfA", "wnsprintfW", "_vsntprintf",
     "wvnsprintf", "wvnsprintfA", "wvnsprintfW",
-    "swprintf", "_swprintf", "vswprintf", "_vswprintf",
+    "swprintf", "vswprintf",
     # memory copying functions can be used insecurely, check if size arg can contain negative numbers
-    "memcpy", "_memcpy", "memccpy", "mempcpy", "memmove", "_memmove", "bcopy", "memset",
-    "wmemcpy", "_wmemcpy", "wmempcpy", "wmemmove", "_wmemmove", "RtlCopyMemory", "CopyMemory",
+    "memcpy", "memccpy", "mempcpy", "memmove", "bcopy", "memset",
+    "wmemcpy", "wmempcpy", "wmemmove", "RtlCopyMemory", "CopyMemory",
     "memcpy_s", "wmemcpy_s", "memmove_s", "wmemmove_s", "memset_s", "memset_explicit",
     # user id and group id functions can be used insecurely, return value must be checked
     "setuid", "seteuid", "setreuid", "setresuid",
@@ -79,9 +79,9 @@ medium = [
     # exec* and related functions can be used in an insecure way
     # functions without "-e" suffix take the environment from the extern variable `environ` of the calling process
     "execl", "execlp", "execle", "execv", "execve", "execvp", "execvpe",
-    "_execl", "_execlp", "_execle", "_execv", "_execve", "_execvp", "_execvpe", "execvP",
+    "execvP",
     "fork", "vfork", "clone", "pipe",
-    "posix_spawn", "posix_spawnp", "spawn", "spawnv", "_spawnv", "wspawnv", "_wspawnv",
+    "posix_spawn", "posix_spawnp", "spawn", "spawnv", "wspawnv",
     "WinExec", "ShellExecute", "ShellExecuteA", "ShellExecuteExA", "ShellExecuteW", "ShellExecuteExW",
     "CreateProcess", "CreateProcessA", "CreateProcessW", "CreateProcessAsUserA", "CreateProcessAsUserW",
     "CreateProcessWithLogon", "CreateProcessWithLogonW", "CreateProcessWithToken", "CreateProcessWithTokenW",
@@ -112,7 +112,7 @@ low = [
     "realloc", "xrealloc", "reallocf", # doesn't initialize memory to zero; realloc(0) is equivalent to free
     "valloc", "pvalloc", "memalign", "aligned_alloc", "vzalloc",
     "kmalloc", "kmalloc_array", "kcalloc", "kzalloc", "mallocarray",
-    "free", "_free", "kfree", # check for incorrect use, double free, use after free
+    "free", "kfree", # check for incorrect use, double free, use after free
     # check for file access bugs
     "mkdir", "mkdirat", "mknod", "mknodat", "chdir", "creat", "truncate",
     "link", "linkat", "symlink", "symlinkat", "readlink", "readlinkat", "unlink", "unlinkat", "realpath", "PathAppend",
@@ -131,16 +131,13 @@ low = [
     "mkstemp", "mkstemp64", "tmpfile", "mkdtemp",
     "GetTempFileName", "GetTempFileNameA", "GetTempFileNameW",
     # check for makepath and splitpath bugs
-    "makepath", "_tmakepath", "_makepath", "_wmakepath",
+    "makepath", "_tmakepath", "_wmakepath",
     "_splitpath", "_tsplitpath", "_wsplitpath",
     # check for format string bugs
     "syslog", "NSLog",
     "printf", "fprintf", "wprintf", "fwprintf", "asprintf", "dprintf", "printk",
     "vprintf", "vfprintf", "vasprintf", "vdprintf", "vfwprintf",
     "vcprintf", "vcwprintf", "vscprintf", "vscwprintf", "vwprintf",
-    "_printf", "_fprintf", "_wprintf", "_fwprintf", "_asprintf", "_dprintf", "_printk",
-    "_vprintf", "_vfprintf", "_vasprintf", "_vdprintf", "_vfwprintf",
-    "_vcprintf", "_vcwprintf", "_vscprintf", "_vscwprintf", "_vwprintf",
     "_printf_c89", "_fprintf_c89",
     "err", "errx", "errc", "warn", "warnx", "warnc", "verr", "verrx", "verrc", "vwarn", "vwarnx", "vwarnc",
     # check for internet address manipulation bugs
