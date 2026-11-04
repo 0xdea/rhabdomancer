@@ -30,12 +30,14 @@ const PREFIX: &str = "[BAD ";
 const DEFAULT_CONFIG: &str = include_str!("../conf/rhabdomancer.toml");
 
 /// Prefixes of the names of library aliases of functions: the Universal CRT's
-/// wrappers (e.g., `__o_malloc`) and glibc's aliases (e.g., `__libc_system`,
-/// `__GI___snprintf`), which IDA may pick over the plain name.
+/// wrappers (e.g., `__o_malloc`), glibc's aliases (e.g., `__libc_system`,
+/// `__GI___snprintf`), which IDA may pick over the plain name, and the names to
+/// which glibc's headers redirect calls in C99 and C23 mode (e.g.,
+/// `__isoc99_sscanf`, `__isoc23_strtol`).
 ///
 /// Matched on the raw name: the leading underscores tell an alias apart from a
 /// function such as `o_write` or `libc_system`.
-const ALIAS_PREFIXES: [&str; 4] = ["__o_", "_o_", "__libc_", "__GI_"];
+const ALIAS_PREFIXES: [&str; 6] = ["__o_", "_o_", "__libc_", "__GI_", "__isoc99_", "__isoc23_"];
 
 /// Prefix that Microsoft's toolchain adds to the symbol of the native version
 /// of a C function in ARM64EC and ARM64X binaries (e.g., `#memcpy`).
@@ -175,15 +177,16 @@ impl KnownBadFunctions {
     ///
     /// First strips the decorations that platforms add to function symbols
     /// (see [`strip_decorations`]), then tries, in order, the normalized name,
-    /// the name without the prefix of library aliases (see
-    /// [`strip_alias_prefix`]), and then that name without the numeric suffix
-    /// that IDA appends to names already in use (see [`strip_ida_suffix`]), so
-    /// that, e.g., `#memcpy`, `_stat$INODE64`, `__libc_system`, and `memset_0`
-    /// match `memcpy`, `stat`, `system`, and `memset`. The suffix is only
-    /// stripped from stubs and library aliases, so that an unrelated function
+    /// the name without the prefix of library aliases and redirects, also after
+    /// the leading dot of ELF .plt stubs (see [`strip_alias_prefix`]), and then
+    /// that name without the numeric suffix that IDA appends to names already
+    /// in use (see [`strip_ida_suffix`]), so that, e.g., `#memcpy`,
+    /// `_stat$INODE64`, `.__isoc23_sscanf`, and `memset_0` match `memcpy`,
+    /// `stat`, `sscanf`, and `memset`. The suffix is only stripped from stubs
+    /// and library aliases (redirects included), so that an unrelated function
     /// such as `read_16` doesn't match `read`. Library aliases count as stubs
     /// here because IDA doesn't always flag them as thunks (e.g., the Universal
-    /// CRT's `_o_rand_0`).
+    /// CRT's `_o_rand_0`, or glibc's `__isoc23_strtoumax_0` in static binaries).
     #[must_use]
     fn lookup(&self, func_name: &str, kind: FunctionKind) -> Option<(&str, Priority)> {
         // Strip the decorations first, so that the alias prefixes and the suffix
@@ -608,10 +611,16 @@ fn normalize_name(name: &str) -> &str {
 
 /// Returns the normalized name of the function aliased by the library alias
 /// named `func_name` (e.g., `malloc` for `__o_malloc`, `system` for
-/// `__libc_system`, `snprintf` for `__GI___snprintf`), or `None` if
-/// `func_name` doesn't start with one of the [`ALIAS_PREFIXES`].
+/// `__libc_system`, `snprintf` for `__GI___snprintf`, `sscanf` for
+/// `__isoc99_sscanf`), or `None` if `func_name` doesn't start with one of the
+/// [`ALIAS_PREFIXES`], after a single leading dot (e.g., `sscanf` for
+/// `.__isoc23_sscanf`).
 #[must_use]
 fn strip_alias_prefix(func_name: &str) -> Option<&str> {
+    // IDA names ELF .plt stubs with a leading dot (e.g., `.__isoc23_sscanf`),
+    // and so do PPC64 ELFv1 binaries their functions' code, as with the other
+    // names that `normalize_name` trims dots from.
+    let func_name = func_name.strip_prefix('.').unwrap_or(func_name);
     ALIAS_PREFIXES
         .iter()
         .find_map(|prefix| func_name.strip_prefix(prefix))
@@ -848,8 +857,8 @@ mod tests {
     #[test]
     fn lookup_strips_glibc_prefixes() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(
-            &["system"],
-            &["snprintf", "strlen"],
+            &["system", "sscanf", "swscanf"],
+            &["snprintf", "strlen", "strtol"],
             &["realloc"],
         ))?;
 
@@ -858,12 +867,37 @@ mod tests {
             ("__libc_realloc", ("realloc", Priority::Low)),
             ("__GI___snprintf", ("snprintf", Priority::Medium)),
             ("__GI_strlen", ("strlen", Priority::Medium)),
+            ("__isoc23_sscanf", ("sscanf", Priority::High)),
+            ("__isoc99_swscanf", ("swscanf", Priority::High)),
+            ("__isoc23_strtol", ("strtol", Priority::Medium)),
+            ("__isoc23_sscanf_0", ("sscanf", Priority::High)),
         ] {
             assert_eq!(
                 known_bad.lookup(func_name, FunctionKind::Plain),
                 Some(expected),
                 "function name `{func_name}` with a glibc prefix should match"
             );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_ignores_leading_dot_before_alias_prefix() -> Result<(), String> {
+        let known_bad =
+            KnownBadFunctions::try_from(config(&["sscanf", "system"], &[], &["malloc"]))?;
+
+        for kind in [FunctionKind::Plain, FunctionKind::Stub] {
+            for (func_name, expected) in [
+                (".__isoc23_sscanf", ("sscanf", Priority::High)),
+                (".__libc_system", ("system", Priority::High)),
+                (".__o_malloc", ("malloc", Priority::Low)),
+            ] {
+                assert_eq!(
+                    known_bad.lookup(func_name, kind),
+                    Some(expected),
+                    "a leading dot (.plt stub, PPC64 code) shouldn't hide alias `{func_name}`"
+                );
+            }
         }
         Ok(())
     }
@@ -1024,8 +1058,11 @@ mod tests {
 
     #[test]
     fn lookup_requires_underscores_before_alias_prefix() -> Result<(), String> {
-        let known_bad =
-            KnownBadFunctions::try_from(config(&["system"], &["write", "snprintf"], &["malloc"]))?;
+        let known_bad = KnownBadFunctions::try_from(config(
+            &["system", "sscanf"],
+            &["write", "snprintf"],
+            &["malloc"],
+        ))?;
 
         for kind in [FunctionKind::Plain, FunctionKind::Stub] {
             for func_name in [
@@ -1036,6 +1073,10 @@ mod tests {
                 "_libc_system",
                 "GI_snprintf",
                 "_GI_snprintf",
+                "isoc23_sscanf",
+                "_isoc99_sscanf",
+                ".isoc99_sscanf",
+                "..__isoc23_sscanf",
             ] {
                 assert_eq!(
                     known_bad.lookup(func_name, kind),

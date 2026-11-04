@@ -51,7 +51,7 @@ const N_BAD_FUNCTIONS: usize = 20;
 /// both the .plt stub and the import).
 const N_CALL_SITE_LINES: usize = 172;
 /// Expected number of marked call locations in `LS` with `CUSTOM_CONFIG_TOML`.
-const N_MARKS_CUSTOM: BookmarkIndex = 13;
+const N_MARKS_CUSTOM: BookmarkIndex = 14;
 /// Expected number of marked call locations in `DOUBLE_XREF`.
 const N_MARKS_DOUBLE_XREF: BookmarkIndex = 1;
 /// Expected stdout of rhabdomancer for `DOUBLE_XREF`, with the call site
@@ -90,14 +90,15 @@ const USER_COMMENT_MARKED: &str = "user comment\n[BAD 0] system";
 /// directory.
 const CUSTOM_CONFIG: &str = "custom";
 /// Custom configuration that marks only a subset of functions, including
-/// decorated names to test normalization.
+/// decorated names to test normalization and `strtol`, which `LS` only calls as
+/// glibc's C23 redirect `__isoc23_strtol`, to test the alias prefixes.
 const CUSTOM_CONFIG_TOML: &str = r#"
 high = ["sprintf", "strcpy"]
-medium = ["snprintf", "_fwrite", "memcpy", ".memset", "strlen"]
+medium = ["snprintf", "_fwrite", "memcpy", ".memset", "strlen", "strtol"]
 low = []
 "#;
 /// Normalized names of the medium-priority functions in `CUSTOM_CONFIG_TOML`.
-const CUSTOM_MEDIUM: &[&str] = &["snprintf", "fwrite", "memcpy", "memset", "strlen"];
+const CUSTOM_MEDIUM: &[&str] = &["snprintf", "fwrite", "memcpy", "memset", "strlen", "strtol"];
 
 /// Label of the invalid configuration file written by the tests to a temporary
 /// directory.
@@ -188,8 +189,10 @@ fn test_custom_configuration() -> anyhow::Result<()> {
     check_number_of_marks(n_marks, N_MARKS_CUSTOM);
 
     let idb = open_idb(LS)?;
+    check_function_exists(&idb, ".__isoc23_strtol");
     check_number_of_bookmarks(&idb, n_marks);
     check_custom_bookmark_descriptions(&idb);
+    check_bookmark_exists(&idb, "[BAD 1] strtol");
     check_number_of_comments(&idb, n_marks)?;
     check_comments_match_bookmarks(&idb)?;
     drop(idb);
@@ -727,6 +730,22 @@ fn check_custom_bookmark_descriptions(idb: &IDB) {
             "custom configuration produced an unexpected bookmark description: {desc:?}"
         );
     }
+    eprintln!("Ok.");
+}
+
+/// Checks that some bookmark is described exactly as `desc`, so that a scenario
+/// fails if the call it expects is no longer marked, even when the number of
+/// marks stays the same.
+fn check_bookmark_exists(idb: &IDB, desc: &str) {
+    eprint!("[*] Checking a bookmark is described as `{desc}`... ");
+    assert!(
+        (0..idb.bookmarks().len()).any(|idx| idb
+            .bookmarks()
+            .get_description_by_index(idx)
+            .as_deref()
+            == Some(desc)),
+        "no bookmark described as `{desc}`, the expected call isn't marked"
+    );
     eprintln!("Ok.");
 }
 

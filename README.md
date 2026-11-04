@@ -37,10 +37,11 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
   `conf/rhabdomancer.toml`.
 - Function names are matched without these decorations: the `#` marking native ARM64EC functions (e.g., `#memcpy`),
   the variant suffixes of Apple's SDK (e.g., `realpath$DARWIN_EXTSN`, `stat$INODE64`), leading dots and underscores
-  (e.g., `_strcpy`), the prefixes of library aliases (e.g., `__o_malloc` in the Universal CRT, `__libc_system` and
-  `__GI___snprintf` in glibc), and, for stubs and such aliases only, the numeric suffix that IDA appends to names
-  already in use (e.g., `memset_0`). In custom configurations, a leading `#`, Apple's variant suffixes, dots, and
-  underscores are ignored as well, and each name may be listed under one priority only.
+  (e.g., `_strcpy`), the prefixes of library aliases and redirects (e.g., `__o_malloc` in the Universal CRT,
+  `__libc_system`, `__GI___snprintf`, and `__isoc23_sscanf` in glibc, also in ELF `.plt` stubs such as
+  `.__isoc23_sscanf`), and, for stubs and such aliases only, the numeric suffix that IDA appends to names already in
+  use (e.g., `memset_0`). In custom configurations, a leading `#`, Apple's variant suffixes, dots, and underscores are
+  ignored as well, and each name may be listed under one priority only.
 
 > [!NOTE]
 > Fortified functions (e.g., `__strcpy_chk`, used instead of `strcpy` when building with `_FORTIFY_SOURCE`) are

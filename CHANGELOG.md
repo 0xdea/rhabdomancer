@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Match native ARM64EC functions, whose names IDA 9.5 keeps with their `#` prefix (e.g., `#memcpy`).
 - Match functions whose names carry the variant suffixes of Apple's SDK (e.g., `realpath$DARWIN_EXTSN`,
   `stat$INODE64`).
+- Match glibc's C99 and C23 redirects (e.g., `__isoc23_sscanf`), including the ELF `.plt` stubs of all library
+  aliases and redirects (e.g., `.__isoc23_sscanf`).
 
 ## [1.1.0] - 2026-11-02
 
