@@ -44,6 +44,17 @@ const ALIAS_PREFIXES: [&str; 4] = ["__o_", "_o_", "__libc_", "__GI_"];
 /// an underscore (e.g., `_memcpy`).
 const ARM64EC_MARKER: char = '#';
 
+/// Suffixes that Apple's SDK (`sys/cdefs.h`) appends to the symbols of libc
+/// functions to select a variant (e.g., `realpath$DARWIN_EXTSN`,
+/// `stat$INODE64`), which can be chained (e.g., `open$NOCANCEL$UNIX2003`).
+const APPLE_VARIANT_SUFFIXES: [&str; 5] = [
+    "$1050",
+    "$DARWIN_EXTSN",
+    "$INODE64",
+    "$NOCANCEL",
+    "$UNIX2003",
+];
+
 /// Priority of bad API functions.
 ///
 /// Variants are declared from highest to lowest priority: the derived [`Ord`]
@@ -167,11 +178,12 @@ impl KnownBadFunctions {
     /// the name without the prefix of library aliases (see
     /// [`strip_alias_prefix`]), and then that name without the numeric suffix
     /// that IDA appends to names already in use (see [`strip_ida_suffix`]), so
-    /// that, e.g., `#memcpy`, `__libc_system`, and `memset_0` match `memcpy`,
-    /// `system`, and `memset`. The suffix is only stripped from stubs and
-    /// library aliases, so that an unrelated function such as `read_16` doesn't
-    /// match `read`. Library aliases count as stubs here because IDA doesn't
-    /// always flag them as thunks (e.g., the Universal CRT's `_o_rand_0`).
+    /// that, e.g., `#memcpy`, `_stat$INODE64`, `__libc_system`, and `memset_0`
+    /// match `memcpy`, `stat`, `system`, and `memset`. The suffix is only
+    /// stripped from stubs and library aliases, so that an unrelated function
+    /// such as `read_16` doesn't match `read`. Library aliases count as stubs
+    /// here because IDA doesn't always flag them as thunks (e.g., the Universal
+    /// CRT's `_o_rand_0`).
     #[must_use]
     fn lookup(&self, func_name: &str, kind: FunctionKind) -> Option<(&str, Priority)> {
         // Strip the decorations first, so that the alias prefixes and the suffix
@@ -569,15 +581,23 @@ fn is_stub(func: &Function<'_>, plt: &PltSegments) -> bool {
 }
 
 /// Returns `name` without the decorations that platforms add to the symbol of
-/// a function: the [`ARM64EC_MARKER`] (e.g., `memcpy` for `#memcpy`). Only one
-/// marker is stripped.
+/// a function: the [`ARM64EC_MARKER`] (e.g., `memcpy` for `#memcpy`), of which
+/// only one is stripped, and the [`APPLE_VARIANT_SUFFIXES`] (e.g., `_stat` for
+/// `_stat$INODE64`), all of which are stripped.
 ///
 /// Decorations are stripped before any other matching step, from function
 /// names and configuration names alike, so that, e.g., a configured `#memcpy`
 /// matches both `#memcpy` and `memcpy`.
 #[must_use]
 fn strip_decorations(name: &str) -> &str {
-    name.strip_prefix(ARM64EC_MARKER).unwrap_or(name)
+    let mut name = name.strip_prefix(ARM64EC_MARKER).unwrap_or(name);
+    while let Some(stripped) = APPLE_VARIANT_SUFFIXES
+        .iter()
+        .find_map(|suffix| name.strip_suffix(suffix))
+    {
+        name = stripped;
+    }
+    name
 }
 
 /// Normalizes a function name for matching against configuration entries.
@@ -861,7 +881,7 @@ mod tests {
             assert_eq!(
                 strip_decorations(func_name),
                 expected,
-                "`{func_name}` should become `{expected}`"
+                "a single leading marker, if any, should be stripped from `{func_name}`"
             );
         }
     }
@@ -909,6 +929,93 @@ mod tests {
                     known_bad.lookup(func_name, kind),
                     None,
                     "function name `{func_name}` should not match"
+                );
+            }
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn strip_decorations_removes_all_apple_variant_suffixes() {
+        for (func_name, expected) in [
+            ("_realpath$DARWIN_EXTSN", "_realpath"),
+            ("_stat$INODE64", "_stat"),
+            ("_open$NOCANCEL$UNIX2003", "_open"),
+            ("_fstat$1050$INODE64$UNIX2003", "_fstat"),
+            ("_select$DARWIN_EXTSN$NOCANCEL", "_select"),
+            ("#_stat$INODE64", "_stat"),
+            ("$UNIX2003", ""),
+            ("_stat$INODE65", "_stat$INODE65"),
+            ("_initscr$NCURSES60", "_initscr$NCURSES60"),
+            ("_stat$inode64", "_stat$inode64"),
+            ("_stat$INODE64_0", "_stat$INODE64_0"),
+            ("#strcpy$exit_thunk", "strcpy$exit_thunk"),
+        ] {
+            assert_eq!(
+                strip_decorations(func_name),
+                expected,
+                "any leading `#` and trailing Apple suffixes should be stripped from `{func_name}`"
+            );
+        }
+    }
+
+    #[test]
+    fn lookup_strips_apple_variant_suffixes() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(
+            &["popen"],
+            &["open"],
+            &["realpath", "stat", "syslog"],
+        ))?;
+
+        for (func_name, kind, expected) in [
+            (
+                "_realpath$DARWIN_EXTSN",
+                FunctionKind::Stub,
+                ("realpath", Priority::Low),
+            ),
+            ("_stat$INODE64", FunctionKind::Stub, ("stat", Priority::Low)),
+            (
+                "_open$NOCANCEL$UNIX2003",
+                FunctionKind::Stub,
+                ("open", Priority::Medium),
+            ),
+            (
+                "_popen$DARWIN_EXTSN",
+                FunctionKind::Stub,
+                ("popen", Priority::High),
+            ),
+            (
+                "_syslog$DARWIN_EXTSN",
+                FunctionKind::Plain,
+                ("syslog", Priority::Low),
+            ),
+        ] {
+            assert_eq!(
+                known_bad.lookup(func_name, kind),
+                Some(expected),
+                "function name `{func_name}` with Apple's variant suffixes should match"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn lookup_does_not_match_other_dollar_suffixes() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(&[], &["open"], &["stat"]))?;
+
+        for kind in [FunctionKind::Plain, FunctionKind::Stub] {
+            for func_name in [
+                "_stat$INODE65",
+                "_stat$NCURSES60",
+                "_stat$inode64",
+                "_stat$",
+                "_open$NOCANCELX",
+                "$UNIX2003",
+            ] {
+                assert_eq!(
+                    known_bad.lookup(func_name, kind),
+                    None,
+                    "`{func_name}` has no exact Apple suffix, so it should not match"
                 );
             }
         }
@@ -999,14 +1106,20 @@ mod tests {
     }
 
     #[test]
-    fn try_from_strips_arm64ec_marker_from_configuration_names() -> Result<(), String> {
-        let known_bad = KnownBadFunctions::try_from(config(&["#memcpy"], &[], &[]))?;
+    fn try_from_strips_decorations_from_configuration_names() -> Result<(), String> {
+        let known_bad =
+            KnownBadFunctions::try_from(config(&["#memcpy"], &[], &["realpath$DARWIN_EXTSN"]))?;
 
-        for func_name in ["#memcpy", "memcpy"] {
+        for (func_name, expected) in [
+            ("#memcpy", ("memcpy", Priority::High)),
+            ("memcpy", ("memcpy", Priority::High)),
+            ("_realpath$DARWIN_EXTSN", ("realpath", Priority::Low)),
+            ("realpath", ("realpath", Priority::Low)),
+        ] {
             assert_eq!(
                 known_bad.lookup(func_name, FunctionKind::Plain),
-                Some(("memcpy", Priority::High)),
-                "configured `#memcpy` should match function name `{func_name}`"
+                Some(expected),
+                "decorated configuration name should match function name `{func_name}`"
             );
         }
         Ok(())
@@ -1033,6 +1146,7 @@ mod tests {
             (&[], &["_memcpy"], &[".memcpy"], "memcpy"),
             (&["getenv"], &[], &["__getenv"], "getenv"),
             (&["strcpy"], &["#strcpy"], &[], "strcpy"),
+            (&[], &["stat"], &["_stat$INODE64"], "stat"),
         ] {
             let result = KnownBadFunctions::try_from(config(high, medium, low));
             assert!(
@@ -1046,7 +1160,17 @@ mod tests {
 
     #[test]
     fn try_from_rejects_names_that_normalize_to_empty() {
-        for name in ["", "_", ".", "._", "__", "#", "#_"] {
+        for name in [
+            "",
+            "_",
+            ".",
+            "._",
+            "__",
+            "#",
+            "#_",
+            "$UNIX2003",
+            "_$INODE64",
+        ] {
             for (high, medium, low) in [
                 (&[name][..], &[][..], &[][..]),
                 (&[], &[name], &[]),

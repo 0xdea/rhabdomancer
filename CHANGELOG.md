@@ -7,15 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add the `darwin_variants` test binary and an integration test for Apple's variant suffixes.
+
 ### Changed
 
 - Mark the `linker_messages` suppression as permanent.
-- Ignore a leading ARM64EC `#` in configuration names too, so that, e.g., `#memcpy` and `memcpy` are the same entry:
-  configurations listing both under different priorities, or a bare `#`, are now rejected.
 
 ### Fixed
 
 - Match native ARM64EC functions, whose names IDA 9.5 keeps with their `#` prefix (e.g., `#memcpy`).
+- Match functions whose names carry the variant suffixes of Apple's SDK (e.g., `realpath$DARWIN_EXTSN`,
+  `stat$INODE64`).
 
 ## [1.1.0] - 2026-11-02
 

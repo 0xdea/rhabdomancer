@@ -36,9 +36,10 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 - The list of known bad API functions is built in and can be easily customized with a configuration file based on
   `conf/rhabdomancer.toml`.
 - Function names are matched without these decorations: the `#` marking native ARM64EC functions (e.g., `#memcpy`),
-  leading dots and underscores (e.g., `_strcpy`), the prefixes of library aliases (e.g., `__o_malloc` in the Universal
-  CRT, `__libc_system` and `__GI___snprintf` in glibc), and, for stubs and such aliases only, the numeric suffix that
-  IDA appends to names already in use (e.g., `memset_0`). In custom configurations, a leading `#`, dots, and
+  the variant suffixes of Apple's SDK (e.g., `realpath$DARWIN_EXTSN`, `stat$INODE64`), leading dots and underscores
+  (e.g., `_strcpy`), the prefixes of library aliases (e.g., `__o_malloc` in the Universal CRT, `__libc_system` and
+  `__GI___snprintf` in glibc), and, for stubs and such aliases only, the numeric suffix that IDA appends to names
+  already in use (e.g., `memset_0`). In custom configurations, a leading `#`, Apple's variant suffixes, dots, and
   underscores are ignored as well, and each name may be listed under one priority only.
 
 > [!NOTE]
