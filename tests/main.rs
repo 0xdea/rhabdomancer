@@ -39,6 +39,9 @@ const DARWIN_VARIANTS: &str = "./tests/data/darwin_variants";
 /// 32-bit x86 PE target binary whose import stubs IDA names with the size of
 /// their arguments (e.g., `_WinExec@8`).
 const STDCALL_STUBS: &str = "./tests/data/stdcall_stubs";
+/// ARM64 Mach-O target binary with a wrapper whose only instruction is a tail
+/// call to `free`, so that the call location is a function's start address.
+const TAIL_CALL: &str = "./tests/data/tail_call";
 /// Target binary that doesn't exist.
 const MISSING: &str = "./tests/data/missing";
 
@@ -75,6 +78,8 @@ const N_MARKS_STATIC_GLIBC: BookmarkIndex = 756;
 const N_MARKS_DARWIN_VARIANTS: BookmarkIndex = 4;
 /// Expected number of marked call locations in `STDCALL_STUBS`.
 const N_MARKS_STDCALL_STUBS: BookmarkIndex = 19;
+/// Expected number of marked call locations in `TAIL_CALL`.
+const N_MARKS_TAIL_CALL: BookmarkIndex = 2;
 
 /// Call site in `DOUBLE_XREF` where the tests add a bookmark of their own,
 /// as a user would.
@@ -87,9 +92,15 @@ const USER_COMMENT_ADDR: Address = 0x7F4;
 /// Comment that the tests add at `USER_COMMENT_ADDR`.
 const USER_COMMENT: &str = "user comment";
 /// Expected comment at `USER_COMMENT_ADDR` after rhabdomancer runs, with its
-/// tag appended to the user's comment exactly once (`append_cmt` separates
-/// them with a newline).
+/// tag appended to the user's comment exactly once, separated by a newline (as
+/// IDA's `append_cmt` would).
 const USER_COMMENT_MARKED: &str = "user comment\n[BAD 0] system";
+
+/// Call location in `TAIL_CALL` at the start of the wrapper `_xfree`, whose
+/// only instruction is a tail call to `free`.
+const TAIL_CALL_ADDR: Address = 0x1_0000_0410;
+/// Expected comment at `TAIL_CALL_ADDR` after rhabdomancer runs.
+const TAIL_CALL_COMMENT: &str = "[BAD 2] free";
 
 /// Label of the custom configuration file written by the tests to a temporary
 /// directory.
@@ -142,6 +153,8 @@ fn main() -> anyhow::Result<()> {
     test_x86_argument_size()?;
     test_user_bookmark_at_call_site()?;
     test_user_comment_at_call_site()?;
+    test_user_comment_at_comment_limit()?;
+    test_call_site_at_function_start()?;
     test_empty_configuration_variable()?;
     test_invalid_configuration()?;
     test_missing_configuration()?;
@@ -397,7 +410,7 @@ fn test_user_bookmark_at_call_site() -> anyhow::Result<()> {
 /// find the tag after any existing text).
 fn test_user_comment_at_call_site() -> anyhow::Result<()> {
     reset_idb(DOUBLE_XREF)?;
-    add_user_comment(DOUBLE_XREF)?;
+    add_user_comment(DOUBLE_XREF, USER_COMMENT)?;
 
     let n_marks = rhabdomancer::run(DOUBLE_XREF)?;
     eprintln!();
@@ -411,11 +424,81 @@ fn test_user_comment_at_call_site() -> anyhow::Result<()> {
     let idb = open_idb(DOUBLE_XREF)?;
     check_number_of_bookmarks(&idb, N_MARKS_DOUBLE_XREF);
     check_number_of_comments(&idb, N_MARKS_DOUBLE_XREF)?;
-    check_user_comment_marked(&idb);
+    check_user_comment(&idb, USER_COMMENT_MARKED);
     drop(idb);
 
     // Remove the IDB file at the end.
     reset_idb(DOUBLE_XREF)?;
+    eprintln!();
+    Ok(())
+}
+
+/// Runs rhabdomancer twice against a binary whose call location carries a
+/// long user comment, and checks that the tag is appended when the tagged
+/// comment fits in the 1024 bytes that IDA stores, and that the comment is left
+/// unchanged, still bookmarked, when it doesn't (regression test for a tag cut
+/// short, leaving a fragment in the user's comment).
+fn test_user_comment_at_comment_limit() -> anyhow::Result<()> {
+    // The tag `[BAD 0] system` is 14 bytes long, so with the newline before it,
+    // a 1009-byte comment gives exactly 1024 bytes, and a 1010-byte one 1025.
+    for (cmt, expected) in [
+        (
+            "y".repeat(1009),
+            format!("{}\n[BAD 0] system", "y".repeat(1009)),
+        ),
+        ("y".repeat(1010), "y".repeat(1010)),
+    ] {
+        reset_idb(DOUBLE_XREF)?;
+        add_user_comment(DOUBLE_XREF, &cmt)?;
+
+        let n_marks = rhabdomancer::run(DOUBLE_XREF)?;
+        eprintln!();
+        check_number_of_marks(n_marks, N_MARKS_DOUBLE_XREF);
+
+        eprintln!();
+        let n_marks_new = rhabdomancer::run(DOUBLE_XREF)?;
+        eprintln!();
+        check_no_new_marks(n_marks_new);
+
+        let idb = open_idb(DOUBLE_XREF)?;
+        check_number_of_bookmarks(&idb, N_MARKS_DOUBLE_XREF);
+        check_user_comment(&idb, &expected);
+        drop(idb);
+
+        // Remove the IDB file at the end.
+        reset_idb(DOUBLE_XREF)?;
+        eprintln!();
+    }
+    Ok(())
+}
+
+/// Runs rhabdomancer twice against a binary with a call location at a
+/// function's start, where IDA's `append_cmt` appends to the function comment
+/// instead, and checks that the location is commented once, like any other
+/// (regression test for its tag missing from the instruction and repeated in
+/// the function comment on every run).
+fn test_call_site_at_function_start() -> anyhow::Result<()> {
+    reset_idb(TAIL_CALL)?;
+
+    let n_marks = rhabdomancer::run(TAIL_CALL)?;
+    eprintln!();
+    check_number_of_marks(n_marks, N_MARKS_TAIL_CALL);
+
+    eprintln!();
+    let n_marks_new = rhabdomancer::run(TAIL_CALL)?;
+    eprintln!();
+    check_no_new_marks(n_marks_new);
+
+    let idb = open_idb(TAIL_CALL)?;
+    check_function_start(&idb, TAIL_CALL_ADDR);
+    check_number_of_bookmarks(&idb, N_MARKS_TAIL_CALL);
+    check_number_of_comments(&idb, N_MARKS_TAIL_CALL)?;
+    check_comments_match_bookmarks(&idb)?;
+    check_function_start_comment(&idb, TAIL_CALL_ADDR, TAIL_CALL_COMMENT);
+    drop(idb);
+
+    // Remove the IDB file at the end.
+    reset_idb(TAIL_CALL)?;
     eprintln!();
     Ok(())
 }
@@ -525,11 +608,11 @@ fn add_user_bookmark(filename: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Creates the IDB of the binary at `filename` with a comment at
+/// Creates the IDB of the binary at `filename` with the comment `cmt` at
 /// `USER_COMMENT_ADDR`, as a user would add it, and saves it.
-fn add_user_comment(filename: &str) -> anyhow::Result<()> {
+fn add_user_comment(filename: &str, cmt: &str) -> anyhow::Result<()> {
     let idb = IDB::open_with(filename, true, true)?;
-    idb.set_cmt(USER_COMMENT_ADDR, USER_COMMENT)?;
+    idb.set_cmt(USER_COMMENT_ADDR, cmt)?;
     Ok(())
 }
 
@@ -859,15 +942,45 @@ fn check_user_bookmark_preserved(idb: &IDB) {
     eprintln!("Ok.");
 }
 
-/// Checks that the user's comment at `USER_COMMENT_ADDR` is preserved and
-/// tagged exactly once.
-fn check_user_comment_marked(idb: &IDB) {
-    eprint!("[*] Checking user comment is preserved and tagged once... ");
+/// Checks that the comment at `USER_COMMENT_ADDR`, where the user added one,
+/// is exactly `expected`.
+fn check_user_comment(idb: &IDB, expected: &str) {
+    eprint!("[*] Checking user comment at {USER_COMMENT_ADDR:#X}... ");
     let cmt = idb.get_cmt(USER_COMMENT_ADDR);
     assert_eq!(
         cmt.as_deref(),
-        Some(USER_COMMENT_MARKED),
+        Some(expected),
         "wrong comment at {USER_COMMENT_ADDR:#X}"
+    );
+    eprintln!("Ok.");
+}
+
+/// Checks that `addr` is the start of a function, which a scenario relies on,
+/// so that it can't pass without testing what it's meant to (e.g., if a future
+/// IDA delimits the function differently).
+fn check_function_start(idb: &IDB, addr: Address) {
+    eprint!("[*] Checking {addr:#X} is a function's start... ");
+    assert!(
+        idb.function_at(addr)
+            .is_some_and(|func| func.start_address() == addr),
+        "{addr:#X} isn't a function's start, the test binary no longer tests what it should"
+    );
+    eprintln!("Ok.");
+}
+
+/// Checks that the instruction comment at `addr`, a function's start, is
+/// exactly `expected`, and that the function has no comment.
+fn check_function_start_comment(idb: &IDB, addr: Address, expected: &str) {
+    eprint!("[*] Checking comment at a function's start... ");
+    assert_eq!(
+        idb.get_cmt(addr).as_deref(),
+        Some(expected),
+        "wrong comment at {addr:#X}"
+    );
+    assert_eq!(
+        idb.get_func_cmt(addr),
+        None,
+        "unexpected function comment at {addr:#X}"
     );
     eprintln!("Ok.");
 }

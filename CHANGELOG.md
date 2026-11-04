@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add the `darwin_variants` test binary and an integration test for Apple's variant suffixes.
 - Add the `stdcall_stubs` test binary and an integration test for the size of the arguments in 32-bit x86 names.
+- Add the `tail_call` test binary and an integration test for call locations at a function's start.
 
 ### Changed
 
@@ -21,9 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Match native ARM64EC functions, whose names IDA 9.5 keeps with their `#` prefix (e.g., `#memcpy`).
 - Match functions whose names carry the variant suffixes of Apple's SDK (e.g., `realpath$DARWIN_EXTSN`,
   `stat$INODE64`).
-- Match 32-bit x86 functions whose names carry the size of their arguments (e.g., `_WinExec@8`).
 - Match glibc's C99 and C23 redirects (e.g., `__isoc23_sscanf`), including the ELF `.plt` stubs of all library
   aliases and redirects (e.g., `.__isoc23_sscanf`).
+- Match 32-bit x86 functions whose names carry the size of their arguments (e.g., `_WinExec@8`).
+- Comment also call locations at a function's start (e.g., a wrapper that only tail-calls `free`), which IDA's
+  `append_cmt` tagged in the function comment instead.
+- Leave comments that are too long for the tag unchanged, with a warning, instead of appending a tag that IDA cuts
+  short (IDA keeps at most 1024 bytes of a comment).
 
 ### Removed
 

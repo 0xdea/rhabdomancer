@@ -25,6 +25,10 @@ use toml::de::Error as TomlError;
 /// the same prefix, so it must never change.
 const PREFIX: &str = "[BAD ";
 
+/// Maximum length, in bytes, of a comment that IDA stores in full (`MAXSTR` in
+/// the SDK's `pro.h`): a longer one is cut short, even within our tag.
+const MAX_COMMENT_LEN: usize = 1024;
+
 /// Default configuration, embedded from `conf/rhabdomancer.toml` at build time
 /// so that the binary doesn't depend on the source tree.
 const DEFAULT_CONFIG: &str = include_str!("../conf/rhabdomancer.toml");
@@ -510,10 +514,20 @@ impl<'a> CallMarker<'a> {
                 }
 
                 // Add a comment if not already present to mark the call location. The
-                // check uses `contains` because `append_cmt` adds our tag after any
-                // existing comment, so it isn't necessarily at the start.
-                if !self.idb.get_cmt(from).unwrap_or_default().contains(PREFIX) {
-                    self.idb.append_cmt(from, desc)?;
+                // check uses `contains` because our tag is added after any existing
+                // comment, so it isn't necessarily at the start. The tag is appended
+                // by hand (see `append_tag`), because at a function's start (e.g., a
+                // wrapper whose only instruction is a tail call) `append_cmt` appends
+                // to the function comment instead, which the check doesn't see.
+                match self.idb.get_cmt(from) {
+                    None => self.idb.set_cmt(from, desc)?,
+                    Some(cmt) if cmt.contains(PREFIX) => {}
+                    Some(cmt) => match append_tag(&cmt, desc) {
+                        Some(tagged) => self.idb.set_cmt(from, tagged)?,
+                        None => eprintln!(
+                            "[!] Warning: comment at {from:#X} is too long to add `{desc}`"
+                        ),
+                    },
                 }
             }
         }
@@ -577,6 +591,16 @@ pub fn run(filepath: impl AsRef<Path>) -> anyhow::Result<BookmarkIndex> {
 #[must_use]
 fn function_name(func: &Function<'_>) -> String {
     func.name().unwrap_or_else(|| "[no name]".to_owned())
+}
+
+/// Returns the existing comment `cmt` followed by a newline and the tag `desc`,
+/// as IDA's `append_cmt` would join them, or `None` if the result is longer
+/// than [`MAX_COMMENT_LEN`], since IDA would cut it short, leaving a fragment of
+/// the tag in the comment.
+#[must_use]
+fn append_tag(cmt: &str, desc: &str) -> Option<String> {
+    let tagged = format!("{cmt}\n{desc}");
+    (tagged.len() <= MAX_COMMENT_LEN).then_some(tagged)
 }
 
 /// Checks if `func` is a stub, i.e., a function that only forwards to another
@@ -706,6 +730,36 @@ mod tests {
             "[BAD 2] getenv",
             "wrong low-priority description"
         );
+    }
+
+    #[test]
+    fn append_tag_joins_with_newline_within_ida_limit() {
+        // The tag is 12 bytes long, so a comment of up to 1011 bytes leaves room
+        // for it and the newline within IDA's 1024 bytes.
+        for (cmt, expected) in [
+            (
+                "user comment",
+                Some("user comment\n[BAD 2] free".to_owned()),
+            ),
+            ("x\n", Some("x\n\n[BAD 2] free".to_owned())),
+            (
+                &"y".repeat(1011),
+                Some(format!("{}\n[BAD 2] free", "y".repeat(1011))),
+            ),
+            (&"y".repeat(1012), None),
+            (
+                &format!("{}y", "\u{e9}".repeat(505)),
+                Some(format!("{}y\n[BAD 2] free", "\u{e9}".repeat(505))),
+            ),
+            (&"\u{e9}".repeat(506), None),
+        ] {
+            assert_eq!(
+                append_tag(cmt, "[BAD 2] free"),
+                expected,
+                "wrong tagged comment for a comment of {} bytes",
+                cmt.len()
+            );
+        }
     }
 
     #[test]
