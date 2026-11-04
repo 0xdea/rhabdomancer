@@ -36,6 +36,9 @@ const STATIC_GLIBC: &str = "./tests/data/static_glibc";
 /// x86-64 Mach-O target binary whose stubs IDA names with the variant suffixes
 /// of Apple's SDK (e.g., `_realpath$DARWIN_EXTSN`, `_stat$INODE64`).
 const DARWIN_VARIANTS: &str = "./tests/data/darwin_variants";
+/// 32-bit x86 PE target binary whose import stubs IDA names with the size of
+/// their arguments (e.g., `_WinExec@8`).
+const STDCALL_STUBS: &str = "./tests/data/stdcall_stubs";
 /// Target binary that doesn't exist.
 const MISSING: &str = "./tests/data/missing";
 
@@ -70,6 +73,8 @@ const N_MARKS_IMPORT_STUBS: BookmarkIndex = 22;
 const N_MARKS_STATIC_GLIBC: BookmarkIndex = 756;
 /// Expected number of marked call locations in `DARWIN_VARIANTS`.
 const N_MARKS_DARWIN_VARIANTS: BookmarkIndex = 4;
+/// Expected number of marked call locations in `STDCALL_STUBS`.
+const N_MARKS_STDCALL_STUBS: BookmarkIndex = 19;
 
 /// Call site in `DOUBLE_XREF` where the tests add a bookmark of their own,
 /// as a user would.
@@ -134,6 +139,7 @@ fn main() -> anyhow::Result<()> {
     test_import_stubs_with_numeric_suffix()?;
     test_glibc_aliases()?;
     test_apple_variant_suffixes()?;
+    test_x86_argument_size()?;
     test_user_bookmark_at_call_site()?;
     test_user_comment_at_call_site()?;
     test_empty_configuration_variable()?;
@@ -325,6 +331,34 @@ fn test_apple_variant_suffixes() -> anyhow::Result<()> {
 
     // Remove the IDB file at the end.
     reset_idb(DARWIN_VARIANTS)?;
+    eprintln!();
+    Ok(())
+}
+
+/// Runs the rhabdomancer binary against a 32-bit x86 PE binary whose import
+/// stubs IDA names with the size of their arguments (e.g., `_WinExec@8`), and
+/// checks that their calls are marked (regression test for missing them).
+fn test_x86_argument_size() -> anyhow::Result<()> {
+    reset_idb(STDCALL_STUBS)?;
+
+    let output = run_binary(&[STDCALL_STUBS], None)?;
+    eprintln!();
+    check_binary_succeeded(&output);
+    check_stdout_line(&output, "[BAD 1] WinExec (thunk)");
+    check_stdout_line(&output, "0x4014EE in _main");
+    check_stdout_line(&output, "[BAD 0] lstrcpyA (thunk)");
+    check_summary(&output, "[+] Marked 19 new call locations");
+
+    let idb = open_idb(STDCALL_STUBS)?;
+    check_thunk_exists(&idb, "_WinExec@8");
+    check_thunk_exists(&idb, "_lstrcpyA@8");
+    check_number_of_bookmarks(&idb, N_MARKS_STDCALL_STUBS);
+    check_number_of_comments(&idb, N_MARKS_STDCALL_STUBS)?;
+    check_comments_match_bookmarks(&idb)?;
+    drop(idb);
+
+    // Remove the IDB file at the end.
+    reset_idb(STDCALL_STUBS)?;
     eprintln!();
     Ok(())
 }

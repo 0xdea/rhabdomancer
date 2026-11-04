@@ -57,6 +57,10 @@ const APPLE_VARIANT_SUFFIXES: [&str; 5] = [
     "$UNIX2003",
 ];
 
+/// Separator before the size of the arguments, in bytes, that 32-bit x86
+/// calling conventions append to function symbols (e.g., `_WinExec@8`).
+const X86_ARGS_SIZE_SEPARATOR: char = '@';
+
 /// Priority of bad API functions.
 ///
 /// Variants are declared from highest to lowest priority: the derived [`Ord`]
@@ -181,12 +185,13 @@ impl KnownBadFunctions {
     /// the leading dot of ELF .plt stubs (see [`strip_alias_prefix`]), and then
     /// that name without the numeric suffix that IDA appends to names already
     /// in use (see [`strip_ida_suffix`]), so that, e.g., `#memcpy`,
-    /// `_stat$INODE64`, `.__isoc23_sscanf`, and `memset_0` match `memcpy`,
-    /// `stat`, `sscanf`, and `memset`. The suffix is only stripped from stubs
-    /// and library aliases (redirects included), so that an unrelated function
-    /// such as `read_16` doesn't match `read`. Library aliases count as stubs
-    /// here because IDA doesn't always flag them as thunks (e.g., the Universal
-    /// CRT's `_o_rand_0`, or glibc's `__isoc23_strtoumax_0` in static binaries).
+    /// `_stat$INODE64`, `_WinExec@8`, `.__isoc23_sscanf`, and `memset_0` match
+    /// `memcpy`, `stat`, `WinExec`, `sscanf`, and `memset`. The suffix is only
+    /// stripped from stubs and library aliases (redirects included), so that an
+    /// unrelated function such as `read_16` doesn't match `read`. Library
+    /// aliases count as stubs here because IDA doesn't always flag them as
+    /// thunks (e.g., the Universal CRT's `_o_rand_0`, or glibc's
+    /// `__isoc23_strtoumax_0` in static binaries).
     #[must_use]
     fn lookup(&self, func_name: &str, kind: FunctionKind) -> Option<(&str, Priority)> {
         // Strip the decorations first, so that the alias prefixes and the suffix
@@ -585,8 +590,10 @@ fn is_stub(func: &Function<'_>, plt: &PltSegments) -> bool {
 
 /// Returns `name` without the decorations that platforms add to the symbol of
 /// a function: the [`ARM64EC_MARKER`] (e.g., `memcpy` for `#memcpy`), of which
-/// only one is stripped, and the [`APPLE_VARIANT_SUFFIXES`] (e.g., `_stat` for
-/// `_stat$INODE64`), all of which are stripped.
+/// only one is stripped, the [`APPLE_VARIANT_SUFFIXES`] (e.g., `_stat` for
+/// `_stat$INODE64`), all of which are stripped, and the size of the arguments
+/// after the [`X86_ARGS_SIZE_SEPARATOR`] (e.g., `_WinExec` for `_WinExec@8`,
+/// `f` for `@f@8` and `f@@8`), of which only one is stripped.
 ///
 /// Decorations are stripped before any other matching step, from function
 /// names and configuration names alike, so that, e.g., a configured `#memcpy`
@@ -599,6 +606,15 @@ fn strip_decorations(name: &str) -> &str {
         .find_map(|suffix| name.strip_suffix(suffix))
     {
         name = stripped;
+    }
+    if let Some(stripped) = strip_number_after(name, X86_ARGS_SIZE_SEPARATOR) {
+        // `vectorcall` doubles the separator (`f@@8`), `fastcall` also prefixes
+        // the name with it (`@f@8`), and `stdcall` only appends the size
+        // (`_f@8`).
+        name = stripped
+            .strip_suffix(X86_ARGS_SIZE_SEPARATOR)
+            .or_else(|| stripped.strip_prefix(X86_ARGS_SIZE_SEPARATOR))
+            .unwrap_or(stripped);
     }
     name
 }
@@ -632,9 +648,17 @@ fn strip_alias_prefix(func_name: &str) -> Option<&str> {
 /// if it has none. Only one suffix is stripped.
 #[must_use]
 fn strip_ida_suffix(name: &str) -> Option<&str> {
-    if let Some((base, suffix)) = name.rsplit_once('_')
-        && !suffix.is_empty()
-        && suffix.bytes().all(|byte| byte.is_ascii_digit())
+    strip_number_after(name, '_')
+}
+
+/// Returns `name` without its trailing decimal number and the `separator`
+/// before it (e.g., `memset` for `memset_0` with `_`), or `None` if it doesn't
+/// end with them.
+#[must_use]
+fn strip_number_after(name: &str, separator: char) -> Option<&str> {
+    if let Some((base, number)) = name.rsplit_once(separator)
+        && !number.is_empty()
+        && number.bytes().all(|byte| byte.is_ascii_digit())
     {
         Some(base)
     } else {
@@ -1057,6 +1081,77 @@ mod tests {
     }
 
     #[test]
+    fn strip_decorations_removes_one_x86_argument_size() {
+        for (func_name, expected) in [
+            ("_WinExec@8", "_WinExec"),
+            ("@f@8", "f"),
+            ("f@@16", "f"),
+            ("f@8@8", "f@8"),
+            ("#f@8", "f"),
+            ("@8", ""),
+            ("f@", "f@"),
+            ("f@x8", "f@x8"),
+            ("f@8a", "f@8a"),
+            ("@f", "@f"),
+            ("?f@@YAXXZ", "?f@@YAXXZ"),
+            ("_WinExec@8_0", "_WinExec@8_0"),
+        ] {
+            assert_eq!(
+                strip_decorations(func_name),
+                expected,
+                "a single trailing argument size should be stripped from `{func_name}`"
+            );
+        }
+    }
+
+    #[test]
+    fn lookup_strips_x86_argument_size() -> Result<(), String> {
+        let known_bad = KnownBadFunctions::try_from(config(
+            &["lstrcpyA"],
+            &["CreateProcessA", "WinExec", "read"],
+            &["malloc"],
+        ))?;
+
+        for kind in [FunctionKind::Plain, FunctionKind::Stub] {
+            for (func_name, expected) in [
+                ("_WinExec@8", Some(("WinExec", Priority::Medium))),
+                ("_lstrcpyA@8", Some(("lstrcpyA", Priority::High))),
+                (
+                    "@CreateProcessA@40",
+                    Some(("CreateProcessA", Priority::Medium)),
+                ),
+                (
+                    "CreateProcessA@@40",
+                    Some(("CreateProcessA", Priority::Medium)),
+                ),
+                ("__o_malloc@4", Some(("malloc", Priority::Low))),
+                ("_WinExec@x", None),
+                ("_WinExec@", None),
+                ("_WinExec@8_0", None),
+            ] {
+                assert_eq!(
+                    known_bad.lookup(func_name, kind),
+                    expected,
+                    "`{func_name}` should match only with a numeric argument size"
+                );
+            }
+        }
+
+        // The suffix gate still applies once the argument size is stripped.
+        for (kind, expected) in [
+            (FunctionKind::Plain, None),
+            (FunctionKind::Stub, Some(("read", Priority::Medium))),
+        ] {
+            assert_eq!(
+                known_bad.lookup("_read_16@4", kind),
+                expected,
+                "IDA's suffix should be stripped from `_read_16@4` only as a stub"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
     fn lookup_requires_underscores_before_alias_prefix() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(
             &["system", "sscanf"],
@@ -1148,12 +1243,17 @@ mod tests {
 
     #[test]
     fn try_from_strips_decorations_from_configuration_names() -> Result<(), String> {
-        let known_bad =
-            KnownBadFunctions::try_from(config(&["#memcpy"], &[], &["realpath$DARWIN_EXTSN"]))?;
+        let known_bad = KnownBadFunctions::try_from(config(
+            &["#memcpy"],
+            &["_WinExec@8"],
+            &["realpath$DARWIN_EXTSN"],
+        ))?;
 
         for (func_name, expected) in [
             ("#memcpy", ("memcpy", Priority::High)),
             ("memcpy", ("memcpy", Priority::High)),
+            ("_WinExec@8", ("WinExec", Priority::Medium)),
+            ("WinExec", ("WinExec", Priority::Medium)),
             ("_realpath$DARWIN_EXTSN", ("realpath", Priority::Low)),
             ("realpath", ("realpath", Priority::Low)),
         ] {
@@ -1188,6 +1288,7 @@ mod tests {
             (&["getenv"], &[], &["__getenv"], "getenv"),
             (&["strcpy"], &["#strcpy"], &[], "strcpy"),
             (&[], &["stat"], &["_stat$INODE64"], "stat"),
+            (&["WinExec"], &["_WinExec@8"], &[], "WinExec"),
         ] {
             let result = KnownBadFunctions::try_from(config(high, medium, low));
             assert!(
@@ -1211,6 +1312,8 @@ mod tests {
             "#_",
             "$UNIX2003",
             "_$INODE64",
+            "@8",
+            "@@8",
         ] {
             for (high, medium, low) in [
                 (&[name][..], &[][..], &[][..]),
