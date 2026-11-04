@@ -162,6 +162,7 @@ This project's development has been supported by the following organizations:
 
 - Further enrich the known bad API function list (see <https://github.com/0xdea/semgrep-rules>).
 - Follow calls through thunks outside `.plt` segments (e.g., MSVC incremental-linking `j_` thunks).
+- Follow direct calls through the import address table (e.g., `call [__imp_X]` from `__declspec(dllimport)` declarations).
 - Consider skipping marking call locations in library code recognized by IDA (now only labeled `(lib)`).
 - Implement serialized output to facilitate automated parsing and analysis.
 - Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
