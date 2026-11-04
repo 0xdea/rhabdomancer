@@ -1310,12 +1310,13 @@ mod tests {
         let mut keys = HashSet::new();
 
         for name in config.high.iter().chain(&config.medium).chain(&config.low) {
+            let undecorated = strip_decorations(name);
             assert!(
-                strip_alias_prefix(name).is_none(),
+                strip_alias_prefix(undecorated).is_none(),
                 "built-in `{name}` is an alias or redirect, which the alias prefixes already match"
             );
             assert!(
-                keys.insert(normalize_name(strip_decorations(name))),
+                keys.insert(normalize_name(undecorated)),
                 "built-in `{name}` repeats another entry once normalized"
             );
         }
