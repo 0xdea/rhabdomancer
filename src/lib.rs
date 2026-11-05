@@ -627,12 +627,14 @@ fn is_stub(func: &Function<'_>, plt: &PltSegments) -> bool {
 #[must_use]
 fn strip_decorations(name: &str) -> &str {
     let mut name = name.strip_prefix(ARM64EC_MARKER).unwrap_or(name);
+
     while let Some(stripped) = APPLE_VARIANT_SUFFIXES
         .iter()
         .find_map(|suffix| name.strip_suffix(suffix))
     {
         name = stripped;
     }
+
     if let Some(stripped) = strip_number_after(name, X86_ARGS_SIZE_SEPARATOR) {
         // `vectorcall` doubles the separator (`f@@8`), `fastcall` also prefixes
         // the name with it (`@f@8`), and `stdcall` only appends the size
@@ -642,6 +644,7 @@ fn strip_decorations(name: &str) -> &str {
             .or_else(|| stripped.strip_prefix(X86_ARGS_SIZE_SEPARATOR))
             .unwrap_or(stripped);
     }
+
     name
 }
 
