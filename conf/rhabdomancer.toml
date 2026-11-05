@@ -114,21 +114,21 @@ low = [
     "kmalloc", "kmalloc_array", "kcalloc", "kzalloc", "mallocarray",
     "free", "kfree", # check for incorrect use, double free, use after free
     # check for file access bugs
-    "mkdir", "mkdirat", "mknod", "mknodat", "chdir", "creat", "truncate",
+    "mkdir", "mkdirat", "mknod", "mknodat", "chdir", "creat", "creat64", "truncate", "truncate64",
     "link", "linkat", "symlink", "symlinkat", "readlink", "readlinkat", "unlink", "unlinkat", "realpath", "PathAppend",
     "rename", "renameat",
-    "stat", "lstat", "fstat", "fstatat",
+    "stat", "stat64", "lstat", "lstat64", "fstat", "fstat64", "fstatat", "fstatat64",
     "chown", "lchown", "fchown", "fchownat",
     "chmod", "fchmod", "fchmodat",
     "access", "faccessat", "faccessat2", "access_ok",
     "getwd", "getcwd", "chroot",
     "ttyname_r", "ptsname_r",
     "fmemopen", "fattach",
-    "ftw", "nftw",
+    "ftw", "ftw64", "nftw", "nftw64",
     "umask", "ulimit",
     "AddAccessAllowedAce",
     # check for temporary file bugs
-    "mkstemp", "mkstemp64", "tmpfile", "mkdtemp",
+    "mkstemp", "mkstemp64", "tmpfile", "tmpfile64", "mkdtemp",
     "GetTempFileName", "GetTempFileNameA", "GetTempFileNameW",
     # check for makepath and splitpath bugs
     "makepath", "_tmakepath", "_wmakepath",

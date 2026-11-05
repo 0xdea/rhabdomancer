@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add the missing large-file `X64` variants of listed functions (e.g., `stat64`, `tmpfile64`) to the list of
+  insecure functions.
 - Add the `darwin_variants` test binary and an integration test for Apple's variant suffixes.
 - Add the `stdcall_stubs` test binary and an integration test for the size of the arguments in 32-bit x86 names.
 - Add the `tail_call` test binary and an integration test for call locations at a function's start.

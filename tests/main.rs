@@ -73,7 +73,7 @@ const DOUBLE_XREF_LISTING: &str = "
 /// Expected number of marked call locations in `IMPORT_STUBS`.
 const N_MARKS_IMPORT_STUBS: BookmarkIndex = 22;
 /// Expected number of marked call locations in `STATIC_GLIBC`.
-const N_MARKS_STATIC_GLIBC: BookmarkIndex = 756;
+const N_MARKS_STATIC_GLIBC: BookmarkIndex = 776;
 /// Expected number of marked call locations in `DARWIN_VARIANTS`.
 const N_MARKS_DARWIN_VARIANTS: BookmarkIndex = 4;
 /// Expected number of marked call locations in `STDCALL_STUBS`.
@@ -305,7 +305,7 @@ fn test_glibc_aliases() -> anyhow::Result<()> {
     check_stdout_line(&output, "[BAD 0] system");
     check_stdout_line(&output, "0x4007CC in main");
     check_no_stdout_line(&output, "0x40CA00 in __malloc_arena_thread_freeres");
-    check_summary(&output, "[+] Marked 756 new call locations");
+    check_summary(&output, "[+] Marked 776 new call locations");
 
     let idb = open_idb(STATIC_GLIBC)?;
     check_function_exists(&idb, "__libc_system");
