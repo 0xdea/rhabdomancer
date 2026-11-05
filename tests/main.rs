@@ -439,6 +439,12 @@ fn test_user_comment_at_call_site() -> anyhow::Result<()> {
 /// unchanged, still bookmarked, when it doesn't (regression test for a tag cut
 /// short, leaving a fragment in the user's comment).
 fn test_user_comment_at_comment_limit() -> anyhow::Result<()> {
+    // Pin IDA's limit itself first, through idalib, so that a change to it in
+    // either direction fails here, rather than only a needless warning later.
+    // The IDB is dropped at the end of the statement, before rhabdomancer runs.
+    reset_idb(DOUBLE_XREF)?;
+    check_ida_comment_limit(&IDB::open(DOUBLE_XREF)?)?;
+
     // The tag `[BAD 0] system` is 14 bytes long, so with the newline before it,
     // a 1009-byte comment gives exactly 1024 bytes, and a 1010-byte one 1025.
     for (cmt, expected) in [
@@ -966,6 +972,23 @@ fn check_function_start(idb: &IDB, addr: Address) {
         "{addr:#X} isn't a function's start, the test binary no longer tests what it should"
     );
     eprintln!("Ok.");
+}
+
+/// Checks that IDA stores exactly 1024 bytes of a comment, which rhabdomancer's
+/// own limit relies on: a 1024-byte comment is kept intact, and a 1025-byte
+/// one is cut to 1024 bytes.
+fn check_ida_comment_limit(idb: &IDB) -> anyhow::Result<()> {
+    eprint!("[*] Checking IDA stores at most 1024 bytes of a comment... ");
+    for (len, expected) in [(1024, 1024), (1025, 1024)] {
+        idb.set_cmt(USER_COMMENT_ADDR, "y".repeat(len))?;
+        assert_eq!(
+            idb.get_cmt(USER_COMMENT_ADDR).map(|cmt| cmt.len()),
+            Some(expected),
+            "IDA kept a wrong number of bytes of a {len}-byte comment"
+        );
+    }
+    eprintln!("Ok.");
+    Ok(())
 }
 
 /// Checks that the instruction comment at `addr`, a function's start, is

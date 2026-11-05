@@ -25,8 +25,10 @@ use toml::de::Error as TomlError;
 /// the same prefix, so it must never change.
 const PREFIX: &str = "[BAD ";
 
-/// Maximum length, in bytes, of a comment that IDA stores in full (`MAXSTR` in
-/// the SDK's `pro.h`): a longer one is cut short, even within our tag.
+/// Maximum length, in bytes, of a comment that IDA stores in full: a longer
+/// one is cut short, even within our tag. Measured on IDA 9.5 and pinned by
+/// the integration tests, since IDA doesn't document it (it matches the SDK's
+/// `MAXSPECSIZE`, the maximum size of a netnode value).
 const MAX_COMMENT_LEN: usize = 1024;
 
 /// Default configuration, embedded from `conf/rhabdomancer.toml` at build time
