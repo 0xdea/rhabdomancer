@@ -47,7 +47,9 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 > [!NOTE]
 > Fortified functions (e.g., `__strcpy_chk`, used instead of `strcpy` when building with `_FORTIFY_SOURCE`) are
 > deliberately not matched, since they are the checked variants of the listed functions. To also mark their calls,
-> add them explicitly to a custom configuration (e.g., `"__strcpy_chk"` with the same priority as `strcpy`).
+> add them explicitly to a custom configuration (e.g., `"__strcpy_chk"` with the same priority as `strcpy`). The same
+> works for other redirected names that rhabdomancer doesn't map to their base function yet (e.g., `"__xstat"` for
+> `stat`): they are matched by name, and labeled with it once normalized (e.g., `[BAD 2] xstat`).
 
 ## Articles
 
@@ -165,6 +167,9 @@ This project's development has been supported by the following organizations:
 - Follow calls through thunks outside `.plt` segments (e.g., MSVC incremental-linking `j_` thunks).
 - Follow direct calls through the import address table (e.g., `call [__imp_X]` from `__declspec(dllimport)`
   declarations).
+- Match more redirected names: the stat family in binaries built against glibc before 2.33 (e.g., `__xstat`), the
+  64-bit `time_t` variants on 32-bit targets (e.g., `__stat64_time64`, `__ioctl_time64`), and NetBSD's renamed
+  functions (e.g., `__stat50`).
 - Consider skipping marking call locations in library code recognized by IDA (now only labeled `(lib)`).
 - Implement serialized output to facilitate automated parsing and analysis.
 - Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
