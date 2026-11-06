@@ -171,6 +171,8 @@ This project's development has been supported by the following organizations:
   64-bit `time_t` variants on 32-bit targets (e.g., `__stat64_time64`, `__ioctl_time64`), and NetBSD's renamed
   functions (e.g., `__stat50`).
 - Consider skipping marking call locations in library code recognized by IDA (now only labeled `(lib)`).
+- Allow choosing which architecture to analyze in universal (fat) Mach-O binaries, since IDA picks one in batch mode
+  (e.g., IDA 9.5 picks arm64e where IDA 9.4 picked x86_64).
 - Implement serialized output to facilitate automated parsing and analysis.
 - Implement a basic ruleset in the style of [VulFi](https://github.com/Accenture/VulFi)
   and [VulnFanatic](https://github.com/Martyx00/VulnFanatic).
