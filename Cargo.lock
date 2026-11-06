@@ -411,9 +411,9 @@ checksum = "15cdd26707701c53297e2fa6afb323d55fbc1d0810c3aec078ae3ef0424c3c15"
 
 [[package]]
 name = "idalib"
-version = "0.11.0+9.5.261026"
+version = "0.11.1+9.5.261026"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "637d4359942dbff00621bc60dc5b17ad9a2043d4c460665d66d62dc0bcb0dcbf"
+checksum = "2f17de71fce2e8082bce7f555b3d86a8498a611f31bec99d892eae4d21949395"
 dependencies = [
  "anyhow",
  "autocxx-idalib",
@@ -426,9 +426,9 @@ dependencies = [
 
 [[package]]
 name = "idalib-build"
-version = "0.11.0+9.5.261026"
+version = "0.11.1+9.5.261026"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2980b36d014d6b93d8141a796ce570bf6ea9ec896a325171112271811c5fc1f"
+checksum = "b88f7cf016da44889378e1554b66474a68cb1ef4610f54cd3bd3e058a7bd01f8"
 dependencies = [
  "anyhow",
  "idalib-sys",
@@ -436,9 +436,9 @@ dependencies = [
 
 [[package]]
 name = "idalib-sys"
-version = "0.11.0+9.5.261026"
+version = "0.11.1+9.5.261026"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f073dceb0d57cea8a0ba29fffe6b05fdd4259a93854da8712a7f2dda87284fd"
+checksum = "387128dad650818234f66ff549f12027748ebf01104c60f192ae09f97cc9734d"
 dependencies = [
  "anyhow",
  "autocxx-bindgen-idalib",
@@ -754,7 +754,7 @@ dependencies = [
 
 [[package]]
 name = "rhabdomancer"
-version = "1.2.0-alpha"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "idalib",
@@ -941,9 +941,9 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "1.1.8+spec-1.1.0"
+version = "1.2.0+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
+checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
 dependencies = [
  "indexmap 2.14.2",
  "serde_core",
@@ -974,9 +974,9 @@ dependencies = [
 
 [[package]]
 name = "toml_writer"
-version = "1.1.3+spec-1.1.0"
+version = "1.2.0+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
+checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
 
 [[package]]
 name = "unicode-ident"
@@ -1123,9 +1123,9 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 
 [[package]]
 name = "winnow"
-version = "1.0.4"
+version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81"
+checksum = "8c3b93199df0ab874cdf0c6a94f0a0dc3423fe41f1cafb62b8bd7b1deb277aef"
 
 [[package]]
 name = "zmij"
