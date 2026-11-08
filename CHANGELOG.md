@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Pin the call locations marked in `static_glibc` per platform, since IDA names glibc's aliases differently on Linux
   and macOS.
+- Update dependencies.
 
 ### Fixed
 
