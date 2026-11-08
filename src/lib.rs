@@ -37,13 +37,21 @@ const DEFAULT_CONFIG: &str = include_str!("../conf/rhabdomancer.toml");
 
 /// Prefixes of the names of library aliases of functions: the Universal CRT's
 /// wrappers (e.g., `__o_malloc`), glibc's aliases (e.g., `__libc_system`,
-/// `__GI___snprintf`), which IDA may pick over the plain name, and the names to
-/// which glibc's headers redirect calls in C99 and C23 mode (e.g.,
-/// `__isoc99_sscanf`, `__isoc23_strtol`).
+/// `__GI___snprintf`, `_IO_fwrite`), which IDA may pick over the plain name,
+/// and the names to which glibc's headers redirect calls in C99 and C23 mode
+/// (e.g., `__isoc99_sscanf`, `__isoc23_strtol`).
 ///
 /// Matched on the raw name: the leading underscores tell an alias apart from a
 /// function such as `o_write` or `libc_system`.
-const ALIAS_PREFIXES: [&str; 6] = ["__o_", "_o_", "__libc_", "__GI_", "__isoc99_", "__isoc23_"];
+const ALIAS_PREFIXES: [&str; 7] = [
+    "__o_",
+    "_o_",
+    "__libc_",
+    "__GI_",
+    "_IO_",
+    "__isoc99_",
+    "__isoc23_",
+];
 
 /// Prefix that Microsoft's toolchain adds to the symbol of the native version
 /// of a C function in ARM64EC and ARM64X binaries (e.g., `#memcpy`).
@@ -656,10 +664,10 @@ fn normalize_name(name: &str) -> &str {
 
 /// Returns the normalized name of the function aliased by the library alias
 /// named `func_name` (e.g., `malloc` for `__o_malloc`, `system` for
-/// `__libc_system`, `snprintf` for `__GI___snprintf`, `sscanf` for
-/// `__isoc99_sscanf`), or `None` if `func_name` doesn't start with one of the
-/// [`ALIAS_PREFIXES`], after a single leading dot (e.g., `sscanf` for
-/// `.__isoc23_sscanf`).
+/// `__libc_system`, `snprintf` for `__GI___snprintf`, `fwrite` for
+/// `_IO_fwrite`, `sscanf` for `__isoc99_sscanf`), or `None` if `func_name`
+/// doesn't start with one of the [`ALIAS_PREFIXES`], after a single leading dot
+/// (e.g., `sscanf` for `.__isoc23_sscanf`).
 #[must_use]
 fn strip_alias_prefix(func_name: &str) -> Option<&str> {
     // IDA names ELF .plt stubs with a leading dot (e.g., `.__isoc23_sscanf`),
@@ -940,8 +948,8 @@ mod tests {
     #[test]
     fn lookup_strips_glibc_prefixes() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(
-            &["system", "sscanf", "swscanf"],
-            &["snprintf", "strlen", "strtol"],
+            &["system", "sscanf", "swscanf", "gets"],
+            &["snprintf", "strlen", "strtol", "fwrite"],
             &["realloc"],
         ))?;
 
@@ -950,6 +958,8 @@ mod tests {
             ("__libc_realloc", ("realloc", Priority::Low)),
             ("__GI___snprintf", ("snprintf", Priority::Medium)),
             ("__GI_strlen", ("strlen", Priority::Medium)),
+            ("_IO_fwrite", ("fwrite", Priority::Medium)),
+            ("_IO_gets", ("gets", Priority::High)),
             ("__isoc23_sscanf", ("sscanf", Priority::High)),
             ("__isoc99_swscanf", ("swscanf", Priority::High)),
             ("__isoc23_strtol", ("strtol", Priority::Medium)),
@@ -1214,7 +1224,7 @@ mod tests {
     fn lookup_requires_underscores_before_alias_prefix() -> Result<(), String> {
         let known_bad = KnownBadFunctions::try_from(config(
             &["system", "sscanf"],
-            &["write", "snprintf"],
+            &["write", "snprintf", "fwrite"],
             &["malloc"],
         ))?;
 
@@ -1227,6 +1237,8 @@ mod tests {
                 "_libc_system",
                 "GI_snprintf",
                 "_GI_snprintf",
+                "IO_fwrite",
+                ".IO_fwrite",
                 "isoc23_sscanf",
                 "_isoc99_sscanf",
                 ".isoc99_sscanf",
@@ -1289,6 +1301,7 @@ mod tests {
             "__o_",
             "__libc_",
             "__GI_",
+            "_IO_",
             "__libc_strcpy_s",
         ] {
             assert_eq!(

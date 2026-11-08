@@ -39,10 +39,10 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
   the variant suffixes of Apple's SDK (e.g., `realpath$DARWIN_EXTSN`, `stat$INODE64`), the size of the arguments
   that 32-bit x86 calling conventions append (e.g., `_WinExec@8`), leading dots and underscores (e.g., `_strcpy`), the
   prefixes of library aliases and redirects (e.g., `__o_malloc` in the Universal CRT, `__libc_system`,
-  `__GI___snprintf`, and `__isoc23_sscanf` in glibc, also in ELF `.plt` stubs such as `.__isoc23_sscanf`), and, for
-  stubs and such aliases only, the numeric suffix that IDA appends to names already in use (e.g., `memset_0`). In
-  custom configurations, a leading `#`, Apple's variant suffixes, the size of the arguments, dots, and underscores are
-  ignored as well, and each name may be listed under one priority only.
+  `__GI___snprintf`, `_IO_fwrite`, and `__isoc23_sscanf` in glibc, also in ELF `.plt` stubs such as
+  `.__isoc23_sscanf`), and, for stubs and such aliases only, the numeric suffix that IDA appends to names already in
+  use (e.g., `memset_0`). In custom configurations, a leading `#`, Apple's variant suffixes, the size of the arguments,
+  dots, and underscores are ignored as well, and each name may be listed under one priority only.
 
 > [!NOTE]
 > Fortified functions (e.g., `__strcpy_chk`, used instead of `strcpy` when building with `_FORTIFY_SOURCE`) are

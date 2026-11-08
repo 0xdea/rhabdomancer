@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pin the call locations marked in `static_glibc` per platform, since IDA names glibc's aliases differently on Linux
   and macOS.
 
+### Fixed
+
+- Match glibc's `_IO_` aliases (e.g., `_IO_fwrite`), which IDA may pick over the plain name in statically linked
+  binaries.
+
 ## [1.2.0] - 2026-11-06
 
 ### Added

@@ -74,17 +74,17 @@ const DOUBLE_XREF_LISTING: &str = "
 const N_MARKS_IMPORT_STUBS: BookmarkIndex = 22;
 /// Expected number of marked call locations in `STATIC_GLIBC`. The same IDA
 /// build (9.5.261026) picks different names among glibc's same-address aliases
-/// on Linux and macOS (e.g., `_IO_fwrite` vs `fwrite`, `open` vs `open64`), so
+/// on Linux and macOS (e.g., `open` vs `open64`, `strstr` vs `__GI_strstr`), so
 /// the count depends on the platform; Windows hasn't been measured.
 #[cfg(target_os = "linux")]
-const N_MARKS_STATIC_GLIBC: BookmarkIndex = 790;
+const N_MARKS_STATIC_GLIBC: BookmarkIndex = 791;
 /// Expected number of marked call locations in `STATIC_GLIBC` (see the Linux
 /// value for why it depends on the platform).
 #[cfg(not(target_os = "linux"))]
 const N_MARKS_STATIC_GLIBC: BookmarkIndex = 776;
 /// Expected summary for `STATIC_GLIBC` (see `N_MARKS_STATIC_GLIBC`).
 #[cfg(target_os = "linux")]
-const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 790 new call locations";
+const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 791 new call locations";
 /// Expected summary for `STATIC_GLIBC` (see `N_MARKS_STATIC_GLIBC`).
 #[cfg(not(target_os = "linux"))]
 const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 776 new call locations";
