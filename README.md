@@ -23,16 +23,16 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 - Blazing-fast, headless user experience courtesy of IDA 9.x and idalib-rs Rust bindings.
 - Support for C/C++ binary targets compiled for any architecture implemented by IDA.
 - Bad API function call locations are printed to stdout and marked in the IDB.
-  - Call locations in library code recognized by IDA (e.g., a statically linked runtime matched by FLIRT signatures) are
-    labeled `(lib)`.
-  - Calls through stubs (e.g., the `.plt` entries of ELF binaries or the import stubs of PE and Mach-O binaries,
-    listed as thunks) are traced back to their callers.
-  - In ELF binaries, a function is deliberately listed twice with the same call locations: once as its `.plt` stub
-    (marked as thunk) and once as its import. Each call location is marked only once in the IDB.
+    - Call locations in library code recognized by IDA (e.g., a statically linked runtime matched by FLIRT signatures) are
+      labeled `(lib)`.
+    - Calls through stubs (e.g., the `.plt` entries of ELF binaries or the import stubs of PE and Mach-O binaries,
+      listed as thunks) are traced back to their callers.
+    - In ELF binaries, a function is deliberately listed twice with the same call locations: once as its `.plt` stub
+      (marked as thunk) and once as its import. Each call location is marked only once in the IDB.
 - Known bad API functions are grouped in tiers of badness to help prioritize the audit work.
-  - [BAD 0] High priority - Functions that are generally considered insecure.
-  - [BAD 1] Medium priority - Interesting functions that should be checked for insecure use cases.
-  - [BAD 2] Low priority - Code paths involving these functions should be carefully checked.
+    - [BAD 0] High priority - Functions that are generally considered insecure.
+    - [BAD 1] Medium priority - Interesting functions that should be checked for insecure use cases.
+    - [BAD 2] Low priority - Code paths involving these functions should be carefully checked.
 - The list of known bad API functions is built in and can be easily customized with a configuration file based on
   `conf/rhabdomancer.toml`.
 - Function names are matched without these decorations: the `#` marking native ARM64EC functions (e.g., `#memcpy`),
@@ -70,17 +70,17 @@ The easiest way to get the latest release is via [crates.io](https://crates.io/c
 1. Download, install, and configure IDA (see <https://hex-rays.com/ida-pro>).
 2. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
 3. On Linux/macOS, install as follows:
-   ```sh
-   export IDADIR=/path/to/ida # if not set, the build script will check common locations
-   cargo install rhabdomancer --locked
-   ```
-   On Windows, instead, use the following commands:
-   ```powershell
-   $env:LIBCLANG_PATH="\path\to\clang+llvm\bin"
-   $env:PATH="\path\to\ida;$env:PATH"
-   $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
-   cargo install rhabdomancer --locked
-   ```
+    ```sh
+    export IDADIR=/path/to/ida # if not set, the build script will check common locations
+    cargo install rhabdomancer --locked
+    ```
+    On Windows, instead, use the following commands:
+    ```powershell
+    $env:LIBCLANG_PATH="\path\to\clang+llvm\bin"
+    $env:PATH="\path\to\ida;$env:PATH"
+    $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
+    cargo install rhabdomancer --locked
+    ```
 
 ## Compiling
 
@@ -89,21 +89,21 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
 1. Download, install, and configure IDA (see <https://hex-rays.com/ida-pro>).
 2. Install LLVM/Clang (see <https://rust-lang.github.io/rust-bindgen/requirements.html>).
 3. On Linux/macOS, compile as follows:
-   ```sh
-   git clone --depth 1 https://github.com/0xdea/rhabdomancer
-   cd rhabdomancer
-   export IDADIR=/path/to/ida # if not set, the build script will check common locations
-   cargo build --release --locked
-   ```
-   On Windows, instead, use the following commands:
-   ```powershell
-   git clone --depth 1 https://github.com/0xdea/rhabdomancer
-   cd rhabdomancer
-   $env:LIBCLANG_PATH="\path\to\clang+llvm\bin"
-   $env:PATH="\path\to\ida;$env:PATH"
-   $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
-   cargo build --release --locked
-   ```
+    ```sh
+    git clone --depth 1 https://github.com/0xdea/rhabdomancer
+    cd rhabdomancer
+    export IDADIR=/path/to/ida # if not set, the build script will check common locations
+    cargo build --release --locked
+    ```
+    On Windows, instead, use the following commands:
+    ```powershell
+    git clone --depth 1 https://github.com/0xdea/rhabdomancer
+    cd rhabdomancer
+    $env:LIBCLANG_PATH="\path\to\clang+llvm\bin"
+    $env:PATH="\path\to\ida;$env:PATH"
+    $env:IDADIR="\path\to\ida" # if not set, the build script will check common locations
+    cargo build --release --locked
+    ```
 
 ## Usage
 
@@ -116,10 +116,10 @@ Alternatively, you can build from [source](https://github.com/0xdea/rhabdomancer
    (editing that file requires a rebuild).
 3. Make sure the `IDADIR` environment variable is set if your IDA installation is in a non-standard location.
 4. Run as follows:
-   ```sh
-   rhabdomancer <binary_file>
-   ```
-   Any existing `.i64` IDB file will be updated; otherwise, a new IDB file will be created.
+    ```sh
+    rhabdomancer <binary_file>
+    ```
+    Any existing `.i64` IDB file will be updated; otherwise, a new IDB file will be created.
 5. Open the resulting `.i64` IDB file with IDA.
 6. Select `View` > `Open subviews` > `Bookmarks`
 7. Enjoy your results conveniently collected into an IDA window.
