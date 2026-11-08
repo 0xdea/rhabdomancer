@@ -72,8 +72,22 @@ const DOUBLE_XREF_LISTING: &str = "
 ";
 /// Expected number of marked call locations in `IMPORT_STUBS`.
 const N_MARKS_IMPORT_STUBS: BookmarkIndex = 22;
-/// Expected number of marked call locations in `STATIC_GLIBC`.
+/// Expected number of marked call locations in `STATIC_GLIBC`. The same IDA
+/// build (9.5.261026) picks different names among glibc's same-address aliases
+/// on Linux and macOS (e.g., `_IO_fwrite` vs `fwrite`, `open` vs `open64`), so
+/// the count depends on the platform; Windows hasn't been measured.
+#[cfg(target_os = "linux")]
+const N_MARKS_STATIC_GLIBC: BookmarkIndex = 790;
+/// Expected number of marked call locations in `STATIC_GLIBC` (see the Linux
+/// value for why it depends on the platform).
+#[cfg(not(target_os = "linux"))]
 const N_MARKS_STATIC_GLIBC: BookmarkIndex = 776;
+/// Expected summary for `STATIC_GLIBC` (see `N_MARKS_STATIC_GLIBC`).
+#[cfg(target_os = "linux")]
+const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 790 new call locations";
+/// Expected summary for `STATIC_GLIBC` (see `N_MARKS_STATIC_GLIBC`).
+#[cfg(not(target_os = "linux"))]
+const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 776 new call locations";
 /// Expected number of marked call locations in `DARWIN_VARIANTS`.
 const N_MARKS_DARWIN_VARIANTS: BookmarkIndex = 4;
 /// Expected number of marked call locations in `STDCALL_STUBS`.
@@ -305,7 +319,7 @@ fn test_glibc_aliases() -> anyhow::Result<()> {
     check_stdout_line(&output, "[BAD 0] system");
     check_stdout_line(&output, "0x4007CC in main");
     check_no_stdout_line(&output, "0x40CA00 in __malloc_arena_thread_freeres");
-    check_summary(&output, "[+] Marked 776 new call locations");
+    check_summary(&output, SUMMARY_STATIC_GLIBC);
 
     let idb = open_idb(STATIC_GLIBC)?;
     check_function_exists(&idb, "__libc_system");
