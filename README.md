@@ -53,6 +53,7 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 ## Articles
 
+- <https://hex-rays.com/blog/divining-vulnerabilities-contributor-program>
 - <https://hex-rays.com/blog/streamlining-vulnerability-research-idalib-rust-bindings>
 - <https://hnsecurity.it/blog/streamlining-vulnerability-research-with-ida-pro-and-rust>
 
