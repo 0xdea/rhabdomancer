@@ -634,7 +634,7 @@ fn is_stub(func: &Function<'_>, plt: &PltSegments) -> bool {
 /// matches both `#memcpy` and `memcpy`.
 #[must_use]
 fn strip_decorations(name: &str) -> &str {
-    let mut name = name.strip_prefix(ARM64EC_MARKER).unwrap_or(name);
+    let mut name = name.trim_prefix(ARM64EC_MARKER);
 
     while let Some(stripped) = APPLE_VARIANT_SUFFIXES
         .iter()
@@ -673,7 +673,7 @@ fn strip_alias_prefix(func_name: &str) -> Option<&str> {
     // IDA names ELF .plt stubs with a leading dot (e.g., `.__isoc23_sscanf`),
     // and so do PPC64 ELFv1 binaries their functions' code, as with the other
     // names that `normalize_name` trims dots from.
-    let func_name = func_name.strip_prefix('.').unwrap_or(func_name);
+    let func_name = func_name.trim_prefix('.');
     ALIAS_PREFIXES
         .iter()
         .find_map(|prefix| func_name.strip_prefix(prefix))
