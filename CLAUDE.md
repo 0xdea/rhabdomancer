@@ -108,6 +108,8 @@ All clippy lint groups (`all`, `pedantic`, `nursery`, `cargo`, `restriction`) ar
 - Unsafe blocks without a `// Safety:` comment (`undocumented_unsafe_blocks`).
 - Undocumented items (`missing_docs`, `missing_docs_in_private_items`): every item has a doc comment, private ones and test helpers included.
 
+`clippy.toml` allows `unwrap()`, `expect()`, `panic!()`, and indexing in tests (`mod tests` in `src/lib.rs` and the custom-harness `tests/main.rs` alike), so they need no suppression there.
+
 `clippy::min_ident_chars` is enabled, so single-character identifiers (e.g. `|s|`, `for f in`) are flagged — use descriptive names like `name`, `func`, `idx`. Clippy's default `allowed-idents-below-min-chars` still permits `i`, `j`, `x`, `y`, `z`, `w`, and `n`, and parameters that keep a trait's own name (such as `f` in `fmt::Display::fmt`) are not flagged either; prefer descriptive names (e.g. `idx`) anyway.
 
 Pure functions whose result matters carry `#[must_use]`, private ones included (clippy's `must_use_candidate` only flags public items), e.g., `Priority::level()`, `KnownBadFunctions::lookup()`, `PltSegments::contains()`, `function_name()`, and `normalize_name()`.

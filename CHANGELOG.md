@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Raise the minimum supported Rust version to 1.100.
 - Pin the call locations marked in `static_glibc` per platform, since IDA names glibc's aliases differently on Linux
   and macOS.
+- Enable Cargo lints and fail CI on their warnings.
+- Allow `unwrap`, `expect`, `panic!`, and indexing in tests via `clippy.toml`.
 - Update documentation.
 - Update dependencies.
 
