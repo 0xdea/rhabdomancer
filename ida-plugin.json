@@ -10,7 +10,7 @@
     "categories": ["vulnerability-research-and-exploit-development"],
     "urls": {
       "repository": "https://github.com/0xdea/rhabdomancer",
-      "homepage": "https://0xdeadbeef.info/rhabdomancer/rhabdomancer/"
+      "homepage": "https://docs.rs/rhabdomancer"
     },
     "authors": [
       {

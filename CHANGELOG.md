@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Host documentation on docs.rs instead of GitHub Pages.
 - Raise the minimum supported Rust version to 1.100.
 - Pin the call locations marked in `static_glibc` per platform, since IDA names glibc's aliases differently on Linux
   and macOS.
