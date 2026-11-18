@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Redirecting to docs.rs</title>
+<script>
+const prefix = "/rhabdomancer/rhabdomancer/";
+const path = location.pathname;
+location.replace(path.startsWith(prefix)
+  ? "https://docs.rs/rhabdomancer/latest/rhabdomancer/" + path.slice(prefix.length)
+  : "https://docs.rs/rhabdomancer");
+</script>
+</head>
+<body>
+<p>The documentation has moved to <a href="https://docs.rs/rhabdomancer">https://docs.rs/rhabdomancer</a>.</p>
+</body>
+</html>
