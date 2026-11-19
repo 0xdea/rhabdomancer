@@ -139,11 +139,13 @@ low = [
     "vprintf", "vfprintf", "vasprintf", "vdprintf", "vfwprintf",
     "vcprintf", "vcwprintf", "vscprintf", "vscwprintf", "vwprintf",
     "_printf_c89", "_fprintf_c89",
+    "obstack_printf", "obstack_vprintf",
     # fortified variants (_FORTIFY_SOURCE) check the buffer size, but not the format string
     "__printf_chk", "__fprintf_chk", "__dprintf_chk", "__sprintf_chk", "__snprintf_chk",
     "__vprintf_chk", "__vfprintf_chk", "__vdprintf_chk", "__vsprintf_chk", "__vsnprintf_chk",
     "__asprintf_chk", "__vasprintf_chk", "__syslog_chk", "__vsyslog_chk",
     "__wprintf_chk", "__fwprintf_chk", "__swprintf_chk", "__vwprintf_chk", "__vfwprintf_chk", "__vswprintf_chk",
+    "__obstack_printf_chk", "__obstack_vprintf_chk",
     "err", "errx", "errc", "warn", "warnx", "warnc", "verr", "verrx", "verrc", "vwarn", "vwarnx", "vwarnc",
     # check for internet address manipulation bugs
     "inet_ntop", "inet_pton",

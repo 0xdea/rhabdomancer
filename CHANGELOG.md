@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add the fortified `printf` family (e.g., `__printf_chk`, `__snprintf_chk`, `__syslog_chk`) to the list of insecure
   functions with low priority, since `_FORTIFY_SOURCE` doesn't prevent format string bugs.
+- Add the `obstack_printf` family and their fortified variants to the list of insecure functions with low priority.
 - Add `vsyslog` to the list of insecure functions.
 
 ### Changed

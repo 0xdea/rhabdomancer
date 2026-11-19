@@ -78,19 +78,21 @@ const N_MARKS_IMPORT_STUBS: BookmarkIndex = 22;
 /// the count depends on the platform; Windows hasn't been measured. On macOS,
 /// IDA also renames `__fprintf_chk` and `__asprintf_chk` to
 /// `_obstack_printf_chk` and `_obstack_printf_chk_0`, names the binary doesn't
-/// contain, so their 16 call locations are marked on Linux only.
+/// contain: the 14 calls to the former are marked as `obstack_printf_chk`, and
+/// the 2 calls to the latter, a plain function whose suffix isn't stripped, are
+/// marked on Linux only.
 #[cfg(target_os = "linux")]
 const N_MARKS_STATIC_GLIBC: BookmarkIndex = 807;
 /// Expected number of marked call locations in `STATIC_GLIBC` (see the Linux
 /// value for why it depends on the platform).
 #[cfg(not(target_os = "linux"))]
-const N_MARKS_STATIC_GLIBC: BookmarkIndex = 776;
+const N_MARKS_STATIC_GLIBC: BookmarkIndex = 790;
 /// Expected summary for `STATIC_GLIBC` (see `N_MARKS_STATIC_GLIBC`).
 #[cfg(target_os = "linux")]
 const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 807 new call locations";
 /// Expected summary for `STATIC_GLIBC` (see `N_MARKS_STATIC_GLIBC`).
 #[cfg(not(target_os = "linux"))]
-const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 776 new call locations";
+const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 790 new call locations";
 /// Expected number of marked call locations in `DARWIN_VARIANTS`.
 const N_MARKS_DARWIN_VARIANTS: BookmarkIndex = 4;
 /// Expected number of marked call locations in `STDCALL_STUBS`.
