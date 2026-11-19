@@ -47,15 +47,15 @@ const MISSING: &str = "./tests/data/missing";
 
 /// Expected number of marked call locations in `LS` with the default
 /// configuration.
-const N_MARKS: BookmarkIndex = 86;
+const N_MARKS: BookmarkIndex = 93;
 /// Expected number of bad functions found in `LS` with the default
 /// configuration, counting .plt stubs and imports separately, each printed on
 /// stdout as a header after a blank line.
-const N_BAD_FUNCTIONS: usize = 20;
+const N_BAD_FUNCTIONS: usize = 22;
 /// Expected number of call-site lines printed on stdout for `LS` with the
 /// default configuration (each of the `N_MARKS` call locations is listed under
 /// both the .plt stub and the import).
-const N_CALL_SITE_LINES: usize = 172;
+const N_CALL_SITE_LINES: usize = 186;
 /// Expected number of marked call locations in `LS` with `CUSTOM_CONFIG_TOML`.
 const N_MARKS_CUSTOM: BookmarkIndex = 14;
 /// Expected number of marked call locations in `DOUBLE_XREF`.
@@ -75,16 +75,19 @@ const N_MARKS_IMPORT_STUBS: BookmarkIndex = 22;
 /// Expected number of marked call locations in `STATIC_GLIBC`. The same IDA
 /// build (9.5.261026) picks different names among glibc's same-address aliases
 /// on Linux and macOS (e.g., `open` vs `open64`, `strstr` vs `__GI_strstr`), so
-/// the count depends on the platform; Windows hasn't been measured.
+/// the count depends on the platform; Windows hasn't been measured. On macOS,
+/// IDA also renames `__fprintf_chk` and `__asprintf_chk` to
+/// `_obstack_printf_chk` and `_obstack_printf_chk_0`, names the binary doesn't
+/// contain, so their 16 call locations are marked on Linux only.
 #[cfg(target_os = "linux")]
-const N_MARKS_STATIC_GLIBC: BookmarkIndex = 791;
+const N_MARKS_STATIC_GLIBC: BookmarkIndex = 807;
 /// Expected number of marked call locations in `STATIC_GLIBC` (see the Linux
 /// value for why it depends on the platform).
 #[cfg(not(target_os = "linux"))]
 const N_MARKS_STATIC_GLIBC: BookmarkIndex = 776;
 /// Expected summary for `STATIC_GLIBC` (see `N_MARKS_STATIC_GLIBC`).
 #[cfg(target_os = "linux")]
-const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 791 new call locations";
+const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 807 new call locations";
 /// Expected summary for `STATIC_GLIBC` (see `N_MARKS_STATIC_GLIBC`).
 #[cfg(not(target_os = "linux"))]
 const SUMMARY_STATIC_GLIBC: &str = "[+] Marked 776 new call locations";
@@ -190,7 +193,8 @@ fn test_default_configuration() -> anyhow::Result<()> {
     check_binary_succeeded(&output);
     check_number_of_output_lines(&output);
     check_stdout_line(&output, "0x2C5F in sub_2C30");
-    check_summary(&output, "[+] Marked 86 new call locations");
+    check_stdout_line(&output, "[BAD 2] snprintf_chk (thunk)");
+    check_summary(&output, "[+] Marked 93 new call locations");
     check_priority_order(&output)?;
 
     let idb = open_idb(LS)?;

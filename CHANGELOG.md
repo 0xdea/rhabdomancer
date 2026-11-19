@@ -7,16 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add the fortified `printf` family (e.g., `__printf_chk`, `__snprintf_chk`, `__syslog_chk`) to the list of insecure
+  functions with low priority, since `_FORTIFY_SOURCE` doesn't prevent format string bugs.
+- Add `vsyslog` to the list of insecure functions.
+
 ### Changed
 
-- Host documentation on docs.rs instead of GitHub Pages.
 - Raise the minimum supported Rust version to 1.100.
+- Host documentation on docs.rs instead of GitHub Pages.
+- Update dependencies.
+- Update documentation.
 - Pin the call locations marked in `static_glibc` per platform, since IDA names glibc's aliases differently on Linux
   and macOS.
 - Enable Cargo lints and fail CI on their warnings.
 - Allow `unwrap`, `expect`, `panic!`, and indexing in tests via `clippy.toml`.
-- Update documentation.
-- Update dependencies.
 
 ### Fixed
 

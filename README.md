@@ -45,10 +45,14 @@ a binary file. Auditors can backtrace from these candidate points to find pathwa
 
 > [!NOTE]
 > Fortified functions (e.g., `__strcpy_chk`, used instead of `strcpy` when building with `_FORTIFY_SOURCE`) are
-> deliberately not matched, since they are the checked variants of the listed functions. To also mark their calls,
-> add them explicitly to a custom configuration (e.g., `"__strcpy_chk"` with the same priority as `strcpy`). The same
-> works for other redirected names that rhabdomancer doesn't map to their base function yet (e.g., `"__xstat"` for
-> `stat`): they are matched by name, and labeled with it once normalized (e.g., `[BAD 2] xstat`).
+> deliberately not matched, since they are the checked variants of the listed functions. The exception is the
+> fortified `printf` family (e.g., `__printf_chk`, `__snprintf_chk`, `__syslog_chk`), listed with low priority and
+> labeled with their own names (e.g., `[BAD 2] printf_chk`): their checks prevent buffer overflows and reject `%n` in
+> writable format strings, but not format string bugs such as information leaks through `%p` or `%s`. To also mark
+> the calls to other fortified functions, add them explicitly to a custom configuration (e.g., `"__strcpy_chk"` with
+> the same priority as `strcpy`). The same works for other redirected names that rhabdomancer doesn't map to their
+> base function yet (e.g., `"__xstat"` for `stat`): they are matched by name, and labeled with it once normalized
+> (e.g., `[BAD 2] xstat`).
 
 ## Articles
 
