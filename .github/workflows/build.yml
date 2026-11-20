@@ -99,13 +99,10 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
-      - name: install clang/llvm
-        uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
-        with:
-          version: "20"
-          directory: "${{ runner.temp }}/llvm-20"
+      # The runner image's LLVM is updated together with its Visual Studio, whose
+      # C++ headers reject older Clang versions.
       - name: configure clang/llvm environment
-        run: echo "LIBCLANG_PATH=$((gcm clang).source -replace "clang.exe")" >> $env:GITHUB_ENV
+        run: echo "LIBCLANG_PATH=C:\Program Files\LLVM\bin" >> $env:GITHUB_ENV
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
